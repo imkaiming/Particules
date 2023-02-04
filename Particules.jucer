@@ -19,12 +19,16 @@
               file="Source/Graphical/AudioFileFrame.cpp"/>
         <FILE id="Lr9CGD" name="AudioFileFrame.h" compile="0" resource="0"
               file="Source/Graphical/AudioFileFrame.h"/>
+        <FILE id="gEPOGU" name="GrainsFrame.cpp" compile="1" resource="0" file="Source/Graphical/GrainsFrame.cpp"/>
+        <FILE id="YSsB2J" name="GrainsFrame.h" compile="0" resource="0" file="Source/Graphical/GrainsFrame.h"/>
         <FILE id="zlhP7Q" name="MainFrame.cpp" compile="1" resource="0" file="Source/Graphical/MainFrame.cpp"/>
         <FILE id="JEAtui" name="MainFrame.h" compile="0" resource="0" file="Source/Graphical/MainFrame.h"/>
         <FILE id="eURq6D" name="SpectrumComponent.cpp" compile="1" resource="0"
               file="Source/Graphical/SpectrumComponent.cpp"/>
         <FILE id="UUX1uF" name="SpectrumComponent.h" compile="0" resource="0"
               file="Source/Graphical/SpectrumComponent.h"/>
+        <FILE id="qvbVMb" name="SynthFrame.cpp" compile="1" resource="0" file="Source/Graphical/SynthFrame.cpp"/>
+        <FILE id="nFCxWF" name="SynthFrame.h" compile="0" resource="0" file="Source/Graphical/SynthFrame.h"/>
       </GROUP>
       <GROUP id="{F5D1AC6B-E2DF-382E-41AA-ADFB6FA3B728}" name="Utils">
         <FILE id="NUK28B" name="FileLoader.cpp" compile="1" resource="0" file="Source/Utils/FileLoader.cpp"/>

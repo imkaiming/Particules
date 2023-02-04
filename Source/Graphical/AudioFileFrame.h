@@ -24,6 +24,7 @@ public:
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFileFrame)
 		SpectrumComponent spectrumComponent;
-		juce::TextButton openFileButton;
+		//juce::TextButton openFileButton;
+		juce::ImageButton openFileButton
 
 };

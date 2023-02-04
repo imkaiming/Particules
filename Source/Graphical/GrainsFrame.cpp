@@ -1,0 +1,29 @@
+/*
+  ==============================================================================
+
+	GrainsFrame.cpp
+	Created: 3 Feb 2023 11:44:06pm
+	Author:  user
+
+  ==============================================================================
+*/
+
+#include "GrainsFrame.h"
+
+GrainsFrame::GrainsFrame() {
+
+}
+GrainsFrame::~GrainsFrame() {
+
+}
+
+void GrainsFrame::paint(juce::Graphics& g) {
+	juce::Rectangle<float> grainsFrame(0.f, 0.f, getWidth(), getHeight());
+	g.setColour(juce::Colours::slategrey);
+	g.fillRect(grainsFrame);
+	g.drawRect(grainsFrame);
+}
+
+void GrainsFrame::resized() {
+
+}

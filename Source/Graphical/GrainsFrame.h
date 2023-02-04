@@ -1,9 +1,9 @@
 /*
   ==============================================================================
 
-	SpectrumComponent.h
-	Created: 3 Feb 2023 10:19:39pm
-	Author:  user
+    GrainsFrame.h
+    Created: 3 Feb 2023 11:44:06pm
+    Author:  user
 
   ==============================================================================
 */
@@ -12,14 +12,14 @@
 
 #pragma once
 
-class SpectrumComponent : public juce::Component {
+class GrainsFrame : public juce::Component {
 public:
-	SpectrumComponent();
-	~SpectrumComponent() override;
+	GrainsFrame();
+	~GrainsFrame() override;
 
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
 private:
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpectrumComponent)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainsFrame)
 };

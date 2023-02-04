@@ -12,6 +12,8 @@
 
 #include <JuceHeader.h>
 #include "AudioFileFrame.h"
+#include "SynthFrame.h"
+#include "GrainsFrame.h"
 
 class MainFrame : public juce::Component {
 public:
@@ -23,6 +25,9 @@ public:
 
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainFrame)
-		AudioFileFrame audioFileFrame;
+
+		SynthFrame synthFrame;
+	GrainsFrame grainsFrame;
+	AudioFileFrame audioFileFrame;
 
 };
