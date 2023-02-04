@@ -5,26 +5,28 @@
               pluginFormats="buildVST3" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn">
   <MAINGROUP id="Ws3dtU" name="Particules">
     <GROUP id="{802498BE-701B-D77E-6320-9D5F6DE36E63}" name="Source">
-      <GROUP id="{08FCD4C4-B852-1C60-AD9C-FB12E054FEEB}" name="Source">
-        <GROUP id="{DBFD176C-8997-DF89-A4CE-ED2D2917D225}" name="GrainSynth">
-          <FILE id="BRc8FY" name="Grain.cpp" compile="1" resource="0" file="Source/GrainSynth/Grain.cpp"/>
-          <FILE id="j7I2cf" name="Grain.h" compile="0" resource="0" file="Source/GrainSynth/Grain.h"/>
-          <FILE id="SE9acx" name="GranularSynth.cpp" compile="1" resource="0"
-                file="Source/GrainSynth/GranularSynth.cpp"/>
-          <FILE id="K4KdUA" name="GranularSynth.h" compile="0" resource="0" file="Source/GrainSynth/GranularSynth.h"/>
-          <FILE id="XHKNY9" name="Scheduler.cpp" compile="1" resource="0" file="Source/GrainSynth/Scheduler.cpp"/>
-          <FILE id="ENmUkw" name="Scheduler.h" compile="0" resource="0" file="Source/GrainSynth/Scheduler.h"/>
-        </GROUP>
-        <GROUP id="{35FB6AA3-D8DD-5C0A-1016-59540FC6A0CE}" name="Graphical">
-          <FILE id="zlhP7Q" name="MainFrame.cpp" compile="1" resource="0" file="Source/Graphical/MainFrame.cpp"/>
-          <FILE id="JEAtui" name="MainFrame.h" compile="0" resource="0" file="Source/Graphical/MainFrame.h"/>
-        </GROUP>
-        <GROUP id="{F5D1AC6B-E2DF-382E-41AA-ADFB6FA3B728}" name="Utils">
-          <FILE id="NUK28B" name="FileLoader.cpp" compile="1" resource="0" file="Source/Utils/FileLoader.cpp"/>
-          <FILE id="yUcByn" name="FileLoader.h" compile="0" resource="0" file="Source/Utils/FileLoader.h"/>
-          <FILE id="nNtmYy" name="StateSaver.cpp" compile="1" resource="0" file="Source/Utils/StateSaver.cpp"/>
-          <FILE id="rp4NTf" name="StateSaver.h" compile="0" resource="0" file="Source/Utils/StateSaver.h"/>
-        </GROUP>
+      <GROUP id="{DBFD176C-8997-DF89-A4CE-ED2D2917D225}" name="GrainSynth">
+        <FILE id="BRc8FY" name="Grain.cpp" compile="1" resource="0" file="Source/GrainSynth/Grain.cpp"/>
+        <FILE id="j7I2cf" name="Grain.h" compile="0" resource="0" file="Source/GrainSynth/Grain.h"/>
+        <FILE id="SE9acx" name="GranularSynth.cpp" compile="1" resource="0"
+              file="Source/GrainSynth/GranularSynth.cpp"/>
+        <FILE id="K4KdUA" name="GranularSynth.h" compile="0" resource="0" file="Source/GrainSynth/GranularSynth.h"/>
+        <FILE id="XHKNY9" name="Scheduler.cpp" compile="1" resource="0" file="Source/GrainSynth/Scheduler.cpp"/>
+        <FILE id="ENmUkw" name="Scheduler.h" compile="0" resource="0" file="Source/GrainSynth/Scheduler.h"/>
+      </GROUP>
+      <GROUP id="{35FB6AA3-D8DD-5C0A-1016-59540FC6A0CE}" name="Graphical">
+        <FILE id="zlhP7Q" name="MainFrame.cpp" compile="1" resource="0" file="Source/Graphical/MainFrame.cpp"/>
+        <FILE id="JEAtui" name="MainFrame.h" compile="0" resource="0" file="Source/Graphical/MainFrame.h"/>
+        <FILE id="eURq6D" name="SpectrumComponent.cpp" compile="1" resource="0"
+              file="Source/Graphical/SpectrumComponent.cpp"/>
+        <FILE id="UUX1uF" name="SpectrumComponent.h" compile="0" resource="0"
+              file="Source/Graphical/SpectrumComponent.h"/>
+      </GROUP>
+      <GROUP id="{F5D1AC6B-E2DF-382E-41AA-ADFB6FA3B728}" name="Utils">
+        <FILE id="NUK28B" name="FileLoader.cpp" compile="1" resource="0" file="Source/Utils/FileLoader.cpp"/>
+        <FILE id="yUcByn" name="FileLoader.h" compile="0" resource="0" file="Source/Utils/FileLoader.h"/>
+        <FILE id="nNtmYy" name="StateSaver.cpp" compile="1" resource="0" file="Source/Utils/StateSaver.cpp"/>
+        <FILE id="rp4NTf" name="StateSaver.h" compile="0" resource="0" file="Source/Utils/StateSaver.h"/>
       </GROUP>
       <FILE id="qS9NwT" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
