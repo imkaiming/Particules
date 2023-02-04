@@ -18,10 +18,11 @@ GrainsFrame::~GrainsFrame() {
 }
 
 void GrainsFrame::paint(juce::Graphics& g) {
-	juce::Rectangle<float> grainsFrame(0.f, 0.f, getWidth(), getHeight());
-	g.setColour(juce::Colours::slategrey);
-	g.fillRect(grainsFrame);
-	g.drawRect(grainsFrame);
+	//juce::Rectangle<float> grainsFrame(0.f, 0.f, getWidth(), getHeight());
+	//g.setColour(juce::Colours::slategrey);
+	//g.fillRect(grainsFrame);
+	//g.drawRect(grainsFrame);
+	g.fillAll(juce::Colours::slategrey);
 }
 
 void GrainsFrame::resized() {

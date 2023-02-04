@@ -14,6 +14,8 @@
 #include "AudioFileFrame.h"
 #include "SynthFrame.h"
 #include "GrainsFrame.h"
+#include "TitleFrame.h"
+#include "StatusBarFrame.h"
 
 class MainFrame : public juce::Component {
 public:
@@ -24,10 +26,15 @@ public:
 	void resized() override;
 
 private:
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainFrame)
-
-		SynthFrame synthFrame;
+	SynthFrame synthFrame;
 	GrainsFrame grainsFrame;
 	AudioFileFrame audioFileFrame;
+	StatusBarFrame statusBarFrame;
+	TitleFrame titleFrame;
+
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainFrame)
+
+
 
 };

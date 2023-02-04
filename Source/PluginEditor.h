@@ -2,7 +2,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "Graphical/MainFrame.h"
+#include "Frame/MainFrame.h"
 
 
 class GranularSynthesisAudioProcessorEditor : public juce::AudioProcessorEditor
@@ -20,8 +20,7 @@ private:
 	// access the processor object that created it.
 	GranularSynthesisAudioProcessor& audioProcessor;
 	MainFrame mainFrame;
-
-
+	int width, heigth;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularSynthesisAudioProcessorEditor)
 

@@ -11,7 +11,7 @@
 #include "AudioFileFrame.h"
 
 AudioFileFrame::AudioFileFrame() :
-	openFileButton((const juce::String) "openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted) 
+	openFileButton((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted)
 
 {
 	//std::unique_ptr <juce::XmlElement> addFolder_Fill_svg(juce::XmlDocument::parse(BinaryData::AddFolder_Fill_svg));
@@ -33,10 +33,11 @@ AudioFileFrame::~AudioFileFrame() {
 }
 
 void AudioFileFrame::paint(juce::Graphics& g) {
-	juce::Rectangle<float> audioFileFrame(0.f, 0.f, getWidth(), getHeight());
-	g.setColour(juce::Colours::slategrey);
-	g.fillRect(audioFileFrame);
-	g.drawRect(audioFileFrame);
+	//juce::Rectangle<float> audioFileFrame(0.f, 0.f, getWidth(), getHeight());
+	//g.setColour(juce::Colours::slategrey);
+	//g.fillRect(audioFileFrame);
+	//g.drawRect(audioFileFrame);
+	g.fillAll(juce::Colours::coral);
 }
 void AudioFileFrame::resized() {
 	//openFileButton.setBounds(25.f, 1.f, 125.f, 33.3f);

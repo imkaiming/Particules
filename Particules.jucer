@@ -61,8 +61,14 @@
         <FILE id="NzqI5c" name="GrainsFrame.h" compile="0" resource="0" file="Source/Frame/GrainsFrame.h"/>
         <FILE id="yraR4p" name="MainFrame.cpp" compile="1" resource="0" file="Source/Frame/MainFrame.cpp"/>
         <FILE id="nOK8dB" name="MainFrame.h" compile="0" resource="0" file="Source/Frame/MainFrame.h"/>
+        <FILE id="BMMo7I" name="StatusBarFrame.cpp" compile="1" resource="0"
+              file="Source/Frame/StatusBarFrame.cpp"/>
+        <FILE id="QKcBYq" name="StatusBarFrame.h" compile="0" resource="0"
+              file="Source/Frame/StatusBarFrame.h"/>
         <FILE id="mgoGRC" name="SynthFrame.cpp" compile="1" resource="0" file="Source/Frame/SynthFrame.cpp"/>
         <FILE id="HtcbT1" name="SynthFrame.h" compile="0" resource="0" file="Source/Frame/SynthFrame.h"/>
+        <FILE id="BWWNwj" name="TitleFrame.cpp" compile="1" resource="0" file="Source/Frame/TitleFrame.cpp"/>
+        <FILE id="yw9AFL" name="TitleFrame.h" compile="0" resource="0" file="Source/Frame/TitleFrame.h"/>
       </GROUP>
       <GROUP id="{C5B1C2E5-8B6E-BEAC-6B7A-D5C38235BAA0}" name="GrainSynth">
         <FILE id="ebsX5A" name="Grain.cpp" compile="1" resource="0" file="Source/GrainSynth/Grain.cpp"/>
