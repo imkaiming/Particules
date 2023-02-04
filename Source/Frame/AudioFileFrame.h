@@ -11,8 +11,8 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "SpectrumComponent.h"
-//#include "../Utils/DrawableSVGButton.h"
+#include "../Component/SpectrumComponent.h"
+//#include "../Component/SVGButton.h"
 
 class AudioFileFrame : public juce::Component {
 public:

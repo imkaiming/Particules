@@ -26,10 +26,7 @@ AudioFileFrame::AudioFileFrame() :
 	);
 
 	addAndMakeVisible(openFileButton);
-	openFileButton.setBounds(getLocalBounds());
-
-
-	addAndMakeVisible(spectrumComponent);
+	//addAndMakeVisible(spectrumComponent);
 }
 AudioFileFrame::~AudioFileFrame() {
 
@@ -43,6 +40,7 @@ void AudioFileFrame::paint(juce::Graphics& g) {
 }
 void AudioFileFrame::resized() {
 	//openFileButton.setBounds(25.f, 1.f, 125.f, 33.3f);
+	openFileButton.setBounds(getLocalBounds());
 	spectrumComponent.setBounds(getLocalBounds());
 
 }

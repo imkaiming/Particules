@@ -16,6 +16,7 @@ SpectrumComponent::SpectrumComponent() {
 
 
 SpectrumComponent::~SpectrumComponent() {
+
 }
 
 
@@ -24,7 +25,6 @@ void SpectrumComponent::paint(juce::Graphics& g) {
 	g.setColour(juce::Colours::coral);
 	g.fillRect(spectrumComponent);
 	g.drawRect(spectrumComponent);
-
 
 }
 
