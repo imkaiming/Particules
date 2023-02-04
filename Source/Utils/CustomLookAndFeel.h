@@ -1,9 +1,9 @@
 /*
   ==============================================================================
 
-    CustomLookAndFeel.h
-    Created: 4 Feb 2023 3:43:16pm
-    Author:  user
+	CustomLookAndFeel.h
+	Created: 4 Feb 2023 3:43:16pm
+	Author:  user
 
   ==============================================================================
 */
@@ -14,19 +14,21 @@
 
 class CustomLookAndFeel : public LookAndFeel_V4 {
 public:
-    CustomLookAndFeel();
-    ~CustomLookAndFeel();
+	CustomLookAndFeel();
+	~CustomLookAndFeel();
 
-    //void drawRotarySlider(Graphics&, int x, int y, int width, int height, float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle, Slider&) override;
-    //void drawButtonBackground(Graphics& g,
-    //    Button& button,
-    //    const Colour& backgroundColour,
-    //    bool shouldDrawButtonAsHighlighted,
-    //    bool shouldDrawButtonAsDown) override;
+	//void drawRotarySlider(Graphics&, int x, int y, int width, int height, float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle, Slider&) override;
+	//void drawButtonBackground(Graphics& g,
+	//    Button& button,
+	//    const Colour& backgroundColour,
+	//    bool shouldDrawButtonAsHighlighted,
+	//    bool shouldDrawButtonAsDown) override;
 
-    //LookAndFeel_V4::ColourScheme getColourScheme();
+	//LookAndFeel_V4::ColourScheme getColourScheme();
+
+	juce::Typeface::Ptr getTypefaceForFont(const juce::Font& f) override;
 
 private:
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CustomLookAndFeel)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CustomLookAndFeel)
 };
