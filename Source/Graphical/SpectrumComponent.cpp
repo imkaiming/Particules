@@ -20,10 +20,11 @@ SpectrumComponent::~SpectrumComponent() {
 
 
 void SpectrumComponent::paint(juce::Graphics& g) {
-	juce::Rectangle<float> spectrumComponent(5.0f, 5.0f, getWidth() - 5.0f, getHeight() - 5.0f);
-	g.setColour(juce::Colours::black);
+	juce::Rectangle<float> spectrumComponent(150.0f, 1.f, 600.0f, 100.f);
+	g.setColour(juce::Colours::aqua);
 	g.fillRect(spectrumComponent);
 	g.drawRect(spectrumComponent);
+
 
 }
 

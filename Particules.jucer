@@ -15,6 +15,10 @@
         <FILE id="ENmUkw" name="Scheduler.h" compile="0" resource="0" file="Source/GrainSynth/Scheduler.h"/>
       </GROUP>
       <GROUP id="{35FB6AA3-D8DD-5C0A-1016-59540FC6A0CE}" name="Graphical">
+        <FILE id="QkSbkH" name="AudioFileFrame.cpp" compile="1" resource="0"
+              file="Source/Graphical/AudioFileFrame.cpp"/>
+        <FILE id="Lr9CGD" name="AudioFileFrame.h" compile="0" resource="0"
+              file="Source/Graphical/AudioFileFrame.h"/>
         <FILE id="zlhP7Q" name="MainFrame.cpp" compile="1" resource="0" file="Source/Graphical/MainFrame.cpp"/>
         <FILE id="JEAtui" name="MainFrame.h" compile="0" resource="0" file="Source/Graphical/MainFrame.h"/>
         <FILE id="eURq6D" name="SpectrumComponent.cpp" compile="1" resource="0"

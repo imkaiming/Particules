@@ -121,9 +121,11 @@ void GranularSynthesisAudioProcessor::processBlock(juce::AudioBuffer<float>& buf
 	juce::ScopedNoDenormals noDenormals;
 	auto totalNumInputChannels = getTotalNumInputChannels();
 	auto totalNumOutputChannels = getTotalNumOutputChannels();
+	int currentBufferLength = buffer.getNumSamples();
 
-	buffer.clear();
-	granSynth.processBlock(buffer, midiMessages);
+	for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+		buffer.clear(i, 0, currentBufferLength);
+	// granSynth.processBlock(buffer, midiMessages);
 }
 
 bool GranularSynthesisAudioProcessor::hasEditor() const

@@ -11,19 +11,20 @@
 #include "MainFrame.h"
 
 MainFrame::MainFrame() {
+	addAndMakeVisible(audioFileFrame);
 }
 
 MainFrame::~MainFrame() {
 }
 
 void MainFrame::paint(juce::Graphics& g) {
-	juce::Rectangle<float> mainFrame(5.f, 5.f, getWidth() - 5.f, getHeight() - 5.f);
-	g.setColour(juce::Colours::indigo);
+	juce::Rectangle<float> mainFrame(1.f, 1.f, getWidth() - 2.f, getHeight() - 2.f);
+	g.setColour(juce::Colours::darkslategrey);
 	g.fillRect(mainFrame);
 	g.drawRect(mainFrame);
 
 }
 
 void MainFrame::resized() {
-	spectrumComponent.setBounds(getLocalBounds());
+	audioFileFrame.setBounds(getLocalBounds());
 }
