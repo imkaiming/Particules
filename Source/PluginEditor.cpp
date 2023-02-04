@@ -7,7 +7,8 @@ GranularSynthesisAudioProcessorEditor::GranularSynthesisAudioProcessorEditor(Gra
 	// Make sure that before the constructor has finished, you've set the
 	// editor's size to whatever you need it to be.
 
-	//setSize(900, 450);
+	this->setLookAndFeel(&customLookAndFeel);
+	
 
 	setResizable(true, true);
 	setResizeLimits(450, 225, 1200, 600);
@@ -28,6 +29,7 @@ GranularSynthesisAudioProcessorEditor::GranularSynthesisAudioProcessorEditor(Gra
 
 GranularSynthesisAudioProcessorEditor::~GranularSynthesisAudioProcessorEditor()
 {
+	this->setLookAndFeel(nullptr);
 }
 
 void GranularSynthesisAudioProcessorEditor::paint(juce::Graphics& g)

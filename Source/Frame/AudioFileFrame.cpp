@@ -26,8 +26,9 @@ AudioFileFrame::AudioFileFrame() :
 	);
 
 	addAndMakeVisible(openFileButton);
-	//addAndMakeVisible(spectrumComponent);
+	addAndMakeVisible(spectrumComponent);
 }
+
 AudioFileFrame::~AudioFileFrame() {
 
 }
@@ -40,8 +41,14 @@ void AudioFileFrame::paint(juce::Graphics& g) {
 	g.fillAll(juce::Colours::coral);
 }
 void AudioFileFrame::resized() {
-	//openFileButton.setBounds(25.f, 1.f, 125.f, 33.3f);
-	openFileButton.setBounds(getLocalBounds());
-	spectrumComponent.setBounds(getLocalBounds());
+	juce::Rectangle<int> area = getLocalBounds();
+	int w = getWidth() / 30;
+	int h = getHeight() / 30;
+	//int bordure = getWidth() 
+
+	area.removeFromTop(h);
+	area.removeFromBottom(h);
+	openFileButton.setBounds(area.removeFromLeft(w));
+	spectrumComponent.setBounds(area.removeFromLeft(w * 29));
 
 }

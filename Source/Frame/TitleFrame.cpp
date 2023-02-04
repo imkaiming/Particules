@@ -10,11 +10,10 @@
 
 #include "TitleFrame.h"
 
-TitleFrame::TitleFrame() : titreLabel((const juce::String)"Particules")
+TitleFrame::TitleFrame()
 {
+
 	addAndMakeVisible(titreLabel);
-	//titreLabel.setFont(juce::Font(16.0f, BinaryData::CascadiaMonoPLRegular_otf));
-	titreLabel.setJustificationType(juce::Justification::centred);
 }
 
 TitleFrame::~TitleFrame() {
@@ -22,7 +21,17 @@ TitleFrame::~TitleFrame() {
 }
 
 void TitleFrame::paint(juce::Graphics& g) {
+	titreLabel.setText((const juce::String)"Particules", juce::dontSendNotification);
+	titreLabel.setJustificationType(juce::Justification::centred);
+	titreLabel.setColour(0, juce::Colours::white);
+	titreLabel.setFont(juce::Font(16.0f)); // utile ?
+
 	g.fillAll(juce::Colours::black);
+
+	//const juce::Font f;
+	//g.setFont((juce::Font)customLookAndFeel.getTypefaceForFont(f));
+	//g.setColour(juce::Colours::black);
+	//g.drawText("ParticulesS", getLocalBounds(), juce::Justification::centred, true);
 }
 
 void TitleFrame::resized() {

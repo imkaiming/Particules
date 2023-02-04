@@ -12,23 +12,15 @@
 
 #include <JuceHeader.h>
 
-class CustomLookAndFeel : public LookAndFeel_V4 {
+class CustomLookAndFeel : public juce::LookAndFeel_V4 {
 public:
 	CustomLookAndFeel();
 	~CustomLookAndFeel();
 
-	//void drawRotarySlider(Graphics&, int x, int y, int width, int height, float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle, Slider&) override;
-	//void drawButtonBackground(Graphics& g,
-	//    Button& button,
-	//    const Colour& backgroundColour,
-	//    bool shouldDrawButtonAsHighlighted,
-	//    bool shouldDrawButtonAsDown) override;
-
-	//LookAndFeel_V4::ColourScheme getColourScheme();
-
-	juce::Typeface::Ptr getTypefaceForFont(const juce::Font& f) override;
+	// virtual method to redraw a slider for custom needs
+	void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
+		float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider) override;
 
 private:
-
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CustomLookAndFeel)
 };
