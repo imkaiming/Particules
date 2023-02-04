@@ -10,22 +10,12 @@
 
 #include "AudioFileFrame.h"
 
-AudioFileFrame::AudioFileFrame() :
-	openFileButton((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted)
-
+AudioFileFrame::AudioFileFrame()
 {
 	//std::unique_ptr <juce::XmlElement> addFolder_Fill_svg(juce::XmlDocument::parse(BinaryData::AddFolder_Fill_svg));
 	//std::unique_ptr <juce::XmlElement> addFolder_svg(juce::XmlDocument::parse(BinaryData::AddFolder_svg));
 
-	openFileButton.setImages(
-		juce::Drawable::createFromImageData(
-			BinaryData::AddFolder_Fill_svg, BinaryData::AddFolder_Fill_svgSize).get(),
-		juce::Drawable::createFromImageData(
-			BinaryData::AddFolder_svg, BinaryData::AddFolder_svgSize).get(),
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
-	);
-
-	addAndMakeVisible(openFileButton);
+	addAndMakeVisible(audioFileComponent);
 	addAndMakeVisible(spectrumComponent);
 }
 
@@ -48,7 +38,7 @@ void AudioFileFrame::resized() {
 
 	area.removeFromTop(h);
 	area.removeFromBottom(h);
-	openFileButton.setBounds(area.removeFromLeft(w));
+	audioFileComponent.setBounds(area.removeFromLeft(w));
 	spectrumComponent.setBounds(area.removeFromLeft(w * 29));
 
 }
