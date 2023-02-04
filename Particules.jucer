@@ -16,7 +16,50 @@
         <FILE id="i3kS72" name="06_Piano_A.wav" compile="0" resource="1" file="Ressources/AudioSource/06_Piano_A.wav"/>
         <FILE id="q7rx5K" name="07_Piano_Em.wav" compile="0" resource="1" file="Ressources/AudioSource/07_Piano_Em.wav"/>
       </GROUP>
-      <GROUP id="{89407F0D-31AA-E09B-2954-92C6F17B57A0}" name="Font"/>
+      <GROUP id="{89407F0D-31AA-E09B-2954-92C6F17B57A0}" name="Font">
+        <GROUP id="{71822C65-6CDD-A0EA-DE29-F9D7C38F9398}" name="Cascadia Mono">
+          <FILE id="bswxmj" name="CascadiaMono-Bold.otf" compile="0" resource="1"
+                file="Ressources/Font/Cascadia Mono/CascadiaMono-Bold.otf"/>
+          <FILE id="nMIwLk" name="CascadiaMono-ExtraLight.otf" compile="0" resource="1"
+                file="Ressources/Font/Cascadia Mono/CascadiaMono-ExtraLight.otf"/>
+          <FILE id="NFHpnr" name="CascadiaMono-Light.otf" compile="0" resource="1"
+                file="Ressources/Font/Cascadia Mono/CascadiaMono-Light.otf"/>
+          <FILE id="kUCDd2" name="CascadiaMonoItalic-BoldItalic.otf" compile="0"
+                resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoItalic-BoldItalic.otf"/>
+          <FILE id="h8ggit" name="CascadiaMonoItalic-ExtraLightItalic.otf" compile="0"
+                resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoItalic-ExtraLightItalic.otf"/>
+          <FILE id="JgLslb" name="CascadiaMonoItalic-Italic.otf" compile="0"
+                resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoItalic-Italic.otf"/>
+          <FILE id="gEMSRg" name="CascadiaMonoItalic-LightItalic.otf" compile="0"
+                resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoItalic-LightItalic.otf"/>
+          <FILE id="BncTpR" name="CascadiaMonoItalic-SemiBoldItalic.otf" compile="0"
+                resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoItalic-SemiBoldItalic.otf"/>
+          <FILE id="kngzM6" name="CascadiaMonoItalic-SemiLightItalic.otf" compile="0"
+                resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoItalic-SemiLightItalic.otf"/>
+          <FILE id="v25I87" name="CascadiaMonoPL-Bold.otf" compile="0" resource="1"
+                file="Ressources/Font/Cascadia Mono/CascadiaMonoPL-Bold.otf"/>
+          <FILE id="QIFopn" name="CascadiaMonoPL-ExtraLight.otf" compile="0"
+                resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoPL-ExtraLight.otf"/>
+          <FILE id="TQJM9z" name="CascadiaMonoPL-Light.otf" compile="0" resource="1"
+                file="Ressources/Font/Cascadia Mono/CascadiaMonoPL-Light.otf"/>
+          <FILE id="B5rpD4" name="CascadiaMonoPL-Regular.otf" compile="0" resource="1"
+                file="Ressources/Font/Cascadia Mono/CascadiaMonoPL-Regular.otf"/>
+          <FILE id="ulmEIn" name="CascadiaMonoPL-SemiBold.otf" compile="0" resource="1"
+                file="Ressources/Font/Cascadia Mono/CascadiaMonoPL-SemiBold.otf"/>
+          <FILE id="CikFiM" name="CascadiaMonoPLItalic-BoldItalic.otf" compile="0"
+                resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoPLItalic-BoldItalic.otf"/>
+          <FILE id="Bcj2xN" name="CascadiaMonoPLItalic-ExtraLightItalic.otf"
+                compile="0" resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoPLItalic-ExtraLightItalic.otf"/>
+          <FILE id="duGV28" name="CascadiaMonoPLItalic-Italic.otf" compile="0"
+                resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoPLItalic-Italic.otf"/>
+          <FILE id="V7w4zC" name="CascadiaMonoPLItalic-LightItalic.otf" compile="0"
+                resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoPLItalic-LightItalic.otf"/>
+          <FILE id="I7cTji" name="CascadiaMonoPLItalic-SemiBoldItalic.otf" compile="0"
+                resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoPLItalic-SemiBoldItalic.otf"/>
+          <FILE id="s8LYld" name="CascadiaMonoPLItalic-SemiLightItalic.otf" compile="0"
+                resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoPLItalic-SemiLightItalic.otf"/>
+        </GROUP>
+      </GROUP>
       <GROUP id="{39FDA41A-5DA7-0ACD-D466-AA5044951568}" name="Icon">
         <FILE id="YziOCI" name="AddFolder.svg" compile="0" resource="1" file="Ressources/Icon/AddFolder.svg"/>
         <FILE id="ZikTY7" name="AddFolder_Fill.svg" compile="0" resource="1"
@@ -80,6 +123,10 @@
         <FILE id="EaARtY" name="Scheduler.h" compile="0" resource="0" file="Source/GrainSynth/Scheduler.h"/>
       </GROUP>
       <GROUP id="{BEF1FE11-21B4-4966-92F0-8B35A65F01D3}" name="Utils">
+        <FILE id="EUgftR" name="CustomLookAndFeel.cpp" compile="1" resource="0"
+              file="Source/Utils/CustomLookAndFeel.cpp"/>
+        <FILE id="dk1tA9" name="CustomLookAndFeel.h" compile="0" resource="0"
+              file="Source/Utils/CustomLookAndFeel.h"/>
         <FILE id="DYWutP" name="FileLoader.cpp" compile="1" resource="0" file="Source/Utils/FileLoader.cpp"/>
         <FILE id="K8R92V" name="FileLoader.h" compile="0" resource="0" file="Source/Utils/FileLoader.h"/>
         <FILE id="i0H0sc" name="StateSaver.cpp" compile="1" resource="0" file="Source/Utils/StateSaver.cpp"/>

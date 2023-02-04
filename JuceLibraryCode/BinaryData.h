@@ -29,6 +29,66 @@ namespace BinaryData
     extern const char*   _07_Piano_Em_wav;
     const int            _07_Piano_Em_wavSize = 4300638;
 
+    extern const char*   CascadiaMonoBold_otf;
+    const int            CascadiaMonoBold_otfSize = 153996;
+
+    extern const char*   CascadiaMonoExtraLight_otf;
+    const int            CascadiaMonoExtraLight_otfSize = 142544;
+
+    extern const char*   CascadiaMonoLight_otf;
+    const int            CascadiaMonoLight_otfSize = 150736;
+
+    extern const char*   CascadiaMonoItalicBoldItalic_otf;
+    const int            CascadiaMonoItalicBoldItalic_otfSize = 163036;
+
+    extern const char*   CascadiaMonoItalicExtraLightItalic_otf;
+    const int            CascadiaMonoItalicExtraLightItalic_otfSize = 156524;
+
+    extern const char*   CascadiaMonoItalicItalic_otf;
+    const int            CascadiaMonoItalicItalic_otfSize = 160972;
+
+    extern const char*   CascadiaMonoItalicLightItalic_otf;
+    const int            CascadiaMonoItalicLightItalic_otfSize = 160308;
+
+    extern const char*   CascadiaMonoItalicSemiBoldItalic_otf;
+    const int            CascadiaMonoItalicSemiBoldItalic_otfSize = 165016;
+
+    extern const char*   CascadiaMonoItalicSemiLightItalic_otf;
+    const int            CascadiaMonoItalicSemiLightItalic_otfSize = 162292;
+
+    extern const char*   CascadiaMonoPLBold_otf;
+    const int            CascadiaMonoPLBold_otfSize = 177396;
+
+    extern const char*   CascadiaMonoPLExtraLight_otf;
+    const int            CascadiaMonoPLExtraLight_otfSize = 167440;
+
+    extern const char*   CascadiaMonoPLLight_otf;
+    const int            CascadiaMonoPLLight_otfSize = 173836;
+
+    extern const char*   CascadiaMonoPLRegular_otf;
+    const int            CascadiaMonoPLRegular_otfSize = 173448;
+
+    extern const char*   CascadiaMonoPLSemiBold_otf;
+    const int            CascadiaMonoPLSemiBold_otfSize = 177616;
+
+    extern const char*   CascadiaMonoPLItalicBoldItalic_otf;
+    const int            CascadiaMonoPLItalicBoldItalic_otfSize = 186104;
+
+    extern const char*   CascadiaMonoPLItalicExtraLightItalic_otf;
+    const int            CascadiaMonoPLItalicExtraLightItalic_otfSize = 179652;
+
+    extern const char*   CascadiaMonoPLItalicItalic_otf;
+    const int            CascadiaMonoPLItalicItalic_otfSize = 184596;
+
+    extern const char*   CascadiaMonoPLItalicLightItalic_otf;
+    const int            CascadiaMonoPLItalicLightItalic_otfSize = 183852;
+
+    extern const char*   CascadiaMonoPLItalicSemiBoldItalic_otf;
+    const int            CascadiaMonoPLItalicSemiBoldItalic_otfSize = 188568;
+
+    extern const char*   CascadiaMonoPLItalicSemiLightItalic_otf;
+    const int            CascadiaMonoPLItalicSemiLightItalic_otfSize = 185180;
+
     extern const char*   AddFolder_svg;
     const int            AddFolder_svgSize = 322;
 
@@ -84,7 +144,7 @@ namespace BinaryData
     const int            Setting_Fill_svgSize = 594;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 25;
+    const int namedResourceListSize = 45;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

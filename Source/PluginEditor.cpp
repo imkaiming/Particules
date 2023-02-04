@@ -16,10 +16,14 @@ GranularSynthesisAudioProcessorEditor::GranularSynthesisAudioProcessorEditor(Gra
 	getConstrainer()->setFixedAspectRatio(ratio);
 
 	width = 900;
-	heigth= 450;
+	heigth = 450;
 	setSize(width, heigth);
 
 	addAndMakeVisible(mainFrame);
+
+	//juce::Typeface::createSystemTypefaceFor(
+	//	BinaryData::CascadiaMonoPLRegular_otf,
+	//	BinaryData::CascadiaMonoPLRegular_otfSize));
 }
 
 GranularSynthesisAudioProcessorEditor::~GranularSynthesisAudioProcessorEditor()

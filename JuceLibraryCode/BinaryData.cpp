@@ -79229,6 +79229,26 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0xbdc379c4:  numBytes = 2867710; return _05_Piano_Gm_wav;
         case 0xfc8998be:  numBytes = 5160582; return _06_Piano_A_wav;
         case 0x7e155bc4:  numBytes = 4300638; return _07_Piano_Em_wav;
+        case 0x3868fdd3:  numBytes = 153996; return CascadiaMonoBold_otf;
+        case 0xf07624b4:  numBytes = 142544; return CascadiaMonoExtraLight_otf;
+        case 0x2f90d68c:  numBytes = 150736; return CascadiaMonoLight_otf;
+        case 0xe1cd54b3:  numBytes = 163036; return CascadiaMonoItalicBoldItalic_otf;
+        case 0x20f9d2d4:  numBytes = 156524; return CascadiaMonoItalicExtraLightItalic_otf;
+        case 0x9e3a1e4e:  numBytes = 160972; return CascadiaMonoItalicItalic_otf;
+        case 0x3310460c:  numBytes = 160308; return CascadiaMonoItalicLightItalic_otf;
+        case 0xac4d19c1:  numBytes = 165016; return CascadiaMonoItalicSemiBoldItalic_otf;
+        case 0xb88922be:  numBytes = 162292; return CascadiaMonoItalicSemiLightItalic_otf;
+        case 0x2947a8cf:  numBytes = 177396; return CascadiaMonoPLBold_otf;
+        case 0x38cfa2b0:  numBytes = 167440; return CascadiaMonoPLExtraLight_otf;
+        case 0x5a878b10:  numBytes = 173836; return CascadiaMonoPLLight_otf;
+        case 0x25cf7c96:  numBytes = 173448; return CascadiaMonoPLRegular_otf;
+        case 0x31fd1a5d:  numBytes = 177616; return CascadiaMonoPLSemiBold_otf;
+        case 0x40f765af:  numBytes = 186104; return CascadiaMonoPLItalicBoldItalic_otf;
+        case 0x6efa36d0:  numBytes = 179652; return CascadiaMonoPLItalicExtraLightItalic_otf;
+        case 0x362c0d4a:  numBytes = 184596; return CascadiaMonoPLItalicItalic_otf;
+        case 0xb9285490:  numBytes = 183852; return CascadiaMonoPLItalicLightItalic_otf;
+        case 0x55ce4cbd:  numBytes = 188568; return CascadiaMonoPLItalicSemiBoldItalic_otf;
+        case 0x3f2e4f42:  numBytes = 185180; return CascadiaMonoPLItalicSemiLightItalic_otf;
         case 0xff7b1274:  numBytes = 322; return AddFolder_svg;
         case 0x0ef383b8:  numBytes = 284; return AddFolder_Fill_svg;
         case 0x909ebef7:  numBytes = 406; return AudioFile_svg;
@@ -79263,6 +79283,26 @@ const char* namedResourceList[] =
     "_05_Piano_Gm_wav",
     "_06_Piano_A_wav",
     "_07_Piano_Em_wav",
+    "CascadiaMonoBold_otf",
+    "CascadiaMonoExtraLight_otf",
+    "CascadiaMonoLight_otf",
+    "CascadiaMonoItalicBoldItalic_otf",
+    "CascadiaMonoItalicExtraLightItalic_otf",
+    "CascadiaMonoItalicItalic_otf",
+    "CascadiaMonoItalicLightItalic_otf",
+    "CascadiaMonoItalicSemiBoldItalic_otf",
+    "CascadiaMonoItalicSemiLightItalic_otf",
+    "CascadiaMonoPLBold_otf",
+    "CascadiaMonoPLExtraLight_otf",
+    "CascadiaMonoPLLight_otf",
+    "CascadiaMonoPLRegular_otf",
+    "CascadiaMonoPLSemiBold_otf",
+    "CascadiaMonoPLItalicBoldItalic_otf",
+    "CascadiaMonoPLItalicExtraLightItalic_otf",
+    "CascadiaMonoPLItalicItalic_otf",
+    "CascadiaMonoPLItalicLightItalic_otf",
+    "CascadiaMonoPLItalicSemiBoldItalic_otf",
+    "CascadiaMonoPLItalicSemiLightItalic_otf",
     "AddFolder_svg",
     "AddFolder_Fill_svg",
     "AudioFile_svg",
@@ -79292,6 +79332,26 @@ const char* originalFilenames[] =
     "05_Piano_Gm.wav",
     "06_Piano_A.wav",
     "07_Piano_Em.wav",
+    "CascadiaMono-Bold.otf",
+    "CascadiaMono-ExtraLight.otf",
+    "CascadiaMono-Light.otf",
+    "CascadiaMonoItalic-BoldItalic.otf",
+    "CascadiaMonoItalic-ExtraLightItalic.otf",
+    "CascadiaMonoItalic-Italic.otf",
+    "CascadiaMonoItalic-LightItalic.otf",
+    "CascadiaMonoItalic-SemiBoldItalic.otf",
+    "CascadiaMonoItalic-SemiLightItalic.otf",
+    "CascadiaMonoPL-Bold.otf",
+    "CascadiaMonoPL-ExtraLight.otf",
+    "CascadiaMonoPL-Light.otf",
+    "CascadiaMonoPL-Regular.otf",
+    "CascadiaMonoPL-SemiBold.otf",
+    "CascadiaMonoPLItalic-BoldItalic.otf",
+    "CascadiaMonoPLItalic-ExtraLightItalic.otf",
+    "CascadiaMonoPLItalic-Italic.otf",
+    "CascadiaMonoPLItalic-LightItalic.otf",
+    "CascadiaMonoPLItalic-SemiBoldItalic.otf",
+    "CascadiaMonoPLItalic-SemiLightItalic.otf",
     "AddFolder.svg",
     "AddFolder_Fill.svg",
     "AudioFile.svg",
