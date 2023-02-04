@@ -12,6 +12,7 @@
 
 #include <JuceHeader.h>
 #include "SpectrumComponent.h"
+//#include "../Utils/DrawableSVGButton.h"
 
 class AudioFileFrame : public juce::Component {
 public:
@@ -24,7 +25,8 @@ public:
 private:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFileFrame)
 		SpectrumComponent spectrumComponent;
-		//juce::TextButton openFileButton;
-		juce::ImageButton openFileButton
-
+	//juce::TextButton openFileButton;
+	//juce::ImageButton openFileButton;
+	//std::unique_ptr<juce::Drawable> openFileSvgPtr;
+	juce::DrawableButton openFileButton;
 };

@@ -4,6 +4,46 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
               pluginFormats="buildVST3" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn">
   <MAINGROUP id="Ws3dtU" name="Particules">
+    <GROUP id="{DB3001AB-CCB9-3FBE-26C8-CF464BB94FFA}" name="Ressources">
+      <GROUP id="{915EB23D-5885-38D3-75E2-ED10E0D3DB5B}" name="AudioSource">
+        <FILE id="Nbunbd" name="01_Piano_E.wav" compile="0" resource="1" file="Ressources/AudioSource/01_Piano_E.wav"/>
+        <FILE id="TRHsCI" name="02_Piano_D#m.wav" compile="0" resource="1"
+              file="Ressources/AudioSource/02_Piano_D#m.wav"/>
+        <FILE id="H2wOGb" name="03_Piano_G#m.wav" compile="0" resource="1"
+              file="Ressources/AudioSource/03_Piano_G#m.wav"/>
+        <FILE id="D25k7S" name="04_Piano_D.wav" compile="0" resource="1" file="Ressources/AudioSource/04_Piano_D.wav"/>
+        <FILE id="DvTdXb" name="05_Piano_Gm.wav" compile="0" resource="1" file="Ressources/AudioSource/05_Piano_Gm.wav"/>
+        <FILE id="i3kS72" name="06_Piano_A.wav" compile="0" resource="1" file="Ressources/AudioSource/06_Piano_A.wav"/>
+        <FILE id="q7rx5K" name="07_Piano_Em.wav" compile="0" resource="1" file="Ressources/AudioSource/07_Piano_Em.wav"/>
+      </GROUP>
+      <GROUP id="{89407F0D-31AA-E09B-2954-92C6F17B57A0}" name="Font"/>
+      <GROUP id="{39FDA41A-5DA7-0ACD-D466-AA5044951568}" name="Icon">
+        <FILE id="YziOCI" name="AddFolder.svg" compile="0" resource="1" file="Ressources/Icon/AddFolder.svg"/>
+        <FILE id="ZikTY7" name="AddFolder_Fill.svg" compile="0" resource="1"
+              file="Ressources/Icon/AddFolder_Fill.svg"/>
+        <FILE id="K67SgC" name="AudioFile.svg" compile="0" resource="1" file="Ressources/Icon/AudioFile.svg"/>
+        <FILE id="Bxsrxm" name="AudioFile_FIll.svg" compile="0" resource="1"
+              file="Ressources/Icon/AudioFile_FIll.svg"/>
+        <FILE id="uFoO1C" name="Expend.svg" compile="0" resource="1" file="Ressources/Icon/Expend.svg"/>
+        <FILE id="WQvuTP" name="ExpendMenu_Fill.svg" compile="0" resource="1"
+              file="Ressources/Icon/ExpendMenu_Fill.svg"/>
+        <FILE id="e8p0TD" name="Menu.svg" compile="0" resource="1" file="Ressources/Icon/Menu.svg"/>
+        <FILE id="Nl5yRr" name="OpenFile.svg" compile="0" resource="1" file="Ressources/Icon/OpenFile.svg"/>
+        <FILE id="Gq0SK7" name="OpenFile_Fill.svg" compile="0" resource="1"
+              file="Ressources/Icon/OpenFile_Fill.svg"/>
+        <FILE id="kcEuey" name="Pause.svg" compile="0" resource="1" file="Ressources/Icon/Pause.svg"/>
+        <FILE id="sbl56S" name="Pause_Fill.svg" compile="0" resource="1" file="Ressources/Icon/Pause_Fill.svg"/>
+        <FILE id="z1TNIL" name="Play.svg" compile="0" resource="1" file="Ressources/Icon/Play.svg"/>
+        <FILE id="jH2iIX" name="Play_Fill.svg" compile="0" resource="1" file="Ressources/Icon/Play_Fill.svg"/>
+        <FILE id="SihDgk" name="Plus.svg" compile="0" resource="1" file="Ressources/Icon/Plus.svg"/>
+        <FILE id="ebOMwU" name="SavePresets.svg" compile="0" resource="1" file="Ressources/Icon/SavePresets.svg"/>
+        <FILE id="LgzXdb" name="SavePresets_Fill.svg" compile="0" resource="1"
+              file="Ressources/Icon/SavePresets_Fill.svg"/>
+        <FILE id="OlfJHJ" name="Setting.svg" compile="0" resource="1" file="Ressources/Icon/Setting.svg"/>
+        <FILE id="LNs35z" name="Setting_Fill.svg" compile="0" resource="1"
+              file="Ressources/Icon/Setting_Fill.svg"/>
+      </GROUP>
+    </GROUP>
     <GROUP id="{802498BE-701B-D77E-6320-9D5F6DE36E63}" name="Source">
       <GROUP id="{DBFD176C-8997-DF89-A4CE-ED2D2917D225}" name="GrainSynth">
         <FILE id="BRc8FY" name="Grain.cpp" compile="1" resource="0" file="Source/GrainSynth/Grain.cpp"/>
@@ -31,6 +71,8 @@
         <FILE id="nFCxWF" name="SynthFrame.h" compile="0" resource="0" file="Source/Graphical/SynthFrame.h"/>
       </GROUP>
       <GROUP id="{F5D1AC6B-E2DF-382E-41AA-ADFB6FA3B728}" name="Utils">
+        <FILE id="fjchPO" name="DrawableSVGButton.h" compile="0" resource="0"
+              file="Source/Utils/DrawableSVGButton.h"/>
         <FILE id="NUK28B" name="FileLoader.cpp" compile="1" resource="0" file="Source/Utils/FileLoader.cpp"/>
         <FILE id="yUcByn" name="FileLoader.h" compile="0" resource="0" file="Source/Utils/FileLoader.h"/>
         <FILE id="nNtmYy" name="StateSaver.cpp" compile="1" resource="0" file="Source/Utils/StateSaver.cpp"/>
