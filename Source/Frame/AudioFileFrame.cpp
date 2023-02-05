@@ -15,8 +15,8 @@ AudioFileFrame::AudioFileFrame()
 	//std::unique_ptr <juce::XmlElement> addFolder_Fill_svg(juce::XmlDocument::parse(BinaryData::AddFolder_Fill_svg));
 	//std::unique_ptr <juce::XmlElement> addFolder_svg(juce::XmlDocument::parse(BinaryData::AddFolder_svg));
 
-	addAndMakeVisible(audioFileComponent);
-	addAndMakeVisible(spectrumComponent);
+	addAndMakeVisible(&audioFileComponent);
+	addAndMakeVisible(&spectrumComponent);
 }
 
 AudioFileFrame::~AudioFileFrame() {
@@ -32,13 +32,15 @@ void AudioFileFrame::paint(juce::Graphics& g) {
 }
 void AudioFileFrame::resized() {
 	juce::Rectangle<int> area = getLocalBounds();
-	int w = getWidth() / 30;
-	int h = getHeight() / 30;
+	float w = getWidth() / 30.f;
+	float h = getHeight() / 30.f;
 	//int bordure = getWidth() 
 
-	area.removeFromTop(h);
-	area.removeFromBottom(h);
-	audioFileComponent.setBounds(area.removeFromLeft(w));
-	spectrumComponent.setBounds(area.removeFromLeft(w * 29));
+	area.removeFromTop(static_cast<int>(h));
+	area.removeFromBottom(static_cast<int>(h));
+	audioFileComponent.setBounds(area.removeFromLeft(static_cast<int>(w)));
+	area.removeFromLeft(static_cast<int>(h));
+	area.removeFromRight(static_cast<int>(h));
+	spectrumComponent.setBounds(area.removeFromLeft(area.getWidth()));
 
 }

@@ -89,11 +89,14 @@
     </GROUP>
     <GROUP id="{A40FC0AA-1CD7-7266-14B2-BD6017EC0C16}" name="Source">
       <GROUP id="{FA58B068-FBE4-E735-B29E-D1CEC38D4E30}" name="Component">
+        <FILE id="IKtKfE" name="AudioFileComponent.cpp" compile="1" resource="0"
+              file="Source/Component/AudioFileComponent.cpp"/>
+        <FILE id="yfnehq" name="AudioFileComponent.h" compile="0" resource="0"
+              file="Source/Component/AudioFileComponent.h"/>
         <FILE id="SRmsA0" name="SpectrumComponent.cpp" compile="1" resource="0"
               file="Source/Component/SpectrumComponent.cpp"/>
         <FILE id="WTpS6l" name="SpectrumComponent.h" compile="0" resource="0"
               file="Source/Component/SpectrumComponent.h"/>
-        <FILE id="onlUzU" name="SVGButton.h" compile="0" resource="0" file="Source/Component/SVGButton.h"/>
       </GROUP>
       <GROUP id="{C12992C0-54E4-FC4C-7FBC-7A454D8D1A4E}" name="Frame">
         <FILE id="DqFYTH" name="AudioFileFrame.cpp" compile="1" resource="0"

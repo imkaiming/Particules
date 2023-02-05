@@ -11,11 +11,11 @@
 #include "MainFrame.h"
 
 MainFrame::MainFrame() {
-	addAndMakeVisible(titleFrame);
-	addAndMakeVisible(synthFrame);
-	addAndMakeVisible(grainsFrame);
-	addAndMakeVisible(audioFileFrame);
-	addAndMakeVisible(statusBarFrame);
+	addAndMakeVisible(&titleFrame);
+	addAndMakeVisible(&synthFrame);
+	addAndMakeVisible(&grainsFrame);
+	addAndMakeVisible(&audioFileFrame);
+	addAndMakeVisible(&statusBarFrame);
 }
 
 MainFrame::~MainFrame() {
@@ -34,19 +34,19 @@ void MainFrame::resized()
 {
 	juce::Rectangle<int> area = getLocalBounds();
 	float heightComp = getHeight() / 30.f;
-	float widthComp = getWidth() / 10.f;
+	/*float widthComp = getWidth() / 10.f;*/
 
-	int w = getWidth() / 300;
+	float w = getWidth() / 300.f;
 
-	titleFrame.setBounds(area.removeFromTop(heightComp * 1));
-	area.removeFromTop(w);
-	synthFrame.setBounds(area.removeFromTop(heightComp * 9));
-	area.removeFromTop(w);
-	grainsFrame.setBounds(area.removeFromTop(heightComp * 9));
-	area.removeFromTop(w);
-	audioFileFrame.setBounds(area.removeFromTop(heightComp * 9));
-	area.removeFromTop(w);
-	statusBarFrame.setBounds(area.removeFromTop(heightComp * 2));
+	titleFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 1)));
+	area.removeFromTop(static_cast<int>(w));
+	synthFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 9)));
+	area.removeFromTop(static_cast<int>(w));
+	grainsFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 9)));
+	area.removeFromTop(static_cast<int>(w));
+	audioFileFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 9)));
+	area.removeFromTop(static_cast<int>(w));
+	statusBarFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 2)));
 
 
 	// old positionning

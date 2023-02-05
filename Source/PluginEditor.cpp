@@ -8,7 +8,7 @@ GranularSynthesisAudioProcessorEditor::GranularSynthesisAudioProcessorEditor(Gra
 	// editor's size to whatever you need it to be.
 
 	this->setLookAndFeel(&customLookAndFeel);
-	
+
 
 	setResizable(true, true);
 	setResizeLimits(450, 225, 1200, 600);
@@ -20,7 +20,7 @@ GranularSynthesisAudioProcessorEditor::GranularSynthesisAudioProcessorEditor(Gra
 	heigth = 450;
 	setSize(width, heigth);
 
-	addAndMakeVisible(mainFrame);
+	addAndMakeVisible(&mainFrame);
 
 	//juce::Typeface::createSystemTypefaceFor(
 	//	BinaryData::CascadiaMonoPLRegular_otf,

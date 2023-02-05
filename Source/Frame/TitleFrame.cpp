@@ -13,7 +13,7 @@
 TitleFrame::TitleFrame()
 {
 
-	addAndMakeVisible(titreLabel);
+	addAndMakeVisible(&titreLabel);
 }
 
 TitleFrame::~TitleFrame() {
