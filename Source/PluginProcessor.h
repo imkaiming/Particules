@@ -41,14 +41,14 @@ public:
 
 	void getStateInformation(juce::MemoryBlock& destData) override;
 	void setStateInformation(const void* data, int sizeInBytes) override;
-	AudioFileComponent* getAudioFileComponent();
+	//AudioFileComponent* getAudioFileComponent();
 	StateSaver* getStateSaver();
 
 private:
 
 	// constructors are called automatically
 	GranularSynth granSynth;
-	AudioFileComponent audioFileComponent;
+	//AudioFileComponent audioFileComponent;
 	StateSaver stateSaver;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularSynthesisAudioProcessor)

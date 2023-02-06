@@ -10,18 +10,18 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "StateSaver.h"
+//#include "StateSaver.h"
 
 class AudioFileLoader {
 public:
 	AudioFileLoader();
 	~AudioFileLoader();
-	void init(StateSaver*);
+	//void init(StateSaver*);
 	void loadAudioFile();
 
 private:
 	juce::File audioFile;
-	StateSaver* stateSaver;
+	//StateSaver* stateSaver;
 
 	juce::AudioFormatManager formatManager;
 	std::unique_ptr<juce::AudioFormatReaderSource> readerSource;

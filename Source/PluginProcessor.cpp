@@ -173,10 +173,10 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 	return new GranularSynthesisAudioProcessor();
 }
 
-AudioFileComponent* GranularSynthesisAudioProcessor::getAudioFileComponent()
-{
-	return &audioFileComponent;
-}
+//AudioFileComponent* GranularSynthesisAudioProcessor::getAudioFileComponent()
+//{
+//	return &audioFileComponent;
+//}
 
 StateSaver* GranularSynthesisAudioProcessor::getStateSaver()
 {

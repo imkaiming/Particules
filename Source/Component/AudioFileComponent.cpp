@@ -1,11 +1,12 @@
 
 #include "AudioFileComponent.h"
 
-AudioFileComponent::AudioFileComponent() :
+AudioFileComponent::AudioFileComponent(StateSaver* stateSaver) :
 	openFileButton((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	stopFileButton((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	playFileButton((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted)
 {
+	this->stateSaver = stateSaver;
 
 	openFileButton.setImages(
 		juce::Drawable::createFromImageData(
@@ -144,9 +145,9 @@ void AudioFileComponent::playFileButtonClicked()
 //	return transportSource;
 //}
 
-void AudioFileComponent::init(StateSaver* stateSaver) {
-	this->stateSaver = stateSaver;
-}
+//void AudioFileComponent::init(StateSaver* stateSaver) {
+//	this->stateSaver = stateSaver;
+//}
 
 void AudioFileComponent::loadAudioFile()
 {

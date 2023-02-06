@@ -10,8 +10,8 @@
 
 #include "MainFrame.h"
 
-MainFrame::MainFrame(AudioFileComponent* audioFileComponent) : 
-	audioFileFrame(audioFileComponent)
+MainFrame::MainFrame(StateSaver* stateSaver) :
+	audioFileFrame(stateSaver)
 {
 	addAndMakeVisible(&titleFrame);
 	addAndMakeVisible(&synthFrame);
@@ -59,6 +59,6 @@ void MainFrame::resized()
 	//audioFileFrame.setBounds(0.f, 0.f, widthComp * 10, heightComp * 2);
 }
 
-void MainFrame::init(StateSaver* stateSaver) {
-	audioFileFrame.init(stateSaver);
-}
+//void MainFrame::init(StateSaver* stateSaver) {
+//	audioFileFrame.init(stateSaver);
+//}

@@ -47,6 +47,6 @@ void AudioFileLoader::loadAudioFile() {
 		});
 }
 
-void AudioFileLoader::init(StateSaver* stateSaver) {
-	this->stateSaver = stateSaver;
-}
+//void AudioFileLoader::init(StateSaver* stateSaver) {
+//	this->stateSaver = stateSaver;
+//}

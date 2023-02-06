@@ -11,7 +11,6 @@ class GranularSynthesisAudioProcessorEditor : public juce::AudioProcessorEditor
 public:
 	GranularSynthesisAudioProcessorEditor(GranularSynthesisAudioProcessor&);
 	~GranularSynthesisAudioProcessorEditor() override;
-
 	void paint(juce::Graphics&) override;
 	void resized() override;
 

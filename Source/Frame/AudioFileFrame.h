@@ -19,15 +19,15 @@
 
 class AudioFileFrame : public juce::Component {
 public:
-	AudioFileFrame(AudioFileComponent*);
+	AudioFileFrame(StateSaver*);
 	~AudioFileFrame() override;
-	void init(StateSaver*);
+	//void init(StateSaver*);
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
 private:
 
-	AudioFileComponent* audioFileComponent;
+	AudioFileComponent audioFileComponent;
 	SpectrumComponent spectrumComponent;
 	//juce::TextButton openFileButton;
 	//juce::ImageButton openFileButton;

@@ -14,11 +14,11 @@
 // , public juce::ChangeListener 
 class AudioFileComponent : public juce::Component {
 public:
-	AudioFileComponent();
+	AudioFileComponent(StateSaver*);
 	~AudioFileComponent() override;
 	void paint(juce::Graphics&) override;
 	void resized() override;
-	void init(StateSaver*);
+
 	//void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 	//void AudioFileComponent::changeState(TransportState newState);
 	//TransportState getCurrentState();

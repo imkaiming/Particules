@@ -10,12 +10,12 @@
 
 #include "AudioFileFrame.h"
 
-AudioFileFrame::AudioFileFrame(AudioFileComponent* audioFileComponent)
+AudioFileFrame::AudioFileFrame(StateSaver* stateSaver) :
+	audioFileComponent(stateSaver)
 {
 	//std::unique_ptr <juce::XmlElement> addFolder_Fill_svg(juce::XmlDocument::parse(BinaryData::AddFolder_Fill_svg));
 	//std::unique_ptr <juce::XmlElement> addFolder_svg(juce::XmlDocument::parse(BinaryData::AddFolder_svg));
-	this->audioFileComponent = audioFileComponent;
-	addAndMakeVisible(*audioFileComponent);
+	addAndMakeVisible(&audioFileComponent);
 	addAndMakeVisible(&spectrumComponent);
 }
 
@@ -38,13 +38,13 @@ void AudioFileFrame::resized() {
 
 	area.removeFromTop(static_cast<int>(h));
 	area.removeFromBottom(static_cast<int>(h));
-	audioFileComponent->setBounds(area.removeFromLeft(static_cast<int>(w)));
+	audioFileComponent.setBounds(area.removeFromLeft(static_cast<int>(w)));
 	area.removeFromLeft(static_cast<int>(h));
 	area.removeFromRight(static_cast<int>(h));
 	spectrumComponent.setBounds(area.removeFromLeft(area.getWidth()));
 
 }
 
-void AudioFileFrame::init(StateSaver* stateSaver) {
-	audioFileComponent->init(stateSaver);
-}
+//void AudioFileFrame::init(StateSaver* stateSaver) {
+//	audioFileComponent->init(stateSaver);
+//}

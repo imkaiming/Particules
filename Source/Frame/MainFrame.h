@@ -20,9 +20,9 @@
 
 class MainFrame : public juce::Component {
 public:
-	MainFrame(AudioFileComponent*);
+	MainFrame(StateSaver*);
 	~MainFrame() override;
-	void init(StateSaver*);
+	//void init(StateSaver*);
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
