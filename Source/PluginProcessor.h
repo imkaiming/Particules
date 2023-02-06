@@ -2,6 +2,7 @@
 
 #include <JuceHeader.h>
 #include "GrainSynth/GranularSynth.h"
+#include "Component/AudioFileComponent.h"
 
 
 class GranularSynthesisAudioProcessor : public juce::AudioProcessor
@@ -40,10 +41,14 @@ public:
 
 	void getStateInformation(juce::MemoryBlock& destData) override;
 	void setStateInformation(const void* data, int sizeInBytes) override;
+	AudioFileComponent* getAudioFileComponent();
 
 private:
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularSynthesisAudioProcessor)
 
 	// constructors are called automatically
 	GranularSynth granSynth;
+	AudioFileComponent audioFileComponent;
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularSynthesisAudioProcessor)
+
 };

@@ -79267,6 +79267,8 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
         case 0x537687f0:  numBytes = 271; return SavePresets_Fill_svg;
         case 0x5c25fbd5:  numBytes = 1175; return Setting_svg;
         case 0x4b384ef7:  numBytes = 594; return Setting_Fill_svg;
+        case 0x6a1588c7:  numBytes = 121; return Stop_svg;
+        case 0x1e150945:  numBytes = 97; return Stop_Fill_svg;
         default: break;
     }
 
@@ -79320,7 +79322,9 @@ const char* namedResourceList[] =
     "SavePresets_svg",
     "SavePresets_Fill_svg",
     "Setting_svg",
-    "Setting_Fill_svg"
+    "Setting_Fill_svg",
+    "Stop_svg",
+    "Stop_Fill_svg"
 };
 
 const char* originalFilenames[] =
@@ -79369,7 +79373,9 @@ const char* originalFilenames[] =
     "SavePresets.svg",
     "SavePresets_Fill.svg",
     "Setting.svg",
-    "Setting_Fill.svg"
+    "Setting_Fill.svg",
+    "Stop.svg",
+    "Stop_Fill.svg"
 };
 
 const char* getNamedResourceOriginalFilename (const char* resourceNameUTF8);

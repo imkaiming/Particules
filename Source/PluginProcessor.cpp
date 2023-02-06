@@ -118,6 +118,10 @@ bool GranularSynthesisAudioProcessor::isBusesLayoutSupported(const BusesLayout& 
 
 void GranularSynthesisAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+	if (audioFileComponent.getCurrentState() != Stopped) {
+		juce::Logger::outputDebugString("cannot launch granular synth when the audio player is running.");
+	}
+
 	juce::ScopedNoDenormals noDenormals;
 	auto totalNumInputChannels = getTotalNumInputChannels();
 	auto totalNumOutputChannels = getTotalNumOutputChannels();
@@ -155,4 +159,9 @@ void GranularSynthesisAudioProcessor::setStateInformation(const void* data, int 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
 	return new GranularSynthesisAudioProcessor();
+}
+
+AudioFileComponent* GranularSynthesisAudioProcessor::getAudioFileComponent()
+{
+	return &audioFileComponent;
 }

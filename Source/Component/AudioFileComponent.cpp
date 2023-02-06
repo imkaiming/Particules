@@ -3,7 +3,7 @@
 
 AudioFileComponent::AudioFileComponent() :
 	openFileButton((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-	saveFileButton((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
+	stopFileButton((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	playFileButton((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted)
 {
 	openFileButton.setImages(
@@ -14,11 +14,11 @@ AudioFileComponent::AudioFileComponent() :
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 	);
 
-	saveFileButton.setImages(
+	stopFileButton.setImages(
 		juce::Drawable::createFromImageData(
-			BinaryData::SavePresets_svg, BinaryData::SavePresets_svgSize).get(),
+			BinaryData::Stop_svg, BinaryData::Stop_svgSize).get(),
 		juce::Drawable::createFromImageData(
-			BinaryData::SavePresets_Fill_svg, BinaryData::SavePresets_Fill_svgSize).get(),
+			BinaryData::Stop_Fill_svg, BinaryData::Stop_Fill_svgSize).get(),
 		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
 	);
 
@@ -33,8 +33,8 @@ AudioFileComponent::AudioFileComponent() :
 	openFileButton.onClick = [this] {
 		openFileButtonClicked();
 	};
-	saveFileButton.onClick = [this] {
-		saveFileButtonClicked();
+	stopFileButton.onClick = [this] {
+		stopFileButtonClicked();
 	};
 
 	playFileButton.onClick = [this] {
@@ -42,11 +42,12 @@ AudioFileComponent::AudioFileComponent() :
 	};
 
 	addAndMakeVisible(&openFileButton);
-	addAndMakeVisible(&saveFileButton);
 	addAndMakeVisible(&playFileButton);
+	addAndMakeVisible(&stopFileButton);
 
 	// This allow us to manage WAV and AIFF files
-	audioFormatManager.registerBasicFormats();
+	formatManager.registerBasicFormats();
+	transportSource.addChangeListener(this);
 }
 
 AudioFileComponent::~AudioFileComponent() {
@@ -62,8 +63,8 @@ void AudioFileComponent::resized() {
 	int h = getHeight() / 3;
 
 	openFileButton.setBounds(area.removeFromTop(h));
-	saveFileButton.setBounds(area.removeFromTop(h));
 	playFileButton.setBounds(area.removeFromTop(h));
+	stopFileButton.setBounds(area.removeFromTop(h));
 }
 
 void AudioFileComponent::openFileButtonClicked()
@@ -90,36 +91,82 @@ void AudioFileComponent::openFileButtonClicked()
 		| juce::FileBrowserComponent::canSelectFiles;
 
 	chooser.launchAsync(chooserFlags, [this](const juce::FileChooser& fc)
-	{
-		juce::File file = fc.getResult();
-
-		if (file != juce::File{})
 		{
-			juce::AudioFormatReader* audioFormatReader = audioFormatManager.createReaderFor(file); 
+			juce::File file = fc.getResult();
 
-			if (audioFormatReader != nullptr)
-			{
-				//std::unique_ptr<juce::AudioFormatReaderSource> tempSource(
-							//new juce::AudioFormatReaderSource(audioFormatReader, true)
+	if (file != juce::File{})
+	{
+		juce::AudioFormatReader* audioFormatReader = formatManager.createReaderFor(file);
 
-				auto newSource = std::make_unique<juce::AudioFormatReaderSource>(audioFormatReader, true);
-				transportSource.setSource(newSource.get(), 0, nullptr, audioFormatReader->sampleRate);
-				playButton.setEnabled(true);                   
-				readerSource.reset(newSource.release());
-			}
+		if (audioFormatReader != nullptr)
+		{
+			//std::unique_ptr<juce::AudioFormatReaderSource> tempSource(
+						//new juce::AudioFormatReaderSource(audioFormatReader, true)
+
+			auto newSource = std::make_unique<juce::AudioFormatReaderSource>(audioFormatReader, true);
+			transportSource.setSource(newSource.get(), 0, nullptr, audioFormatReader->sampleRate);
+			playFileButton.setEnabled(true);
+			readerSource.reset(newSource.release());
 		}
-	});
+	}
+		});
 
 }
 
-void AudioFileComponent::saveFileButtonClicked()
+void AudioFileComponent::stopFileButtonClicked()
 {
 	juce::Logger::outputDebugString("saveFileButtonClicked");
+}
 
 
+void AudioFileComponent::playFileButtonClicked()
+{
+	juce::Logger::outputDebugString("playFileButtonClicked");
 
-	void AudioFileComponent::playFileButtonClicked()
+}
+
+void AudioFileComponent::changeState(TransportState newState)
+{
+	if (state != newState)
 	{
-		juce::Logger::outputDebugString("playFileButtonClicked");
+		state = newState;
 
+		switch (state)
+		{
+		case Stopped:
+			stopFileButton.setEnabled(false);
+			playFileButton.setEnabled(true);
+			transportSource.setPosition(0.0);
+			break;
+
+		case Starting:
+			playFileButton.setEnabled(false);
+			transportSource.start();
+			break;
+
+		case Playing:
+			stopFileButton.setEnabled(true);
+			break;
+
+		case Stopping:
+			transportSource.stop();
+			break;
+		}
 	}
+}
+
+void AudioFileComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+	if (source == &transportSource)
+	{
+		if (transportSource.isPlaying())
+			changeState(Playing);
+		else
+			changeState(Stopped);
+	}
+}
+
+TransportState AudioFileComponent::getCurrentState() {
+	return state;
+}
+

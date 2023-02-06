@@ -18,7 +18,7 @@
 
 class AudioFileFrame : public juce::Component {
 public:
-	AudioFileFrame();
+	AudioFileFrame(AudioFileComponent*);
 	~AudioFileFrame() override;
 
 	void paint(juce::Graphics&) override;
@@ -26,7 +26,7 @@ public:
 
 private:
 
-	AudioFileComponent audioFileComponent;
+	AudioFileComponent* audioFileComponent;
 	SpectrumComponent spectrumComponent;
 	//juce::TextButton openFileButton;
 	//juce::ImageButton openFileButton;

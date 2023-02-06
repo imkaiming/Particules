@@ -10,7 +10,9 @@
 
 #include "MainFrame.h"
 
-MainFrame::MainFrame() {
+MainFrame::MainFrame(AudioFileComponent* audioFileComponent) : 
+	audioFileFrame(audioFileComponent)
+{
 	addAndMakeVisible(&titleFrame);
 	addAndMakeVisible(&synthFrame);
 	addAndMakeVisible(&grainsFrame);

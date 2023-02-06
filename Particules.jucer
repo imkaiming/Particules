@@ -85,6 +85,8 @@
         <FILE id="OlfJHJ" name="Setting.svg" compile="0" resource="1" file="Ressources/Icon/Setting.svg"/>
         <FILE id="LNs35z" name="Setting_Fill.svg" compile="0" resource="1"
               file="Ressources/Icon/Setting_Fill.svg"/>
+        <FILE id="Pn6Gvt" name="Stop.svg" compile="0" resource="1" file="Ressources/Icon/Stop.svg"/>
+        <FILE id="aZSWpt" name="Stop_Fill.svg" compile="0" resource="1" file="Ressources/Icon/Stop_Fill.svg"/>
       </GROUP>
     </GROUP>
     <GROUP id="{A40FC0AA-1CD7-7266-14B2-BD6017EC0C16}" name="Source">

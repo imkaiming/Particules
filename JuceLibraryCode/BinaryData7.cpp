@@ -2586,4 +2586,16 @@ static const unsigned char temp_binary_data_44[] =
 "6 0-2.7-1.9-4.6-1.9-1.9-4.6-1.9-2.7 0-4.6 1.9-1.9 1.9-1.9 4.6 0 2.7 1.9 4.6 1.9 1.9 4.6 1.9Z\"/></svg>";
 
 const char* Setting_Fill_svg = (const char*) temp_binary_data_44;
+
+//================== Stop.svg ==================
+static const unsigned char temp_binary_data_45[] =
+"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"48\" width=\"48\"><path d=\"M15 15v18Zm-3 21V12h24v24Zm3-3h18V15H15Z\"/></svg>";
+
+const char* Stop_svg = (const char*) temp_binary_data_45;
+
+//================== Stop_Fill.svg ==================
+static const unsigned char temp_binary_data_46[] =
+"<svg xmlns=\"http://www.w3.org/2000/svg\" height=\"48\" width=\"48\"><path d=\"M12 36V12h24v24Z\"/></svg>";
+
+const char* Stop_Fill_svg = (const char*) temp_binary_data_46;
 }

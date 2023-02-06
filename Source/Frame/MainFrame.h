@@ -19,7 +19,7 @@
 
 class MainFrame : public juce::Component {
 public:
-	MainFrame();
+	MainFrame(AudioFileComponent*);
 	~MainFrame() override;
 
 	void paint(juce::Graphics&) override;
