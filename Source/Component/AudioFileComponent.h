@@ -20,6 +20,8 @@ public:
 	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
 	void AudioFileComponent::changeState(TransportState newState);
 	TransportState getCurrentState();
+	std::unique_ptr<juce::AudioFormatReaderSource> getReaderSource();
+	juce::AudioTransportSource getTransportSource();
 
 private:
 

@@ -70,19 +70,6 @@ void AudioFileComponent::resized() {
 void AudioFileComponent::openFileButtonClicked()
 {
 	juce::Logger::outputDebugString("openFileButtonClicked");
-	//juce::FileChooser fileChooser("Choose a WAV or AIFF file.",
-	//	juce::File::getSpecialLocation(juce::File::userMusicDirectory),
-	//	"*.wav", "*.aiff", true, false);
-
-	//if (fileChooser.getResult().existsAsFile()) {
-	//	juce::File file = fileChooser.getResult();
-	//	juce::AudioFormatReader* audioFormatReader = audioFormatManager.createReaderFor(file);
-	//	std::unique_ptr<juce::AudioFormatReaderSource> tempSource(
-	//		new juce::AudioFormatReaderSource(audioFormatReader, true)
-	//	);
-	//	juce::Logger::outputDebugString("path of the audio source is : ");
-	//	juce::Logger::outputDebugString(file.getFullPathName());
-	//}
 
 	juce::FileChooser chooser("Choose a WAV or AIFF file.",
 		juce::File{}, "*.wav", " * .aiff", true, false);
@@ -170,3 +157,10 @@ TransportState AudioFileComponent::getCurrentState() {
 	return state;
 }
 
+std::unique_ptr<juce::AudioFormatReaderSource> AudioFileComponent::getReaderSource() {
+	return readerSource;
+}
+
+juce::AudioTransportSource AudioFileComponent::getTransportSource() {
+	return transportSource;
+}
