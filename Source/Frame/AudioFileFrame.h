@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "../Component/SpectrumComponent.h"
 #include "../Component/AudioFileComponent.h"
+#include "../Utils/StateSaver.h"
 
 
 
@@ -20,7 +21,7 @@ class AudioFileFrame : public juce::Component {
 public:
 	AudioFileFrame(AudioFileComponent*);
 	~AudioFileFrame() override;
-
+	void init(StateSaver*);
 	void paint(juce::Graphics&) override;
 	void resized() override;
 

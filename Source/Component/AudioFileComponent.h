@@ -1,27 +1,29 @@
 #pragma once
 #include <JuceHeader.h>
-#include "../Utils/FileLoader.h"
+#include "../Utils/AudioFileLoader.h"
+#include "../Utils/StateSaver.h"
 
-enum TransportState
-{
-	Stopped,
-	Starting,
-	Playing,
-	Stopping
-};
+//enum TransportState
+//{
+//	Stopped,
+//	Starting,
+//	Playing,
+//	Stopping
+//};
 
-
-class AudioFileComponent : public juce::Component, public juce::ChangeListener {
+// , public juce::ChangeListener 
+class AudioFileComponent : public juce::Component {
 public:
 	AudioFileComponent();
 	~AudioFileComponent() override;
 	void paint(juce::Graphics&) override;
 	void resized() override;
-	void changeListenerCallback(juce::ChangeBroadcaster* source) override;
-	void AudioFileComponent::changeState(TransportState newState);
-	TransportState getCurrentState();
-	std::unique_ptr<juce::AudioFormatReaderSource> getReaderSource();
-	juce::AudioTransportSource getTransportSource();
+	void init(StateSaver*);
+	//void changeListenerCallback(juce::ChangeBroadcaster* source) override;
+	//void AudioFileComponent::changeState(TransportState newState);
+	//TransportState getCurrentState();
+	//std::unique_ptr<juce::AudioFormatReaderSource> getReaderSource();
+	//juce::AudioTransportSource getTransportSource();
 
 private:
 
@@ -33,10 +35,11 @@ private:
 	void stopFileButtonClicked();
 	void playFileButtonClicked();
 
-	juce::AudioFormatManager formatManager;
-	std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
-	juce::AudioTransportSource transportSource;
-	TransportState state;
+	StateSaver* stateSaver;
+	AudioFileLoader loader;
+	void loadAudioFile(); // open window, select a file using loader's methods and put in the StaeSaver ptr
+
+
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFileComponent)
 };

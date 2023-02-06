@@ -58,3 +58,7 @@ void MainFrame::resized()
 	//grainsFrame.setBounds(0.f, 0.f, widthComp * 10, heightComp * 9);
 	//audioFileFrame.setBounds(0.f, 0.f, widthComp * 10, heightComp * 2);
 }
+
+void MainFrame::init(StateSaver* stateSaver) {
+	audioFileFrame.init(stateSaver);
+}

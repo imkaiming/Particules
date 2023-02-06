@@ -1,7 +1,7 @@
 #include <JuceHeader.h>
 #include "../Utils/StateSaver.h"
 #include "Scheduler.h"
-#include "../Utils/FileLoader.h"
+#include "../Utils/AudioFileLoader.h"
 
 class GranularSynth {
 public:
@@ -17,5 +17,5 @@ private:
 	//juce::AudioProcessorValueTreeState treeState;
 	StateSaver* stateSaver;
 	Scheduler scheduler; // responsible to determine when the next grain should be extracted
-	FileLoader fileLoader; // responsible to load the audio source and put it in the samples pool
+	AudioFileLoader fileLoader; // responsible to load the audio source and put it in the samples pool
 };

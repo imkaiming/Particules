@@ -16,12 +16,13 @@
 #include "GrainsFrame.h"
 #include "TitleFrame.h"
 #include "StatusBarFrame.h"
+#include "../Utils/StateSaver.h"
 
 class MainFrame : public juce::Component {
 public:
 	MainFrame(AudioFileComponent*);
 	~MainFrame() override;
-
+	void init(StateSaver*);
 	void paint(juce::Graphics&) override;
 	void resized() override;
 

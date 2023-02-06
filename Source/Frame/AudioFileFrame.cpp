@@ -44,3 +44,7 @@ void AudioFileFrame::resized() {
 	spectrumComponent.setBounds(area.removeFromLeft(area.getWidth()));
 
 }
+
+void AudioFileFrame::init(StateSaver* stateSaver) {
+	audioFileComponent->init(stateSaver);
+}

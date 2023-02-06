@@ -128,12 +128,14 @@
         <FILE id="EaARtY" name="Scheduler.h" compile="0" resource="0" file="Source/GrainSynth/Scheduler.h"/>
       </GROUP>
       <GROUP id="{BEF1FE11-21B4-4966-92F0-8B35A65F01D3}" name="Utils">
+        <FILE id="J5AcuA" name="AudioFileLoader.cpp" compile="1" resource="0"
+              file="Source/Utils/AudioFileLoader.cpp"/>
+        <FILE id="KGxW4H" name="AudioFileLoader.h" compile="0" resource="0"
+              file="Source/Utils/AudioFileLoader.h"/>
         <FILE id="EUgftR" name="CustomLookAndFeel.cpp" compile="1" resource="0"
               file="Source/Utils/CustomLookAndFeel.cpp"/>
         <FILE id="dk1tA9" name="CustomLookAndFeel.h" compile="0" resource="0"
               file="Source/Utils/CustomLookAndFeel.h"/>
-        <FILE id="DYWutP" name="FileLoader.cpp" compile="1" resource="0" file="Source/Utils/FileLoader.cpp"/>
-        <FILE id="K8R92V" name="FileLoader.h" compile="0" resource="0" file="Source/Utils/FileLoader.h"/>
         <FILE id="i0H0sc" name="StateSaver.cpp" compile="1" resource="0" file="Source/Utils/StateSaver.cpp"/>
         <FILE id="CAaSGJ" name="StateSaver.h" compile="0" resource="0" file="Source/Utils/StateSaver.h"/>
       </GROUP>

@@ -1,7 +1,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-GranularSynthesisAudioProcessorEditor::GranularSynthesisAudioProcessorEditor(GranularSynthesisAudioProcessor& p)
+GranularSynthesisAudioProcessorEditor::GranularSynthesisAudioProcessorEditor(
+	GranularSynthesisAudioProcessor& p)
 	: AudioProcessorEditor(&p), audioProcessor(p),
 	mainFrame(p.getAudioFileComponent())
 {
@@ -9,6 +10,8 @@ GranularSynthesisAudioProcessorEditor::GranularSynthesisAudioProcessorEditor(Gra
 	// editor's size to whatever you need it to be.
 
 	this->setLookAndFeel(&customLookAndFeel);
+
+	mainFrame.init(audioProcessor.getStateSaver());
 
 	setResizable(true, true);
 	setResizeLimits(450, 225, 1200, 600);
