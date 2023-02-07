@@ -9,4 +9,5 @@ public:
 	//AudioFileLoader audioFileLoader;
 private:
 	bool isAudioLoaded;
+	int sampleRate;
 };

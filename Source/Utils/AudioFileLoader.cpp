@@ -12,41 +12,55 @@
 
 AudioFileLoader::AudioFileLoader()
 {
+	//this->stateSaver = stateSaver;
 	formatManager.registerBasicFormats();
+	buffer = new juce::AudioBuffer<float>();
 }
 
 AudioFileLoader::~AudioFileLoader()
 {
-
+	delete buffer;
 }
 
-void AudioFileLoader::loadAudioFile() {
+// https://forum.juce.com/t/solved-juce-filechooser-has-no-member-browseforfiletoopen/47793/3
+void AudioFileLoader::openFile()
+{
+	// Choose the file to import
+	std::unique_ptr<juce::FileChooser> chooser = std::make_unique<juce::FileChooser>
+		("Select a audio file to play...", juce::File{}, formatManager.getWildcardForAllFormats());
 
-	juce::FileChooser chooser("Choose a WAV or AIFF file.", juce::File{}, "*.wav", " * .aiff", true, false);
+	auto flags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
 
-	auto chooserFlags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
-
-	chooser.launchAsync(chooserFlags, [this](const juce::FileChooser& fc) {
-		juce::File file = fc.getResult();
-
-	if (file != juce::File{})
+	// TODO : check pour quoi le programme ne rentre pas dans le lambda ???
+	// lambda function to analyse the sound from the choosen file
+	chooser->launchAsync(flags, [this](const juce::FileChooser& chooser)
 	{
-		juce::AudioFormatReader* audioFormatReader = formatManager.createReaderFor(file);
-
-		if (audioFormatReader != nullptr)
+			juce::Logger::outputDebugString("4");
+		juce::File file = chooser.getResult();
+		if (file.exists())
 		{
-			auto newSource = std::make_unique<juce::AudioFormatReaderSource>(audioFormatReader, true);
-			//transportSource.setSource(newSource.get(), 0, nullptr, reader->sampleRate);
-			transportSource.setSource(newSource.get(), 0, nullptr, audioFormatReader->sampleRate);
+			juce::Logger::outputDebugString("fichier exist!");
+			// creates a new AudioFormatReader from the file	
+/*			juce::AudioFormatReader* reader = formatManager.createReaderFor(file);
 
-			//playFileButton.setEnabled(true);
-			readerSource.reset(newSource.release());
+			if (reader != nullptr)
+			{
+				*///auto newSource = std::make_unique<juce::AudioFormatReaderSource>(audioFormatReader, true);
+				//readerSource.reset(newSource.release());
+				this->loadAudio(file);
+			//}
 		}
+	});
+}
+
+//https://forum.juce.com/t/load-binary-wav-files-into-audiosamplebuffer-array/38790
+void AudioFileLoader::loadAudio(juce::File file) 
+{
+	juce::AudioFormatReader* reader = formatManager.createReaderFor(file);
+
+	if (reader != nullptr)
+	{
+		buffer->setSize(reader->numChannels, reader->lengthInSamples);
 	}
 
-		});
 }
-
-//void AudioFileLoader::init(StateSaver* stateSaver) {
-//	this->stateSaver = stateSaver;
-//}

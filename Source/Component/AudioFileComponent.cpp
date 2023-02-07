@@ -73,7 +73,7 @@ void AudioFileComponent::openFileButtonClicked()
 {
 
 	juce::Logger::outputDebugString("openFileButtonClicked");
-
+	loader.openFile();
 
 
 }
@@ -81,14 +81,12 @@ void AudioFileComponent::openFileButtonClicked()
 void AudioFileComponent::stopFileButtonClicked()
 {
 	juce::Logger::outputDebugString("stopFileButtonClicked");
-	juce::Logger::outputDebugString(getParentComponent()->getName());
 }
 
 
 void AudioFileComponent::playFileButtonClicked()
 {
 	juce::Logger::outputDebugString("playFileButtonClicked");
-	juce::Logger::outputDebugString(getParentComponent()->getName());
 
 }
 
@@ -148,8 +146,3 @@ void AudioFileComponent::playFileButtonClicked()
 //void AudioFileComponent::init(StateSaver* stateSaver) {
 //	this->stateSaver = stateSaver;
 //}
-
-void AudioFileComponent::loadAudioFile()
-{
-
-}
