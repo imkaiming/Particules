@@ -1,8 +1,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-GranularSynthesisAudioProcessorEditor::GranularSynthesisAudioProcessorEditor(
-	GranularSynthesisAudioProcessor& p)
+ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(
+	ParticulesAudioProcessor& p)
 	: AudioProcessorEditor(&p), audioProcessor(p),
 	open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
@@ -33,18 +33,18 @@ GranularSynthesisAudioProcessorEditor::GranularSynthesisAudioProcessorEditor(
 	//	BinaryData::CascadiaMonoPLRegular_otfSize));
 }
 
-GranularSynthesisAudioProcessorEditor::~GranularSynthesisAudioProcessorEditor()
+ParticulesAudioProcessorEditor::~ParticulesAudioProcessorEditor()
 {
 	this->setLookAndFeel(nullptr);
 	this->stateSaver = nullptr;
 }
 
-void GranularSynthesisAudioProcessorEditor::paint(juce::Graphics& g)
+void ParticulesAudioProcessorEditor::paint(juce::Graphics& g)
 {
 	g.fillAll(juce::Colours::black);
 }
 
-void GranularSynthesisAudioProcessorEditor::resized()
+void ParticulesAudioProcessorEditor::resized()
 {
 	int w = getWidth() / 300;
 	juce::Rectangle<int> area = getLocalBounds();
@@ -53,25 +53,25 @@ void GranularSynthesisAudioProcessorEditor::resized()
 	mainFrame.setBounds(area);
 }
 
-void GranularSynthesisAudioProcessorEditor::openFileButtonClicked()
+void ParticulesAudioProcessorEditor::openFileButtonClicked()
 {
 	juce::Logger::outputDebugString("openFileButtonClicked");
 	loader.openFile();
 }
 
-void GranularSynthesisAudioProcessorEditor::stopFileButtonClicked()
+void ParticulesAudioProcessorEditor::stopFileButtonClicked()
 {
 	juce::Logger::outputDebugString("stopFileButtonClicked");
 }
 
 
-void GranularSynthesisAudioProcessorEditor::playFileButtonClicked()
+void ParticulesAudioProcessorEditor::playFileButtonClicked()
 {
 	juce::Logger::outputDebugString("playFileButtonClicked");
 
 }
 
-void GranularSynthesisAudioProcessorEditor::initButtons() {
+void ParticulesAudioProcessorEditor::initButtons() {
 
 	open_btn.setImages(
 		juce::Drawable::createFromImageData(

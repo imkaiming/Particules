@@ -10,14 +10,14 @@
 #include "Component/AudioFileComponent.h"
 
 
-class GranularSynthesisAudioProcessor : public juce::AudioProcessor
+class ParticulesAudioProcessor : public juce::AudioProcessor
 #if JucePlugin_Enable_ARA
 	, public juce::AudioProcessorARAExtension
 #endif
 {
 public:
-	GranularSynthesisAudioProcessor();
-	~GranularSynthesisAudioProcessor() override;
+	ParticulesAudioProcessor();
+	~ParticulesAudioProcessor() override;
 
 	void prepareToPlay(double sampleRate, int samplesPerBlock) override;
 	void releaseResources() override;
@@ -57,6 +57,6 @@ private:
 	StateSaver stateSaver;
 	juce::AudioSampleBuffer sampleBuffer; // the loaded file should be here.
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularSynthesisAudioProcessor)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessor)
 
 };

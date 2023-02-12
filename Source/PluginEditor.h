@@ -11,11 +11,11 @@
 #include "Utils/CustomLookAndFeel.h"
 
 
-class GranularSynthesisAudioProcessorEditor : public juce::AudioProcessorEditor
+class ParticulesAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
-	GranularSynthesisAudioProcessorEditor(GranularSynthesisAudioProcessor&);
-	~GranularSynthesisAudioProcessorEditor() override;
+	ParticulesAudioProcessorEditor(ParticulesAudioProcessor&);
+	~ParticulesAudioProcessorEditor() override;
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
@@ -24,7 +24,7 @@ private:
 	void initButtons();
 
 	// Core functions
-	GranularSynthesisAudioProcessor& audioProcessor;
+	ParticulesAudioProcessor& audioProcessor;
 	StateSaver* stateSaver;
 	AudioFileLoader loader;
 
@@ -45,7 +45,7 @@ private:
 	int width, heigth;
 
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularSynthesisAudioProcessorEditor)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessorEditor)
 
 
 };

@@ -1,7 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-GranularSynthesisAudioProcessor::GranularSynthesisAudioProcessor()
+ParticulesAudioProcessor::ParticulesAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
 	: AudioProcessor(BusesProperties()
 #if ! JucePlugin_IsMidiEffect
@@ -15,16 +15,16 @@ GranularSynthesisAudioProcessor::GranularSynthesisAudioProcessor()
 {
 }
 
-GranularSynthesisAudioProcessor::~GranularSynthesisAudioProcessor()
+ParticulesAudioProcessor::~ParticulesAudioProcessor()
 {
 }
 
-const juce::String GranularSynthesisAudioProcessor::getName() const
+const juce::String ParticulesAudioProcessor::getName() const
 {
 	return JucePlugin_Name;
 }
 
-bool GranularSynthesisAudioProcessor::acceptsMidi() const
+bool ParticulesAudioProcessor::acceptsMidi() const
 {
 #if JucePlugin_WantsMidiInput
 	return true;
@@ -33,7 +33,7 @@ bool GranularSynthesisAudioProcessor::acceptsMidi() const
 #endif
 }
 
-bool GranularSynthesisAudioProcessor::producesMidi() const
+bool ParticulesAudioProcessor::producesMidi() const
 {
 #if JucePlugin_ProducesMidiOutput
 	return true;
@@ -42,7 +42,7 @@ bool GranularSynthesisAudioProcessor::producesMidi() const
 #endif
 }
 
-bool GranularSynthesisAudioProcessor::isMidiEffect() const
+bool ParticulesAudioProcessor::isMidiEffect() const
 {
 #if JucePlugin_IsMidiEffect
 	return true;
@@ -51,47 +51,47 @@ bool GranularSynthesisAudioProcessor::isMidiEffect() const
 #endif
 }
 
-double GranularSynthesisAudioProcessor::getTailLengthSeconds() const
+double ParticulesAudioProcessor::getTailLengthSeconds() const
 {
 	return 0.0;
 }
 
-int GranularSynthesisAudioProcessor::getNumPrograms()
+int ParticulesAudioProcessor::getNumPrograms()
 {
 	return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
 	// so this should be at least 1, even if you're not really implementing programs.
 }
 
-int GranularSynthesisAudioProcessor::getCurrentProgram()
+int ParticulesAudioProcessor::getCurrentProgram()
 {
 	return 0;
 }
 
-void GranularSynthesisAudioProcessor::setCurrentProgram(int index)
+void ParticulesAudioProcessor::setCurrentProgram(int index)
 {
 }
 
-const juce::String GranularSynthesisAudioProcessor::getProgramName(int index)
+const juce::String ParticulesAudioProcessor::getProgramName(int index)
 {
 	return {};
 }
 
-void GranularSynthesisAudioProcessor::changeProgramName(int index, const juce::String& newName)
+void ParticulesAudioProcessor::changeProgramName(int index, const juce::String& newName)
 {
 }
 
-void GranularSynthesisAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
+void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
 	granSynth.prepareToPlay(sampleRate, samplesPerBlock);
 }
 
-void GranularSynthesisAudioProcessor::releaseResources()
+void ParticulesAudioProcessor::releaseResources()
 {
 
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool GranularSynthesisAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
+bool ParticulesAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
 #if JucePlugin_IsMidiEffect
 	juce::ignoreUnused(layouts);
@@ -118,7 +118,7 @@ bool GranularSynthesisAudioProcessor::isBusesLayoutSupported(const BusesLayout& 
 
 
 
-void GranularSynthesisAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void ParticulesAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 	juce::ScopedNoDenormals noDenormals;
 	auto totalNumInputChannels = getTotalNumInputChannels();
@@ -144,24 +144,24 @@ void GranularSynthesisAudioProcessor::processBlock(juce::AudioBuffer<float>& buf
 	// granSynth.processBlock(buffer, midiMessages);
 }
 
-bool GranularSynthesisAudioProcessor::hasEditor() const
+bool ParticulesAudioProcessor::hasEditor() const
 {
 	return true; // (change this to false if you choose to not supply an editor)
 }
 
-juce::AudioProcessorEditor* GranularSynthesisAudioProcessor::createEditor()
+juce::AudioProcessorEditor* ParticulesAudioProcessor::createEditor()
 {
-	return new GranularSynthesisAudioProcessorEditor(*this);
+	return new ParticulesAudioProcessorEditor(*this);
 }
 
-void GranularSynthesisAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
+void ParticulesAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
 	// You should use this method to store your parameters in the memory block.
 	// You could do that either as raw data, or use the XML or ValueTree classes
 	// as intermediaries to make it easy to save and load complex data.
 }
 
-void GranularSynthesisAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
+void ParticulesAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
 	// You should use this method to restore your parameters from this memory block,
 	// whose contents will have been created by the getStateInformation() call.
@@ -170,7 +170,7 @@ void GranularSynthesisAudioProcessor::setStateInformation(const void* data, int 
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-	return new GranularSynthesisAudioProcessor();
+	return new ParticulesAudioProcessor();
 }
 
 //AudioFileComponent* GranularSynthesisAudioProcessor::getAudioFileComponent()
@@ -178,7 +178,7 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 //	return &audioFileComponent;
 //}
 
-StateSaver* GranularSynthesisAudioProcessor::getStateSaver()
+StateSaver* ParticulesAudioProcessor::getStateSaver()
 {
 	return &stateSaver;
 }

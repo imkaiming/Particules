@@ -12,14 +12,13 @@
 
 AudioFileLoader::AudioFileLoader()
 {
-	//this->stateSaver = stateSaver;
 	formatManager.registerBasicFormats();
 	buffer = new juce::AudioBuffer<float>();
 }
 
 AudioFileLoader::~AudioFileLoader()
 {
-	readerSource.release();
+	readerSource.reset();
 	delete buffer;
 }
 
