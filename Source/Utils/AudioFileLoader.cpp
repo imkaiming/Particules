@@ -19,6 +19,7 @@ AudioFileLoader::AudioFileLoader()
 
 AudioFileLoader::~AudioFileLoader()
 {
+	readerSource.release();
 	delete buffer;
 }
 
@@ -46,7 +47,7 @@ void AudioFileLoader::openFile()
 }
 
 //https://forum.juce.com/t/load-binary-wav-files-into-audiosamplebuffer-array/38790
-// On veut charger le son dans le buffer du stateSaver.
+// On veut charger le son dans le buffer du pluginprocessor.
 void AudioFileLoader::loadAudio(juce::File file) 
 {
 	juce::AudioFormatReader* reader = formatManager.createReaderFor(file);

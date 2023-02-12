@@ -20,7 +20,7 @@
 
 class MainFrame : public juce::Component {
 public:
-	MainFrame(StateSaver*);
+	MainFrame(juce::DrawableButton*, juce::DrawableButton*, juce::DrawableButton*);
 	~MainFrame() override;
 	//void init(StateSaver*);
 	void paint(juce::Graphics&) override;

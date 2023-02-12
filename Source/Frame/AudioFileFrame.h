@@ -19,9 +19,8 @@
 
 class AudioFileFrame : public juce::Component {
 public:
-	AudioFileFrame(StateSaver*);
+	AudioFileFrame(juce::DrawableButton*, juce::DrawableButton*, juce::DrawableButton*);
 	~AudioFileFrame() override;
-	//void init(StateSaver*);
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
@@ -29,9 +28,6 @@ private:
 
 	AudioFileComponent audioFileComponent;
 	SpectrumComponent spectrumComponent;
-	//juce::TextButton openFileButton;
-	//juce::ImageButton openFileButton;
-	//std::unique_ptr<juce::Drawable> openFileSvgPtr;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFileFrame)
 

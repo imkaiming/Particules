@@ -10,11 +10,10 @@
 
 #include "AudioFileFrame.h"
 
-AudioFileFrame::AudioFileFrame(StateSaver* stateSaver) :
-	audioFileComponent(stateSaver)
+AudioFileFrame::AudioFileFrame(juce::DrawableButton* open_Btn, juce::DrawableButton* play_Btn,
+	juce::DrawableButton* stop_Btn) :
+	audioFileComponent(open_Btn, play_Btn, stop_Btn)
 {
-	//std::unique_ptr <juce::XmlElement> addFolder_Fill_svg(juce::XmlDocument::parse(BinaryData::AddFolder_Fill_svg));
-	//std::unique_ptr <juce::XmlElement> addFolder_svg(juce::XmlDocument::parse(BinaryData::AddFolder_svg));
 	addAndMakeVisible(&audioFileComponent);
 	addAndMakeVisible(&spectrumComponent);
 }
@@ -24,17 +23,12 @@ AudioFileFrame::~AudioFileFrame() {
 }
 
 void AudioFileFrame::paint(juce::Graphics& g) {
-	//juce::Rectangle<float> audioFileFrame(0.f, 0.f, getWidth(), getHeight());
-	//g.setColour(juce::Colours::slategrey);
-	//g.fillRect(audioFileFrame);
-	//g.drawRect(audioFileFrame);
 	g.fillAll(juce::Colours::coral);
 }
 void AudioFileFrame::resized() {
 	juce::Rectangle<int> area = getLocalBounds();
 	float w = getWidth() / 30.f;
 	float h = getHeight() / 30.f;
-	//int bordure = getWidth() 
 
 	area.removeFromTop(static_cast<int>(h));
 	area.removeFromBottom(static_cast<int>(h));
@@ -44,7 +38,3 @@ void AudioFileFrame::resized() {
 	spectrumComponent.setBounds(area.removeFromLeft(area.getWidth()));
 
 }
-
-//void AudioFileFrame::init(StateSaver* stateSaver) {
-//	audioFileComponent->init(stateSaver);
-//}

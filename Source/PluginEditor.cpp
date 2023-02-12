@@ -4,12 +4,17 @@
 GranularSynthesisAudioProcessorEditor::GranularSynthesisAudioProcessorEditor(
 	GranularSynthesisAudioProcessor& p)
 	: AudioProcessorEditor(&p), audioProcessor(p),
-	mainFrame(p.getStateSaver())
+	open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
+	play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
+	stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
+	mainFrame(&open_btn, &play_btn, &stop_btn)
+
 {
-	// Make sure that before the constructor has finished, you've set the
-	// editor's size to whatever you need it to be.
+
+	initButtons();
 
 	this->setLookAndFeel(&customLookAndFeel);
+	this->stateSaver = audioProcessor.getStateSaver();
 
 	setResizable(true, true);
 	setResizeLimits(450, 225, 1200, 600);
@@ -31,28 +36,75 @@ GranularSynthesisAudioProcessorEditor::GranularSynthesisAudioProcessorEditor(
 GranularSynthesisAudioProcessorEditor::~GranularSynthesisAudioProcessorEditor()
 {
 	this->setLookAndFeel(nullptr);
+	this->stateSaver = nullptr;
 }
 
 void GranularSynthesisAudioProcessorEditor::paint(juce::Graphics& g)
 {
-	// (Our component is opaque, so we must completely fill the background with a solid colour)
-	// g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 	g.fillAll(juce::Colours::black);
-	// g.setColour(juce::Colours::white);
-	// g.setFont(15.0f);
-	// g.drawFittedText("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
 }
 
 void GranularSynthesisAudioProcessorEditor::resized()
 {
-	// This is generally where you'll want to lay out the positions of any
-	// subcomponents in your editor..
-	//int w = getWidth();
-	//int h = getHeight();
-	//juce::Rectangle<int> bounds(w - 5, h);
 	int w = getWidth() / 300;
 	juce::Rectangle<int> area = getLocalBounds();
 	area.removeFromLeft(w);
 	area.removeFromRight(w);
 	mainFrame.setBounds(area);
+}
+
+void GranularSynthesisAudioProcessorEditor::openFileButtonClicked()
+{
+	juce::Logger::outputDebugString("openFileButtonClicked");
+	loader.openFile();
+}
+
+void GranularSynthesisAudioProcessorEditor::stopFileButtonClicked()
+{
+	juce::Logger::outputDebugString("stopFileButtonClicked");
+}
+
+
+void GranularSynthesisAudioProcessorEditor::playFileButtonClicked()
+{
+	juce::Logger::outputDebugString("playFileButtonClicked");
+
+}
+
+void GranularSynthesisAudioProcessorEditor::initButtons() {
+
+	open_btn.setImages(
+		juce::Drawable::createFromImageData(
+			BinaryData::AddFolder_svg, BinaryData::AddFolder_svgSize).get(),
+		juce::Drawable::createFromImageData(
+			BinaryData::AddFolder_Fill_svg, BinaryData::AddFolder_Fill_svgSize).get(),
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+	);
+
+	stop_btn.setImages(
+		juce::Drawable::createFromImageData(
+			BinaryData::Stop_svg, BinaryData::Stop_svgSize).get(),
+		juce::Drawable::createFromImageData(
+			BinaryData::Stop_Fill_svg, BinaryData::Stop_Fill_svgSize).get(),
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+	);
+
+	play_btn.setImages(
+		juce::Drawable::createFromImageData(
+			BinaryData::Play_svg, BinaryData::Play_svgSize).get(),
+		juce::Drawable::createFromImageData(
+			BinaryData::Play_Fill_svg, BinaryData::Play_Fill_svgSize).get(),
+		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+	);
+
+	open_btn.onClick = [this] {
+		openFileButtonClicked();
+	};
+	stop_btn.onClick = [this] {
+		stopFileButtonClicked();
+	};
+
+	play_btn.onClick = [this] {
+		playFileButtonClicked();
+	};
 }

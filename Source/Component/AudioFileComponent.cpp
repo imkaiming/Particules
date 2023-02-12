@@ -1,59 +1,23 @@
 
 #include "AudioFileComponent.h"
 
-AudioFileComponent::AudioFileComponent(StateSaver* stateSaver) :
-	openFileButton((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-	stopFileButton((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-	playFileButton((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted)
+AudioFileComponent::AudioFileComponent(juce::DrawableButton* open_btn, 
+	juce::DrawableButton* play_btn, juce::DrawableButton* stop_btn)
 {
-	this->stateSaver = stateSaver;
 
-	openFileButton.setImages(
-		juce::Drawable::createFromImageData(
-			BinaryData::AddFolder_svg, BinaryData::AddFolder_svgSize).get(),
-		juce::Drawable::createFromImageData(
-			BinaryData::AddFolder_Fill_svg, BinaryData::AddFolder_Fill_svgSize).get(),
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
-	);
+	this->open_btn = open_btn;
+	this->play_btn = play_btn;
+	this->stop_btn = stop_btn;
 
-	stopFileButton.setImages(
-		juce::Drawable::createFromImageData(
-			BinaryData::Stop_svg, BinaryData::Stop_svgSize).get(),
-		juce::Drawable::createFromImageData(
-			BinaryData::Stop_Fill_svg, BinaryData::Stop_Fill_svgSize).get(),
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
-	);
-
-	playFileButton.setImages(
-		juce::Drawable::createFromImageData(
-			BinaryData::Play_svg, BinaryData::Play_svgSize).get(),
-		juce::Drawable::createFromImageData(
-			BinaryData::Play_Fill_svg, BinaryData::Play_Fill_svgSize).get(),
-		nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
-	);
-
-	openFileButton.onClick = [this] {
-		openFileButtonClicked();
-	};
-	stopFileButton.onClick = [this] {
-		stopFileButtonClicked();
-	};
-
-	playFileButton.onClick = [this] {
-		playFileButtonClicked();
-	};
-
-	addAndMakeVisible(&openFileButton);
-	addAndMakeVisible(&playFileButton);
-	addAndMakeVisible(&stopFileButton);
-
-	// This allow us to manage WAV and AIFF files
-	//formatManager.registerBasicFormats();
-	//transportSource.addChangeListener(this);
+	addAndMakeVisible(this->open_btn);
+	addAndMakeVisible(this->play_btn);
+	addAndMakeVisible(this->stop_btn);
 }
 
 AudioFileComponent::~AudioFileComponent() {
-
+	this->open_btn = nullptr;
+	this->play_btn = nullptr;
+	this->stop_btn = nullptr;
 }
 
 void AudioFileComponent::paint(juce::Graphics&) {
@@ -64,85 +28,7 @@ void AudioFileComponent::resized() {
 	juce::Rectangle<int> area = getLocalBounds();
 	int h = getHeight() / 3;
 
-	openFileButton.setBounds(area.removeFromTop(h));
-	playFileButton.setBounds(area.removeFromTop(h));
-	stopFileButton.setBounds(area.removeFromTop(h));
+	open_btn->setBounds(area.removeFromTop(h));
+	play_btn->setBounds(area.removeFromTop(h));
+	stop_btn->setBounds(area.removeFromTop(h));
 }
-
-void AudioFileComponent::openFileButtonClicked()
-{
-
-	juce::Logger::outputDebugString("openFileButtonClicked");
-	loader.openFile();
-
-
-}
-
-void AudioFileComponent::stopFileButtonClicked()
-{
-	juce::Logger::outputDebugString("stopFileButtonClicked");
-}
-
-
-void AudioFileComponent::playFileButtonClicked()
-{
-	juce::Logger::outputDebugString("playFileButtonClicked");
-
-}
-
-//void AudioFileComponent::changeState(TransportState newState)
-//{
-//	if (state != newState)
-//	{
-//		state = newState;
-//
-//		switch (state)
-//		{
-//		case Stopped:
-//			stopFileButton.setEnabled(false);
-//			playFileButton.setEnabled(true);
-//			transportSource.setPosition(0.0);
-//			break;
-//
-//		case Starting:
-//			playFileButton.setEnabled(false);
-//			transportSource.start();
-//			break;
-//
-//		case Playing:
-//			stopFileButton.setEnabled(true);
-//			break;
-//
-//		case Stopping:
-//			transportSource.stop();
-//			break;
-//		}
-//	}
-//}
-
-//void AudioFileComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
-//{
-//	if (source == &transportSource)
-//	{
-//		if (transportSource.isPlaying())
-//			changeState(Playing);
-//		else
-//			changeState(Stopped);
-//	}
-//}
-
-//TransportState AudioFileComponent::getCurrentState() {
-//	return state;
-//}
-//
-//std::unique_ptr<juce::AudioFormatReaderSource> AudioFileComponent::getReaderSource() {
-//	return readerSource;
-//}
-//
-//juce::AudioTransportSource AudioFileComponent::getTransportSource() {
-//	return transportSource;
-//}
-
-//void AudioFileComponent::init(StateSaver* stateSaver) {
-//	this->stateSaver = stateSaver;
-//}

@@ -11,8 +11,6 @@
 
 #include <JuceHeader.h>
 
-//JUCE_MODAL_LOOPS_PERMITTED 1
-
 class AudioFileLoader {
 public:
 	AudioFileLoader();

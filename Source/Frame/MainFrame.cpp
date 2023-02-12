@@ -10,8 +10,9 @@
 
 #include "MainFrame.h"
 
-MainFrame::MainFrame(StateSaver* stateSaver) :
-	audioFileFrame(stateSaver)
+MainFrame::MainFrame(juce::DrawableButton* open_Btn, juce::DrawableButton* play_Btn,
+	juce::DrawableButton* stop_Btn) :
+	audioFileFrame(open_Btn, play_Btn, stop_Btn)
 {
 	addAndMakeVisible(&titleFrame);
 	addAndMakeVisible(&synthFrame);

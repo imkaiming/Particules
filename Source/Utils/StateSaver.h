@@ -17,4 +17,10 @@ public:
 private:
 	bool isAudioLoaded;
 	int sampleRate;
+
+	// all parameters
+	float position;
+	float density;
+	float grainSize;
+	float speed;
 };
