@@ -23,6 +23,7 @@ AudioFileLoader::~AudioFileLoader()
 }
 
 // https://forum.juce.com/t/solved-juce-filechooser-has-no-member-browseforfiletoopen/47793/3
+// https://forum.juce.com/t/filechooser-not-appearing-in-windows/54952/2
 void AudioFileLoader::openFile()
 {
 	// Choose the file to import
@@ -35,25 +36,17 @@ void AudioFileLoader::openFile()
 	// lambda function to analyse the sound from the choosen file
 	chooser->launchAsync(flags, [this](const juce::FileChooser& chooser)
 	{
-			juce::Logger::outputDebugString("Opening File Chooser");
 		juce::File file = chooser.getResult();
 		if (file.exists())
 		{
 			juce::Logger::outputDebugString("fichier exist!");
-			// creates a new AudioFormatReader from the file	
-/*			juce::AudioFormatReader* reader = formatManager.createReaderFor(file);
-
-			if (reader != nullptr)
-			{
-				*///auto newSource = std::make_unique<juce::AudioFormatReaderSource>(audioFormatReader, true);
-				//readerSource.reset(newSource.release());
-				this->loadAudio(file);
-			//}
+			this->loadAudio(file);
 		}
 	});
 }
 
 //https://forum.juce.com/t/load-binary-wav-files-into-audiosamplebuffer-array/38790
+// On veut charger le son dans le buffer du stateSaver.
 void AudioFileLoader::loadAudio(juce::File file) 
 {
 	juce::AudioFormatReader* reader = formatManager.createReaderFor(file);

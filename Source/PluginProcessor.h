@@ -55,6 +55,7 @@ private:
 	GranularSynth granSynth;
 	//AudioFileComponent audioFileComponent;
 	StateSaver stateSaver;
+	juce::AudioSampleBuffer sampleBuffer; // the loaded file should be here.
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularSynthesisAudioProcessor)
 
