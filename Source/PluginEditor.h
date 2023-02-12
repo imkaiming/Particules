@@ -1,3 +1,8 @@
+/**
+ * This class is the graphical user interface for the plugin and is responsible 
+ * for displaying the controls and parameters. 
+*/
+
 #pragma once
 
 #include <JuceHeader.h>

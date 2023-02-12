@@ -26,7 +26,7 @@ AudioFileLoader::~AudioFileLoader()
 void AudioFileLoader::openFile()
 {
 	// Choose the file to import
-	std::unique_ptr<juce::FileChooser> chooser = std::make_unique<juce::FileChooser>
+	juce::FileChooser* chooser = new juce::FileChooser
 		("Select a audio file to play...", juce::File{}, formatManager.getWildcardForAllFormats());
 
 	auto flags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
@@ -35,7 +35,7 @@ void AudioFileLoader::openFile()
 	// lambda function to analyse the sound from the choosen file
 	chooser->launchAsync(flags, [this](const juce::FileChooser& chooser)
 	{
-			juce::Logger::outputDebugString("4");
+			juce::Logger::outputDebugString("Opening File Chooser");
 		juce::File file = chooser.getResult();
 		if (file.exists())
 		{

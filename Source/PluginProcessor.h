@@ -1,3 +1,8 @@
+/**
+ * This class is the main processing class of the plugin and is responsible for 
+ * handling the audio processing and control information.
+*/
+
 #pragma once
 
 #include <JuceHeader.h>

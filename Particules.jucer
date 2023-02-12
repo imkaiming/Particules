@@ -136,6 +136,8 @@
               file="Source/Utils/CustomLookAndFeel.cpp"/>
         <FILE id="dk1tA9" name="CustomLookAndFeel.h" compile="0" resource="0"
               file="Source/Utils/CustomLookAndFeel.h"/>
+        <FILE id="A40Nzd" name="Parameter.cpp" compile="1" resource="0" file="Source/Utils/Parameter.cpp"/>
+        <FILE id="pL5lgg" name="Parameter.h" compile="0" resource="0" file="Source/Utils/Parameter.h"/>
         <FILE id="i0H0sc" name="StateSaver.cpp" compile="1" resource="0" file="Source/Utils/StateSaver.cpp"/>
         <FILE id="CAaSGJ" name="StateSaver.h" compile="0" resource="0" file="Source/Utils/StateSaver.h"/>
       </GROUP>
