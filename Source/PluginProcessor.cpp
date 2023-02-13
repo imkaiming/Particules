@@ -116,8 +116,6 @@ bool ParticulesAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts
 }
 #endif
 
-
-
 void ParticulesAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
 	juce::ScopedNoDenormals noDenormals;
@@ -167,18 +165,16 @@ void ParticulesAudioProcessor::setStateInformation(const void* data, int sizeInB
 	// whose contents will have been created by the getStateInformation() call.
 }
 
-
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
 	return new ParticulesAudioProcessor();
 }
 
-//AudioFileComponent* GranularSynthesisAudioProcessor::getAudioFileComponent()
-//{
-//	return &audioFileComponent;
-//}
-
 StateSaver* ParticulesAudioProcessor::getStateSaver()
 {
 	return &stateSaver;
+}
+
+juce::AudioBuffer<float>* ParticulesAudioProcessor::getSampleBuffer() {
+	return &sampleBuffer;
 }

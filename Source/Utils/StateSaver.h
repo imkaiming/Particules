@@ -13,6 +13,8 @@ class StateSaver {
 public:
 	StateSaver();
 	~StateSaver();
+	void setAudioLoaded(bool);
+	bool getAudioLoaded();
 	//AudioFileLoader audioFileLoader;
 private:
 	bool isAudioLoaded;

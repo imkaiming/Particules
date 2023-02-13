@@ -1,5 +1,5 @@
 /**
- * This class is the main processing class of the plugin and is responsible for 
+ * This class is the main processing class of the plugin and is responsible for
  * handling the audio processing and control information.
 */
 
@@ -46,16 +46,17 @@ public:
 
 	void getStateInformation(juce::MemoryBlock& destData) override;
 	void setStateInformation(const void* data, int sizeInBytes) override;
-	//AudioFileComponent* getAudioFileComponent();
 	StateSaver* getStateSaver();
+	juce::AudioBuffer<float>* getSampleBuffer();
 
 private:
 
-	// constructors are called automatically
 	GranularSynth granSynth;
-	//AudioFileComponent audioFileComponent;
-	StateSaver stateSaver;
-	juce::AudioSampleBuffer sampleBuffer; // the loaded file should be here.
+	StateSaver stateSaver;  //juce::AudioProcessorValueTreeState vts;
+	juce::AudioBuffer<float> sampleBuffer; // the loaded file should be here.
+
+	double sampleRate;
+	int samplesPerBlock;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessor)
 

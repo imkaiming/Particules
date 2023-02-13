@@ -2,16 +2,16 @@
 #include "PluginEditor.h"
 
 ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(
-	ParticulesAudioProcessor& p)
-	: AudioProcessorEditor(&p), audioProcessor(p),
+	ParticulesAudioProcessor& p) : AudioProcessorEditor(&p), audioProcessor(p),
 	open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	mainFrame(&open_btn, &play_btn, &stop_btn)
-
 {
 
 	initButtons();
+	loader = std::make_unique<AudioFileLoader>();
+
 
 	this->setLookAndFeel(&customLookAndFeel);
 	this->stateSaver = audioProcessor.getStateSaver();
@@ -56,7 +56,16 @@ void ParticulesAudioProcessorEditor::resized()
 void ParticulesAudioProcessorEditor::openFileButtonClicked()
 {
 	juce::Logger::outputDebugString("openFileButtonClicked");
-	loader.openFile();
+	// TODO : il faut stoper la lecture du plugin si elle est en cours
+	juce::AudioBuffer<float>* buffer = audioProcessor.getSampleBuffer();
+	buffer->clear();
+	stateSaver->setAudioLoaded(false);
+	loader->openFile(buffer);
+	if (buffer->getNumSamples() > 0) {
+		juce::Logger::outputDebugString("Le buffer est chargé en samples");
+		stateSaver->setAudioLoaded(true);
+	}
+
 }
 
 void ParticulesAudioProcessorEditor::stopFileButtonClicked()

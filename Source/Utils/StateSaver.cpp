@@ -7,3 +7,11 @@ StateSaver::StateSaver() {
 StateSaver::~StateSaver() {
 
 };
+
+void StateSaver::setAudioLoaded(bool b) {
+	juce::Logger::outputDebugString("StateSaver -> audioLoaded !");
+	isAudioLoaded = b;
+}
+bool StateSaver::getAudioLoaded() {
+	return isAudioLoaded;
+}

@@ -1,7 +1,6 @@
 #include <JuceHeader.h>
 #include "../Utils/StateSaver.h"
 #include "Scheduler.h"
-#include "../Utils/AudioFileLoader.h"
 
 class GranularSynth {
 public:

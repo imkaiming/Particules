@@ -11,18 +11,19 @@
 #pragma once
 
 #include <JuceHeader.h>
+//#include "StateSaver.h"
 
 class AudioFileLoader {
 public:
 	AudioFileLoader();
 	~AudioFileLoader();
-	void openFile();
-	void loadAudio(juce::File);
+	void openFile(juce::AudioBuffer<float>*);
+	void loadAudio(juce::File, juce::AudioBuffer<float>*);
 
 private:
 	//juce::File* audioFile;
 	juce::AudioFormatManager formatManager; // classe qui traite les formats de fichier tq wav, aiff, ogg, vorbis ou mp3
 	std::unique_ptr<juce::AudioFormatReaderSource> readerSource; // fichier d'origine
-	juce::AudioBuffer<float>* buffer; // contient les samples audio (similaire à AudioSamplesBuffer)
-	//juce::AudioThumbnail* thumbnail; // pour dessiner la waveform
+	/*juce::AudioBuffer<float>* buffer;*/ 
+	//StateSaver* stateSaver;
 };

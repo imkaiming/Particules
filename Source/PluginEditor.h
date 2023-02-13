@@ -26,7 +26,7 @@ private:
 	// Core functions
 	ParticulesAudioProcessor& audioProcessor;
 	StateSaver* stateSaver;
-	AudioFileLoader loader;
+	std::unique_ptr<AudioFileLoader> loader;
 
 
 	// Buttons parameters
