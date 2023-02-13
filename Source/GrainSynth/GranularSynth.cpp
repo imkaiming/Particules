@@ -1,8 +1,7 @@
 #include "GranularSynth.h"
 
-GranularSynth::GranularSynth() 
+GranularSynth::GranularSynth(StateSaver* stateSaver) : stateSaver(stateSaver)
 {
-	this->stateSaver = new StateSaver();
 };
 
 GranularSynth::~GranularSynth() {
@@ -26,7 +25,3 @@ void GranularSynth::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuf
 	}
 
 };
-
-StateSaver GranularSynth::getStateSaver() {
-	return *stateSaver; // retour par valeur
-}

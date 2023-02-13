@@ -3,8 +3,7 @@
 */
 
 #pragma once
-
-#include "AudioFileLoader.h"
+#include <JuceHeader.h>
 
 // doit inherits from : public juce::AudioProcessorValueTreeState
 // ou alors: public juce::AudioProcessorState
@@ -15,10 +14,12 @@ public:
 	~StateSaver();
 	void setAudioLoaded(bool);
 	bool getAudioLoaded();
+	void setSampleRate(double);
+	double getSampleRate();
 	//AudioFileLoader audioFileLoader;
 private:
 	bool isAudioLoaded;
-	int sampleRate;
+	double sampleRate;
 
 	// all parameters
 	float position;

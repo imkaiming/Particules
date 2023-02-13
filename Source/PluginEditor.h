@@ -25,6 +25,7 @@ private:
 
 	// Core functions
 	ParticulesAudioProcessor& audioProcessor;
+	juce::AudioBuffer<float>* buffer;
 	StateSaver* stateSaver;
 	std::unique_ptr<AudioFileLoader> loader;
 

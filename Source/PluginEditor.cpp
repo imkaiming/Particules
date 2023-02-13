@@ -2,20 +2,20 @@
 #include "PluginEditor.h"
 
 ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(
-	ParticulesAudioProcessor& p) : AudioProcessorEditor(&p), audioProcessor(p),
+	ParticulesAudioProcessor& p) : AudioProcessorEditor(&p), audioProcessor(p), buffer(p.getBuffer()),
+	stateSaver(p.getStateSaver()),
 	open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	mainFrame(&open_btn, &play_btn, &stop_btn)
 {
-	
+	loader = std::make_unique<AudioFileLoader>(stateSaver);
 
 	initButtons();
-	loader = std::make_unique<AudioFileLoader>();
 
 
 	this->setLookAndFeel(&customLookAndFeel);
-	this->stateSaver = audioProcessor.getStateSaver();
+	//this->stateSaver = audioProcessor.getStateSaver();
 
 	setResizable(true, true);
 	setResizeLimits(450, 225, 1200, 600);
@@ -36,7 +36,9 @@ ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(
 
 ParticulesAudioProcessorEditor::~ParticulesAudioProcessorEditor()
 {
+	loader.reset();
 	this->setLookAndFeel(nullptr);
+	this->buffer = nullptr;
 	this->stateSaver = nullptr;
 }
 
@@ -56,17 +58,16 @@ void ParticulesAudioProcessorEditor::resized()
 
 void ParticulesAudioProcessorEditor::openFileButtonClicked()
 {
-	juce::Logger::outputDebugString("openFileButtonClicked");
+	//juce::Logger::outputDebugString("openFileButtonClicked");
 	// TODO : il faut stoper la lecture du plugin si elle est en cours
-	juce::AudioBuffer<float>* buffer = audioProcessor.getSampleBuffer();
-	buffer->clear();
+	//buffer->clear();
+
 	stateSaver->setAudioLoaded(false);
-	loader->openFile(buffer);
+	loader->loadFile();
 	if (buffer->getNumSamples() > 0) {
 		juce::Logger::outputDebugString("Le buffer est chargé en samples");
 		stateSaver->setAudioLoaded(true);
 	}
-
 }
 
 void ParticulesAudioProcessorEditor::stopFileButtonClicked()
@@ -78,6 +79,7 @@ void ParticulesAudioProcessorEditor::stopFileButtonClicked()
 void ParticulesAudioProcessorEditor::playFileButtonClicked()
 {
 	juce::Logger::outputDebugString("playFileButtonClicked");
+	//audioProcessor.processBlock();
 
 }
 

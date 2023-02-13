@@ -10,9 +10,12 @@ ParticulesAudioProcessor::ParticulesAudioProcessor()
 #endif
 		.withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-	), apvts(*this, nullptr, "Parameters", createParameters())
+	), apvts(*this, nullptr, "Parameters", createParameters()), granSynth(&stateSaver)
 #endif
 {
+	//for (int i = 0; i < mNumVoices; ++i) {
+	//	granSynth.addVoice(new juce::SamplerVoice());
+	//}
 }
 
 ParticulesAudioProcessor::~ParticulesAudioProcessor()
@@ -82,7 +85,12 @@ void ParticulesAudioProcessor::changeProgramName(int index, const juce::String& 
 
 void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
+	juce::Logger::outputDebugString("on configure le sample rate a : " + (juce::String)sampleRate);
+
 	granSynth.prepareToPlay(sampleRate, samplesPerBlock);
+	this->sampleRate = sampleRate;
+	this->stateSaver.setSampleRate(sampleRate);
+
 }
 
 void ParticulesAudioProcessor::releaseResources()
@@ -164,8 +172,8 @@ StateSaver* ParticulesAudioProcessor::getStateSaver()
 	return &stateSaver;
 }
 
-juce::AudioBuffer<float>* ParticulesAudioProcessor::getSampleBuffer() {
-	return &sampleBuffer;
+juce::AudioBuffer<float>* ParticulesAudioProcessor::getBuffer() {
+	return &buffer;
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::createParameters() {
