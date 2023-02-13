@@ -10,7 +10,7 @@ ParticulesAudioProcessor::ParticulesAudioProcessor()
 #endif
 		.withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-	)
+	), apvts(*this, nullptr, "Parameters", createParameters())
 #endif
 {
 }
@@ -123,23 +123,12 @@ void ParticulesAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
 	auto totalNumOutputChannels = getTotalNumOutputChannels();
 	int currentBufferLength = buffer.getNumSamples();
 
-	//if (audioFileComponent.getCurrentState() != Stopped) {
-	//	juce::Logger::outputDebugString("cannot launch granular synth when the audio player is running.");
-	//	if (audioFileComponent.getReaderSource().get() == nullptr)
-	//	{
-	//		for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-	//			buffer.clear(i, 0, currentBufferLength);
-	//		return;
-	//	}
-
-	//	audioFileComponent.getTransportSource().getNextAudioBlock(buffer);
-	//}
-
-
-
+	// dans le cas où on a plus de channel out que de channel in
 	for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
 		buffer.clear(i, 0, currentBufferLength);
-	// granSynth.processBlock(buffer, midiMessages);
+
+	granSynth.processBlock(buffer, midiMessages, totalNumOutputChannels);
+
 }
 
 bool ParticulesAudioProcessor::hasEditor() const
@@ -177,4 +166,15 @@ StateSaver* ParticulesAudioProcessor::getStateSaver()
 
 juce::AudioBuffer<float>* ParticulesAudioProcessor::getSampleBuffer() {
 	return &sampleBuffer;
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::createParameters() {
+	std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+
+	// add parameters here
+	params.push_back(
+		std::make_unique<juce::AudioParameterFloat>("GAIN", "Gain", 0.0f, 1.0f, 0.5f)
+	);
+
+	return { params.begin(), params.end() };
 }

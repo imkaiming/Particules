@@ -8,6 +8,7 @@ ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(
 	stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	mainFrame(&open_btn, &play_btn, &stop_btn)
 {
+	
 
 	initButtons();
 	loader = std::make_unique<AudioFileLoader>();

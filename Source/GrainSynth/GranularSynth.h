@@ -7,7 +7,7 @@ public:
 	GranularSynth();
 	~GranularSynth();
 	void  prepareToPlay(double sampleRate, int samplesPerBlock);
-	void processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages);
+	void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&, int);
 	StateSaver getStateSaver();
 
 private:

@@ -48,15 +48,19 @@ public:
 	void setStateInformation(const void* data, int sizeInBytes) override;
 	StateSaver* getStateSaver();
 	juce::AudioBuffer<float>* getSampleBuffer();
+	juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
+
 
 private:
 
 	GranularSynth granSynth;
-	StateSaver stateSaver;  //juce::AudioProcessorValueTreeState vts;
+	juce::AudioProcessorValueTreeState apvts;
+	StateSaver stateSaver;
 	juce::AudioBuffer<float> sampleBuffer; // the loaded file should be here.
 
 	double sampleRate;
 	int samplesPerBlock;
+
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessor)
 

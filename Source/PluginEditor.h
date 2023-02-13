@@ -28,6 +28,10 @@ private:
 	StateSaver* stateSaver;
 	std::unique_ptr<AudioFileLoader> loader;
 
+	//juce::Slider gainSlider;
+	//gainSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalDrag);
+	//gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 50);
+
 
 	// Buttons parameters
 	juce::DrawableButton open_btn;
