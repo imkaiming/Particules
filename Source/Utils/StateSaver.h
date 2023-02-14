@@ -13,10 +13,12 @@ public:
 	StateSaver();
 	~StateSaver();
 	void setAudioLoaded(bool);
-	bool getAudioLoaded();
+	bool* getAudioLoaded();
 	void setSampleRate(double);
 	double getSampleRate();
+	void setAudioBuffer(juce::AudioBuffer<float>* buffer);
 	//AudioFileLoader audioFileLoader;
+
 private:
 	bool isAudioLoaded;
 	double sampleRate;
@@ -26,4 +28,6 @@ private:
 	float density;
 	float grainSize;
 	float speed;
+
+	juce::AudioBuffer<float>* buffer;
 };

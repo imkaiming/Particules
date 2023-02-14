@@ -17,12 +17,15 @@
 
 
 
-class AudioFileFrame : public juce::Component {
+class AudioFileFrame :
+	public juce::Component
+{
 public:
 	AudioFileFrame(juce::DrawableButton*, juce::DrawableButton*, juce::DrawableButton*);
 	~AudioFileFrame() override;
 	void paint(juce::Graphics&) override;
 	void resized() override;
+
 
 private:
 

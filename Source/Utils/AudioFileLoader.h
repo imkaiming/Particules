@@ -13,15 +13,25 @@
 #include <JuceHeader.h>
 #include "StateSaver.h"
 
+// https://github.com/davedema/GranularSynth/tree/master/Grana
+
 class AudioFileLoader {
 public:
 	AudioFileLoader(StateSaver*);
 	~AudioFileLoader();
+	//static AudioFileLoader* getInstance();
+	//static void resetInstance();
+	void AudioFileLoader::loadAudio(juce::File&);
 	void loadFile();
+	void loadFile(const juce::String&);
+	void unloadFile();
+	juce::AudioBuffer<float>* getAudioBuffer() const;
+	//void AudioFileLoader::initStateSaver(StateSaver*);
 
 private:
+	//static AudioFileLoader* instance;
 	juce::AudioFormatManager formatManager; // classe qui traite les formats de fichier tq wav, aiff, ogg, vorbis ou mp3
-	//juce::AudioFormatReader* reader{ nullptr };
+	//juce::AudioFormatReader* reader;
 	std::unique_ptr<juce::AudioFormatReaderSource>* readerSource;
 	juce::AudioBuffer<float>* buffer;
 	StateSaver* stateSaver;

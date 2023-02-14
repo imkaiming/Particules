@@ -15,8 +15,8 @@ void StateSaver::setAudioLoaded(bool b) {
 	juce::Logger::outputDebugString("StateSaver.isAudioLoaded = " + b);
 	isAudioLoaded = b;
 }
-bool StateSaver::getAudioLoaded() {
-	return isAudioLoaded;
+bool* StateSaver::getAudioLoaded() {
+	return &isAudioLoaded;
 }
 
 void StateSaver::setSampleRate(double sampleRate) {
@@ -25,4 +25,8 @@ void StateSaver::setSampleRate(double sampleRate) {
 }
 double StateSaver::getSampleRate() {
 	return sampleRate;
+}
+
+void StateSaver::setAudioBuffer(juce::AudioBuffer<float>* buffer) {
+	this->buffer = buffer;
 }

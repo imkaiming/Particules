@@ -2,7 +2,7 @@
 #include "PluginEditor.h"
 
 ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(
-	ParticulesAudioProcessor& p) : AudioProcessorEditor(&p), audioProcessor(p), buffer(p.getBuffer()),
+	ParticulesAudioProcessor& p) : AudioProcessorEditor(&p), audioProcessor(p),
 	stateSaver(p.getStateSaver()),
 	open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
@@ -10,7 +10,6 @@ ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(
 	mainFrame(&open_btn, &play_btn, &stop_btn)
 {
 	loader = std::make_unique<AudioFileLoader>(stateSaver);
-
 	initButtons();
 
 
@@ -38,7 +37,6 @@ ParticulesAudioProcessorEditor::~ParticulesAudioProcessorEditor()
 {
 	loader.reset();
 	this->setLookAndFeel(nullptr);
-	this->buffer = nullptr;
 	this->stateSaver = nullptr;
 }
 
@@ -64,10 +62,13 @@ void ParticulesAudioProcessorEditor::openFileButtonClicked()
 
 	stateSaver->setAudioLoaded(false);
 	loader->loadFile();
-	if (buffer->getNumSamples() > 0) {
-		juce::Logger::outputDebugString("Le buffer est chargé en samples");
-		stateSaver->setAudioLoaded(true);
-	}
+	//buffer = loader->getBuffer();
+	//if (buffer->getNumSamples() > 0) {
+	//	stateSaver->setAudioLoaded(true);
+	//	juce::Logger::outputDebugString("Le buffer de l'éditeur est chargé!");
+
+	//	// on dessine la waveform
+	//}
 }
 
 void ParticulesAudioProcessorEditor::stopFileButtonClicked()
@@ -119,4 +120,26 @@ void ParticulesAudioProcessorEditor::initButtons() {
 	play_btn.onClick = [this] {
 		playFileButtonClicked();
 	};
+}
+
+bool ParticulesAudioProcessorEditor::isInterestedInFileDrag(const juce::StringArray& files)
+{
+	// is it an audio file ?
+	for (juce::String file : files) {
+		if (file.contains(".wav") || (".aif") || (".mp3"))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void ParticulesAudioProcessorEditor::filesDropped(const juce::StringArray& files, int x, int y)
+{
+	for (juce::String file : files) {
+		if (isInterestedInFileDrag(file)) {
+			// load this file.
+			//loader->loadFile(file);
+		}
+	}
 }

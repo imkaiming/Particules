@@ -11,13 +11,16 @@
 #include "Utils/CustomLookAndFeel.h"
 
 
-class ParticulesAudioProcessorEditor : public juce::AudioProcessorEditor
+class ParticulesAudioProcessorEditor : public juce::AudioProcessorEditor,
+	public juce::FileDragAndDropTarget
 {
 public:
 	ParticulesAudioProcessorEditor(ParticulesAudioProcessor&);
 	~ParticulesAudioProcessorEditor() override;
 	void paint(juce::Graphics&) override;
 	void resized() override;
+	bool isInterestedInFileDrag(const juce::StringArray&) override;
+	void filesDropped(const juce::StringArray&, int x, int y) override;
 
 private:
 
@@ -25,7 +28,7 @@ private:
 
 	// Core functions
 	ParticulesAudioProcessor& audioProcessor;
-	juce::AudioBuffer<float>* buffer;
+	//juce::AudioBuffer<float>* buffer;
 	StateSaver* stateSaver;
 	std::unique_ptr<AudioFileLoader> loader;
 
