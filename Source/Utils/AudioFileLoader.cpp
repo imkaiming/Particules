@@ -105,8 +105,8 @@ void AudioFileLoader::loadAudio(juce::File& file)
 	*this->buffer = juce::AudioBuffer<float>(newBuffer);
 	juce::Logger::outputDebugString("buffer.getNumSamples() : " + (juce::String)this->buffer->getNumSamples());
 
-	stateSaver->setAudioLoaded(true);
 	stateSaver->setAudioBuffer(buffer);
+	stateSaver->setAudioLoaded(true);
 
 	//reader = nullptr;
 }
@@ -117,6 +117,7 @@ void AudioFileLoader::loadFile()
 {
 	if (stateSaver == nullptr) {
 		return;
+		juce::Logger::outputDebugString("Le statesaver n'est pas initialisé dans AudioFileLoader.");
 	}
 
 	juce::FileChooser* chooser = new juce::FileChooser
@@ -136,11 +137,13 @@ void AudioFileLoader::loadFile()
 
 // https://www.youtube.com/watch?v=2OErY-qhGyw
 void AudioFileLoader::loadFile(const juce::String& path) {
+
 	juce::Logger::outputDebugString("File dragged ! ");
 	juce::File file(path);
 
 	if (stateSaver == nullptr) {
 		return;
+		juce::Logger::outputDebugString("Le statesaver n'est pas initialisé dans AudioFileLoader.");
 	}
 
 	if (file.exists()) {

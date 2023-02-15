@@ -21,6 +21,7 @@ class Parameter : public juce::AudioProcessorParameter
 public:
 	Parameter(const juce::String&, const juce::String&, float);
 	~Parameter();
+
 	float getValue() const override;
 	void setValue(float newValue) override;
 	float getDefaultValue() const override;

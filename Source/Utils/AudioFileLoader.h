@@ -33,8 +33,7 @@ private:
 	juce::AudioFormatManager formatManager; // classe qui traite les formats de fichier tq wav, aiff, ogg, vorbis ou mp3
 	//juce::AudioFormatReader* reader;
 	std::unique_ptr<juce::AudioFormatReaderSource>* readerSource;
-	juce::AudioBuffer<float>* buffer;
+	juce::AudioBuffer<float>* buffer; 
 	StateSaver* stateSaver;
-
 
 };

@@ -56,19 +56,19 @@ void ParticulesAudioProcessorEditor::resized()
 
 void ParticulesAudioProcessorEditor::openFileButtonClicked()
 {
-	//juce::Logger::outputDebugString("openFileButtonClicked");
+	juce::Logger::outputDebugString("openFileButtonClicked");
 	// TODO : il faut stoper la lecture du plugin si elle est en cours
 	//buffer->clear();
 
 	stateSaver->setAudioLoaded(false);
 	loader->loadFile();
 	//buffer = loader->getBuffer();
-	//if (buffer->getNumSamples() > 0) {
+	if (this->stateSaver->getAudioLoaded()) {
 	//	stateSaver->setAudioLoaded(true);
-	//	juce::Logger::outputDebugString("Le buffer de l'éditeur est chargé!");
+		juce::Logger::outputDebugString("Le buffer de l'éditeur est chargé!");
 
 	//	// on dessine la waveform
-	//}
+	}
 }
 
 void ParticulesAudioProcessorEditor::stopFileButtonClicked()

@@ -3,7 +3,8 @@
 StateSaver::StateSaver() : sampleRate(44100.0f), position(0.0f), density(0.0f), grainSize(1.0f),
 speed(1.0f), isAudioLoaded(false)
 {
-
+	// on créer un buffer vide au départ. Contient zéro samples.
+	this->buffer = juce::AudioBuffer<float>();
 };
 
 StateSaver::~StateSaver()
@@ -28,5 +29,10 @@ double StateSaver::getSampleRate() {
 }
 
 void StateSaver::setAudioBuffer(juce::AudioBuffer<float>* buffer) {
-	this->buffer = buffer;
+	this->buffer = *buffer;
+}
+
+juce::AudioBuffer<float>* StateSaver::getAudioBuffer()
+{
+	return &buffer;
 }

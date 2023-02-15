@@ -54,7 +54,7 @@ public:
 private:
 
 	GranularSynth granSynth;
-	const int mNumVoices{ 8 };
+	//const int mNumVoices{ 8 };
 	juce::AudioProcessorValueTreeState apvts;
 	StateSaver stateSaver;
 

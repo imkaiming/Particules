@@ -17,6 +17,7 @@ public:
 	void setSampleRate(double);
 	double getSampleRate();
 	void setAudioBuffer(juce::AudioBuffer<float>* buffer);
+	juce::AudioBuffer<float>* getAudioBuffer();
 	//AudioFileLoader audioFileLoader;
 
 private:
@@ -29,5 +30,7 @@ private:
 	float grainSize;
 	float speed;
 
-	juce::AudioBuffer<float>* buffer;
+	// Le state saver contient le buffer du projet  car on veut 
+	// pouvoir sauvegarder le presets avec le son qui lui est associé
+	juce::AudioBuffer<float> buffer;
 };
