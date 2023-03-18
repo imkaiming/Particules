@@ -298,12 +298,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 	//		PITCH_MIN, PITCH_MAX, PITCH_DEFAULT)
 	//);
 
-	layout.add(
-		std::make_unique<juce::String>(
-			FILEPATH_ID,
-			FILEPATH_NAME,
-			FILEPATH_DEFAULT)
-	);
+	//layout.add(
+	//	std::make_unique<juce::String>(
+	//		FILEPATH_ID,
+	//		FILEPATH_NAME,
+	//		FILEPATH_DEFAULT)
+	//);
 
 	const juce::StringArray& choices{ ENVTYPE_1, ENVTYPE_2, ENVTYPE_3 };
 

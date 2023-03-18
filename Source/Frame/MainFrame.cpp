@@ -10,9 +10,10 @@
 
 #include "MainFrame.h"
 
-MainFrame::MainFrame(juce::DrawableButton* open_Btn, juce::DrawableButton* play_Btn,
-	juce::DrawableButton* stop_Btn) :
-	audioFileFrame(open_Btn, play_Btn, stop_Btn)
+MainFrame::MainFrame(ValueTreeState* apvts, StateParameters* stateParams) : 
+	titleFrame(stateParams), synthFrame(apvts, stateParams), 
+	grainsFrame(apvts, stateParams), audioFileFrame(apvts, stateParams), 
+	statusBarFrame(stateParams)
 {
 	addAndMakeVisible(&titleFrame);
 	addAndMakeVisible(&synthFrame);
@@ -21,7 +22,8 @@ MainFrame::MainFrame(juce::DrawableButton* open_Btn, juce::DrawableButton* play_
 	addAndMakeVisible(&statusBarFrame);
 }
 
-MainFrame::~MainFrame() {
+MainFrame::~MainFrame() 
+{
 }
 
 void MainFrame::paint(juce::Graphics& g) {
@@ -35,21 +37,22 @@ void MainFrame::paint(juce::Graphics& g) {
 
 void MainFrame::resized()
 {
-	juce::Rectangle<int> area = getLocalBounds();
+	//juce::Rectangle<int> area = getLocalBounds();
 	float heightComp = getHeight() / 30.f;
-	/*float widthComp = getWidth() / 10.f;*/
+	float widthComp = getWidth() / 10.f;
 
-	float w = getWidth() / 300.f;
+	//float w = getWidth() / 300.f;
 
-	titleFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 1)));
-	area.removeFromTop(static_cast<int>(w));
-	synthFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 9)));
-	area.removeFromTop(static_cast<int>(w));
-	grainsFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 9)));
-	area.removeFromTop(static_cast<int>(w));
-	audioFileFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 9)));
-	area.removeFromTop(static_cast<int>(w));
-	statusBarFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 2)));
+	// old positionning V2
+	//titleFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 1)));
+	//area.removeFromTop(static_cast<int>(w));
+	//synthFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 9)));
+	//area.removeFromTop(static_cast<int>(w));
+	//grainsFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 9)));
+	//area.removeFromTop(static_cast<int>(w));
+	//audioFileFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 9)));
+	//area.removeFromTop(static_cast<int>(w));
+	//statusBarFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 2)));
 
 
 	// old positionning
@@ -58,8 +61,19 @@ void MainFrame::resized()
 	//synthFrame.setBounds(0.f, 0.f, widthComp * 10, heightComp * 9);
 	//grainsFrame.setBounds(0.f, 0.f, widthComp * 10, heightComp * 9);
 	//audioFileFrame.setBounds(0.f, 0.f, widthComp * 10, heightComp * 2);
+
+	juce::FlexBox flexbox;
+	flexbox.flexDirection = juce::FlexBox::Direction::column;
+	flexbox.flexWrap = juce::FlexBox::Wrap::noWrap;
+	flexbox.alignContent = juce::FlexBox::AlignContent::stretch;
+	flexbox.alignItems = juce::FlexBox::AlignItems::stretch;
+
+	flexbox.items.add(juce::FlexItem(titleFrame).withHeight(heightComp));
+	flexbox.items.add(juce::FlexItem(synthFrame).withHeight(heightComp * 9));
+	flexbox.items.add(juce::FlexItem(grainsFrame).withHeight(heightComp * 9));
+	flexbox.items.add(juce::FlexItem(audioFileFrame).withHeight(heightComp * 9));
+	flexbox.items.add(juce::FlexItem(statusBarFrame).withHeight(heightComp * 2));
+
+	flexbox.performLayout(getLocalBounds().toFloat());
 }
 
-//void MainFrame::init(StateSaver* stateSaver) {
-//	audioFileFrame.init(stateSaver);
-//}

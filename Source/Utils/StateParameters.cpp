@@ -14,7 +14,7 @@ StateParameters::StateParameters()
 {
 	sampleRate = 0;
 	numChannels = 0;
-	isLoaded = false;
+	isAudioLoaded = false;
 	audioFileNumSamples = 0;
 }
 
@@ -126,6 +126,11 @@ void StateParameters::setAudioLoaded(bool newValue)
 	isAudioLoaded = newValue;
 }
 
+void StateParameters::setAudioBuffer(juce::AudioBuffer<float>* newValue)
+{
+	audioFileBuffer = newValue;
+}
+
 // getters
 
 float StateParameters::getGain()
@@ -173,4 +178,9 @@ int StateParameters::getEnvelopeType()
 bool StateParameters::getAudioLoaded()
 {
 	return isAudioLoaded;
+}
+
+juce::AudioBuffer<float>* StateParameters::getAudioBuffer()
+{
+	return audioFileBuffer ;
 }

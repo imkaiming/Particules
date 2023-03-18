@@ -10,11 +10,14 @@
 
 #include "GrainsFrame.h"
 
-GrainsFrame::GrainsFrame() {
+GrainsFrame::GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams) : apvts(apvts), stateParams(stateParams)
+{
 
 }
-GrainsFrame::~GrainsFrame() {
-
+GrainsFrame::~GrainsFrame() 
+{
+	apvts = nullptr;
+	stateParams = nullptr;
 }
 
 void GrainsFrame::paint(juce::Graphics& g) {

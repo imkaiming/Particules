@@ -12,7 +12,7 @@
 
 //AudioFileLoader* AudioFileLoader::instance = 0;
 
-AudioFileLoader::AudioFileLoader(StateSaver* stateSaver) : stateSaver(stateSaver)
+AudioFileLoader::AudioFileLoader(StateParameters* stateParams) : stateParams(stateParams)
 {
 	readerSource = new std::unique_ptr<juce::AudioFormatReaderSource>();
 	// permet au manager de format de gérer les formats WAV, AIFF, MP3, etc.
@@ -24,31 +24,15 @@ AudioFileLoader::AudioFileLoader(StateSaver* stateSaver) : stateSaver(stateSaver
 AudioFileLoader::~AudioFileLoader()
 {
 	this->unloadFile();
-	stateSaver = nullptr;
+	stateParams = nullptr;
 	delete buffer;
-	//reader = nullptr;
 	readerSource->reset(nullptr);
 }
-
-//AudioFileLoader* AudioFileLoader::getInstance()
-//{
-//	if (!instance)
-//		instance = new AudioFileLoader();
-//	return instance;
-//}
-//
-//void AudioFileLoader::resetInstance()
-//{
-//	if (instance != nullptr) {
-//		delete instance;
-//		instance = nullptr;
-//	}
-//}
 
 void AudioFileLoader::unloadFile()
 {
 	buffer->clear();
-	stateSaver->setAudioLoaded(false);
+	stateParams->setAudioLoaded(false);
 }
 
 // https://forum.juce.com/t/load-binary-wav-files-into-audiosamplebuffer-array/38790
@@ -75,12 +59,12 @@ void AudioFileLoader::loadAudio(juce::File& file)
 
 	const int numSamples = reader->lengthInSamples;
 	const int numChannels = reader->numChannels;
-	double ratio = reader->sampleRate / stateSaver->getSampleRate();
+	double ratio = reader->sampleRate / stateParams->getSampleRate();
 
-	juce::Logger::outputDebugString("numSamples : " + (juce::String)numSamples);
-	juce::Logger::outputDebugString("numChannels : " + (juce::String)numChannels);
-	juce::Logger::outputDebugString("reader->sampleRate : " + (juce::String)reader->sampleRate);
-	juce::Logger::outputDebugString("stateSaver->getSampleRate: " + (juce::String)stateSaver->getSampleRate());
+	//juce::Logger::outputDebugString("numSamples : " + (juce::String)numSamples);
+	//juce::Logger::outputDebugString("numChannels : " + (juce::String)numChannels);
+	//juce::Logger::outputDebugString("reader->sampleRate : " + (juce::String)reader->sampleRate);
+	//juce::Logger::outputDebugString("stateSaver->getSampleRate: " + (juce::String)stateParams->getSampleRate());
 
 	//buffer.setSize(numChannels, numSamples);
 	juce::AudioBuffer<float> tempBuffer(numChannels, numSamples);
@@ -105,8 +89,8 @@ void AudioFileLoader::loadAudio(juce::File& file)
 	*this->buffer = juce::AudioBuffer<float>(newBuffer);
 	juce::Logger::outputDebugString("buffer.getNumSamples() : " + (juce::String)this->buffer->getNumSamples());
 
-	stateSaver->setAudioBuffer(buffer);
-	stateSaver->setAudioLoaded(true);
+	stateParams->setAudioBuffer(buffer);
+	stateParams->setAudioLoaded(true);
 
 	//reader = nullptr;
 }
@@ -115,7 +99,7 @@ void AudioFileLoader::loadAudio(juce::File& file)
 // https://forum.juce.com/t/filechooser-not-appearing-in-windows/54952/2
 void AudioFileLoader::loadFile()
 {
-	if (stateSaver == nullptr) {
+	if (stateParams == nullptr) {
 		return;
 		juce::Logger::outputDebugString("Le statesaver n'est pas initialisé dans AudioFileLoader.");
 	}
@@ -141,7 +125,7 @@ void AudioFileLoader::loadFile(const juce::String& path) {
 	juce::Logger::outputDebugString("File dragged ! ");
 	juce::File file(path);
 
-	if (stateSaver == nullptr) {
+	if (stateParams == nullptr) {
 		return;
 		juce::Logger::outputDebugString("Le statesaver n'est pas initialisé dans AudioFileLoader.");
 	}

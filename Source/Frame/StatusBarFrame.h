@@ -9,15 +9,17 @@
 */
 
 #include <JuceHeader.h>
+#include "../Utils/StateParameters.h"
 #pragma once
 
 class StatusBarFrame : public juce::Component {
 public:
-    StatusBarFrame();
+    StatusBarFrame(StateParameters* stateParams);
     ~StatusBarFrame();
     void paint(juce::Graphics&) override;
     void resized() override;
 
 private:
+    StateParameters* stateParams;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatusBarFrame)
 };

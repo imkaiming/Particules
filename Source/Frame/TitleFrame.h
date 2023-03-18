@@ -9,16 +9,18 @@
 */
 
 #include <JuceHeader.h>
+#include "../Utils/StateParameters.h"
 #pragma once
 
 class TitleFrame : public juce::Component {
 public:
-	TitleFrame();
+	TitleFrame(StateParameters* stateParams);
 	~TitleFrame();
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
 private:
 	juce::Label titreLabel;
+	StateParameters* stateParams;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TitleFrame)
 };

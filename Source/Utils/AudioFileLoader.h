@@ -11,22 +11,19 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "StateSaver.h"
+#include "../Utils/StateParameters.h"
 
 // https://github.com/davedema/GranularSynth/tree/master/Grana
 
 class AudioFileLoader {
 public:
-	AudioFileLoader(StateSaver*);
+	AudioFileLoader(StateParameters*);
 	~AudioFileLoader();
-	//static AudioFileLoader* getInstance();
-	//static void resetInstance();
 	void AudioFileLoader::loadAudio(juce::File&);
 	void loadFile();
 	void loadFile(const juce::String&);
 	void unloadFile();
 	juce::AudioBuffer<float>* getAudioBuffer() const;
-	//void AudioFileLoader::initStateSaver(StateSaver*);
 
 private:
 	//static AudioFileLoader* instance;
@@ -34,6 +31,6 @@ private:
 	//juce::AudioFormatReader* reader;
 	std::unique_ptr<juce::AudioFormatReaderSource>* readerSource;
 	juce::AudioBuffer<float>* buffer; 
-	StateSaver* stateSaver;
+	StateParameters* stateParams;
 
 };

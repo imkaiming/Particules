@@ -41,6 +41,7 @@ public:
 	void setSpeed(float);
 	void setEnvelopeType(int);
 	void setAudioLoaded(bool);
+	void setAudioBuffer(juce::AudioBuffer<float>*);
 
 	// getters
 	float getGain();
@@ -53,7 +54,7 @@ public:
 	int getNumChannels();
 	int getEnvelopeType();
 	bool getAudioLoaded();
-
+	juce::AudioBuffer<float>* StateParameters::getAudioBuffer();
 
 private:
 
@@ -78,9 +79,10 @@ private:
 	// all the parameters relative to the Audio File
 	bool isAudioLoaded;
 	int audioFileNumSamples;
-	juce::AudioBuffer<float> audioFileBuffer;
+	juce::AudioBuffer<float>* audioFileBuffer;
 	float filePosition; // starting point of the granulation in the file
-	float windowSelection; // p
+	float windowSelection;
+	//juce::String filePath;
 	//Playback playback; // grain can play in reverse
 
 	// Random parameters

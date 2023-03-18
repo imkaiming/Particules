@@ -10,12 +10,15 @@
 
 #include "SynthFrame.h"
 
-SynthFrame::SynthFrame() {
+SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) : apvts(apvts), stateParams(stateParams)
+{
 
 }
 
-SynthFrame::~SynthFrame() {
-
+SynthFrame::~SynthFrame() 
+{
+    apvts = nullptr;
+    stateParams = nullptr;
 }
 
 void SynthFrame::paint(juce::Graphics& g) {

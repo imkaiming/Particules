@@ -11,11 +11,13 @@
 #include "StatusBarFrame.h"
 
 
-StatusBarFrame::StatusBarFrame() {
+StatusBarFrame::StatusBarFrame(StateParameters* stateParams) : stateParams(stateParams)
+{
 
 }
-StatusBarFrame::~StatusBarFrame() {
-
+StatusBarFrame::~StatusBarFrame() 
+{
+	stateParams = nullptr;
 }
 void StatusBarFrame::paint(juce::Graphics& g) {
 	g.fillAll(juce::Colours::black);
