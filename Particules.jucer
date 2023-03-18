@@ -90,63 +90,69 @@
       </GROUP>
     </GROUP>
     <GROUP id="{A40FC0AA-1CD7-7266-14B2-BD6017EC0C16}" name="Source">
-      <GROUP id="{FA58B068-FBE4-E735-B29E-D1CEC38D4E30}" name="Component">
-        <FILE id="IKtKfE" name="AudioFileComponent.cpp" compile="1" resource="0"
-              file="Source/Component/AudioFileComponent.cpp"/>
-        <FILE id="yfnehq" name="AudioFileComponent.h" compile="0" resource="0"
-              file="Source/Component/AudioFileComponent.h"/>
-        <FILE id="SRmsA0" name="SpectrumComponent.cpp" compile="1" resource="0"
-              file="Source/Component/SpectrumComponent.cpp"/>
-        <FILE id="WTpS6l" name="SpectrumComponent.h" compile="0" resource="0"
-              file="Source/Component/SpectrumComponent.h"/>
+      <GROUP id="{1C9794D5-26CB-7423-13A8-774541C252FB}" name="Audio">
+        <FILE id="sS1vr6" name="Grain.cpp" compile="1" resource="0" file="Source/Audio/Grain.cpp"/>
+        <FILE id="xzPARq" name="Grain.h" compile="0" resource="0" file="Source/Audio/Grain.h"/>
+        <FILE id="Jnj13l" name="GranularEngine.cpp" compile="1" resource="0"
+              file="Source/Audio/GranularEngine.cpp"/>
+        <FILE id="MxDrxc" name="GranularEngine.h" compile="0" resource="0"
+              file="Source/Audio/GranularEngine.h"/>
+        <FILE id="AOO4Ba" name="Scheduler.cpp" compile="1" resource="0" file="Source/Audio/Scheduler.cpp"/>
+        <FILE id="OxBgJa" name="Scheduler.h" compile="0" resource="0" file="Source/Audio/Scheduler.h"/>
       </GROUP>
       <GROUP id="{C12992C0-54E4-FC4C-7FBC-7A454D8D1A4E}" name="Frame">
-        <FILE id="DqFYTH" name="AudioFileFrame.cpp" compile="1" resource="0"
+        <FILE id="Cr6Gr1" name="AudioFileFrame.cpp" compile="1" resource="0"
               file="Source/Frame/AudioFileFrame.cpp"/>
-        <FILE id="xZtNtS" name="AudioFileFrame.h" compile="0" resource="0"
+        <FILE id="LktTIJ" name="AudioFileFrame.h" compile="0" resource="0"
               file="Source/Frame/AudioFileFrame.h"/>
-        <FILE id="RfFKp6" name="GrainsFrame.cpp" compile="1" resource="0" file="Source/Frame/GrainsFrame.cpp"/>
-        <FILE id="NzqI5c" name="GrainsFrame.h" compile="0" resource="0" file="Source/Frame/GrainsFrame.h"/>
-        <FILE id="yraR4p" name="MainFrame.cpp" compile="1" resource="0" file="Source/Frame/MainFrame.cpp"/>
-        <FILE id="nOK8dB" name="MainFrame.h" compile="0" resource="0" file="Source/Frame/MainFrame.h"/>
-        <FILE id="BMMo7I" name="StatusBarFrame.cpp" compile="1" resource="0"
+        <FILE id="pNaodN" name="ControlFrame.cpp" compile="1" resource="0"
+              file="Source/Frame/ControlFrame.cpp"/>
+        <FILE id="mb45Dp" name="ControlFrame.h" compile="0" resource="0" file="Source/Frame/ControlFrame.h"/>
+        <FILE id="grzxRL" name="GrainsFrame.cpp" compile="1" resource="0" file="Source/Frame/GrainsFrame.cpp"/>
+        <FILE id="zsghky" name="GrainsFrame.h" compile="0" resource="0" file="Source/Frame/GrainsFrame.h"/>
+        <FILE id="tR0Tro" name="MainFrame.cpp" compile="1" resource="0" file="Source/Frame/MainFrame.cpp"/>
+        <FILE id="NZtifT" name="MainFrame.h" compile="0" resource="0" file="Source/Frame/MainFrame.h"/>
+        <FILE id="vSZ1kE" name="StatusBarFrame.cpp" compile="1" resource="0"
               file="Source/Frame/StatusBarFrame.cpp"/>
-        <FILE id="QKcBYq" name="StatusBarFrame.h" compile="0" resource="0"
+        <FILE id="ZNSufT" name="StatusBarFrame.h" compile="0" resource="0"
               file="Source/Frame/StatusBarFrame.h"/>
-        <FILE id="mgoGRC" name="SynthFrame.cpp" compile="1" resource="0" file="Source/Frame/SynthFrame.cpp"/>
-        <FILE id="HtcbT1" name="SynthFrame.h" compile="0" resource="0" file="Source/Frame/SynthFrame.h"/>
-        <FILE id="BWWNwj" name="TitleFrame.cpp" compile="1" resource="0" file="Source/Frame/TitleFrame.cpp"/>
-        <FILE id="yw9AFL" name="TitleFrame.h" compile="0" resource="0" file="Source/Frame/TitleFrame.h"/>
+        <FILE id="fi4sLz" name="SynthFrame.cpp" compile="1" resource="0" file="Source/Frame/SynthFrame.cpp"/>
+        <FILE id="tOJCbm" name="SynthFrame.h" compile="0" resource="0" file="Source/Frame/SynthFrame.h"/>
+        <FILE id="DEOT6r" name="TitleFrame.cpp" compile="1" resource="0" file="Source/Frame/TitleFrame.cpp"/>
+        <FILE id="I6aXF3" name="TitleFrame.h" compile="0" resource="0" file="Source/Frame/TitleFrame.h"/>
       </GROUP>
-      <GROUP id="{C5B1C2E5-8B6E-BEAC-6B7A-D5C38235BAA0}" name="GrainSynth">
-        <FILE id="ebsX5A" name="Grain.cpp" compile="1" resource="0" file="Source/GrainSynth/Grain.cpp"/>
-        <FILE id="CWjrNq" name="Grain.h" compile="0" resource="0" file="Source/GrainSynth/Grain.h"/>
-        <FILE id="hiGgib" name="GranularSynth.cpp" compile="1" resource="0"
-              file="Source/GrainSynth/GranularSynth.cpp"/>
-        <FILE id="xgJRUb" name="GranularSynth.h" compile="0" resource="0" file="Source/GrainSynth/GranularSynth.h"/>
-        <FILE id="ShitpQ" name="Scheduler.cpp" compile="1" resource="0" file="Source/GrainSynth/Scheduler.cpp"/>
-        <FILE id="EaARtY" name="Scheduler.h" compile="0" resource="0" file="Source/GrainSynth/Scheduler.h"/>
-      </GROUP>
-      <GROUP id="{BEF1FE11-21B4-4966-92F0-8B35A65F01D3}" name="Utils">
-        <FILE id="J5AcuA" name="AudioFileLoader.cpp" compile="1" resource="0"
+      <GROUP id="{86010F12-3214-D661-97A9-B6F7D1F56A93}" name="Utils">
+        <FILE id="Ioj6vo" name="AudioFileComponent.cpp" compile="1" resource="0"
+              file="Source/Utils/AudioFileComponent.cpp"/>
+        <FILE id="Y13ZPb" name="AudioFileComponent.h" compile="0" resource="0"
+              file="Source/Utils/AudioFileComponent.h"/>
+        <FILE id="MyJhHq" name="AudioFileLoader.cpp" compile="1" resource="0"
               file="Source/Utils/AudioFileLoader.cpp"/>
-        <FILE id="KGxW4H" name="AudioFileLoader.h" compile="0" resource="0"
+        <FILE id="OzTHmU" name="AudioFileLoader.h" compile="0" resource="0"
               file="Source/Utils/AudioFileLoader.h"/>
-        <FILE id="EUgftR" name="CustomLookAndFeel.cpp" compile="1" resource="0"
+        <FILE id="MJphO1" name="CustomLookAndFeel.cpp" compile="1" resource="0"
               file="Source/Utils/CustomLookAndFeel.cpp"/>
-        <FILE id="dk1tA9" name="CustomLookAndFeel.h" compile="0" resource="0"
+        <FILE id="Motre4" name="CustomLookAndFeel.h" compile="0" resource="0"
               file="Source/Utils/CustomLookAndFeel.h"/>
-        <FILE id="A40Nzd" name="Parameter.cpp" compile="1" resource="0" file="Source/Utils/Parameter.cpp"/>
-        <FILE id="pL5lgg" name="Parameter.h" compile="0" resource="0" file="Source/Utils/Parameter.h"/>
-        <FILE id="i0H0sc" name="StateSaver.cpp" compile="1" resource="0" file="Source/Utils/StateSaver.cpp"/>
-        <FILE id="CAaSGJ" name="StateSaver.h" compile="0" resource="0" file="Source/Utils/StateSaver.h"/>
+        <FILE id="uE0YNs" name="Parameter.cpp" compile="1" resource="0" file="Source/Utils/Parameter.cpp"/>
+        <FILE id="SYU3wI" name="Parameter.h" compile="0" resource="0" file="Source/Utils/Parameter.h"/>
+        <FILE id="nUQXlw" name="ParamsID.h" compile="0" resource="0" file="Source/Utils/ParamsID.h"/>
+        <FILE id="Uak9wW" name="SpectrumComponent.cpp" compile="1" resource="0"
+              file="Source/Utils/SpectrumComponent.cpp"/>
+        <FILE id="WBmhcv" name="SpectrumComponent.h" compile="0" resource="0"
+              file="Source/Utils/SpectrumComponent.h"/>
+        <FILE id="cWGhlA" name="StateParameters.cpp" compile="1" resource="0"
+              file="Source/Utils/StateParameters.cpp"/>
+        <FILE id="T0wylU" name="StateParameters.h" compile="0" resource="0"
+              file="Source/Utils/StateParameters.h"/>
+        <FILE id="cISZi4" name="SVGButton.h" compile="0" resource="0" file="Source/Utils/SVGButton.h"/>
       </GROUP>
-      <FILE id="WGvUhB" name="PluginEditor.cpp" compile="1" resource="0"
+      <FILE id="a3Oip3" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
-      <FILE id="o1xQl7" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="KwTBrp" name="PluginProcessor.cpp" compile="1" resource="0"
+      <FILE id="mTJXyc" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="e2irrO" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
-      <FILE id="Wepito" name="PluginProcessor.h" compile="0" resource="0"
+      <FILE id="rqjsgY" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
     </GROUP>
   </MAINGROUP>

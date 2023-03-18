@@ -1,14 +1,18 @@
-/**
- * This class is the main processing class of the plugin and is responsible for
- * handling the audio processing and control information.
+/*
+  ==============================================================================
+
+	This file contains the basic framework code for a JUCE plugin processor.
+
+  ==============================================================================
 */
+
 
 #pragma once
 
 #include <JuceHeader.h>
-#include "GrainSynth/GranularSynth.h"
-#include "Component/AudioFileComponent.h"
-
+#include "Utils/StateParameters.h"
+#include "Utils/ParamsID.h"
+#include "Audio/GranularEngine.h"
 
 class ParticulesAudioProcessor : public juce::AudioProcessor
 #if JucePlugin_Enable_ARA
@@ -46,23 +50,24 @@ public:
 
 	void getStateInformation(juce::MemoryBlock& destData) override;
 	void setStateInformation(const void* data, int sizeInBytes) override;
-	StateSaver* getStateSaver();
-	juce::AudioBuffer<float>* getBuffer();
-	juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
 
+	StateParameters* getStateParameters();
+	ValueTreeState* getValueTreeState();
+	void initValueTreeState();
+	//void setParameters(juce::AudioProcessorValueTreeState& apvts);
+	static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
 private:
 
-	GranularSynth granSynth;
-	//const int mNumVoices{ 8 };
-	juce::AudioProcessorValueTreeState apvts;
-	StateSaver stateSaver;
+	ValueTreeState apvts;			// connecte les slider avec les paramètres
+	StateParameters stateParams;	// fait le pont entre apvts et le synth
+	GranularEngine grainEngine;		// le synth
 
-	juce::AudioBuffer<float> buffer;
+	//juce::ADSR::Parameters adsrParameters;
+	//juce::ADSR adsr;
 
-	double sampleRate;
-	int samplesPerBlock;
 
+	//juce::UndoManager undoManager;
+	// juce::AudioSampleBuffer grainBuffer;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessor)
-
 };

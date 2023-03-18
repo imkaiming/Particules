@@ -9,6 +9,8 @@
 #include "PluginProcessor.h"
 #include "Frame/MainFrame.h"
 #include "Utils/CustomLookAndFeel.h"
+#include "Utils/StateParameters.h"
+#include "Utils/AudioFileLoader.h"
 
 
 class ParticulesAudioProcessorEditor : public juce::AudioProcessorEditor,
@@ -28,8 +30,8 @@ private:
 
 	// Core functions
 	ParticulesAudioProcessor& audioProcessor;
-	//juce::AudioBuffer<float>* buffer;
-	StateSaver* stateSaver;
+	StateParameters* stateSaver;
+	ValueTreeState* apvts;
 	std::unique_ptr<AudioFileLoader> loader;
 
 	//juce::Slider gainSlider;

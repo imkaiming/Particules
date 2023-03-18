@@ -1,6 +1,16 @@
+/*
+  ==============================================================================
+
+	This file contains the basic framework code for a JUCE plugin processor.
+
+  ==============================================================================
+*/
+
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+
+//==============================================================================
 ParticulesAudioProcessor::ParticulesAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
 	: AudioProcessor(BusesProperties()
@@ -10,12 +20,21 @@ ParticulesAudioProcessor::ParticulesAudioProcessor()
 #endif
 		.withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
-	), apvts(*this, nullptr, "Parameters", createParameters()), granSynth(&stateSaver)
+	), apvts(*this, nullptr, "Parameters", createParameterLayout()),
+	grainEngine(&stateParams)
 #endif
 {
-	//for (int i = 0; i < mNumVoices; ++i) {
-	//	granSynth.addVoice(new juce::SamplerVoice());
-	//}
+	// la connection entre le ValueTreeState et le StateParameters ce fait ici
+	//apvts.addParameterListener(MIX_ID, &stateParams);
+	//apvts.addParameterListener(GAIN_ID, &stateParams);
+	//apvts.addParameterListener(DENSITY_ID, &stateParams);
+	//apvts.addParameterListener(DURATION_ID, &stateParams);
+	//apvts.addParameterListener(PITCH_ID, &stateParams);
+
+	// add the pan
+
+	stateParams.init(&apvts, getTotalNumInputChannels());
+
 }
 
 ParticulesAudioProcessor::~ParticulesAudioProcessor()
@@ -85,17 +104,24 @@ void ParticulesAudioProcessor::changeProgramName(int index, const juce::String& 
 
 void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
-	juce::Logger::outputDebugString("on configure le sample rate a : " + (juce::String)sampleRate);
+	// On synchronise le samplerate des classes avant de jouer
+	this->stateParams.setSampleRate(sampleRate);
+	//this->stateParams.getNumChannels(getTotalNumInputChannels()) // préférer ça que passer la variable
+	grainEngine.init(sampleRate, getTotalNumOutputChannels(), samplesPerBlock);
 
-	granSynth.prepareToPlay(sampleRate, samplesPerBlock);
-	this->sampleRate = sampleRate;
-	this->stateSaver.setSampleRate(sampleRate);
+	//adsr.setSampleRate(sampleRate);
+	//adsr.setParameters(adsrParameters);
+
+
+
+	//juce::Logger::outputDebugString("density : " + (const juce::String)this->stateParams.getDensity()
+	//	+ " duration : " + (const juce::String)this->stateParams.getDuration());
 
 }
 
 void ParticulesAudioProcessor::releaseResources()
 {
-
+	//grainEngine.initialization();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -126,16 +152,37 @@ bool ParticulesAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts
 
 void ParticulesAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-	juce::ScopedNoDenormals noDenormals;
-	auto totalNumInputChannels = getTotalNumInputChannels();
-	auto totalNumOutputChannels = getTotalNumOutputChannels();
-	int currentBufferLength = buffer.getNumSamples();
+	//juce::ScopedNoDenormals noDenormals;
+	const int totalNumInputChannels = getTotalNumInputChannels();
+	const int totalNumOutputChannels = getTotalNumOutputChannels();
+	const int numSamples = buffer.getNumSamples(); // buffer size
 
-	// dans le cas où on a plus de channel out que de channel in
-	for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-		buffer.clear(i, 0, currentBufferLength);
+	for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+		buffer.clear(i, 0, numSamples);
 
-	granSynth.processBlock(buffer, midiMessages, totalNumOutputChannels);
+	//adsrParameters.attack = stateParams->getAttack();
+	//adsrParameters.decay = stateParams->getDecay();
+	//adsrParameters.sustain = stateParams->getSustain();
+	//adsrParameters.release = stateParams->getRelease();
+
+	//for (int channel = 0; channel < buffer.getNumChannels(); ++channel) {
+	//	juce::ADSR::applyEnvelopeToBuffer(buffer, channel, numSamples);
+	//}
+
+	// let the engine operate under the given buffer
+	grainEngine.process(buffer, numSamples);
+
+	//for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
+	//{
+	//	float* channelDataDry = buffer.getWritePointer(channel);
+	//	float* channelDataWet = grainBuffer->getWritePointer(channel);
+
+	//	// iterate for all the samples in the given buffer
+	//	for (int samplePos = 0; samplePos < numSamples; samplePos++) {
+
+	//	}
+	//}
+
 
 }
 
@@ -147,42 +194,131 @@ bool ParticulesAudioProcessor::hasEditor() const
 juce::AudioProcessorEditor* ParticulesAudioProcessor::createEditor()
 {
 	return new ParticulesAudioProcessorEditor(*this);
+	//return new juce::GenericAudioProcessorEditor(*this);
 }
 
 void ParticulesAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
-	// You should use this method to store your parameters in the memory block.
-	// You could do that either as raw data, or use the XML or ValueTree classes
-	// as intermediaries to make it easy to save and load complex data.
+	juce::ValueTree vt = apvts.copyState();
+	std::unique_ptr<juce::XmlElement> xml(vt.createXml());
+	copyXmlToBinary(*xml, destData);
 }
 
 void ParticulesAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
-	// You should use this method to restore your parameters from this memory block,
-	// whose contents will have been created by the getStateInformation() call.
+	std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+	if (xmlState.get() != nullptr) {
+		// si on trouve un fichier xml alors on met à jours les données dans apvts
+		if (xmlState->hasTagName(apvts.state.getType()))
+			apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
+	}
+	else {
+		// on initialise tout avec les valeurs de base
+		initValueTreeState();
+	}
+
+	//juce::Logger::outputDebugString("apvts mix : " + (juce::String)apvts.getRawParameterValue(MIX_ID)->load());
+	//juce::Logger::outputDebugString("apvts gain : " + (juce::String)apvts.getRawParameterValue(GAIN_ID)->load());
+	//juce::Logger::outputDebugString("apvts dens : " + (juce::String)apvts.getRawParameterValue(DENSITY_ID)->load());
+	//juce::Logger::outputDebugString("apvts dur : " + (juce::String)apvts.getRawParameterValue(DURATION_ID)->load());
+	//juce::Logger::outputDebugString("apvts pitch : " + (juce::String)apvts.getRawParameterValue(PITCH_ID)->load());
+
+	//stateParams.print();
+}
+
+void ParticulesAudioProcessor::initValueTreeState() {
+	apvts.getRawParameterValue(MIX_ID)->store(MIX_DEFAULT);
+	apvts.getRawParameterValue(GAIN_ID)->store(GAIN_DEFAULT);
+	apvts.getRawParameterValue(DENSITY_ID)->store(DENSITY_DEFAULT);
+	apvts.getRawParameterValue(DURATION_ID)->store(DURATION_DEFAULT);
+	apvts.getRawParameterValue(SPEED_ID)->store(SPEED_DEFAULT);
+	apvts.getRawParameterValue(ENVTYPE_ID)->store(ENVTYPE_DEFAULT);
+}
+
+StateParameters* ParticulesAudioProcessor::getStateParameters() {
+	return &stateParams;
+}
+
+ValueTreeState* ParticulesAudioProcessor::getValueTreeState()
+{
+	return &apvts;
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::createParameterLayout()
+{
+	juce::AudioProcessorValueTreeState::ParameterLayout layout;
+
+	layout.add(
+		std::make_unique<juce::AudioParameterInt>(
+			MIX_ID,
+			MIX_NAME,
+			MIX_MIN, MIX_MAX, MIX_DEFAULT)
+	);
+
+	layout.add(
+		std::make_unique<juce::AudioParameterFloat>(
+			GAIN_ID,
+			GAIN_NAME,
+			juce::NormalisableRange<float>(
+				static_cast<float>(GAIN_MIN),
+				static_cast<float>(GAIN_MAX),
+				0.01f),
+			static_cast<float>(GAIN_DEFAULT))
+	);
+
+	layout.add(
+		std::make_unique<juce::AudioParameterFloat>(
+			// id, name, min, max, init val
+			DENSITY_ID,
+			DENSITY_NAME,
+			juce::NormalisableRange<float>(DENSITY_MIN, DENSITY_MAX, 0.001f),
+			DENSITY_DEFAULT)
+	);
+
+	layout.add(
+		std::make_unique<juce::AudioParameterFloat>(
+			DURATION_ID,
+			DURATION_NAME,
+			juce::NormalisableRange<float>(DURATION_MIN, DURATION_MAX, 0.001f),
+			DURATION_DEFAULT)
+	);
+
+	layout.add(
+		std::make_unique<juce::AudioParameterFloat>(
+			SPEED_ID,
+			SPEED_NAME,
+			SPEED_MIN, SPEED_MAX, SPEED_DEFAULT)
+	);
+
+	//layout.add(
+	//	std::make_unique<juce::AudioParameterFloat>(
+	//		PITCH_ID,
+	//		PITCH_NAME,
+	//		PITCH_MIN, PITCH_MAX, PITCH_DEFAULT)
+	//);
+
+	layout.add(
+		std::make_unique<juce::String>(
+			FILEPATH_ID,
+			FILEPATH_NAME,
+			FILEPATH_DEFAULT)
+	);
+
+	const juce::StringArray& choices{ ENVTYPE_1, ENVTYPE_2, ENVTYPE_3 };
+
+	layout.add(
+		std::make_unique<juce::AudioParameterInt>(
+			ENVTYPE_ID, ENVTYPE_NAME, 1, 3, ENVTYPE_DEFAULT)
+	);
+
+	// ajouter envWidth, pan, direction 
+	// randomDensity, randomDuration, randomPan, randomDirection, randomPitch
+
+	return layout;
 }
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
 	return new ParticulesAudioProcessor();
-}
-
-StateSaver* ParticulesAudioProcessor::getStateSaver()
-{
-	return &stateSaver;
-}
-
-juce::AudioBuffer<float>* ParticulesAudioProcessor::getBuffer() {
-	return &buffer;
-}
-
-juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::createParameters() {
-	std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
-
-	// add parameters here
-	params.push_back(
-		std::make_unique<juce::AudioParameterFloat>("GAIN", "Gain", 0.0f, 1.0f, 0.5f)
-	);
-
-	return { params.begin(), params.end() };
 }

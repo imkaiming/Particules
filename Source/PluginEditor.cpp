@@ -3,12 +3,13 @@
 
 ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(
 	ParticulesAudioProcessor& p) : AudioProcessorEditor(&p), audioProcessor(p),
-	stateSaver(p.getStateSaver()),
+	stateSaver(p.getStateParameters()), apvts(p.getValueTreeState()),
 	open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	mainFrame(&open_btn, &play_btn, &stop_btn)
 {
+
 	loader = std::make_unique<AudioFileLoader>(stateSaver);
 	initButtons();
 
@@ -37,7 +38,7 @@ ParticulesAudioProcessorEditor::~ParticulesAudioProcessorEditor()
 {
 	loader.reset();
 	this->setLookAndFeel(nullptr);
-	this->stateSaver = nullptr;
+	stateSaver = nullptr;
 }
 
 void ParticulesAudioProcessorEditor::paint(juce::Graphics& g)
@@ -63,7 +64,7 @@ void ParticulesAudioProcessorEditor::openFileButtonClicked()
 	stateSaver->setAudioLoaded(false);
 	loader->loadFile();
 	//buffer = loader->getBuffer();
-	if (this->stateSaver->getAudioLoaded()) {
+	if (stateSaver->getAudioLoaded()) {
 	//	stateSaver->setAudioLoaded(true);
 		juce::Logger::outputDebugString("Le buffer de l'éditeur est chargé!");
 
