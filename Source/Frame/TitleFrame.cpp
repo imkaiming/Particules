@@ -10,7 +10,7 @@
 
 #include "TitleFrame.h"
 
-TitleFrame::TitleFrame(StateParameters* stateParams) : stateParams(stateParams)
+TitleFrame::TitleFrame() 
 {
 
 	addAndMakeVisible(&titreLabel);
@@ -18,7 +18,6 @@ TitleFrame::TitleFrame(StateParameters* stateParams) : stateParams(stateParams)
 
 TitleFrame::~TitleFrame() 
 {
-	stateParams = nullptr;
 }
 
 void TitleFrame::paint(juce::Graphics& g) {

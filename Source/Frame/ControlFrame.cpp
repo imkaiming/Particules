@@ -148,6 +148,11 @@ ControlFrame::ControlFrame(juce::AudioProcessorValueTreeState* apvts, StateParam
 
 ControlFrame::~ControlFrame()
 {
+	mixSlider.removeListener(this);
+	gainSlider.removeListener(this);
+	densitySlider.removeListener(this);
+	durationSlider.removeListener(this);
+	speedSlider.removeListener(this);
 }
 
 void ControlFrame::paint(juce::Graphics& g)

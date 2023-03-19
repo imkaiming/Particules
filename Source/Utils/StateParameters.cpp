@@ -16,6 +16,9 @@ StateParameters::StateParameters()
 	numChannels = 0;
 	isAudioLoaded = false;
 	audioFileNumSamples = 0;
+	//isAudioLoaded.addListener(this);
+
+	
 }
 
 StateParameters::~StateParameters()
@@ -42,9 +45,6 @@ void StateParameters::print() {
 	juce::Logger::outputDebugString("stateparams speed : " + (juce::String)speed);
 }
 
-//void StateParameters::resetSmoothedGain(double sampleRate, float time) {
-//	smoothedGain.reset(sampleRate, time);
-//}
 
 // Le callback qui envoit newValue ne provient pas du apvts mais du slider associé au Listener
 /*void StateParameters::parameterChanged(const juce::String& parameterID, float newValue)
@@ -123,12 +123,22 @@ void StateParameters::setSampleRate(double sampleRate) {
 
 void StateParameters::setAudioLoaded(bool newValue)
 {
-	isAudioLoaded = newValue;
+	if (newValue == false)
+	{
+		audioFileBuffer = nullptr;
+	}
+
+	isAudioLoaded.setValue(newValue);
 }
 
 void StateParameters::setAudioBuffer(juce::AudioBuffer<float>* newValue)
 {
 	audioFileBuffer = newValue;
+}
+
+void StateParameters::setIsPlaying(bool newValue)
+{
+	isPlaying = newValue;
 }
 
 // getters
@@ -152,7 +162,6 @@ float StateParameters::getSpeed()
 	return speed;
 }
 
-
 double StateParameters::getSampleRate() {
 	return sampleRate;
 }
@@ -175,9 +184,15 @@ int StateParameters::getEnvelopeType()
 	return envelopeType;
 }
 
-bool StateParameters::getAudioLoaded()
+juce::Value* StateParameters::getAudioLoaded()
 {
-	return isAudioLoaded;
+	//return isAudioLoaded.getValue();
+	return &isAudioLoaded;
+}
+
+bool StateParameters::getIsPlaying()
+{
+	return isPlaying;
 }
 
 juce::AudioBuffer<float>* StateParameters::getAudioBuffer()

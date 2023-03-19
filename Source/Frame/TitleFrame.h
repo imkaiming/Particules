@@ -14,13 +14,12 @@
 
 class TitleFrame : public juce::Component {
 public:
-	TitleFrame(StateParameters* stateParams);
+	TitleFrame();
 	~TitleFrame();
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
 private:
 	juce::Label titreLabel;
-	StateParameters* stateParams;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TitleFrame)
 };

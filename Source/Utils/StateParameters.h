@@ -18,7 +18,9 @@
 //	forward, backward
 //};
 
-class StateParameters // : public juce::AudioProcessorValueTreeState::Listener
+
+
+class StateParameters
 {
 public:
 	StateParameters();
@@ -42,6 +44,7 @@ public:
 	void setEnvelopeType(int);
 	void setAudioLoaded(bool);
 	void setAudioBuffer(juce::AudioBuffer<float>*);
+	void setIsPlaying(bool);
 
 	// getters
 	float getGain();
@@ -53,9 +56,12 @@ public:
 	float getMix();
 	int getNumChannels();
 	int getEnvelopeType();
-	bool getAudioLoaded();
+	juce::Value* getAudioLoaded();
+	bool getIsPlaying();
 	juce::AudioBuffer<float>* StateParameters::getAudioBuffer();
 
+	//void unloadBuffer();
+	//void valueChanged(juce::Value& value) override;
 private:
 
 	// Listened Parameters
@@ -76,8 +82,9 @@ private:
 	int interOnset;
 
 
-	// all the parameters relative to the Audio File
-	bool isAudioLoaded;
+	// all the parameters relative to the Audio File and its managment
+	juce::Value isAudioLoaded; // listenable boolean 
+	bool isPlaying;
 	int audioFileNumSamples;
 	juce::AudioBuffer<float>* audioFileBuffer;
 	float filePosition; // starting point of the granulation in the file

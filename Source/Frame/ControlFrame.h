@@ -25,13 +25,11 @@ public:
 
 private:
 
-	//StateParameters* stateParams;
 	ValueTreeState* apvts;
 	StateParameters* stateParams;
 
 	juce::Slider mixSlider;
 	juce::Slider gainSlider;
-
 	juce::Slider densitySlider;
 	juce::Slider durationSlider;
 	juce::Slider speedSlider;

@@ -62,7 +62,7 @@ void Grain::init()
 }
 
 void Grain::updateBuffer(AudioBlock* audioBlock) {
-	juce::Logger::outputDebugString("on copie le nouveau block entièrement dans le buffer du grain");
+	//juce::Logger::outputDebugString("on copie le nouveau block entièrement dans le buffer du grain");
 	buffer.setSize(audioBlock->getNumChannels(), audioBlock->getNumSamples());
 	audioBlock->copyTo(buffer);
 }

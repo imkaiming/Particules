@@ -122,10 +122,6 @@
         <FILE id="I6aXF3" name="TitleFrame.h" compile="0" resource="0" file="Source/Frame/TitleFrame.h"/>
       </GROUP>
       <GROUP id="{86010F12-3214-D661-97A9-B6F7D1F56A93}" name="Utils">
-        <FILE id="Ioj6vo" name="AudioFileComponent.cpp" compile="1" resource="0"
-              file="Source/Utils/AudioFileComponent.cpp"/>
-        <FILE id="Y13ZPb" name="AudioFileComponent.h" compile="0" resource="0"
-              file="Source/Utils/AudioFileComponent.h"/>
         <FILE id="MyJhHq" name="AudioFileLoader.cpp" compile="1" resource="0"
               file="Source/Utils/AudioFileLoader.cpp"/>
         <FILE id="OzTHmU" name="AudioFileLoader.h" compile="0" resource="0"

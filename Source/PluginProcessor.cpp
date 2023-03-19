@@ -170,7 +170,10 @@ void ParticulesAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
 	//}
 
 	// let the engine operate under the given buffer
-	grainEngine.process(buffer, numSamples);
+	bool loaded = stateParams.getAudioLoaded()->getValue();
+	if (loaded == true && stateParams.getIsPlaying() == true) {
+		grainEngine.process(buffer, numSamples);
+	}
 
 	//for (int channel = 0; channel < buffer.getNumChannels(); ++channel)
 	//{

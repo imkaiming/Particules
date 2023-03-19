@@ -12,14 +12,15 @@
 
 #include <JuceHeader.h>
 #include "../Utils/SpectrumComponent.h"
-#include "../Utils/AudioFileComponent.h"
+//#include "../Utils/AudioFileComponent.h"
+#include "../Utils/AudioFileLoader.h"
 #include "../Utils/StateParameters.h"
 
 
 
 
 class AudioFileFrame :
-	public juce::Component, public juce::FileDragAndDropTarget
+	public juce::Component, public juce::FileDragAndDropTarget, public juce::Value::Listener // public juce::DrawableButton::Listener,
 {
 public:
 	AudioFileFrame(ValueTreeState* apvts, StateParameters* stateParams);
@@ -27,6 +28,7 @@ public:
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
+	void valueChanged(juce::Value& value) override;
 
 private:
 
@@ -34,6 +36,7 @@ private:
 	SpectrumComponent spectrumComponent;
 	std::unique_ptr<AudioFileLoader> loader;
 
+	juce::Value* isAudioLoaded;
 	ValueTreeState* apvts;
 	StateParameters* stateParams;
 
@@ -42,11 +45,18 @@ private:
 	juce::DrawableButton stop_btn;
 	juce::DrawableButton play_btn;
 
+	// Button managment
+	void setPlayButtonImagePlay();
+	void setPlayButtonImagePause();
+	void setOpenButtonImageOpen();
+	void setStopButtonImageStop();
+
 	// Buttons methods
-	void initDrawableButtons();
+	//void initDrawableButtons();
 	void openFileButtonClicked();
 	void stopFileButtonClicked();
 	void playFileButtonClicked();
+
 
 	// marche pas
 	bool isInterestedInFileDrag(const juce::StringArray&);

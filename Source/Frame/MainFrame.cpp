@@ -11,7 +11,7 @@
 #include "MainFrame.h"
 
 MainFrame::MainFrame(ValueTreeState* apvts, StateParameters* stateParams) : 
-	titleFrame(stateParams), synthFrame(apvts, stateParams), 
+	titleFrame(), synthFrame(apvts, stateParams), 
 	grainsFrame(apvts, stateParams), audioFileFrame(apvts, stateParams), 
 	statusBarFrame(stateParams)
 {
