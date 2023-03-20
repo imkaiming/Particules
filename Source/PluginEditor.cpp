@@ -32,7 +32,7 @@ ParticulesAudioProcessorEditor::~ParticulesAudioProcessorEditor()
 
 void ParticulesAudioProcessorEditor::paint(juce::Graphics& g)
 {
-	g.fillAll(juce::Colours::black);
+	g.fillAll(MyColours::black);
 }
 
 void ParticulesAudioProcessorEditor::resized()

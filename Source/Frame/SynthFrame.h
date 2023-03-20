@@ -10,9 +10,10 @@
 
 #include <JuceHeader.h>
 #include "../Utils/StateParameters.h"
+#include "../Utils/MyColours.h"
 #pragma once
 
-class SynthFrame : public juce::Component
+class SynthFrame : public juce::Component, public juce::Slider::Listener
 {
 public:
 	SynthFrame(ValueTreeState* apvts, StateParameters* stateParams);
@@ -21,10 +22,22 @@ public:
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
+	void sliderValueChanged(juce::Slider* slider) override;
+
 private:
 
 	ValueTreeState* apvts;
 	StateParameters* stateParams;
+
+	juce::Slider mixSlider;
+	juce::Slider gainSlider;
+
+	juce::Label mixLabel;
+	juce::Label gainLabel;
+
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixSliderAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainSliderAttachment;
+
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SynthFrame)
 
 };

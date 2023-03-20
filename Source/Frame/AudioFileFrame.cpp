@@ -207,10 +207,12 @@ void AudioFileFrame::filesDropped(const juce::StringArray& files, int x, int y)
 }
 
 void AudioFileFrame::paint(juce::Graphics& g) {
-	g.fillAll(juce::Colours::coral);
+	g.fillAll(MyColours::lavender);
+
 }
 
 void AudioFileFrame::resized() {
+
 	juce::Rectangle<int> localArea = getLocalBounds();
 	float w = getWidth() / 30.f;
 	float h = getHeight() / 30.f;

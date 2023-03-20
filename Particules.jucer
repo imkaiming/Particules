@@ -59,6 +59,9 @@
           <FILE id="s8LYld" name="CascadiaMonoPLItalic-SemiLightItalic.otf" compile="0"
                 resource="1" file="Ressources/Font/Cascadia Mono/CascadiaMonoPLItalic-SemiLightItalic.otf"/>
         </GROUP>
+        <FILE id="PnhhuC" name="FuturaMedium.cpp" compile="1" resource="0"
+              file="Ressources/Font/FuturaMedium.cpp"/>
+        <FILE id="X5fTuB" name="FuturaMedium.h" compile="0" resource="0" file="Ressources/Font/FuturaMedium.h"/>
       </GROUP>
       <GROUP id="{39FDA41A-5DA7-0ACD-D466-AA5044951568}" name="Icon">
         <FILE id="YziOCI" name="AddFolder.svg" compile="0" resource="1" file="Ressources/Icon/AddFolder.svg"/>
@@ -130,6 +133,7 @@
               file="Source/Utils/CustomLookAndFeel.cpp"/>
         <FILE id="Motre4" name="CustomLookAndFeel.h" compile="0" resource="0"
               file="Source/Utils/CustomLookAndFeel.h"/>
+        <FILE id="wvmaoy" name="MyColours.h" compile="0" resource="0" file="Source/Utils/MyColours.h"/>
         <FILE id="uE0YNs" name="Parameter.cpp" compile="1" resource="0" file="Source/Utils/Parameter.cpp"/>
         <FILE id="SYU3wI" name="Parameter.h" compile="0" resource="0" file="Source/Utils/Parameter.h"/>
         <FILE id="nUQXlw" name="ParamsID.h" compile="0" resource="0" file="Source/Utils/ParamsID.h"/>

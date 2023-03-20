@@ -26,7 +26,7 @@ void TitleFrame::paint(juce::Graphics& g) {
 	titreLabel.setColour(0, juce::Colours::white);
 	titreLabel.setFont(juce::Font(16.0f)); // utile ?
 
-	g.fillAll(juce::Colours::black);
+	g.fillAll(MyColours::smokyBlack);
 
 	//const juce::Font f;
 	//g.setFont((juce::Font)customLookAndFeel.getTypefaceForFont(f));

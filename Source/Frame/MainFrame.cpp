@@ -26,7 +26,9 @@ MainFrame::~MainFrame()
 {
 }
 
-void MainFrame::paint(juce::Graphics& g) {
+void MainFrame::paint(juce::Graphics& g) 
+{
+	g.fillAll(MyColours::black);
 	//juce::Rectangle<float> mainFrame(5.f, 0.f, getWidth() - 10.f, getHeight());
 	//g.setColour(juce::Colours::grey);
 	//g.fillRect(mainFrame);
@@ -69,9 +71,9 @@ void MainFrame::resized()
 	flexbox.alignItems = juce::FlexBox::AlignItems::stretch;
 
 	flexbox.items.add(juce::FlexItem(titleFrame).withHeight(heightComp));
-	flexbox.items.add(juce::FlexItem(synthFrame).withHeight(heightComp * 9));
-	flexbox.items.add(juce::FlexItem(grainsFrame).withHeight(heightComp * 9));
-	flexbox.items.add(juce::FlexItem(audioFileFrame).withHeight(heightComp * 9));
+	flexbox.items.add(juce::FlexItem(synthFrame).withHeight(heightComp * 9).withMargin(1));
+	flexbox.items.add(juce::FlexItem(grainsFrame).withHeight(heightComp * 9).withMargin(1));
+	flexbox.items.add(juce::FlexItem(audioFileFrame).withHeight(heightComp * 9).withMargin(1));
 	flexbox.items.add(juce::FlexItem(statusBarFrame).withHeight(heightComp * 2));
 
 	flexbox.performLayout(getLocalBounds().toFloat());

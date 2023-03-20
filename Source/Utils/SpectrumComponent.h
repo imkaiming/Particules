@@ -9,6 +9,8 @@
 */
 
 #include <JuceHeader.h>
+#include "ParamsID.h"
+#include "../Utils/MyColours.h"
 
 #pragma once
 

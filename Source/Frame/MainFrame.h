@@ -17,6 +17,7 @@
 #include "TitleFrame.h"
 #include "StatusBarFrame.h"
 #include "../Utils/StateParameters.h"
+#include "../Utils/MyColours.h"
 
 class MainFrame : public juce::Component {
 public:

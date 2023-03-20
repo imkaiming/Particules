@@ -20,7 +20,7 @@ StatusBarFrame::~StatusBarFrame()
 	stateParams = nullptr;
 }
 void StatusBarFrame::paint(juce::Graphics& g) {
-	g.fillAll(juce::Colours::black);
+	g.fillAll(MyColours::black);
 }
 void StatusBarFrame::resized() {
 

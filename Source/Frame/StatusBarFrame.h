@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "../Utils/StateParameters.h"
+#include "../Utils/MyColours.h"
 #pragma once
 
 class StatusBarFrame : public juce::Component {

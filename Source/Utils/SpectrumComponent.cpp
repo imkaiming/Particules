@@ -24,7 +24,7 @@ void SpectrumComponent::paint(juce::Graphics& g) {
 	//g.setColour(juce::Colours::black);
 	//g.fillRect(spectrumComponent);
 	//g.drawRect(spectrumComponent);
-	g.fillAll(juce::Colours::green);
+	g.fillAll(MyColours::black);
 
 }
 
