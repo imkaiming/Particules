@@ -14,13 +14,11 @@ AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* statePara
 open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-isAudioLoaded(stateParams->getAudioLoaded())// ,	audioFileComponent()
+isAudioLoaded(stateParams->getAudioLoaded()), thumbnailCache(5),
+loader(stateParams, &thumbnailComponent), thumbnailComponent(5, *loader.getFormatManager(), thumbnailCache)
 {
-	//open_btn.addListener(this);
-	//play_btn.addListener(this);
-	//stop_btn.addListener(this);
 
-	loader = std::make_unique<AudioFileLoader>(stateParams);
+	//loader = std::make_unique<AudioFileLoader>(stateParams);
 
 	setOpenButtonImageOpen();
 	setStopButtonImageStop();
@@ -41,7 +39,8 @@ isAudioLoaded(stateParams->getAudioLoaded())// ,	audioFileComponent()
 	addAndMakeVisible(&open_btn);
 	addAndMakeVisible(&play_btn);
 	addAndMakeVisible(&stop_btn);
-	addAndMakeVisible(&spectrumComponent);
+
+	addAndMakeVisible(&thumbnailComponent);
 
 	//play_btn.setToggleState(false, juce::NotificationType::dontSendNotification);
 	play_btn.setEnabled(false);
@@ -57,7 +56,7 @@ AudioFileFrame::~AudioFileFrame()
 	//stop_btn.removeListener(this);
 	isAudioLoaded->removeListener(this);
 
-	loader.reset();
+	//loader.reset();
 	apvts = nullptr;
 	stateParams = nullptr;
 }
@@ -65,7 +64,8 @@ AudioFileFrame::~AudioFileFrame()
 void AudioFileFrame::openFileButtonClicked()
 {
 	//stateParams->setAudioLoaded(false);
-	loader->loadFile();
+	loader.loadFile();
+	//loader->loadFile();
 }
 
 void AudioFileFrame::stopFileButtonClicked()
@@ -252,7 +252,7 @@ void AudioFileFrame::resized() {
 	flexboxLeft.items.add(juce::FlexItem(play_btn).withHeight(buttonsArea.getWidth() * 1.33));
 	//flexboxLeft.items.add(juce::FlexItem(stop_btn).withHeight(buttonsArea.getWidth()));
 
-	flexboxRight.items.add(juce::FlexItem(spectrumComponent).withHeight(SpectrumArea.getHeight()));
+	flexboxRight.items.add(juce::FlexItem(thumbnailComponent).withHeight(SpectrumArea.getHeight()));
 
 	flexboxMain.items.add(juce::FlexItem(flexboxLeft).withFlex(0.05).withMargin(h));
 	flexboxMain.items.add(juce::FlexItem(flexboxRight).withFlex(0.95).withMargin(h));

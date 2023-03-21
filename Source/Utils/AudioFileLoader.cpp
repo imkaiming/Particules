@@ -12,28 +12,20 @@
 
 //AudioFileLoader* AudioFileLoader::instance = 0;
 
-AudioFileLoader::AudioFileLoader(StateParameters* stateParams) : stateParams(stateParams)
+AudioFileLoader::AudioFileLoader(StateParameters* stateParams, ThumbnailComponent* thumbnailComponent) :
+	stateParams(stateParams), thumbnailComponent(thumbnailComponent)
 {
 	readerSource = new std::unique_ptr<juce::AudioFormatReaderSource>();
 	// permet au manager de format de gérer les formats WAV, AIFF, MP3, etc.
 	formatManager.registerBasicFormats();
-	//reader = nullptr;
+
 }
 
 AudioFileLoader::~AudioFileLoader()
 {
-	//this->unloadFile();
 	stateParams = nullptr;
-	//buffer = nullptr;
 	readerSource->reset(nullptr);
 }
-
-//void AudioFileLoader::unloadFile()
-//{
-//	buffer->clear();
-//	buffer = nullptr;
-//	stateParams->setAudioLoaded(false);
-//}
 
 // https://forum.juce.com/t/load-binary-wav-files-into-audiosamplebuffer-array/38790
 // https://forum.juce.com/t/resampling-an-audiosamplebuffer/14287/5 
@@ -51,21 +43,20 @@ void AudioFileLoader::loadAudio(juce::File& file)
 		new juce::AudioFormatReaderSource(reader, true)
 	);
 
-	//this->unloadFile();
 	juce::AudioBuffer<float>* buffer = new juce::AudioBuffer<float>();
 
 	readerSource->reset(newSource.release());
+
+
+	thumbnailComponent->setFile(file);
+
+
+	// on procède au resampling de la source par rapport à la fréquence d'échantillonage du projet
 
 	const int numSamples = reader->lengthInSamples;
 	const int numChannels = reader->numChannels;
 	double ratio = reader->sampleRate / stateParams->getSampleRate();
 
-	//juce::Logger::outputDebugString("numSamples : " + (juce::String)numSamples);
-	//juce::Logger::outputDebugString("numChannels : " + (juce::String)numChannels);
-	//juce::Logger::outputDebugString("reader->sampleRate : " + (juce::String)reader->sampleRate);
-	//juce::Logger::outputDebugString("stateSaver->getSampleRate: " + (juce::String)stateParams->getSampleRate());
-
-	//buffer.setSize(numChannels, numSamples);
 	juce::AudioBuffer<float> tempBuffer(numChannels, numSamples);
 	juce::AudioBuffer<float> newBuffer(numChannels, (int)((double)numSamples / ratio));
 
@@ -84,17 +75,12 @@ void AudioFileLoader::loadAudio(juce::File& file)
 			outputs[channel], newBuffer.getNumSamples());
 	}
 
-	juce::Logger::outputDebugString("buffer.getNumSamples() : " + (juce::String)buffer->getNumSamples());
 	*buffer = juce::AudioBuffer<float>(newBuffer);
-	juce::Logger::outputDebugString("buffer.getNumSamples() : " + (juce::String)buffer->getNumSamples());
 
 	stateParams->setAudioBuffer(buffer);
 	stateParams->setAudioLoaded(true);
 
-	//reader = nullptr;
 
-	// set enable true le player des grains qui enclenche processBlock
-	// le bouton est dans le audiofileframe + processblock
 }
 
 // https://forum.juce.com/t/solved-juce-filechooser-has-no-member-browseforfiletoopen/47793/3
@@ -136,7 +122,11 @@ void AudioFileLoader::loadFile(const juce::String& path) {
 	}
 }
 
+juce::AudioFormatManager* AudioFileLoader::getFormatManager()
+{
+	return &formatManager;
+}
 
-//juce::AudioBuffer<float>* AudioFileLoader::getAudioBuffer() const {
-//	return this->buffer;
-//}
+
+
+

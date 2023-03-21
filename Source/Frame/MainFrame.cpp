@@ -70,11 +70,11 @@ void MainFrame::resized()
 	flexbox.alignContent = juce::FlexBox::AlignContent::stretch;
 	flexbox.alignItems = juce::FlexBox::AlignItems::stretch;
 
-	flexbox.items.add(juce::FlexItem(titleFrame).withHeight(heightComp));
+	flexbox.items.add(juce::FlexItem(titleFrame).withHeight(heightComp * 2));
 	flexbox.items.add(juce::FlexItem(synthFrame).withHeight(heightComp * 9).withMargin(1));
 	flexbox.items.add(juce::FlexItem(grainsFrame).withHeight(heightComp * 9).withMargin(1));
 	flexbox.items.add(juce::FlexItem(audioFileFrame).withHeight(heightComp * 9).withMargin(1));
-	flexbox.items.add(juce::FlexItem(statusBarFrame).withHeight(heightComp * 2));
+	flexbox.items.add(juce::FlexItem(statusBarFrame).withHeight(heightComp * 1));
 
 	flexbox.performLayout(getLocalBounds().toFloat());
 }

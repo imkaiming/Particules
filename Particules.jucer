@@ -131,17 +131,15 @@
         <FILE id="Motre4" name="CustomLookAndFeel.h" compile="0" resource="0"
               file="Source/Utils/CustomLookAndFeel.h"/>
         <FILE id="wvmaoy" name="MyColours.h" compile="0" resource="0" file="Source/Utils/MyColours.h"/>
-        <FILE id="uE0YNs" name="Parameter.cpp" compile="1" resource="0" file="Source/Utils/Parameter.cpp"/>
-        <FILE id="SYU3wI" name="Parameter.h" compile="0" resource="0" file="Source/Utils/Parameter.h"/>
         <FILE id="nUQXlw" name="ParamsID.h" compile="0" resource="0" file="Source/Utils/ParamsID.h"/>
-        <FILE id="Uak9wW" name="SpectrumComponent.cpp" compile="1" resource="0"
-              file="Source/Utils/SpectrumComponent.cpp"/>
-        <FILE id="WBmhcv" name="SpectrumComponent.h" compile="0" resource="0"
-              file="Source/Utils/SpectrumComponent.h"/>
         <FILE id="cWGhlA" name="StateParameters.cpp" compile="1" resource="0"
               file="Source/Utils/StateParameters.cpp"/>
         <FILE id="T0wylU" name="StateParameters.h" compile="0" resource="0"
               file="Source/Utils/StateParameters.h"/>
+        <FILE id="i3rYfb" name="ThumbnailComponent.cpp" compile="1" resource="0"
+              file="Source/Utils/ThumbnailComponent.cpp"/>
+        <FILE id="i2cnWk" name="ThumbnailComponent.h" compile="0" resource="0"
+              file="Source/Utils/ThumbnailComponent.h"/>
       </GROUP>
       <FILE id="a3Oip3" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>

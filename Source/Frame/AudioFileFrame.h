@@ -11,7 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../Utils/SpectrumComponent.h"
+#include "../Utils/ThumbnailComponent.h"
 #include "../Utils/AudioFileLoader.h"
 #include "../Utils/StateParameters.h"
 #include "../Utils/MyColours.h"
@@ -31,9 +31,10 @@ public:
 
 private:
 
-	//AudioFileComponent audioFileComponent;
-	SpectrumComponent spectrumComponent;
-	std::unique_ptr<AudioFileLoader> loader;
+	//std::unique_ptr<AudioFileLoader> loader; // load the audio file and pass it to the stateparameter
+	AudioFileLoader loader;
+	juce::AudioThumbnailCache thumbnailCache;
+	ThumbnailComponent thumbnailComponent; // after the file is loaded draw the waveform
 
 	juce::Value* isAudioLoaded;
 	ValueTreeState* apvts;

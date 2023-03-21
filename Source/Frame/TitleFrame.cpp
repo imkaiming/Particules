@@ -34,6 +34,11 @@ void TitleFrame::paint(juce::Graphics& g) {
 	//g.drawText("ParticulesS", getLocalBounds(), juce::Justification::centred, true);
 }
 
-void TitleFrame::resized() {
-	titreLabel.setBounds(getLocalBounds());
+void TitleFrame::resized() 
+{
+	float h = getHeight() / 30.f;
+	juce::FlexBox flexbox;
+	flexbox.items.add(juce::FlexItem(titreLabel).withFlex(1).withMargin(h));
+	flexbox.performLayout(getLocalBounds().toFloat());
+	//titreLabel.setBounds(getLocalBounds());
 }
