@@ -18,4 +18,6 @@ namespace MyColours
 	const juce::Colour cream{ 0xfff6f9e4 };
 	const juce::Colour red{ 0xffe5383b };
 	const juce::Colour pink{ 0xffff8fa3 };
+	const juce::Colour jungleGreen{ 0xff2AAA8A };
+	const juce::Colour brightBlue{ 0xff0096FF };
 }

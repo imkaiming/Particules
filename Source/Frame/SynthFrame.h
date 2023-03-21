@@ -38,6 +38,16 @@ private:
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixSliderAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainSliderAttachment;
 
+
+	juce::Slider filePosSlider;
+	juce::Slider windowSelectionSlider;
+
+	juce::Label filePosLabel;
+	juce::Label windowSelectionLabel;
+
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filePosSliderAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> windowSelectionSliderAttachment;
+
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SynthFrame)
 
 };

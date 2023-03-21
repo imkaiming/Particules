@@ -22,8 +22,10 @@ public:
 	CustomLookAndFeel();
 	~CustomLookAndFeel();
 
+	//void drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height,
+	//	float sliderPos, float minSliderPos, float maxSliderPos,
+	//	const juce::Slider::SliderStyle style, juce::Slider& slider) override;
 
-	// virtual method to redraw a slider for custom needs
 	void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
 		float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider) override;
 

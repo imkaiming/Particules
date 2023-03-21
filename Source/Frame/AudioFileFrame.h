@@ -12,7 +12,6 @@
 
 #include <JuceHeader.h>
 #include "../Utils/SpectrumComponent.h"
-//#include "../Utils/AudioFileComponent.h"
 #include "../Utils/AudioFileLoader.h"
 #include "../Utils/StateParameters.h"
 #include "../Utils/MyColours.h"

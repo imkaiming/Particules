@@ -308,12 +308,29 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 	//		FILEPATH_DEFAULT)
 	//);
 
+	layout.add(
+		std::make_unique<juce::AudioParameterFloat>(
+			POSITION_ID,
+			POSITION_NAME,
+			juce::NormalisableRange<float>(POSITION_MIN, POSITION_MAX, 0.001f),
+			POSITION_DEFAULT)
+	);
+
+	layout.add(
+		std::make_unique<juce::AudioParameterFloat>(
+			POSWIDTH_ID,
+			POSWIDTH_NAME,
+			juce::NormalisableRange<float>(POSWIDTH_MIN, POSWIDTH_MAX, 0.001f),
+			POSWIDTH_DEFAULT)
+	);
+
 	const juce::StringArray& choices{ ENVTYPE_1, ENVTYPE_2, ENVTYPE_3 };
 
 	layout.add(
 		std::make_unique<juce::AudioParameterInt>(
 			ENVTYPE_ID, ENVTYPE_NAME, 1, 3, ENVTYPE_DEFAULT)
 	);
+
 
 	// ajouter envWidth, pan, direction 
 	// randomDensity, randomDuration, randomPan, randomDirection, randomPitch

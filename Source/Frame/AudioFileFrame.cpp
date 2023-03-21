@@ -207,7 +207,7 @@ void AudioFileFrame::filesDropped(const juce::StringArray& files, int x, int y)
 }
 
 void AudioFileFrame::paint(juce::Graphics& g) {
-	g.fillAll(MyColours::lavender);
+	g.fillAll(MyColours::brightBlue);
 
 }
 

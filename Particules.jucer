@@ -108,9 +108,6 @@
               file="Source/Frame/AudioFileFrame.cpp"/>
         <FILE id="LktTIJ" name="AudioFileFrame.h" compile="0" resource="0"
               file="Source/Frame/AudioFileFrame.h"/>
-        <FILE id="pNaodN" name="ControlFrame.cpp" compile="1" resource="0"
-              file="Source/Frame/ControlFrame.cpp"/>
-        <FILE id="mb45Dp" name="ControlFrame.h" compile="0" resource="0" file="Source/Frame/ControlFrame.h"/>
         <FILE id="grzxRL" name="GrainsFrame.cpp" compile="1" resource="0" file="Source/Frame/GrainsFrame.cpp"/>
         <FILE id="zsghky" name="GrainsFrame.h" compile="0" resource="0" file="Source/Frame/GrainsFrame.h"/>
         <FILE id="tR0Tro" name="MainFrame.cpp" compile="1" resource="0" file="Source/Frame/MainFrame.cpp"/>
@@ -145,7 +142,6 @@
               file="Source/Utils/StateParameters.cpp"/>
         <FILE id="T0wylU" name="StateParameters.h" compile="0" resource="0"
               file="Source/Utils/StateParameters.h"/>
-        <FILE id="cISZi4" name="SVGButton.h" compile="0" resource="0" file="Source/Utils/SVGButton.h"/>
       </GROUP>
       <FILE id="a3Oip3" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>

@@ -14,8 +14,8 @@ ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(
 	const float ratio = 2.f;
 	getConstrainer()->setFixedAspectRatio(ratio);
 
-	width = 900;
-	heigth = 450;
+	width = 700; // 600
+	heigth = 350; // 300
 	setSize(width, heigth);
 
 	addAndMakeVisible(&mainFrame);

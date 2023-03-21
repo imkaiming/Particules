@@ -10,7 +10,7 @@
 
 #include "SynthFrame.h"
 
-SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) : 
+SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	apvts(apvts), stateParams(stateParams)
 {
 	mixSliderAttachment =
@@ -39,7 +39,7 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	gainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
 	gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
 		true, 100, 25);
-	mixSlider.setTextBoxIsEditable(true);
+	gainSlider.setTextBoxIsEditable(true);
 	gainSlider.setRange(GAIN_MIN, GAIN_MAX);
 	gainSlider.setSkewFactorFromMidPoint(-12.0);
 	gainSlider.setTextValueSuffix(" dB");
@@ -55,6 +55,45 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	addAndMakeVisible(&gainSlider);
 	addAndMakeVisible(&mixLabel);
 	addAndMakeVisible(&gainLabel);
+
+
+
+	filePosSliderAttachment =
+		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+			*apvts, POSITION_ID, filePosSlider);
+
+	windowSelectionSliderAttachment =
+		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+			*apvts, POSWIDTH_ID, windowSelectionSlider);
+
+	filePosSlider.setName("filePosSlider");
+	filePosSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+	filePosSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
+	filePosSlider.setTextBoxIsEditable(true);
+	filePosSlider.setRange(POSITION_MIN, POSITION_MAX);
+	filePosSlider.addListener(this);
+
+
+	filePosLabel.setText((const juce::String)POSITION_NAME, juce::dontSendNotification);
+	filePosLabel.attachToComponent(&filePosSlider, false);
+	filePosLabel.setJustificationType(juce::Justification::centred);
+
+	windowSelectionSlider.setName("windowSelection");
+	windowSelectionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+	windowSelectionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
+	windowSelectionSlider.setTextBoxIsEditable(true);
+	windowSelectionSlider.setRange(POSWIDTH_MIN, POSWIDTH_MAX);
+	windowSelectionSlider.addListener(this);
+
+
+	windowSelectionLabel.setText((const juce::String)POSWIDTH_NAME, juce::dontSendNotification);
+	windowSelectionLabel.attachToComponent(&windowSelectionSlider, false);
+	windowSelectionLabel.setJustificationType(juce::Justification::centred);
+
+	addAndMakeVisible(&filePosSlider);
+	addAndMakeVisible(&windowSelectionSlider);
+	addAndMakeVisible(&filePosLabel);
+	addAndMakeVisible(&windowSelectionLabel);
 }
 
 SynthFrame::~SynthFrame()
@@ -73,7 +112,7 @@ void SynthFrame::paint(juce::Graphics& g) {
 	g.fillAll(MyColours::black);
 }
 
-void SynthFrame::resized() 
+void SynthFrame::resized()
 {
 
 	float h = getHeight() / 30.f;
@@ -101,6 +140,31 @@ void SynthFrame::resized()
 	flexBox2.items.add(juce::FlexItem(gainLabel).withFlex(0.2));
 
 
+	juce::FlexBox flexBox3;
+	flexBox3.flexDirection = juce::FlexBox::Direction::column;
+	flexBox3.flexWrap = juce::FlexBox::Wrap::noWrap;
+	flexBox3.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+	flexBox3.alignContent = juce::FlexBox::AlignContent::center;
+
+	flexBox3.items.add(juce::FlexItem(filePosLabel).withFlex(0.2).withMargin(h));
+	flexBox3.items.add(juce::FlexItem(filePosSlider).withFlex(0.5));
+
+	juce::FlexBox flexBox4;
+	flexBox4.flexDirection = juce::FlexBox::Direction::column;
+	flexBox4.flexWrap = juce::FlexBox::Wrap::noWrap;
+	flexBox4.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+	flexBox4.alignContent = juce::FlexBox::AlignContent::center;
+
+	flexBox4.items.add(juce::FlexItem(windowSelectionLabel).withFlex(0.2).withMargin(h));
+	flexBox4.items.add(juce::FlexItem(windowSelectionSlider).withFlex(0.5));
+
+	juce::FlexBox flexBox5;
+	flexBox5.flexDirection = juce::FlexBox::Direction::column;
+
+	flexBox5.items.add(juce::FlexItem(flexBox3).withFlex(0.5).withMargin(h));
+	flexBox5.items.add(juce::FlexItem(flexBox4).withFlex(0.5).withMargin(h));
+
+	mainFlexBox.items.add(juce::FlexItem(flexBox5).withFlex(0.66));
 	mainFlexBox.items.add(juce::FlexItem(flexBox1).withFlex(0.25));
 	mainFlexBox.items.add(juce::FlexItem(flexBox2).withFlex(0.25)); // .withMargin(h));
 
@@ -115,11 +179,16 @@ void SynthFrame::sliderValueChanged(juce::Slider* slider)
 		//this->apvts->mix = mixSlider.getValue();
 	}
 	if (slider == &gainSlider) {
-		apvts->getRawParameterValue(GAIN_ID)->store(
-			static_cast<float>((gainSlider.getValue())));
-		stateParams->setGain(
-			static_cast<float>(gainSlider.getValue()));
-
+		apvts->getRawParameterValue(GAIN_ID)->store(static_cast<float>((gainSlider.getValue())));
+		stateParams->setGain(static_cast<float>(gainSlider.getValue()));
+	}
+	if (slider == &filePosSlider) {
+		apvts->getRawParameterValue(POSITION_ID)->store(static_cast<float>(filePosSlider.getValue()));
+		stateParams->setFilePosition(static_cast<float>(filePosSlider.getValue()));
+	}
+	if (slider == &windowSelectionSlider) {
+		apvts->getRawParameterValue(POSWIDTH_ID)->store(static_cast<float>((windowSelectionSlider.getValue())));
+		stateParams->setWindowSelection(static_cast<float>(windowSelectionSlider.getValue()));
 	}
 
 }

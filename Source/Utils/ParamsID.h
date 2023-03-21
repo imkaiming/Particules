@@ -49,6 +49,19 @@
 #define FILEPATH_ID "FILEPATH"
 #define FILEPATH_NAME "FilePath"
 #define FILEPATH_DEFAULT ""
+
+#define POSITION_ID "POSITION"
+#define POSITION_NAME "Position"
+#define POSITION_MIN 0.0f
+#define POSITION_MAX 1.0f
+#define POSITION_DEFAULT 0.0f
+
+#define POSWIDTH_ID "SELECTION"
+#define POSWIDTH_NAME "Selection"
+#define POSWIDTH_MIN 0.0f
+#define POSWIDTH_MAX 1.0f
+#define POSWIDTH_DEFAULT 1.0f
+
 typedef juce::AudioProcessorValueTreeState ValueTreeState;
 
 

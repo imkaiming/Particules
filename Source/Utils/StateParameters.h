@@ -45,6 +45,9 @@ public:
 	void setAudioLoaded(bool);
 	void setAudioBuffer(juce::AudioBuffer<float>*);
 	void setIsPlaying(bool);
+	void setWindowSelection(float);
+	void setFilePosition(float);
+
 
 	// getters
 	float getGain();
@@ -58,6 +61,8 @@ public:
 	int getEnvelopeType();
 	juce::Value* getAudioLoaded();
 	bool getIsPlaying();
+	float getWindowSelection();
+	float getFilePosition();
 	juce::AudioBuffer<float>* StateParameters::getAudioBuffer();
 
 	//void unloadBuffer();

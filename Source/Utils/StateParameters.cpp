@@ -18,7 +18,7 @@ StateParameters::StateParameters()
 	audioFileNumSamples = 0;
 	//isAudioLoaded.addListener(this);
 
-	
+
 }
 
 StateParameters::~StateParameters()
@@ -34,6 +34,8 @@ void StateParameters::init(ValueTreeState* apvts, int numChannels)
 	setDensity(apvts->getRawParameterValue(DENSITY_ID)->load());
 	setDuration(apvts->getRawParameterValue(DURATION_ID)->load());
 	setSpeed(apvts->getRawParameterValue(SPEED_ID)->load());
+	setFilePosition(apvts->getRawParameterValue(POSITION_ID)->load());
+	setWindowSelection(apvts->getRawParameterValue(POSWIDTH_ID)->load());
 	this->numChannels = numChannels;
 }
 
@@ -141,6 +143,16 @@ void StateParameters::setIsPlaying(bool newValue)
 	isPlaying = newValue;
 }
 
+void StateParameters::setFilePosition(float newValue)
+{
+	filePosition = newValue;
+}
+
+void StateParameters::setWindowSelection(float newValue)
+{
+	windowSelection = newValue;
+}
+
 // getters
 
 float StateParameters::getGain()
@@ -197,5 +209,14 @@ bool StateParameters::getIsPlaying()
 
 juce::AudioBuffer<float>* StateParameters::getAudioBuffer()
 {
-	return audioFileBuffer ;
+	return audioFileBuffer;
+}
+
+float StateParameters::getWindowSelection()
+{
+	return windowSelection;
+}
+float StateParameters::getFilePosition()
+{
+	return filePosition;
 }
