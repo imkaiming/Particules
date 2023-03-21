@@ -173,22 +173,36 @@ void SynthFrame::resized()
 
 void SynthFrame::sliderValueChanged(juce::Slider* slider)
 {
-	if (slider == &mixSlider) {
-		apvts->getRawParameterValue(MIX_ID)->store(static_cast<float>(mixSlider.getValue()));
-		stateParams->setMix(static_cast<float>(mixSlider.getValue()));
+	if (slider == &mixSlider)
+	{
+		float mixValue = static_cast<float>(mixSlider.getValue());
+		apvts->getRawParameterValue(MIX_ID)->store(mixValue);
+		stateParams->setMix(mixValue);
 		//this->apvts->mix = mixSlider.getValue();
 	}
-	if (slider == &gainSlider) {
-		apvts->getRawParameterValue(GAIN_ID)->store(static_cast<float>((gainSlider.getValue())));
-		stateParams->setGain(static_cast<float>(gainSlider.getValue()));
+	if (slider == &gainSlider)
+	{
+		float gainValue = static_cast<float>(gainSlider.getValue());
+		apvts->getRawParameterValue(GAIN_ID)->store(gainValue);
+		stateParams->setGain(gainValue);
 	}
-	if (slider == &filePosSlider) {
-		apvts->getRawParameterValue(POSITION_ID)->store(static_cast<float>(filePosSlider.getValue()));
-		stateParams->setFilePosition(static_cast<float>(filePosSlider.getValue()));
+	if (slider == &filePosSlider)
+	{
+		float filePosValue = static_cast<float>(filePosSlider.getValue());
+		apvts->getRawParameterValue(POSITION_ID)->store(filePosValue);
+		stateParams->setFilePosition(filePosValue);
+		thumbnailComponent->updateFilePostion(filePosValue);
 	}
-	if (slider == &windowSelectionSlider) {
-		apvts->getRawParameterValue(POSWIDTH_ID)->store(static_cast<float>((windowSelectionSlider.getValue())));
-		stateParams->setWindowSelection(static_cast<float>(windowSelectionSlider.getValue()));
+	if (slider == &windowSelectionSlider)
+	{
+		float windowValue = static_cast<float>(windowSelectionSlider.getValue());
+		apvts->getRawParameterValue(POSWIDTH_ID)->store(windowValue);
+		stateParams->setWindowSelection(windowValue);
 	}
 
+}
+
+void SynthFrame::init(ThumbnailComponent* thumbnailComponent)
+{
+	this->thumbnailComponent = thumbnailComponent;
 }

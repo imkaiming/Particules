@@ -191,6 +191,10 @@ int StateParameters::getNumChannels() {
 	return numChannels;
 }
 
+//int StateParameters::getNumSamples() {
+//	return audioFileNumSamples;
+//}
+
 int StateParameters::getEnvelopeType()
 {
 	return envelopeType;

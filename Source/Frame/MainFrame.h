@@ -27,6 +27,7 @@ public:
 	void resized() override;
 
 private:
+
 	SynthFrame synthFrame;
 	GrainsFrame grainsFrame;
 	AudioFileFrame audioFileFrame;

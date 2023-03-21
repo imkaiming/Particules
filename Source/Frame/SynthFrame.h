@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "../Utils/StateParameters.h"
 #include "../Utils/MyColours.h"
+#include "../Utils//ThumbnailComponent.h"
 #pragma once
 
 class SynthFrame : public juce::Component, public juce::Slider::Listener
@@ -24,10 +25,13 @@ public:
 
 	void sliderValueChanged(juce::Slider* slider) override;
 
+	void init(ThumbnailComponent*);
+
 private:
 
 	ValueTreeState* apvts;
 	StateParameters* stateParams;
+	ThumbnailComponent* thumbnailComponent;
 
 	juce::Slider mixSlider;
 	juce::Slider gainSlider;

@@ -132,6 +132,10 @@
               file="Source/Utils/CustomLookAndFeel.h"/>
         <FILE id="wvmaoy" name="MyColours.h" compile="0" resource="0" file="Source/Utils/MyColours.h"/>
         <FILE id="nUQXlw" name="ParamsID.h" compile="0" resource="0" file="Source/Utils/ParamsID.h"/>
+        <FILE id="YybEWZ" name="PositionOverlay.cpp" compile="1" resource="0"
+              file="Source/Utils/PositionOverlay.cpp"/>
+        <FILE id="DpNBxS" name="PositionOverlay.h" compile="0" resource="0"
+              file="Source/Utils/PositionOverlay.h"/>
         <FILE id="cWGhlA" name="StateParameters.cpp" compile="1" resource="0"
               file="Source/Utils/StateParameters.cpp"/>
         <FILE id="T0wylU" name="StateParameters.h" compile="0" resource="0"

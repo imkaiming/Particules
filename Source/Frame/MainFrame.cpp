@@ -12,7 +12,7 @@
 
 MainFrame::MainFrame(ValueTreeState* apvts, StateParameters* stateParams) : 
 	titleFrame(), synthFrame(apvts, stateParams), 
-	grainsFrame(apvts, stateParams), audioFileFrame(apvts, stateParams), 
+	grainsFrame(apvts, stateParams), audioFileFrame(apvts, stateParams, &synthFrame), 
 	statusBarFrame(stateParams)
 {
 	addAndMakeVisible(&titleFrame);

@@ -8,13 +8,15 @@
   ==============================================================================
 */
 
-#include "ThumbnailComponent.h"
+#include "ThumbnailComponent.h", 
 
 ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail,
 	juce::AudioFormatManager& formatManager, juce::AudioThumbnailCache& cache)
 	: thumbnail(samplesPerThumbnail, formatManager, cache)
 {
+	positionValue = 0;
 	thumbnail.addChangeListener(this);
+	addAndMakeVisible(&positionMarker);
 }
 
 ThumbnailComponent::~ThumbnailComponent()
@@ -25,6 +27,7 @@ ThumbnailComponent::~ThumbnailComponent()
 void ThumbnailComponent::setFile(const juce::File& file)
 {
 	thumbnail.setSource(new juce::FileInputSource(file));
+	;
 }
 
 void ThumbnailComponent::paint(juce::Graphics& g)
@@ -61,4 +64,18 @@ void ThumbnailComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
 	if (source == &thumbnail)
 		repaint();
+}
+
+void ThumbnailComponent::updateFilePostion(float value)
+{
+	positionValue = value;
+	positionMarker.setPosition(positionValue * getWidth());
+
+}
+
+void ThumbnailComponent::resized()
+{
+	positionMarker.setPosition(positionValue * getWidth());
+	positionMarker.setBounds(getLocalBounds());
+
 }

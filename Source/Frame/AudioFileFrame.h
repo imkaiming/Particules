@@ -14,6 +14,7 @@
 #include "../Utils/ThumbnailComponent.h"
 #include "../Utils/AudioFileLoader.h"
 #include "../Utils/StateParameters.h"
+#include "../Frame/SynthFrame.h"
 #include "../Utils/MyColours.h"
 
 
@@ -22,7 +23,7 @@ class AudioFileFrame :
 	public juce::Component, public juce::FileDragAndDropTarget, public juce::Value::Listener // public juce::DrawableButton::Listener,
 {
 public:
-	AudioFileFrame(ValueTreeState* apvts, StateParameters* stateParams);
+	AudioFileFrame(ValueTreeState*, StateParameters*, SynthFrame*);
 	~AudioFileFrame() override;
 	void paint(juce::Graphics&) override;
 	void resized() override;

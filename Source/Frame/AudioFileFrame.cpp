@@ -10,14 +10,15 @@
 
 #include "AudioFileFrame.h"
 
-AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* stateParams) : apvts(apvts), stateParams(stateParams),
-open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-isAudioLoaded(stateParams->getAudioLoaded()), thumbnailCache(5),
-loader(stateParams, &thumbnailComponent), thumbnailComponent(5, *loader.getFormatManager(), thumbnailCache)
+AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* stateParams, SynthFrame* synthFrame)
+	: apvts(apvts), stateParams(stateParams),
+	open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
+	play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
+	stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
+	isAudioLoaded(stateParams->getAudioLoaded()), thumbnailCache(5),
+	loader(stateParams, &thumbnailComponent), thumbnailComponent(5, *loader.getFormatManager(), thumbnailCache) //, stateParams)
 {
-
+	synthFrame->init(&thumbnailComponent);
 	//loader = std::make_unique<AudioFileLoader>(stateParams);
 
 	setOpenButtonImageOpen();
@@ -30,7 +31,6 @@ loader(stateParams, &thumbnailComponent), thumbnailComponent(5, *loader.getForma
 	stop_btn.onClick = [this]() {
 		stopFileButtonClicked();
 	};
-
 	play_btn.onClick = [this]() {
 		playFileButtonClicked();
 	};
@@ -164,8 +164,12 @@ void AudioFileFrame::setStopButtonImageStop()
 void AudioFileFrame::valueChanged(juce::Value& value)
 {
 
+	isAudioLoaded->setValue(value);
+
 	if (value == true)
 	{
+		//DBG("isAudioLoaded = true");
+
 		// on test le buffer
 		if (stateParams->getAudioBuffer() == nullptr)
 		{
@@ -178,6 +182,8 @@ void AudioFileFrame::valueChanged(juce::Value& value)
 	}
 	else
 	{
+		//DBG("isAudioLoaded = false");
+
 		// on ne peut pas play le son mais on ne laisse le btn play
 	}
 }
@@ -205,6 +211,8 @@ void AudioFileFrame::filesDropped(const juce::StringArray& files, int x, int y)
 		}
 	}
 }
+
+// component section
 
 void AudioFileFrame::paint(juce::Graphics& g) {
 	g.fillAll(MyColours::brightBlue);

@@ -30,13 +30,11 @@ public:
 	void init(ValueTreeState* apvts, int numChannels);
 	void print();
 
-	//void resetSmoothedGain(double, float);
 
 	// setters
 	void setSampleRate(double);
 	void setInterOnSet();
 	void setGain(float);
-	//void setPreviousGain(float);
 	void setDensity(float);
 	void setDuration(float);
 	void setMix(float);
@@ -59,13 +57,13 @@ public:
 	float getMix();
 	int getNumChannels();
 	int getEnvelopeType();
+	//int getNumSamples();
 	juce::Value* getAudioLoaded();
 	bool getIsPlaying();
 	float getWindowSelection();
 	float getFilePosition();
 	juce::AudioBuffer<float>* StateParameters::getAudioBuffer();
 
-	//void unloadBuffer();
 	//void valueChanged(juce::Value& value) override;
 private:
 
