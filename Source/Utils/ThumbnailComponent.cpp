@@ -77,15 +77,15 @@ void ThumbnailComponent::updatePosition(float value)
 	positionValue = value;
 	positionComponent.setPosition(positionValue * getWidth());
 	selectionComponent.setPosition(positionValue * getWidth());
-	updateSelection(selectionValue);
+	//updateSelection(selectionValue);
 
 }
 
 void ThumbnailComponent::updateSelection(float value)
 {
 	selectionValue = value;
-	float space = getWidth() - (positionValue * getWidth());
-	selectionComponent.setSelection(selectionValue * space);
+	//float space = getWidth() - (positionValue * getWidth());
+	selectionComponent.setSelection(selectionValue * getWidth());
 
 }
 

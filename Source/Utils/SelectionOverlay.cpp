@@ -24,6 +24,7 @@ SelectionOverlay::~SelectionOverlay()
 void SelectionOverlay::setPosition(float newValue)
 {
 	positionValue = newValue;
+	repaint();
 }
 
 void SelectionOverlay::setSelection(float newValue)
@@ -35,6 +36,14 @@ void SelectionOverlay::setSelection(float newValue)
 void SelectionOverlay::paint(juce::Graphics& g)
 {
 	g.setColour(MyColours::red);
-	g.fillRect(positionValue + 1.f, (float) getHeight() - 2.f, selectionValue, 4.f);
+	if (positionValue + selectionValue > getWidth())
+	{
+		g.fillRect(positionValue + 1.f, (float)getHeight() - 2.f, getWidth() - positionValue, 4.f);
+	}
+	else
+	{
+		g.fillRect(positionValue + 1.f, (float)getHeight() - 2.f, selectionValue, 4.f);
+	}
 }
+
 
