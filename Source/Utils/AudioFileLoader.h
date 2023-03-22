@@ -10,6 +10,8 @@
 
 #pragma once
 
+#define MAX_DURATION (120) // le nombre de second maximum pour loader un fichier audio
+
 #include <JuceHeader.h>
 #include "../Utils/StateParameters.h"
 #include "ThumbnailComponent.h"

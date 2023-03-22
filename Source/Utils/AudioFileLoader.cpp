@@ -39,17 +39,23 @@ void AudioFileLoader::loadAudio(juce::File& file)
 		return;
 	}
 
+	// si le reader de fichier lit un fichier de plus de MAX_DURATION alors on annule tout
+	if (reader->lengthInSamples / reader->sampleRate >= MAX_DURATION)
+	{
+		DBG("(reader->lengthInSamples / reader->sampleRate == MAX_DURATION) ERREUR");
+		stateParams->setAudioBuffer(nullptr);
+		stateParams->setAudioLoaded(false);
+		// TODO :: afficher une pop up window avec un message d'erreur
+		return;
+	}
+
 	std::unique_ptr<juce::AudioFormatReaderSource> newSource(
 		new juce::AudioFormatReaderSource(reader, true)
 	);
 
 	juce::AudioBuffer<float>* buffer = new juce::AudioBuffer<float>();
-
 	readerSource->reset(newSource.release());
-
-
 	thumbnailComponent->setFile(file);
-
 
 	// on procède au resampling de la source par rapport à la fréquence d'échantillonage du projet
 
