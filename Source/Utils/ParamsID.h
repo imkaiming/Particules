@@ -56,11 +56,11 @@
 #define POSITION_MAX 1.0f
 #define POSITION_DEFAULT 0.0f
 
-#define POSWIDTH_ID "SELECTION"
-#define POSWIDTH_NAME "Selection"
-#define POSWIDTH_MIN 0.0f
-#define POSWIDTH_MAX 1.0f
-#define POSWIDTH_DEFAULT 1.0f
+#define SELECTION_ID "SELECTION"
+#define SELECTION_NAME "Selection"
+#define SELECTION_MIN 0.0f
+#define SELECTION_MAX 1.0f
+#define SELECTION_DEFAULT 1.0f
 
 typedef juce::AudioProcessorValueTreeState ValueTreeState;
 

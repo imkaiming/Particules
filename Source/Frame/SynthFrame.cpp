@@ -64,7 +64,7 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 
 	windowSelectionSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, POSWIDTH_ID, windowSelectionSlider);
+			*apvts, SELECTION_ID, windowSelectionSlider);
 
 	filePosSlider.setName("filePosSlider");
 	filePosSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
@@ -82,11 +82,11 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	windowSelectionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
 	windowSelectionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
 	windowSelectionSlider.setTextBoxIsEditable(true);
-	windowSelectionSlider.setRange(POSWIDTH_MIN, POSWIDTH_MAX);
+	windowSelectionSlider.setRange(SELECTION_MIN, SELECTION_MAX);
 	windowSelectionSlider.addListener(this);
 
 
-	windowSelectionLabel.setText((const juce::String)POSWIDTH_NAME, juce::dontSendNotification);
+	windowSelectionLabel.setText((const juce::String)SELECTION_NAME, juce::dontSendNotification);
 	windowSelectionLabel.attachToComponent(&windowSelectionSlider, false);
 	windowSelectionLabel.setJustificationType(juce::Justification::centred);
 
@@ -191,12 +191,12 @@ void SynthFrame::sliderValueChanged(juce::Slider* slider)
 		float filePosValue = static_cast<float>(filePosSlider.getValue());
 		apvts->getRawParameterValue(POSITION_ID)->store(filePosValue);
 		stateParams->setFilePosition(filePosValue);
-		thumbnailComponent->updateFilePosition(filePosValue);
+		thumbnailComponent->updatePosition(filePosValue);
 	}
 	if (slider == &windowSelectionSlider)
 	{
 		float windowValue = static_cast<float>(windowSelectionSlider.getValue());
-		apvts->getRawParameterValue(POSWIDTH_ID)->store(windowValue);
+		apvts->getRawParameterValue(SELECTION_ID)->store(windowValue);
 		stateParams->setWindowSelection(windowValue);
 		thumbnailComponent->updateSelection(windowValue);
 	}

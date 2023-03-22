@@ -318,10 +318,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 
 	layout.add(
 		std::make_unique<juce::AudioParameterFloat>(
-			POSWIDTH_ID,
-			POSWIDTH_NAME,
-			juce::NormalisableRange<float>(POSWIDTH_MIN, POSWIDTH_MAX, 0.001f),
-			POSWIDTH_DEFAULT)
+			SELECTION_ID,
+			SELECTION_NAME,
+			juce::NormalisableRange<float>(SELECTION_MIN, SELECTION_MAX, 0.001f),
+			SELECTION_DEFAULT)
 	);
 
 	const juce::StringArray& choices{ ENVTYPE_1, ENVTYPE_2, ENVTYPE_3 };

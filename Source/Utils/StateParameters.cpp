@@ -35,7 +35,7 @@ void StateParameters::init(ValueTreeState* apvts, int numChannels)
 	setDuration(apvts->getRawParameterValue(DURATION_ID)->load());
 	setSpeed(apvts->getRawParameterValue(SPEED_ID)->load());
 	setFilePosition(apvts->getRawParameterValue(POSITION_ID)->load());
-	setWindowSelection(apvts->getRawParameterValue(POSWIDTH_ID)->load());
+	setWindowSelection(apvts->getRawParameterValue(SELECTION_ID)->load());
 	this->numChannels = numChannels;
 }
 

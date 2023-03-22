@@ -34,21 +34,19 @@ public:
 
 	void changeListenerCallback(juce::ChangeBroadcaster*) override; // to change the waveform when changing the audio
 
-	void updateFilePosition(float value); // update the position marker when changing the file position slider value
+	void updatePosition(float value); // update the position marker when changing the file position slider value
 	void updateSelection(float value);
 
 
 private:
 
-	void setAvailableSpace();
-
 	float positionValue;
 	float selectionValue;
-	float availableSpace;
 
 	juce::AudioThumbnail thumbnail;
 	PositionOverlay positionComponent;
 	SelectionOverlay selectionComponent;
+
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ThumbnailComponent)
 };
