@@ -136,6 +136,10 @@
               file="Source/Utils/PositionOverlay.cpp"/>
         <FILE id="DpNBxS" name="PositionOverlay.h" compile="0" resource="0"
               file="Source/Utils/PositionOverlay.h"/>
+        <FILE id="iJuUe2" name="SelectionOverlay.cpp" compile="1" resource="0"
+              file="Source/Utils/SelectionOverlay.cpp"/>
+        <FILE id="ZHFxVN" name="SelectionOverlay.h" compile="0" resource="0"
+              file="Source/Utils/SelectionOverlay.h"/>
         <FILE id="cWGhlA" name="StateParameters.cpp" compile="1" resource="0"
               file="Source/Utils/StateParameters.cpp"/>
         <FILE id="T0wylU" name="StateParameters.h" compile="0" resource="0"

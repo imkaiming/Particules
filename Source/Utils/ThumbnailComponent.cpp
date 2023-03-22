@@ -14,9 +14,15 @@ ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail,
 	juce::AudioFormatManager& formatManager, juce::AudioThumbnailCache& cache)
 	: thumbnail(samplesPerThumbnail, formatManager, cache)
 {
-	positionValue = 0;
+	positionValue = 0.f;
+	selectionValue = 1.f;
+	updateFilePosition(positionValue);
+	updateSelection(selectionValue);
+
 	thumbnail.addChangeListener(this);
-	addAndMakeVisible(&positionMarker);
+
+	addAndMakeVisible(&positionComponent);
+	addAndMakeVisible(&selectionComponent);
 }
 
 ThumbnailComponent::~ThumbnailComponent()
@@ -27,7 +33,6 @@ ThumbnailComponent::~ThumbnailComponent()
 void ThumbnailComponent::setFile(const juce::File& file)
 {
 	thumbnail.setSource(new juce::FileInputSource(file));
-	;
 }
 
 void ThumbnailComponent::paint(juce::Graphics& g)
@@ -66,16 +71,37 @@ void ThumbnailComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
 		repaint();
 }
 
-void ThumbnailComponent::updateFilePostion(float value)
+void ThumbnailComponent::setAvailableSpace()
 {
-	positionValue = value;
-	positionMarker.setPosition(positionValue * getWidth());
+	availableSpace = getWidth() - positionValue;
+}
 
+void ThumbnailComponent::updateFilePosition(float value)
+{
+	positionValue = value * getWidth();
+	setAvailableSpace();
+
+	positionComponent.setPosition(positionValue);
+	selectionComponent.setPosition(positionValue);
+
+	updateSelection(selectionValue);
+
+}
+
+void ThumbnailComponent::updateSelection(float value)
+{
+	selectionValue = value ;
+	selectionComponent.setSelection(selectionValue * availableSpace);
 }
 
 void ThumbnailComponent::resized()
 {
-	positionMarker.setPosition(positionValue * getWidth());
-	positionMarker.setBounds(getLocalBounds());
+	positionComponent.setPosition(positionValue);
+	positionComponent.setBounds(getLocalBounds());
+
+	selectionComponent.setPosition(positionValue);
+	selectionComponent.setSelection(selectionValue);
+	selectionComponent.setBounds(getLocalBounds());
+
 
 }

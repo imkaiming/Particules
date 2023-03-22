@@ -2,16 +2,22 @@
 
 PositionOverlay::PositionOverlay()
 {
-	positionValue = 0;
+	positionValue = 0.f;
 }
 
 PositionOverlay::~PositionOverlay()
 {
 }
 
+float PositionOverlay::getPosition()
+{
+	return positionValue;
+}
+
+
+
 void PositionOverlay::setPosition(float newValue)
 {
-	DBG(newValue);
 	positionValue = newValue;
 	repaint();
 }
@@ -19,7 +25,7 @@ void PositionOverlay::setPosition(float newValue)
 void PositionOverlay::paint(juce::Graphics& g)
 {
 	g.setColour(MyColours::cream);
-	g.drawLine(positionValue, 0.f , positionValue + 1.0f, (float)getHeight(), 2.0f);
+	g.drawLine(positionValue, 0.f, positionValue, (float)getHeight(), 2.0f);
 }
 
 //void PositionOverlay::resized()

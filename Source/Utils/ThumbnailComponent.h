@@ -13,6 +13,7 @@
 #include "../Utils/MyColours.h"
 #include "PositionOverlay.h"
 #include "StateParameters.h"
+#include "SelectionOverlay.h"
 
 #pragma once
 
@@ -33,16 +34,21 @@ public:
 
 	void changeListenerCallback(juce::ChangeBroadcaster*) override; // to change the waveform when changing the audio
 
-	void updateFilePostion(float value); // update the position marker when changing the file position slider value
+	void updateFilePosition(float value); // update the position marker when changing the file position slider value
+	void updateSelection(float value);
 
 
 private:
 
-	float positionValue;
+	void setAvailableSpace();
 
-	//StateParameters* stateParams;
+	float positionValue;
+	float selectionValue;
+	float availableSpace;
+
 	juce::AudioThumbnail thumbnail;
-	PositionOverlay positionMarker;
+	PositionOverlay positionComponent;
+	SelectionOverlay selectionComponent;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ThumbnailComponent)
 };

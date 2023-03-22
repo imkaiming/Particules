@@ -191,13 +191,14 @@ void SynthFrame::sliderValueChanged(juce::Slider* slider)
 		float filePosValue = static_cast<float>(filePosSlider.getValue());
 		apvts->getRawParameterValue(POSITION_ID)->store(filePosValue);
 		stateParams->setFilePosition(filePosValue);
-		thumbnailComponent->updateFilePostion(filePosValue);
+		thumbnailComponent->updateFilePosition(filePosValue);
 	}
 	if (slider == &windowSelectionSlider)
 	{
 		float windowValue = static_cast<float>(windowSelectionSlider.getValue());
 		apvts->getRawParameterValue(POSWIDTH_ID)->store(windowValue);
 		stateParams->setWindowSelection(windowValue);
+		thumbnailComponent->updateSelection(windowValue);
 	}
 
 }
