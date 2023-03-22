@@ -22,5 +22,6 @@ public:
 
 private:
     StateParameters* stateParams;
+    juce::Label statusLabel;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatusBarFrame)
 };

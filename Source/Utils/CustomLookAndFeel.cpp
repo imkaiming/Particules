@@ -18,8 +18,8 @@ CustomLookAndFeel::CustomLookAndFeel()
 		FuturaMedium::FuturaMedium_ttf,
 		FuturaMedium::FuturaMedium_ttfSize
 	);
-	setDefaultSansSerifTypeface(typeface);
 
+	//LookAndFeel::getDefaultLookAndFeel().setDefaultSansSerifTypeface(typeface);
 }
 
 CustomLookAndFeel::~CustomLookAndFeel()
@@ -118,6 +118,7 @@ void CustomLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int wi
 	g.strokePath(valueArc, juce::PathStrokeType(lineWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 
 }
+
 /*
 void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height,
 	float sliderPos, float minSliderPos, float maxSliderPos,
@@ -136,25 +137,35 @@ void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int wi
 
 }*/
 
+/*
+void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height,
+	float sliderPos, float minSliderPos, float maxSliderPos,
+	const juce::Slider::SliderStyle style, juce::Slider& slider)
+{
 
-//void CustomLookAndFeel::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height,
-//	float sliderPos, float minSliderPos, float maxSliderPos,
-//	const juce::Slider::SliderStyle style, juce::Slider& slider)
+	g.setColour(MyColours::lavender);
+
+
+	g.setColour(MyColours::black);
+	g.fillRect(x, y, width, height);
+
+	g.setColour(juce::Colours::white);
+	g.fillRect(x, y, width, height);
+
+	g.setColour(juce::Colours::black);
+	g.drawRect(x, y, width, height);
+
+	g.setColour(juce::Colours::black);
+	g.setFont(15.0f);
+	g.drawText(juce::String(slider.getValue()), x, y, width, height, juce::Justification::centred);
+}*/
+
+
+//void CustomLookAndFeel::drawLabel(juce::Graphics& g, juce::Label& label)
 //{
+//	//g.drawText(label.getText(), label.getLocalBounds(), juce::Justification::centred, true);
 //
-//	g.setColour(MyColours::lavender);
 //
-//
-//	g.setColour(MyColours::black);
-//	g.fillRect(x, y, width, height);
-//
-//	g.setColour(juce::Colours::white);
-//	g.fillRect(x, y, width, height);
-//
-//	g.setColour(juce::Colours::black);
-//	g.drawRect(x, y, width, height);
-//
-//	g.setColour(juce::Colours::black);
-//	g.setFont(15.0f);
-//	g.drawText(juce::String(slider.getValue()), x, y, width, height, juce::Justification::centred);
+//	// Call the base class to draw the label with the new font
+//	LookAndFeel_V4::drawLabel(g, label);
 //}

@@ -13,15 +13,26 @@
 
 StatusBarFrame::StatusBarFrame(StateParameters* stateParams) : stateParams(stateParams)
 {
+	addAndMakeVisible(&statusLabel);
 
 }
-StatusBarFrame::~StatusBarFrame() 
+StatusBarFrame::~StatusBarFrame()
 {
 	stateParams = nullptr;
 }
 void StatusBarFrame::paint(juce::Graphics& g) {
 	g.fillAll(MyColours::black);
-}
-void StatusBarFrame::resized() {
 
+	statusLabel.setText((const juce::String)"IFT3150", juce::dontSendNotification);
+	statusLabel.setJustificationType(juce::Justification::centredLeft);
+	statusLabel.setColour(0, juce::Colours::white);
+	//statusLabel.setSize(statusLabel.getWidth() * 0.5f, statusLabel.getHeight() * 0.5f);
+}
+void StatusBarFrame::resized()
+{
+	float h = getHeight() / 30.f;
+
+	juce::FlexBox flexbox;
+	flexbox.items.add(juce::FlexItem(statusLabel).withFlex(1).withMargin(h));
+	flexbox.performLayout(getLocalBounds().toFloat());
 }
