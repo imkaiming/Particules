@@ -25,7 +25,6 @@ void GranularEngine::mixingProcess(AudioBlock wetBlock)
 	//juce::Logger::outputDebugString("mix : " + (juce::String)stateParams->getMix());
 	mixerProcessor.setWetMixProportion(stateParams->getMix());
 	mixerProcessor.mixWetSamples(wetBlock);
-
 }
 
 void GranularEngine::gainProcess(juce::dsp::ProcessContextReplacing<float> context)
@@ -59,11 +58,10 @@ void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 	//juce::Logger::outputDebugString("block : " + (juce::String)numSamples);
 	for (int sample = 0; sample < numSamples; ++sample)
 	{
-		//juce::Logger::outputDebugString("sample : " + (juce::String)sample);
-		scheduler.synthesize(&audioBlock, sample, numSamples); // , & grainBuffer);
+		scheduler.synthesize(&audioBlock, sample, numSamples);
 	}
 
-	//audioBlock.copyFrom(grainBlock);
+	//audioBlock.copyFrom(buffer);
 
 
 	//reverbProcess(audioBlock); // ok

@@ -45,6 +45,7 @@ public:
 	void setIsPlaying(bool);
 	void setWindowSelection(float);
 	void setFilePosition(float);
+	void setEnvWidth(float);
 
 
 	// getters
@@ -62,6 +63,7 @@ public:
 	bool getIsPlaying();
 	float getWindowSelection();
 	float getFilePosition();
+	float getEnvWidth();
 	juce::AudioBuffer<float>* StateParameters::getAudioBuffer();
 
 	//void valueChanged(juce::Value& value) override;
@@ -74,12 +76,12 @@ private:
 	float speed;
 	int envelopeType;
 	float gain;
+	float envWidth;
 
 
 	// Parameters relative to the AudioProcessor
 	double sampleRate;
 	int numChannels;
-
 
 	// Derived Parameter
 	int interOnset;
@@ -90,7 +92,7 @@ private:
 	bool isPlaying;
 	int audioFileNumSamples;
 	juce::AudioBuffer<float>* audioFileBuffer;
-	float filePosition; // starting point of the granulation in the file
+	float filePosition; 
 	float windowSelection;
 	//juce::String filePath;
 	//Playback playback; // grain can play in reverse

@@ -18,6 +18,7 @@
 #include "Grain.h"
 
 using AudioBlock = juce::dsp::AudioBlock<float>;
+using Buffer = juce::AudioBuffer<float>;
 
 class Scheduler
 {
@@ -25,7 +26,7 @@ public:
 	Scheduler(StateParameters*); // , juce::AudioBuffer<float>*);
 	~Scheduler();
 	void synthesize(AudioBlock*, int, int); // , juce::AudioBuffer<float>*);
-	//void generateGrain();
+	Grain* generateGrain(int);
 	void init(int);
 
 private:

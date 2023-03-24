@@ -33,16 +33,18 @@ private:
 	juce::Slider densitySlider;
 	juce::Slider durationSlider;
 	juce::Slider speedSlider;
-
+	juce::Slider envWidthSlider;
 
 	juce::Label densityLabel;
 	juce::Label durationLabel;
 	juce::Label speedLabel;
+	juce::Label envWidthLabel;
 
 
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> densitySliderAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> durationSliderAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> speedSliderAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> envWidthSliderAttachment;
 
 	juce::ComboBox envelopeList;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> envelopeAttachment;

@@ -40,62 +40,94 @@ void Scheduler::init(int numChannels)
 }
 
 
-//void Scheduler::generateGrain()
-//{
-//	grains.add(
-//		new Grain(
-//			round(stateParams->getDuration() / stateParams->getDensity() * stateParams->getSampleRate()),
-//			numChannels,
-//			stateParams->getEnvelopeType())
-//	);
-//	++nbActiveGrains;
-//	//juce::Logger::outputDebugString("creation d'un grain : " 
-//	//	+ (juce::String)nbActiveGrains + " density : " + (juce::String)stateParams->getDensity() + " duration : "
-//	//	+ (juce::String)stateParams->getDuration() + " interonset : " + (juce::String)stateParams->getInterOnset());
-//
-//}
+Grain* Scheduler::generateGrain(int numSamples)
+{
+	// on récupère la valeur en samples par rapport au pourcentage de la position dans le fichier audio
+	int durationSamples = static_cast<int>(stateParams->getDuration() * stateParams->getSampleRate());
+	int widthSamples = static_cast<int>(durationSamples * stateParams->getEnvWidth());
+	int positionSamples = static_cast<int>(numSamples * stateParams->getFilePosition());
+	int selectionSamples = static_cast<int>(numSamples * stateParams->getWindowSelection());
+
+	// Si selectionSamples est supérieur à numSamples, alors on loop le samples
+
+
+	//if (duration / getSampleRate() > selectionSamples) ?
+	//	if (positionSamples + selectionSamples > numSamples) ?
+	//		1 soit on bloque les limites
+	//		2 soit on retourne en arrière (reverse)
+	//		2 soit on retourne au début  (modulo)
+	//		3 soit on va au dela (libre)
+
+	// définir les MODES de gestion des limites du buffer pour les grains ici
+	// utiliser un switch case (1, 2, 3, 4)
+
+	// 1. on ne veut pas que les samples aillent au delà des limites accordées par le buffer
+	if (positionSamples + selectionSamples > numSamples)
+	{
+		selectionSamples = numSamples - positionSamples;
+	}
+	if (durationSamples > selectionSamples)
+	{
+		durationSamples = selectionSamples;
+	}
+
+
+	DBG("new grain");
+	if (stateParams->getAudioBuffer() == nullptr)
+	{
+		DBG("nullptr");
+	}
+
+	return new Grain(
+		//round(stateParams->getDuration() / stateParams->getDensity() * stateParams->getSampleRate()),
+		durationSamples,
+		numChannels,
+		stateParams->getEnvelopeType(),
+		stateParams->getSpeed(),
+		widthSamples,
+		positionSamples,
+		selectionSamples,
+		stateParams->getAudioBuffer()
+	);
+
+}
 
 // Realtime distribution of grains must be activated in timesequential order.
 // Non realtime distribution ofgrains must be activated in random order according to the required density (nextOnset).
 // generate one active grain at a time and set the inter-onset value for the next grain
-void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples) // , juce::AudioBuffer<float>* grainBuffer)
+void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 {
-	// si on a aucun grain alors on écrit rien dans le buffer
-	if (grains.isEmpty()) {
+	// si on a aucun grain alors on écrit du silence dans le buffer
+	if (grains.isEmpty())
+	{
 		for (size_t channel = 0; channel < numChannels; channel++) {
 			audioBlock->addSample(channel, sample, 0.f);
 		}
 	}
-	else {
+	else
+	{
 		for (Grain* grain : grains)
 		{
-			if (sample == 0) {
-				grain->updateBuffer(audioBlock);
-			}
+			//if (sample == 0) {
+			//	grain->updateBuffer(buffer);
+			//}
 
 			for (size_t channel = 0; channel < numChannels; ++channel)
 			{
 				// gérer le pan ici 
-
+				//float* channelData = buffer->getWritePointer(channel);
+				//channelData[sample] += grain->getCurrentSample(channel); // add rms here + amplitude to the grains
 				float* blockPointer = audioBlock->getChannelPointer(channel);
 				blockPointer[sample] += grain->getCurrentSample(channel); // add rms here
-
-				//juce::Logger::outputDebugString("channel : " + (juce::String)channel);
-				//juce::Logger::outputDebugString("sample : " + (juce::String)sample);
-
-				//audioBlock->addSample(channel, sample, grain->getCurrentSample(channel));
-
 			}
 
 			grain->update();
-
 
 			if (!grain->isActive())
 			{
 				grains.remove(grains.indexOf(grain));
 				delete grain;
 				--nbActiveGrains;
-				//juce::Logger::outputDebugString("suppression d'un grain");
 
 			}
 		}
@@ -105,23 +137,18 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples) /
 	if (--nextOnset == 0) // on avance à chaque sample
 	{
 		// TODO : récupérer les valeur random du stateParam pour les donner au grain avant de le générer.
-		Grain* unGrain = new Grain(
-			round(stateParams->getDuration() / stateParams->getDensity() * stateParams->getSampleRate()),
-			numChannels,
-			stateParams->getEnvelopeType(),
-			stateParams->getSpeed(),
-			audioBlock
-		);
+		Grain* unGrain = generateGrain(numSamples);
 		++nbActiveGrains;
-		//generateGrain();
 
-		if (!grains.isEmpty())
+		if (!grains.isEmpty()) // if(nbActiveGrains != 0)
 		{
 			// on veut le crossfade du dernier grain avant 
 			// pour synchroniser les rampes du dernier grains et de celui qu'on va ajouter
+			// TODO a remplacer part grain->applyEnvelope() avec un paramètre envelopeWidth 
 			int crossfade = grains.getLast()->remainingLife();
-			unGrain->applyCrossFade(crossfade, true);
 			grains.getLast()->applyCrossFade(crossfade, false);
+			unGrain->applyCrossFade(crossfade, true);
+
 		}
 
 
@@ -137,7 +164,7 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples) /
 	//float linearCoef = juce::Decibels::decibelsToGain(-3.f); // logarithmique... max 1 - min 0.7
 	// 0.707 = 10 ^ (-3 / 10)
 
-	
+
 }
 
 //float getWeight(const juce::AudioBuffer<float>& grain)

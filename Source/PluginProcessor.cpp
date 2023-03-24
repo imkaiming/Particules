@@ -169,7 +169,7 @@ void ParticulesAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
 	//	juce::ADSR::applyEnvelopeToBuffer(buffer, channel, numSamples);
 	//}
 
-	// let the engine operate under the given buffer
+	// let the engine operate under the given buffer if the button is press
 	bool loaded = stateParams.getAudioLoaded()->getValue();
 	if (loaded == true && stateParams.getIsPlaying() == true) {
 		grainEngine.process(buffer, numSamples);
@@ -331,8 +331,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 			ENVTYPE_ID, ENVTYPE_NAME, 1, 3, ENVTYPE_DEFAULT)
 	);
 
-
-	// ajouter envWidth, pan, direction 
+	layout.add(
+		std::make_unique<juce::AudioParameterFloat>(
+			ENVWIDTH_ID,
+			ENVWIDTH_NAME,
+			juce::NormalisableRange<float>(ENVWIDTH_MIN, ENVWIDTH_MAX, 0.01f),
+			ENVWIDTH_DEFAULT)
+	);
+	// ajouter pan, direction 
 	// randomDensity, randomDuration, randomPan, randomDirection, randomPitch
 
 	return layout;

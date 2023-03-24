@@ -30,41 +30,72 @@ WindowingMethod Grain::getWindowingMethod(int val) {
 }
 
 
-Grain::Grain(int length, int numChannel, int envelopeType, float speed, AudioBlock* audioBlock) :
-	length(length), numChannel(numChannel),
-	window(getWindowingMethod(envelopeType)), speed(speed),
-	buffer(audioBlock->getNumChannels(), audioBlock->getNumSamples())
-	/*	audioBlock(audioBlock) *///, envelopeType(envelopeType)
+Grain::Grain(int duration, int numChannel, int envelopeType, float speed, int width, int position, int selection, juce::AudioBuffer<float>* buffer) :
+	duration(duration), numChannel(numChannel), position(position), selection(selection),
+	window(getWindowingMethod(envelopeType)), speed(speed), width(width),
+	fileBuffer(buffer)
 {
-	//juce::Logger::outputDebugString("numChannel : " + (juce::String)audioBlock->getNumChannels() + " numSample : " + (juce::String)audioBlock->getNumSamples());
-	audioBlock->copyTo(buffer);
-
 	// on resample le buffer en fonction de la vitesse en appliquant le phase vocoder algorithme
 
 	currentTime = 0;
-	active = true; // un grain est créer lorsqu'il est ajouté dans le vector dont il est joué tout de suite
+	//active = true; // un grain est créer lorsqu'il est ajouté dans le vector dont il est joué tout de suite
 }
 
 Grain::~Grain()
 {
-	//audioBlock = nullptr;
-	//delete audioBlock;
+	fileBuffer = nullptr;
 }
 
-void Grain::init()
+void Grain::updateBuffer(juce::AudioBuffer<float>* buffer) 
 {
-	currentTime = 0;
-	//currentTimeChannel.clear();
-
-	//for (int i = 0; i < numChannel; ++i) {
-	//	currentTimeChannel.push_back(0);
-	//}
+	fileBuffer = buffer;
 }
 
-void Grain::updateBuffer(AudioBlock* audioBlock) {
-	//juce::Logger::outputDebugString("on copie le nouveau block entièrement dans le buffer du grain");
-	buffer.setSize(audioBlock->getNumChannels(), audioBlock->getNumSamples());
-	audioBlock->copyTo(buffer);
+
+
+// on prend un grain du buffer du sample d'entré pour le mettre dans le buffer des grains
+// si la duration est plus grande que la selection alors on loop 
+float Grain::getCurrentSample(int channel)
+{
+
+	// on veut récupérer le sample dans une fenetre de positionSamples à positionSamples + selectionSamples 
+	return fileBuffer->getSample(channel % numChannel, position + currentTime);
+}
+
+
+void Grain::applyCrossFade(int crossfade, bool atStart)
+{
+	// crossfade de début
+	if (atStart) {
+		// si la longueur restante du grain précédent excède la valeur total du grain 
+		// qui démarre alors on prend la valeur minimale
+		crossfade = std::min(crossfade, this->duration - 1);
+		// lorsqu'on va copier le requerir le sample à cet index son amplitude sera déjà modifié
+		fileBuffer->applyGainRamp(0, crossfade, 0, 1);
+	}
+	// crossfade de fin
+	else {
+		fileBuffer->applyGainRamp(this->duration - crossfade, crossfade, 1, 0);
+	}
+}
+
+void Grain::update() // int channel)
+{
+	currentTime++;
+}
+
+int Grain::remainingLife()
+{
+	return duration - currentTime;
+}
+
+bool Grain::isActive()
+{
+	if (currentTime >= duration) {
+		return false;
+	}
+
+	return true;
 }
 
 float Grain::applyEnvelope(float sample)
@@ -83,7 +114,7 @@ float Grain::applyEnvelope(float sample)
 		//	sample = 0.5f * (1.0f - std::cos(phase));
 		//}
 
-		sample* hannEnvelope(currentTime, length);
+		sample* hannEnvelope(currentTime, duration);
 		break;
 	case triangular:
 		//float halfSlots = static_cast<float> (0.5) * static_cast<float> (length - 1);
@@ -91,13 +122,13 @@ float Grain::applyEnvelope(float sample)
 		// 
 		//sample* trapezoidalEnvelope(currentTime, length, 1.0f);
 
-		sample* triangularEnvelope(currentTime, length);
+		sample* triangularEnvelope(currentTime, duration);
 		break;
 
 	case hamming:
 		//float cos2 = ncos(2, currentTime, length);
 		//sample = static_cast<float> (0.54 - 0.46 * cos2);
-		sample* hammingEnvelope(currentTime, length);
+		sample* hammingEnvelope(currentTime, duration);
 		break;
 		/*
 		case blackman:
@@ -131,52 +162,6 @@ float Grain::applyEnvelope(float sample)
 		return sample;
 	}
 }
-
-// on prend un grain du buffer du sample d'entré pour le mettre dans le buffer des grains
-float Grain::getCurrentSample(int channel)
-{
-	//juce::Logger::outputDebugString("numChannel : " + (juce::String)channel + " numSample : " + (juce::String)buffer.getNumSamples());
-	return buffer.getSample(channel % numChannel, currentTime % buffer.getNumSamples());
-
-	//return blockPtr[currentTime % numSample];
-}
-
-
-void Grain::applyCrossFade(int crossfade, bool atStart)
-{
-	if (atStart) {
-		crossfade = std::min(crossfade, this->length - 1);
-		buffer.applyGainRamp(0, crossfade, 0, 1);
-	}
-	else {
-		buffer.applyGainRamp(this->length - crossfade, crossfade, 1, 0);
-	}
-}
-
-void Grain::update() // int channel)
-{
-	currentTime++;
-}
-
-int Grain::remainingLife()
-{
-	return length - currentTime;
-}
-
-// pour savoir si on desactive un grain, il faut que tous 
-// les temps courrant des channels soit supérieur à la durée
-bool Grain::isActive()
-{
-	bool active = true;
-
-	if (currentTime >= length) {
-		//juce::Logger::outputDebugString("active = false");
-		active = false;
-	}
-
-	return active;
-}
-
 
 float Grain::parabolicEnvelope(int index, int duration, float width)
 {

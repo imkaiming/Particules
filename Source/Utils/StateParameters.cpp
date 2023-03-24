@@ -153,6 +153,11 @@ void StateParameters::setWindowSelection(float newValue)
 	windowSelection = newValue;
 }
 
+void StateParameters::setEnvWidth(float newValue)
+{
+	envWidth = newValue;
+}
+
 // getters
 
 float StateParameters::getGain()
@@ -223,4 +228,9 @@ float StateParameters::getWindowSelection()
 float StateParameters::getFilePosition()
 {
 	return filePosition;
+}
+
+float StateParameters::getEnvWidth()
+{
+	return envWidth;
 }

@@ -13,9 +13,6 @@
 #include <JuceHeader.h>
 //#include <juce_dsp/juce_dsp.h>
 
-
-using AudioBlock = juce::dsp::AudioBlock<float>;
-
 enum WindowingMethod
 {
 	triangular,
@@ -23,21 +20,17 @@ enum WindowingMethod
 	hamming
 };
 
-//static float ncos(size_t order, size_t i, size_t size);
-
 class Grain {
 
 public:
-	Grain(int, int, int, float, AudioBlock*);
+	Grain(int duration, int numChannel, int envelopeType, float speed, int width, int position, int selection, juce::AudioBuffer<float>* buffer);
 	~Grain();
-	//void setActive(bool);
 	float getCurrentSample(int);
 	bool isActive();
-	void update(); // int);
+	void update();
 	void applyCrossFade(int, bool);
 	int remainingLife();
-	void updateBuffer(AudioBlock*);
-	void init();
+	void updateBuffer(juce::AudioBuffer<float>*);
 
 private:
 
@@ -51,29 +44,26 @@ private:
 	float triangularEnvelope(int,  int);
 	float hannEnvelope(int, int);
 	float applyEnvelope(float);
+
 	WindowingMethod getWindowingMethod(int);
 	WindowingMethod window;
 	//GrainEnvelope grainEnv;
-
-
-
-	//juce::dsp::WindowingFunction<float>::
-	int currentTime;
-	//std::vector<int> currentTimeChannel; // le temps courrant pour chaque channel
-	bool active;		// on active ou désactive le grain entier 
-	const int length;		// on compte la durée en nombre de sample
-	const int numChannel;
-	float speed;
-	//const int numSamples;
 	//const int envelopeType;	// on associe un grain a une envelope
 
+	//juce::dsp::WindowingFunction<float>::
 
-	//AudioBlock* audioBlock; // on ne modifie pas le buffer mais on le lit seulement
-	juce::AudioBuffer<float> buffer;
+	int currentTime;		// le compteur interne du grain
+	const int numChannel;	// le grain est le même pour chaque channel
+	float speed;
+	const int duration;		// définie la durée en nombre de sample
+	const int position;		// définie la position en sample dans le buffer
+	const int selection;	// définie la position maximale qu'un grain peut atteindre dans le buffer
+	const int width;		// définie la taille des rampes d'amplitude en entré et en sortie du grain
+
+	juce::AudioBuffer<float>* fileBuffer;
 	//double startTime;
 	//double frequency;
 	//float amplitude;
-	//double currentTime;
 
 };
 

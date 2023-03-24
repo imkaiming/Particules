@@ -25,6 +25,10 @@ GrainsFrame::GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
 			*apvts, SPEED_ID, speedSlider);
 
+	envWidthSliderAttachment =
+		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+			*apvts, ENVWIDTH_ID, envWidthSlider);
+
 	//pitchSliderAttachment =
 	//	std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
 	//		*apvts, PITCH_ID, pitchSlider);
@@ -72,13 +76,32 @@ GrainsFrame::GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	speedLabel.attachToComponent(&speedSlider, false);
 	speedLabel.setJustificationType(juce::Justification::centred);
 
+
+	envWidthSlider.setName("envWidthSlider");
+	envWidthSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+	envWidthSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
+		true, 100, 25);
+	envWidthSlider.setTextBoxIsEditable(true);
+	envWidthSlider.setRange(ENVWIDTH_MIN, ENVWIDTH_MAX);
+	envWidthSlider.setSkewFactorFromMidPoint(ENVWIDTH_DEFAULT);
+	//envWidthSlider.setTextValueSuffix(" g");
+	envWidthSlider.addListener(this);
+
+
+	envWidthLabel.setText((const juce::String)ENVWIDTH_NAME, juce::dontSendNotification);
+	envWidthLabel.attachToComponent(&envWidthSlider, false);
+	envWidthLabel.setJustificationType(juce::Justification::centred);
+
+
 	addAndMakeVisible(&densitySlider);
 	addAndMakeVisible(&durationSlider);
 	addAndMakeVisible(&speedSlider);
+	addAndMakeVisible(&envWidthSlider);
 
 	addAndMakeVisible(&densityLabel);
 	addAndMakeVisible(&durationLabel);
 	addAndMakeVisible(&speedLabel);
+	addAndMakeVisible(&envWidthLabel);
 
 	//ComboBoxParameterAttachment(RangedAudioParameter& parameter, ComboBox& combo,
 	//	UndoManager* undoManager = nullptr);
@@ -106,128 +129,21 @@ GrainsFrame::~GrainsFrame()
 	densitySlider.removeListener(this);
 	durationSlider.removeListener(this);
 	speedSlider.removeListener(this);
+	envWidthSlider.removeListener(this);
 
 	apvts = nullptr;
 	stateParams = nullptr;
 }
 
-void GrainsFrame::paint(juce::Graphics& g) {
-	//juce::Rectangle<float> grainsFrame(0.f, 0.f, getWidth(), getHeight());
-	//g.setColour(juce::Colours::slategrey);
-	//g.fillRect(grainsFrame);
-	//g.drawRect(grainsFrame);
+void GrainsFrame::paint(juce::Graphics& g) 
+{
 	g.fillAll(MyColours::black);
 }
 
-/*
 void GrainsFrame::resized()
 {
 
 	float h = getHeight() / 30.f;
-
-	juce::FlexBox layout;
-	layout.flexDirection = juce::FlexBox::Direction::row;
-
-	juce::FlexBox fbDensity;
-	fbDensity.flexDirection = juce::FlexBox::Direction::column;
-	fbDensity.flexWrap = juce::FlexBox::Wrap::noWrap;
-	fbDensity.alignContent = juce::FlexBox::AlignContent::spaceBetween ;
-	//fbDensity.alignItems = juce::FlexBox::AlignItems::stretch;
-	//fbDensity.justifyContent = juce::FlexBox::JustifyContent::center;
-
-
-	fbDensity.items.add(juce::FlexItem(densitySlider).withFlex(0.6));
-	fbDensity.items.add(juce::FlexItem(densityLabel).withFlex(0.3));
-
-
-	juce::FlexBox fbDuration;
-	fbDuration.flexDirection = juce::FlexBox::Direction::column;
-	fbDuration.flexWrap = juce::FlexBox::Wrap::noWrap;
-	fbDuration.alignContent = juce::FlexBox::AlignContent::spaceBetween;
-	//fbDuration.alignItems = juce::FlexBox::AlignItems::stretch;
-	//fbDuration.justifyContent = juce::FlexBox::JustifyContent::center;
-
-	fbDuration.items.add(juce::FlexItem(durationSlider).withFlex(0.6));
-	fbDuration.items.add(juce::FlexItem(durationLabel).withFlex(0.3)); // .withMargin(juce::FlexItem::Margin(0, 0, 0, 20)));
-
-	juce::FlexBox fbSpeed;
-	fbSpeed.flexDirection = juce::FlexBox::Direction::column;
-	fbSpeed.flexWrap = juce::FlexBox::Wrap::noWrap;
-	fbSpeed.alignContent = juce::FlexBox::AlignContent::spaceBetween;
-	//fbSpeed.alignItems = juce::FlexBox::AlignItems::stretch;
-	//fbSpeed.justifyContent = juce::FlexBox::JustifyContent::center;
-
-	fbSpeed.items.add(juce::FlexItem(speedSlider).withFlex(0.6));
-	fbSpeed.items.add(juce::FlexItem(speedLabel).withFlex(0.3));
-
-
-	juce::FlexBox fbEnvelope;
-
-	fbEnvelope.items.add(juce::FlexItem(envelopeList).withFlex(1));
-
-
-	layout.items.add(juce::FlexItem(fbDensity).withFlex(1).withMargin(h));
-	layout.items.add(juce::FlexItem(fbDuration).withFlex(1).withMargin(h));
-	layout.items.add(juce::FlexItem(fbSpeed).withFlex(1).withMargin(h));
-	layout.items.add(juce::FlexItem(fbEnvelope).withFlex(1).withMargin(h));
-
-	layout.performLayout(getLocalBounds().toFloat());
-}*/
-
-/*void GrainsFrame::resized()
-{
-
-	float h = getHeight() / 30.f;
-	juce::Rectangle<int> localArea = getLocalBounds();
-	localArea.removeFromTop(h);
-	localArea.removeFromBottom(h);
-
-	juce::FlexBox layout;
-	juce::FlexBox fbSLider;
-	juce::FlexBox fbLabel;
-	juce::FlexBox fbEnv;
-	juce::FlexBox fbLeft;
-
-	fbSLider.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-	fbLabel.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-	fbLeft.flexWrap = juce::FlexBox::Wrap::wrap;
-	fbLeft.flexDirection = juce::FlexBox::Direction::column;
-	fbLeft.alignContent = juce::FlexBox::AlignContent::center;
-
-	//fbLeft.justifyContent = juce::FlexBox::JustifyContent::center;
-
-	fbSLider.items.add(juce::FlexItem(densitySlider).withFlex(0.3));
-	fbSLider.items.add(juce::FlexItem(durationSlider).withFlex(0.3));
-	fbSLider.items.add(juce::FlexItem(speedSlider).withFlex(0.3));    
-	//  .withHeight(localArea.getHeight() / 1.333));
-
-
-	fbLabel.items.add(juce::FlexItem(densityLabel).withFlex(0.3));
-	fbLabel.items.add(juce::FlexItem(durationLabel).withFlex(0.3));
-	fbLabel.items.add(juce::FlexItem(speedLabel).withFlex(0.3));
-
-
-
-	fbLeft.items.add(juce::FlexItem(fbSLider).withFlex(0.5).withHeight(localArea.getHeight() / 1.333));
-	fbLeft.items.add(juce::FlexItem(fbLabel).withFlex(0.2));
-
-	fbEnv.items.add(juce::FlexItem(envelopeList).withFlex(1));
-
-
-
-	layout.items.add(juce::FlexItem(fbSLider).withFlex(1).withMargin(h));
-	//layout.items.add(juce::FlexItem(fbEnv).withFlex(1).withMargin(h));
-
-	layout.performLayout(getLocalBounds().toFloat());
-}*/
-
-void GrainsFrame::resized()
-{
-
-	float h = getHeight() / 30.f;
-	//juce::Rectangle<int> localArea = getLocalBounds();
-	//localArea.removeFromTop(h);
-	//localArea.removeFromBottom(h);
 
 	juce::FlexBox mainFlexBox;
 	mainFlexBox.flexDirection = juce::FlexBox::Direction::row;
@@ -261,13 +177,22 @@ void GrainsFrame::resized()
 	flexBox4.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
 	flexBox4.alignContent = juce::FlexBox::AlignContent::center;
 
-	flexBox4.items.add(juce::FlexItem(envelopeList).withFlex(0.8).withMaxHeight(getHeight()/2).withMargin(h));
+	flexBox4.items.add(juce::FlexItem(envelopeList).withFlex(0.8).withMaxHeight(getHeight() / 2).withMargin(h));
 	//flexBox4.items.add(juce::FlexItem(speedLabel).withFlex(0.2));
 
-	mainFlexBox.items.add(juce::FlexItem(flexBox1).withFlex(0.25));
-	mainFlexBox.items.add(juce::FlexItem(flexBox2).withFlex(0.25));
-	mainFlexBox.items.add(juce::FlexItem(flexBox3).withFlex(0.25));
-	mainFlexBox.items.add(juce::FlexItem(flexBox4).withFlex(0.25));
+	juce::FlexBox flexBox5;
+	flexBox5.flexDirection = juce::FlexBox::Direction::column;
+	flexBox5.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+	flexBox5.alignContent = juce::FlexBox::AlignContent::center;
+
+	flexBox5.items.add(juce::FlexItem(envWidthSlider).withFlex(0.8).withMargin(h));
+	flexBox5.items.add(juce::FlexItem(envWidthLabel).withFlex(0.2));
+
+	mainFlexBox.items.add(juce::FlexItem(flexBox1).withFlex(0.20));
+	mainFlexBox.items.add(juce::FlexItem(flexBox2).withFlex(0.20));
+	mainFlexBox.items.add(juce::FlexItem(flexBox3).withFlex(0.20));
+	mainFlexBox.items.add(juce::FlexItem(flexBox5).withFlex(0.20));
+	mainFlexBox.items.add(juce::FlexItem(flexBox4).withFlex(0.20));
 
 	mainFlexBox.performLayout(getLocalBounds().toFloat());
 }

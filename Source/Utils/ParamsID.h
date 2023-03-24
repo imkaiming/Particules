@@ -12,7 +12,6 @@
 #define GAIN_MAX 0.0
 #define GAIN_DEFAULT -1.0
 
-
 // grain emissions per sec
 #define DENSITY_ID "DENSITY"
 #define DENSITY_NAME "Density"
@@ -46,9 +45,9 @@
 #define ENVTYPE_2 "RaisedCosBell"
 #define ENVTYPE_3 "Trapezoidal"
 
-#define FILEPATH_ID "FILEPATH"
-#define FILEPATH_NAME "FilePath"
-#define FILEPATH_DEFAULT ""
+//#define FILEPATH_ID "FILEPATH"
+//#define FILEPATH_NAME "FilePath"
+//#define FILEPATH_DEFAULT ""
 
 #define POSITION_ID "POSITION"
 #define POSITION_NAME "Position"
@@ -61,6 +60,12 @@
 #define SELECTION_MIN 0.0f
 #define SELECTION_MAX 1.0f
 #define SELECTION_DEFAULT 1.0f
+
+#define ENVWIDTH_ID "ENVWIDTH"
+#define ENVWIDTH_NAME "EnvWidth"
+#define ENVWIDTH_MIN 0.0f
+#define ENVWIDTH_MAX 1.0f
+#define ENVWIDTH_DEFAULT 0.5f
 
 typedef juce::AudioProcessorValueTreeState ValueTreeState;
 

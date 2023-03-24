@@ -33,8 +33,6 @@ public:
 	~GranularEngine();
 	void process(juce::AudioBuffer<float>& buffer, int numSamples);
 	void init(int, int, int);
-	//double sampleRate;
-	//int samplesPerBlock;
 private:
 
 	void mixingProcess(AudioBlock);
@@ -43,7 +41,6 @@ private:
 
 	Scheduler scheduler;
 	StateParameters* stateParams;
-	//juce::AudioBuffer<float> grainBuffer;
 
 	juce::dsp::DryWetMixer<float> mixerProcessor;
 	juce::dsp::Gain<float> gainProcessor;
