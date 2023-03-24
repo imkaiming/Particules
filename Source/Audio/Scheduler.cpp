@@ -12,7 +12,8 @@
 
 Scheduler::Scheduler(StateParameters* stateParams) : stateParams(stateParams)
 {
-
+	nextOnset = 1;
+	nbActiveGrains = 0;
 }
 
 Scheduler::~Scheduler()
@@ -34,7 +35,6 @@ void Scheduler::init(int numChannels)
 {
 	freeActiveGrains();
 	this->numChannels = numChannels;
-	//interOnset = 0;
 	nextOnset = 1;
 	nbActiveGrains = 0;
 }
@@ -43,10 +43,11 @@ void Scheduler::init(int numChannels)
 Grain* Scheduler::generateGrain(int numSamples)
 {
 	// on récupère la valeur en samples par rapport au pourcentage de la position dans le fichier audio
+
 	int durationSamples = static_cast<int>(stateParams->getDuration() * stateParams->getSampleRate());
 	int widthSamples = static_cast<int>(durationSamples * stateParams->getEnvWidth());
-	int positionSamples = static_cast<int>(numSamples * stateParams->getFilePosition());
-	int selectionSamples = static_cast<int>(numSamples * stateParams->getWindowSelection());
+	int positionSamples = static_cast<int>(stateParams->getNumSamples() * stateParams->getFilePosition());
+	int selectionSamples = static_cast<int>(stateParams->getNumSamples() * stateParams->getWindowSelection());
 
 	// Si selectionSamples est supérieur à numSamples, alors on loop le samples
 
@@ -62,9 +63,9 @@ Grain* Scheduler::generateGrain(int numSamples)
 	// utiliser un switch case (1, 2, 3, 4)
 
 	// 1. on ne veut pas que les samples aillent au delà des limites accordées par le buffer
-	if (positionSamples + selectionSamples > numSamples)
+	if (positionSamples + selectionSamples > stateParams->getNumSamples())
 	{
-		selectionSamples = numSamples - positionSamples;
+		selectionSamples = stateParams->getNumSamples() - positionSamples;
 	}
 	if (durationSamples > selectionSamples)
 	{

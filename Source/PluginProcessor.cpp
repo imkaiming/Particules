@@ -237,6 +237,9 @@ void ParticulesAudioProcessor::initValueTreeState() {
 	apvts.getRawParameterValue(DURATION_ID)->store(DURATION_DEFAULT);
 	apvts.getRawParameterValue(SPEED_ID)->store(SPEED_DEFAULT);
 	apvts.getRawParameterValue(ENVTYPE_ID)->store(ENVTYPE_DEFAULT);
+	apvts.getRawParameterValue(POSITION_ID)->store(POSITION_DEFAULT);
+	apvts.getRawParameterValue(SELECTION_ID)->store(SELECTION_DEFAULT);
+	apvts.getRawParameterValue(ENVWIDTH_ID)->store(ENVWIDTH_DEFAULT);
 }
 
 StateParameters* ParticulesAudioProcessor::getStateParameters() {

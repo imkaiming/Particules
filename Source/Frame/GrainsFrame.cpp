@@ -135,7 +135,7 @@ GrainsFrame::~GrainsFrame()
 	stateParams = nullptr;
 }
 
-void GrainsFrame::paint(juce::Graphics& g) 
+void GrainsFrame::paint(juce::Graphics& g)
 {
 	g.fillAll(MyColours::black);
 }
@@ -214,6 +214,10 @@ void GrainsFrame::sliderValueChanged(juce::Slider* slider)
 	if (slider == &speedSlider) {
 		apvts->getRawParameterValue(SPEED_ID)->store(static_cast<float>(speedSlider.getValue()));
 		stateParams->setSpeed(static_cast<float>(speedSlider.getValue()));
+	}
+	if (slider == &envWidthSlider) {
+		apvts->getRawParameterValue(ENVWIDTH_ID)->store(static_cast<float>(envWidthSlider.getValue()));
+		stateParams->setEnvWidth(static_cast<float>(envWidthSlider.getValue()));
 	}
 
 }

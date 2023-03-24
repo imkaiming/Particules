@@ -46,7 +46,7 @@ public:
 	void setWindowSelection(float);
 	void setFilePosition(float);
 	void setEnvWidth(float);
-
+	void setNumSamples(float);
 
 	// getters
 	float getGain();
@@ -64,6 +64,7 @@ public:
 	float getWindowSelection();
 	float getFilePosition();
 	float getEnvWidth();
+	float getNumSamples();
 	juce::AudioBuffer<float>* StateParameters::getAudioBuffer();
 
 	//void valueChanged(juce::Value& value) override;
@@ -90,7 +91,7 @@ private:
 	// all the parameters relative to the Audio File and its managment
 	juce::Value isAudioLoaded; // listenable boolean 
 	bool isPlaying;
-	int audioFileNumSamples;
+	int numSamples;
 	juce::AudioBuffer<float>* audioFileBuffer;
 	float filePosition; 
 	float windowSelection;

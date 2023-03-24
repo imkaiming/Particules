@@ -34,10 +34,21 @@ Grain::Grain(int duration, int numChannels, int envelopeType, float speed, int e
 	duration(duration), numChannels(numChannels), position(position), selection(selection),
 	speed(speed), envelopeWidth(envelopeWidth), grainBuffer(numChannels, duration), envelopeType(envelopeType) //, window(getWindowingMethod(envelopeType))
 {
+	DBG("duration : " << duration);
+	DBG("position : " << position);
+	DBG("selection : " << selection);
+	DBG("buffer->getNumSamples() : " << buffer->getNumSamples());
 	// on ajoute le contenu du buffer dans le buffer local
 	for (size_t channel = 0; channel < numChannels; ++channel)
 	{
-		grainBuffer.copyFrom(channel, position, buffer->getReadPointer(channel), selection);
+		const float* readerPointer = buffer->getReadPointer(channel);
+		float* writerPointer = grainBuffer.getWritePointer(channel);
+
+		for (int sample = position; sample < duration; ++sample)
+		{
+			writerPointer[sample] = readerPointer[sample];
+			//grainBuffer.copyFrom(channel, position, buffer->getReadPointer(channel), selection);
+		}
 	}
 
 	// on resample le buffer en fonction de la vitesse en appliquant le phase vocoder algorithme
@@ -61,7 +72,6 @@ float Grain::getCurrentSample(int channel)
 	// on veut récupérer le sample dans une fenetre de positionSamples à positionSamples + selectionSamples 
 	return grainBuffer.getSample(channel, currentTime);
 }
-
 
 
 void Grain::update() // int channel)
@@ -95,54 +105,47 @@ void Grain::applyEnvelope()
 			float* channelData = grainBuffer.getWritePointer(channel);
 
 			for (int sample = 0; sample < fadeIn; ++sample)
-			{
 				channelData[sample] *= hannEnvelope(sample, fadeIn + fadeOut);
 
-			}
 			for (int sample = fadeOut; sample < duration; ++sample)
-			{
 				channelData[sample] *= hannEnvelope(sample, fadeIn + fadeOut);
 
-			}
 		}
 		break;
 	}
 	case 2:
+	{
 		for (size_t channel = 0; channel < numChannels; channel++)
 		{
 
 			float* channelData = grainBuffer.getWritePointer(channel);
 
 			for (int sample = 0; sample < fadeIn; ++sample)
-			{
 				channelData[sample] *= triangularEnvelope(sample, fadeIn + fadeOut);
 
-			}
+
 			for (int sample = fadeOut; sample < duration; ++sample)
-			{
 				channelData[sample] *= triangularEnvelope(sample, fadeIn + fadeOut);
 
-			}
 		}
 		break;
+	}
 	case 3:
+	{
 		for (size_t channel = 0; channel < numChannels; channel++)
 		{
 
 			float* channelData = grainBuffer.getWritePointer(channel);
 
 			for (int sample = 0; sample < fadeIn; ++sample)
-			{
 				channelData[sample] *= hammingEnvelope(sample, fadeIn + fadeOut);
 
-			}
 			for (int sample = fadeOut; sample < duration; ++sample)
-			{
 				channelData[sample] *= hammingEnvelope(sample, fadeIn + fadeOut);
 
-			}
 		}
 		break;
+	}
 	}
 }
 

@@ -41,9 +41,9 @@
 #define ENVTYPE_ID "ENVTYPE"
 #define ENVTYPE_NAME "EnvType"
 #define ENVTYPE_DEFAULT 1
-#define ENVTYPE_1 "Gaussian"
-#define ENVTYPE_2 "RaisedCosBell"
-#define ENVTYPE_3 "Trapezoidal"
+#define ENVTYPE_1 "Hann"
+#define ENVTYPE_2 "Triangular"
+#define ENVTYPE_3 "Hamming"
 
 //#define FILEPATH_ID "FILEPATH"
 //#define FILEPATH_NAME "FilePath"
@@ -57,13 +57,13 @@
 
 #define SELECTION_ID "SELECTION"
 #define SELECTION_NAME "Selection"
-#define SELECTION_MIN 0.0f
+#define SELECTION_MIN 0.01f
 #define SELECTION_MAX 1.0f
 #define SELECTION_DEFAULT 1.0f
 
 #define ENVWIDTH_ID "ENVWIDTH"
 #define ENVWIDTH_NAME "EnvWidth"
-#define ENVWIDTH_MIN 0.0f
+#define ENVWIDTH_MIN 0.01f
 #define ENVWIDTH_MAX 1.0f
 #define ENVWIDTH_DEFAULT 0.5f
 

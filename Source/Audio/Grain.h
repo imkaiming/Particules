@@ -28,16 +28,8 @@ public:
 	float getCurrentSample(int);
 	bool isActive();
 	void update();
-	void applyCrossFade(int, bool);
-	//int remainingLife();
-	void updateBuffer(juce::AudioBuffer<float>*);
 
 private:
-
-
-	//float parabolicEnvelope(int, int, float);
-	//float trapezoidalEnvelope(int, int, float);
-	//float raisedCosineBellEnvelope(int, int, float);
 
 	float ncos(size_t, size_t, size_t);
 	float hammingEnvelope(int index, int length);
@@ -57,7 +49,6 @@ private:
 	const int selection;	// définie la position maximale qu'un grain peut atteindre dans le buffer
 	const int envelopeWidth;		// définie la taille des rampes d'amplitude en entré et en sortie du grain
 	juce::AudioBuffer<float> grainBuffer;
-	//double startTime;
 	//double frequency;
 	//float amplitude;
 

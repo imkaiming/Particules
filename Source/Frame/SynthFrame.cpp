@@ -21,6 +21,16 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
 			*apvts, GAIN_ID, gainSlider);
 
+	filePosSliderAttachment =
+		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+			*apvts, POSITION_ID, filePosSlider);
+
+	windowSelectionSliderAttachment =
+		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+			*apvts, SELECTION_ID, windowSelectionSlider);
+
+
+
 	mixSlider.setName("mixSlider");
 	mixSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
 	mixSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
@@ -56,15 +66,6 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	addAndMakeVisible(&mixLabel);
 	addAndMakeVisible(&gainLabel);
 
-
-
-	filePosSliderAttachment =
-		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, POSITION_ID, filePosSlider);
-
-	windowSelectionSliderAttachment =
-		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, SELECTION_ID, windowSelectionSlider);
 
 	filePosSlider.setName("filePosSlider");
 	filePosSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);

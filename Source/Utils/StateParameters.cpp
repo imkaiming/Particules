@@ -15,7 +15,7 @@ StateParameters::StateParameters()
 	sampleRate = 0;
 	numChannels = 0;
 	isAudioLoaded = false;
-	audioFileNumSamples = 0;
+	numSamples = 0;
 	//isAudioLoaded.addListener(this);
 
 
@@ -30,21 +30,13 @@ void StateParameters::init(ValueTreeState* apvts, int numChannels)
 {
 	setMix(apvts->getRawParameterValue(MIX_ID)->load());
 	setGain(apvts->getRawParameterValue(GAIN_ID)->load());
-	//smoothedGain.setValue(apvts->getRawParameterValue(GAIN_ID)->load());
 	setDensity(apvts->getRawParameterValue(DENSITY_ID)->load());
 	setDuration(apvts->getRawParameterValue(DURATION_ID)->load());
 	setSpeed(apvts->getRawParameterValue(SPEED_ID)->load());
 	setFilePosition(apvts->getRawParameterValue(POSITION_ID)->load());
 	setWindowSelection(apvts->getRawParameterValue(SELECTION_ID)->load());
+	setEnvWidth(apvts->getRawParameterValue(ENVWIDTH_ID)->load());
 	this->numChannels = numChannels;
-}
-
-void StateParameters::print() {
-	juce::Logger::outputDebugString("stateparams mix : " + (juce::String)mix);
-	juce::Logger::outputDebugString("stateparams gain : " + (juce::String)gain);
-	juce::Logger::outputDebugString("stateparams dens : " + (juce::String)density);
-	juce::Logger::outputDebugString("stateparams dur : " + (juce::String)duration);
-	juce::Logger::outputDebugString("stateparams speed : " + (juce::String)speed);
 }
 
 
@@ -136,6 +128,7 @@ void StateParameters::setAudioLoaded(bool newValue)
 void StateParameters::setAudioBuffer(juce::AudioBuffer<float>* newValue)
 {
 	audioFileBuffer = newValue;
+	setNumSamples(audioFileBuffer->getNumSamples());
 }
 
 void StateParameters::setIsPlaying(bool newValue)
@@ -158,19 +151,25 @@ void StateParameters::setEnvWidth(float newValue)
 	envWidth = newValue;
 }
 
+void StateParameters::setNumSamples(float newValue)
+{
+	numSamples = newValue;
+}
+
 // getters
 
 float StateParameters::getGain()
 {
 	return gain;
-	//return smoothedGain.getNextValue();
 }
 
-float StateParameters::getDensity() {
+float StateParameters::getDensity() 
+{
 	return density;
 }
 
-float StateParameters::getDuration() {
+float StateParameters::getDuration() 
+{
 	return duration;
 }
 
@@ -179,11 +178,13 @@ float StateParameters::getSpeed()
 	return speed;
 }
 
-double StateParameters::getSampleRate() {
+double StateParameters::getSampleRate() 
+{
 	return sampleRate;
 }
 
-float StateParameters::getMix() {
+float StateParameters::getMix() 
+{
 	return mix;
 }
 
@@ -192,13 +193,10 @@ int StateParameters::getInterOnset()
 	return interOnset;
 }
 
-int StateParameters::getNumChannels() {
+int StateParameters::getNumChannels() 
+{
 	return numChannels;
 }
-
-//int StateParameters::getNumSamples() {
-//	return audioFileNumSamples;
-//}
 
 int StateParameters::getEnvelopeType()
 {
@@ -225,6 +223,7 @@ float StateParameters::getWindowSelection()
 {
 	return windowSelection;
 }
+
 float StateParameters::getFilePosition()
 {
 	return filePosition;
@@ -233,4 +232,9 @@ float StateParameters::getFilePosition()
 float StateParameters::getEnvWidth()
 {
 	return envWidth;
+}
+
+float StateParameters::getNumSamples()
+{
+	return numSamples;
 }
