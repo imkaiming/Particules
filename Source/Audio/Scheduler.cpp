@@ -71,13 +71,6 @@ Grain* Scheduler::generateGrain(int numSamples)
 		durationSamples = selectionSamples;
 	}
 
-
-	DBG("new grain");
-	if (stateParams->getAudioBuffer() == nullptr)
-	{
-		DBG("nullptr");
-	}
-
 	return new Grain(
 		//round(stateParams->getDuration() / stateParams->getDensity() * stateParams->getSampleRate()),
 		durationSamples,
@@ -140,16 +133,16 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 		Grain* unGrain = generateGrain(numSamples);
 		++nbActiveGrains;
 
-		if (!grains.isEmpty()) // if(nbActiveGrains != 0)
-		{
-			// on veut le crossfade du dernier grain avant 
-			// pour synchroniser les rampes du dernier grains et de celui qu'on va ajouter
-			// TODO a remplacer part grain->applyEnvelope() avec un paramètre envelopeWidth 
-			int crossfade = grains.getLast()->remainingLife();
-			grains.getLast()->applyCrossFade(crossfade, false);
-			unGrain->applyCrossFade(crossfade, true);
+		//if (!grains.isEmpty()) // if(nbActiveGrains != 0)
+		//{
+		//	// on veut le crossfade du dernier grain avant 
+		//	// pour synchroniser les rampes du dernier grains et de celui qu'on va ajouter
+		//	// TODO a remplacer part grain->applyEnvelope() avec un paramètre envelopeWidth 
+		//	int crossfade = grains.getLast()->remainingLife();
+		//	grains.getLast()->applyCrossFade(crossfade, false);
+		//	unGrain->applyCrossFade(crossfade, true);
 
-		}
+		//}
 
 
 		grains.add(unGrain);
