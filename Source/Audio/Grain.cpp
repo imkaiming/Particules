@@ -34,25 +34,77 @@ Grain::Grain(int duration, int numChannels, int envelopeType, float speed, int e
 	duration(duration), numChannels(numChannels), position(position), selection(selection),
 	speed(speed), envelopeWidth(envelopeWidth), grainBuffer(numChannels, duration), envelopeType(envelopeType) //, window(getWindowingMethod(envelopeType))
 {
-	DBG("duration : " << duration);
-	DBG("position : " << position);
-	DBG("selection : " << selection);
-	DBG("buffer->getNumSamples() : " << buffer->getNumSamples());
-	// on ajoute le contenu du buffer dans le buffer local
-	for (size_t channel = 0; channel < numChannels; ++channel)
-	{
-		const float* readerPointer = buffer->getReadPointer(channel);
-		float* writerPointer = grainBuffer.getWritePointer(channel);
 
-		for (int sample = position; sample < duration; ++sample)
+	const int fadeIn = (duration - envelopeWidth) / 2; // 0 to fadeIn
+	const int fadeOut = fadeIn + envelopeWidth; // fadeOut to numSamples
+
+	DBG("envelopeType : " << envelopeType);
+	switch (envelopeType)
+	{
+	case 1:
+	{
+		for (size_t channel = 0; channel < numChannels; channel++)
 		{
-			writerPointer[sample] = readerPointer[sample];
-			//grainBuffer.copyFrom(channel, position, buffer->getReadPointer(channel), selection);
+			const float* readerPointer = buffer->getReadPointer(channel);
+			float* writerPointer = grainBuffer.getWritePointer(channel);
+
+
+			for (int sample = 0; sample < fadeIn; ++sample)
+				writerPointer[sample] = readerPointer[sample] * hannEnvelope(sample, fadeIn * 2);
+
+			for (int sample = fadeIn; sample < fadeOut; ++sample)
+				writerPointer[sample] = readerPointer[sample];
+
+			for (int sample = fadeOut; sample < duration; ++sample)
+				writerPointer[sample] = readerPointer[sample] * hannEnvelope(sample, fadeIn * 2);
+
 		}
+		break;
+	}
+	case 2:
+	{
+		for (size_t channel = 0; channel < numChannels; channel++)
+		{
+
+			const float* readerPointer = buffer->getReadPointer(channel);
+			float* writerPointer = grainBuffer.getWritePointer(channel);
+
+			for (int sample = 0; sample < fadeIn; ++sample)
+				writerPointer[sample] = readerPointer[sample] * triangularEnvelope(sample, fadeIn * 2);
+
+			for (int sample = fadeIn; sample < fadeOut; ++sample)
+				writerPointer[sample] = readerPointer[sample];
+
+			for (int sample = fadeOut; sample < duration; ++sample)
+				writerPointer[sample] = readerPointer[sample] * triangularEnvelope(sample, fadeIn * 2);
+
+		}
+		break;
+	}
+	case 3:
+	{
+		for (size_t channel = 0; channel < numChannels; channel++)
+		{
+			const float* readerPointer = buffer->getReadPointer(channel);
+			float* writerPointer = grainBuffer.getWritePointer(channel);
+
+
+			for (int sample = 0; sample < fadeIn; ++sample)
+				writerPointer[sample] = readerPointer[sample] * hammingEnvelope(sample, fadeIn * 2);
+
+			for (int sample = fadeIn; sample < fadeOut; ++sample)
+				writerPointer[sample] = readerPointer[sample];
+
+			for (int sample = fadeOut; sample < duration; ++sample)
+				writerPointer[sample] = readerPointer[sample] * hammingEnvelope(sample, fadeIn * 2);
+
+		}
+		break;
+	}
 	}
 
 	// on resample le buffer en fonction de la vitesse en appliquant le phase vocoder algorithme
-	applyEnvelope();
+	//applyEnvelope();
 
 	// on applique l'envelope à partir de la duration et de envelope width
 
@@ -73,7 +125,6 @@ float Grain::getCurrentSample(int channel)
 	return grainBuffer.getSample(channel, currentTime);
 }
 
-
 void Grain::update() // int channel)
 {
 	currentTime++;
@@ -87,7 +138,6 @@ bool Grain::isActive()
 
 	return true;
 }
-
 
 void Grain::applyEnvelope()
 {
@@ -149,7 +199,6 @@ void Grain::applyEnvelope()
 	}
 }
 
-
 float Grain::hannEnvelope(int indexSample, int length)
 {
 	float envelopeValue = 0.0f;
@@ -173,7 +222,6 @@ float Grain::triangularEnvelope(int indexSample, int length)
 	return envelopeValue;
 }
 
-
 float Grain::hammingEnvelope(int indexSample, int length)
 {
 	float envelopeValue = 0.0f;
@@ -185,52 +233,14 @@ float Grain::hammingEnvelope(int indexSample, int length)
 	return envelopeValue;
 }
 
-
 float Grain::ncos(size_t order, size_t i, size_t size)
 {
 	return std::cos(static_cast<float> (order * i)
 		* juce::MathConstants<float>::pi / static_cast<float> (size - 1));
 }
 
-
 /*
 
-float Grain::applyEnvelope(float sample)
-{
-	switch (window)
-	{
-
-		case blackman:
-		{
-			constexpr FloatType alpha = 0.16f;
-
-			for (size_t i = 0; i < size; ++i)
-			{
-				auto cos2 = ncos<FloatType>(2, i, size);
-				auto cos4 = ncos<FloatType>(4, i, size);
-
-				samples[i] = static_cast<FloatType> (0.5 * (1 - alpha) - 0.5 * cos2 + 0.5 * alpha * cos4);
-			}
-		}
-		break;
-
-		case blackmanHarris:
-		{
-			for (size_t i = 0; i < size; ++i)
-			{
-				auto cos2 = ncos<FloatType>(2, i, size);
-				auto cos4 = ncos<FloatType>(4, i, size);
-				auto cos6 = ncos<FloatType>(6, i, size);
-
-				samples[i] = static_cast<FloatType> (0.35875 - 0.48829 * cos2 + 0.14128 * cos4 - 0.01168 * cos6);
-			}
-		}
-		break;
-
-
-		return sample;
-	}
-}
 
 float Grain::triangularEnvelope(int indexSample, int length)
 {
