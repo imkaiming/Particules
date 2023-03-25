@@ -93,18 +93,22 @@ float Grain::getCurrentSample(const int channel)
 	// on vérifie la position du grain a extraire
 	const int readPosition = currentTime + position;
 
+	// on applique l'envelope sur le grain en fonction de l'envelope type
+
 	if (currentTime < fadeIn)
 	{
-		sample[readPosition] *= applyEnvelope(currentTime);
+		return sample[readPosition] * applyEnvelope(currentTime);
 	}
 	else if (fadeOut <= currentTime)
 	{
-		sample[readPosition] *= applyEnvelope(currentTime - envelopeSize);
+		return sample[readPosition] * applyEnvelope(currentTime - envelopeSize);
+	}
+	else
+	{
+		return sample[readPosition];
 	}
 
 
-	// on applique l'envelope sur le grain en fonction de l'envelope type
-	return readPosition[sample];
 
 }
 
