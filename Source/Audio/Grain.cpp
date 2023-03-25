@@ -22,6 +22,18 @@ WindowingMethod Grain::getWindowingMethod(int val) {
 	case 3:
 		window = WindowingMethod::hamming;
 		break;
+	case 4:
+		window = WindowingMethod::rectangular;
+		break;
+	case 5:
+		window = WindowingMethod::blackman;
+		break;
+	case 6:
+		window = WindowingMethod::blackmanHarris;
+		break;
+	case 7:
+		window = WindowingMethod::flatTop;
+		break;
 	default:
 		break;
 	}
@@ -31,77 +43,28 @@ WindowingMethod Grain::getWindowingMethod(int val) {
 
 
 Grain::Grain(int duration, int numChannels, int envelopeType, float speed, int envelopeWidth, int position, int selection, juce::AudioBuffer<float>* buffer) :
-	duration(duration), numChannels(numChannels), position(position), selection(selection),
-	speed(speed), envelopeWidth(envelopeWidth), grainBuffer(numChannels, duration), envelopeType(envelopeType) //, window(getWindowingMethod(envelopeType))
+	duration(duration),
+	numChannels(numChannels),
+	position(position),
+	//selection(selection),
+	speed(speed),
+	envelopeWidth(static_cast<int>(envelopeWidth * duration)),
+	buffer(buffer),
+	envelopeType(getWindowingMethod(envelopeType)),
+	fadeIn((duration - envelopeWidth) / 2),
+	fadeOut(fadeIn + envelopeWidth),
+	envelopeSize(duration - envelopeWidth)//, window(getWindowingMethod(envelopeType))
 {
 
-	const int fadeIn = (duration - envelopeWidth) / 2; // 0 to fadeIn
-	const int fadeOut = fadeIn + envelopeWidth; // fadeOut to numSamples
+	currentTime = 0;
 
-	DBG("envelopeType : " << envelopeType);
-	switch (envelopeType)
-	{
-	case 1:
-	{
-		for (size_t channel = 0; channel < numChannels; channel++)
-		{
-			const float* readerPointer = buffer->getReadPointer(channel);
-			float* writerPointer = grainBuffer.getWritePointer(channel);
+	DBG("duration : " << duration);
+	DBG("fadeIn : " << fadeIn);
+	DBG("fadeOut : " << fadeOut);
+	DBG("envelopeSize : " << envelopeSize);
+	DBG("envelopeWidth : " << envelopeWidth);
+	DBG("position : " << position);
 
-
-			for (int sample = 0; sample < fadeIn; ++sample)
-				writerPointer[sample] = readerPointer[sample] * hannEnvelope(sample, fadeIn * 2);
-
-			for (int sample = fadeIn; sample < fadeOut; ++sample)
-				writerPointer[sample] = readerPointer[sample];
-
-			for (int sample = fadeOut; sample < duration; ++sample)
-				writerPointer[sample] = readerPointer[sample] * hannEnvelope(sample, fadeIn * 2);
-
-		}
-		break;
-	}
-	case 2:
-	{
-		for (size_t channel = 0; channel < numChannels; channel++)
-		{
-
-			const float* readerPointer = buffer->getReadPointer(channel);
-			float* writerPointer = grainBuffer.getWritePointer(channel);
-
-			for (int sample = 0; sample < fadeIn; ++sample)
-				writerPointer[sample] = readerPointer[sample] * triangularEnvelope(sample, fadeIn * 2);
-
-			for (int sample = fadeIn; sample < fadeOut; ++sample)
-				writerPointer[sample] = readerPointer[sample];
-
-			for (int sample = fadeOut; sample < duration; ++sample)
-				writerPointer[sample] = readerPointer[sample] * triangularEnvelope(sample, fadeIn * 2);
-
-		}
-		break;
-	}
-	case 3:
-	{
-		for (size_t channel = 0; channel < numChannels; channel++)
-		{
-			const float* readerPointer = buffer->getReadPointer(channel);
-			float* writerPointer = grainBuffer.getWritePointer(channel);
-
-
-			for (int sample = 0; sample < fadeIn; ++sample)
-				writerPointer[sample] = readerPointer[sample] * hammingEnvelope(sample, fadeIn * 2);
-
-			for (int sample = fadeIn; sample < fadeOut; ++sample)
-				writerPointer[sample] = readerPointer[sample];
-
-			for (int sample = fadeOut; sample < duration; ++sample)
-				writerPointer[sample] = readerPointer[sample] * hammingEnvelope(sample, fadeIn * 2);
-
-		}
-		break;
-	}
-	}
 
 	// on resample le buffer en fonction de la vitesse en appliquant le phase vocoder algorithme
 	//applyEnvelope();
@@ -109,7 +72,6 @@ Grain::Grain(int duration, int numChannels, int envelopeType, float speed, int e
 	// on applique l'envelope à partir de la duration et de envelope width
 
 
-	currentTime = 0;
 }
 
 Grain::~Grain()
@@ -118,11 +80,32 @@ Grain::~Grain()
 
 // on prend un grain du buffer du sample d'entré pour le mettre dans le buffer des grains
 // si la duration est plus grande que la selection alors on loop 
-float Grain::getCurrentSample(int channel)
+float Grain::getCurrentSample(const int channel)
 {
 
 	// on veut récupérer le sample dans une fenetre de positionSamples à positionSamples + selectionSamples 
-	return grainBuffer.getSample(channel, currentTime);
+	//return grainBuffer.getSample(channel, currentTime);
+	float* sample = buffer->getWritePointer(channel % numChannels);
+
+
+	// On a la position, la selection, l'envelopeWidth et la duration
+	// On veut la position de l'index dans l'envelope
+	// on vérifie la position du grain a extraire
+	const int readPosition = currentTime + position;
+
+	if (currentTime < fadeIn)
+	{
+		sample[readPosition] *= applyEnvelope(currentTime);
+	}
+	else if (fadeOut <= currentTime)
+	{
+		sample[readPosition] *= applyEnvelope(currentTime - envelopeSize);
+	}
+
+
+	// on applique l'envelope sur le grain en fonction de l'envelope type
+	return readPosition[sample];
+
 }
 
 void Grain::update() // int channel)
@@ -139,99 +122,57 @@ bool Grain::isActive()
 	return true;
 }
 
-void Grain::applyEnvelope()
+float Grain::applyEnvelope(const int index)
 {
-	const int fadeIn = (duration - envelopeWidth) / 2; // 0 to fadeIn
-	const int fadeOut = fadeIn + envelopeWidth; // fadeOut to numSamples
-
 
 	switch (envelopeType)
 	{
-	case 1:
+	case hann:
 	{
-		for (size_t channel = 0; channel < numChannels; channel++)
-		{
+		return hannEnvelope(index);
+	}
+	break;
 
-			float* channelData = grainBuffer.getWritePointer(channel);
+	case triangular:
+	{
+		return triangularEnvelope(index);
+	}
+	break;
+	case hamming:
+	{
+		return hammingEnvelope(index);
+	}
+	break;
 
-			for (int sample = 0; sample < fadeIn; ++sample)
-				channelData[sample] *= hannEnvelope(sample, fadeIn + fadeOut);
+	case rectangular:
+	{
+		return rectangularEnvelope(index);
+	}
+	break;
+	case blackman:
+	{
+		return blackmanEnvelope(index);
+	}
+	break;
 
-			for (int sample = fadeOut; sample < duration; ++sample)
-				channelData[sample] *= hannEnvelope(sample, fadeIn + fadeOut);
-
-		}
+	case blackmanHarris:
+	{
+		return blackmanHarrisEnvelope(index);
+	}
+	break;
+	case flatTop:
+	{
+		return flatTopEnvelope(index);
+	}
+	break;
+	default:
+		jassertfalse;
 		break;
 	}
-	case 2:
-	{
-		for (size_t channel = 0; channel < numChannels; channel++)
-		{
-
-			float* channelData = grainBuffer.getWritePointer(channel);
-
-			for (int sample = 0; sample < fadeIn; ++sample)
-				channelData[sample] *= triangularEnvelope(sample, fadeIn + fadeOut);
-
-
-			for (int sample = fadeOut; sample < duration; ++sample)
-				channelData[sample] *= triangularEnvelope(sample, fadeIn + fadeOut);
-
-		}
-		break;
-	}
-	case 3:
-	{
-		for (size_t channel = 0; channel < numChannels; channel++)
-		{
-
-			float* channelData = grainBuffer.getWritePointer(channel);
-
-			for (int sample = 0; sample < fadeIn; ++sample)
-				channelData[sample] *= hammingEnvelope(sample, fadeIn + fadeOut);
-
-			for (int sample = fadeOut; sample < duration; ++sample)
-				channelData[sample] *= hammingEnvelope(sample, fadeIn + fadeOut);
-
-		}
-		break;
-	}
-	}
 }
 
-float Grain::hannEnvelope(int indexSample, int length)
-{
-	float envelopeValue = 0.0f;
-	if (indexSample < length)
-	{
-		float phase = (2.0f * juce::MathConstants<float>::pi * float(indexSample)) / float(length - 1);
-		envelopeValue = 0.5f * (1.0f - std::cos(phase));
-	}
-	return envelopeValue;
-}
+// envelope types computations
 
-float Grain::triangularEnvelope(int indexSample, int length)
-{
-	float envelopeValue = 0.0f;
-	if (indexSample < length)
-	{
-		float halfSlots = static_cast<float>(0.5) * static_cast<float> (length - 1);
-		envelopeValue = static_cast<float> (1.0) - std::abs((static_cast<float> (indexSample) - halfSlots) / halfSlots);
-
-	}
-	return envelopeValue;
-}
-
-float Grain::hammingEnvelope(int indexSample, int length)
-{
-	float envelopeValue = 0.0f;
-	if (indexSample < length)
-	{
-		float cos2 = ncos(2, indexSample, length);
-		envelopeValue = static_cast<float> (0.54 - 0.46 * cos2);
-	}
-	return envelopeValue;
-}
 
 float Grain::ncos(size_t order, size_t i, size_t size)
 {
@@ -239,18 +180,57 @@ float Grain::ncos(size_t order, size_t i, size_t size)
 		* juce::MathConstants<float>::pi / static_cast<float> (size - 1));
 }
 
-/*
 
-
-float Grain::triangularEnvelope(int indexSample, int length)
+float Grain::hannEnvelope(const int index)
 {
-	int midpoint = length / 2;
-	float slope = 1.0f / midpoint;
+	float cos2 = ncos(2, index, envelopeSize);
+	return (0.5 - 0.5 * cos2);
 
-	if (indexSample <= midpoint)
-		return slope * indexSample;
-	else
-		return 1.0f - slope * (indexSample - midpoint);
 }
 
-*/
+float Grain::triangularEnvelope(const int index)
+{
+	float halfSlots = static_cast<float> (0.5) * static_cast<float> (envelopeSize - 1);
+	return static_cast<float> (1.0) - std::abs((static_cast<float> (index) - halfSlots) / halfSlots);
+}
+
+float Grain::rectangularEnvelope(const int index)
+{
+	return static_cast<float> (0);
+}
+
+float Grain::hammingEnvelope(const int index)
+{
+	float cos2 = ncos(2, index, envelopeSize);
+	return static_cast<float> (0.54 - 0.46 * cos2);
+}
+
+float Grain::blackmanEnvelope(const int index)
+{
+	constexpr float alpha = 0.16f;
+	float cos2 = ncos(2, index, envelopeSize);
+	float cos4 = ncos(4, index, envelopeSize);
+
+	return static_cast<float> (0.5 * (1 - alpha) - 0.5 * cos2 + 0.5 * alpha * cos4);
+}
+
+float Grain::blackmanHarrisEnvelope(const int index)
+{
+	float cos2 = ncos(2, index, envelopeSize);
+	float cos4 = ncos(4, index, envelopeSize);
+	float cos6 = ncos(6, index, envelopeSize);
+
+	return static_cast<float> (0.35875 - 0.48829 * cos2 + 0.14128 * cos4 - 0.01168 * cos6);
+}
+
+float Grain::flatTopEnvelope(const int index)
+{
+
+	float cos2 = ncos(2, index, envelopeSize);
+	float cos4 = ncos(4, index, envelopeSize);
+	float cos6 = ncos(6, index, envelopeSize);
+	float cos8 = ncos(8, index, envelopeSize);
+
+	return static_cast<float> (1.0 - 1.93 * cos2 + 1.29 * cos4 - 0.388 * cos6 + 0.028 * cos8);
+
+}

@@ -17,25 +17,35 @@ enum WindowingMethod
 {
 	triangular,
 	hann,
-	hamming
+	hamming,
+	rectangular,
+	blackman,
+	blackmanHarris,
+	flatTop
 };
 
-class Grain {
+class Grain
+{
 
 public:
 	Grain(int duration, int numChannel, int envelopeType, float speed, int envelopeWidth, int position, int selection, juce::AudioBuffer<float>* buffer);
 	~Grain();
-	float getCurrentSample(int);
+	float getCurrentSample(const int channel);
 	bool isActive();
 	void update();
 
 private:
 
+	// envelope type function
 	float ncos(size_t, size_t, size_t);
-	float hammingEnvelope(int index, int length);
-	float triangularEnvelope(int index, int length);
-	float hannEnvelope(int index, int length);
-	void applyEnvelope();
+	float hammingEnvelope(const int index);
+	float triangularEnvelope(const int index);
+	float hannEnvelope(int index);
+	float rectangularEnvelope(const int index);
+	float blackmanEnvelope(const int index);
+	float blackmanHarrisEnvelope(const int index);
+	float flatTopEnvelope(const int index);
+	float applyEnvelope(const int index);
 
 	WindowingMethod getWindowingMethod(int);
 
@@ -46,9 +56,16 @@ private:
 	float speed;
 	const int duration;		// définie la durée en nombre de sample
 	const int position;		// définie la position en sample dans le buffer
-	const int selection;	// définie la position maximale qu'un grain peut atteindre dans le buffer
-	const int envelopeWidth;		// définie la taille des rampes d'amplitude en entré et en sortie du grain
-	juce::AudioBuffer<float> grainBuffer;
+	// const int selection;	// définie la position maximale qu'un grain peut atteindre dans le buffer
+	const int envelopeWidth;// définie la taille des rampes d'amplitude en entré et en sortie du grain
+
+
+	const int fadeIn;		// 0 to fadeIn
+	const int fadeOut;		// fadeOut to numSamples
+	const int envelopeSize;	// utile pour calculer les fade d'entrés et de sorties des envelopes selon les functions données
+
+
+	juce::AudioBuffer<float>* buffer;
 	//double frequency;
 	//float amplitude;
 

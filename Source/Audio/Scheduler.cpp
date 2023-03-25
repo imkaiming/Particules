@@ -63,14 +63,22 @@ Grain* Scheduler::generateGrain(int numSamples)
 	// utiliser un switch case (1, 2, 3, 4)
 
 	// 1. on ne veut pas que les samples aillent au delà des limites accordées par le buffer
-	if (positionSamples + selectionSamples > stateParams->getNumSamples())
-	{
-		selectionSamples = stateParams->getNumSamples() - positionSamples;
-	}
-	if (durationSamples > selectionSamples)
-	{
-		durationSamples = selectionSamples;
-	}
+	//if (positionSamples + selectionSamples > stateParams->getNumSamples())
+	//{
+	//	selectionSamples = stateParams->getNumSamples() - positionSamples;
+	//}
+	//if (durationSamples > selectionSamples)
+	//{
+	//	durationSamples = selectionSamples;
+	//}
+
+
+	//DBG("duration : " << duration);
+	//DBG("fadeIn : " << fadeIn);
+	//DBG("fadeOut : " << fadeOut);
+	//DBG("envelopeSize : " << envelopeSize);
+	//DBG("envelopeWidth : " << envelopeWidth);
+
 
 	return new Grain(
 		//round(stateParams->getDuration() / stateParams->getDensity() * stateParams->getSampleRate()),
