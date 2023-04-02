@@ -44,6 +44,12 @@
 #define ENVTYPE_1 "Hann"
 #define ENVTYPE_2 "Triangular"
 #define ENVTYPE_3 "Hamming"
+#define ENVTYPE_4 "Rectangular"
+#define ENVTYPE_5 "Blackman"
+#define ENVTYPE_6 "BlackmanHarris"
+#define ENVTYPE_7 "FlatTop"
+
+
 
 //#define FILEPATH_ID "FILEPATH"
 //#define FILEPATH_NAME "FilePath"

@@ -110,7 +110,11 @@ GrainsFrame::GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	envelopeList.addItem(ENVTYPE_1, 1);
 	envelopeList.addItem(ENVTYPE_2, 2);
 	envelopeList.addItem(ENVTYPE_3, 3);
-	envelopeList.setSelectedId(1, juce::dontSendNotification); // default value set to Gaussian
+	envelopeList.addItem(ENVTYPE_4, 4);
+	envelopeList.addItem(ENVTYPE_5, 5);
+	envelopeList.addItem(ENVTYPE_6, 6);
+	envelopeList.addItem(ENVTYPE_7, 7);
+	envelopeList.setSelectedId(1, juce::dontSendNotification); // default value set to Hann window
 
 	envelopeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
 		*apvts, ENVTYPE_ID, envelopeList);

@@ -327,7 +327,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 			SELECTION_DEFAULT)
 	);
 
-	const juce::StringArray& choices{ ENVTYPE_1, ENVTYPE_2, ENVTYPE_3 };
+	const juce::StringArray& choices{ ENVTYPE_1, ENVTYPE_2, ENVTYPE_3 ,  ENVTYPE_4,  ENVTYPE_5, ENVTYPE_6, ENVTYPE_7 };
 
 	layout.add(
 		std::make_unique<juce::AudioParameterInt>(
