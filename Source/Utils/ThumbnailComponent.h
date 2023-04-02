@@ -37,8 +37,9 @@ public:
 	void updatePosition(float value); // update the position marker when changing the file position slider value
 	void updateSelection(float value);
 
-
 private:
+	void updateOverflow(float value);
+
 
 	float positionValue;
 	float selectionValue;
@@ -46,6 +47,7 @@ private:
 	juce::AudioThumbnail thumbnail;
 	PositionOverlay positionComponent;
 	SelectionOverlay selectionComponent;
+	SelectionOverlay overflowComponent; // its when the selection is higher than the width
 
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ThumbnailComponent)

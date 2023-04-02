@@ -18,11 +18,13 @@ ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail,
 	selectionValue = 1.f;
 	updatePosition(positionValue);
 	updateSelection(selectionValue);
+	updateOverflow(positionValue);
 
 	thumbnail.addChangeListener(this);
 
 	addAndMakeVisible(&selectionComponent);
 	addAndMakeVisible(&positionComponent);
+	addAndMakeVisible(&overflowComponent);
 
 }
 
@@ -77,15 +79,27 @@ void ThumbnailComponent::updatePosition(float value)
 	positionValue = value;
 	positionComponent.setPosition(positionValue * getWidth());
 	selectionComponent.setPosition(positionValue * getWidth());
-	//updateSelection(selectionValue);
+
+	float overflow = selectionValue * getWidth() + positionValue * getWidth() - (float)getWidth();
+	if (overflow >= 0.f)
+		updateOverflow(overflow);
 
 }
 
 void ThumbnailComponent::updateSelection(float value)
 {
 	selectionValue = value;
-	//float space = getWidth() - (positionValue * getWidth());
 	selectionComponent.setSelection(selectionValue * getWidth());
+
+	float overflow = selectionValue * getWidth() + positionValue * getWidth() - (float)getWidth();
+	if (overflow >= 0.f)
+		updateOverflow(overflow);
+
+}
+
+void ThumbnailComponent::updateOverflow(float value)
+{
+	overflowComponent.setSelection(value);
 
 }
 
@@ -95,4 +109,5 @@ void ThumbnailComponent::resized()
 	updateSelection(selectionValue);
 	positionComponent.setBounds(getLocalBounds());
 	selectionComponent.setBounds(getLocalBounds());
+	overflowComponent.setBounds(getLocalBounds());
 }

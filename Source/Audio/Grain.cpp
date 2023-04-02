@@ -98,20 +98,14 @@ float Grain::getCurrentSample(const int channel)
 
 	if (currentTime < fadeIn)
 	{
-		//if (channel == 0)
-		//	DBG(currentTime << "applyEnvelope(currentTime) : " << applyEnvelope(currentTime));
 		return sample[readPosition] * applyEnvelope(currentTime);
 	}
 	else if (fadeOut <= currentTime)
 	{
-		//if (channel == 0)
-		//	DBG(currentTime << "applyEnvelope(currentTime - envelopeWidth) : " << applyEnvelope(currentTime - envelopeSize));
 		return sample[readPosition] * applyEnvelope(duration - currentTime);
 	}
 	else
 	{
-		//if (channel == 0)
-		//	DBG(currentTime << "applyEnvelope(currentTime) : 1");
 		return sample[readPosition];
 	}
 
