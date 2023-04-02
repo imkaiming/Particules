@@ -63,7 +63,7 @@
 
 #define ENVWIDTH_ID "ENVWIDTH"
 #define ENVWIDTH_NAME "EnvWidth"
-#define ENVWIDTH_MIN 0.01f
+#define ENVWIDTH_MIN 0.f
 #define ENVWIDTH_MAX 1.0f
 #define ENVWIDTH_DEFAULT 0.5f
 

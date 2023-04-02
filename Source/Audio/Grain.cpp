@@ -48,7 +48,7 @@ Grain::Grain(int duration, int numChannels, int envelopeType, float speed, int e
 	position(position),
 	//selection(selection),
 	speed(speed),
-	envelopeWidth(static_cast<int>(envelopeWidth * duration)),
+	envelopeWidth(static_cast<int>(envelopeWidth* duration)),
 	buffer(buffer),
 	envelopeType(getWindowingMethod(envelopeType)),
 	fadeIn((duration - envelopeWidth) / 2),
@@ -91,20 +91,27 @@ float Grain::getCurrentSample(const int channel)
 	// On a la position, la selection, l'envelopeWidth et la duration
 	// On veut la position de l'index dans l'envelope
 	// on vérifie la position du grain a extraire
-	const int readPosition = currentTime + position;
+	int readPosition = currentTime + position;
+	readPosition %= buffer->getNumSamples();
 
 	// on applique l'envelope sur le grain en fonction de l'envelope type
 
 	if (currentTime < fadeIn)
 	{
+		//if (channel == 0)
+		//	DBG(currentTime << "applyEnvelope(currentTime) : " << applyEnvelope(currentTime));
 		return sample[readPosition] * applyEnvelope(currentTime);
 	}
 	else if (fadeOut <= currentTime)
 	{
-		return sample[readPosition] * applyEnvelope(currentTime - envelopeSize);
+		//if (channel == 0)
+		//	DBG(currentTime << "applyEnvelope(currentTime - envelopeWidth) : " << applyEnvelope(currentTime - envelopeSize));
+		return sample[readPosition] * applyEnvelope(duration - currentTime);
 	}
 	else
 	{
+		//if (channel == 0)
+		//	DBG(currentTime << "applyEnvelope(currentTime) : 1");
 		return sample[readPosition];
 	}
 
