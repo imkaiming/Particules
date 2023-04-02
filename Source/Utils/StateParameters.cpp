@@ -128,7 +128,8 @@ void StateParameters::setAudioLoaded(bool newValue)
 void StateParameters::setAudioBuffer(juce::AudioBuffer<float>* newValue)
 {
 	audioFileBuffer = newValue;
-	setNumSamples(audioFileBuffer->getNumSamples());
+	if (newValue != nullptr)
+		setNumSamples(audioFileBuffer->getNumSamples());
 }
 
 void StateParameters::setIsPlaying(bool newValue)
@@ -163,12 +164,12 @@ float StateParameters::getGain()
 	return gain;
 }
 
-float StateParameters::getDensity() 
+float StateParameters::getDensity()
 {
 	return density;
 }
 
-float StateParameters::getDuration() 
+float StateParameters::getDuration()
 {
 	return duration;
 }
@@ -178,12 +179,12 @@ float StateParameters::getSpeed()
 	return speed;
 }
 
-double StateParameters::getSampleRate() 
+double StateParameters::getSampleRate()
 {
 	return sampleRate;
 }
 
-float StateParameters::getMix() 
+float StateParameters::getMix()
 {
 	return mix;
 }
@@ -193,7 +194,7 @@ int StateParameters::getInterOnset()
 	return interOnset;
 }
 
-int StateParameters::getNumChannels() 
+int StateParameters::getNumChannels()
 {
 	return numChannels;
 }

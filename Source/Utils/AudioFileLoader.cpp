@@ -42,10 +42,9 @@ void AudioFileLoader::loadAudio(juce::File& file)
 	// si le reader de fichier lit un fichier de plus de MAX_DURATION alors on annule tout
 	if (reader->lengthInSamples / reader->sampleRate >= MAX_DURATION)
 	{
-		DBG("(reader->lengthInSamples / reader->sampleRate == MAX_DURATION) ERREUR");
-		stateParams->setAudioBuffer(nullptr);
-		stateParams->setAudioLoaded(false);
-		// TODO :: afficher une pop up window avec un message d'erreur
+		//stateParams->setAudioBuffer(nullptr);
+		//stateParams->setAudioLoaded(false);
+		showErrorWindow("The file duration must not exceed " + (juce::String)MAX_DURATION + " seconds.");
 		return;
 	}
 
@@ -134,5 +133,11 @@ juce::AudioFormatManager* AudioFileLoader::getFormatManager()
 }
 
 
-
-
+void AudioFileLoader::showErrorWindow(juce::String message)
+{
+	juce::AlertWindow::showMessageBoxAsync(
+		juce::AlertWindow::AlertIconType::WarningIcon,
+		"Error",
+		message,
+		"OK");
+}
