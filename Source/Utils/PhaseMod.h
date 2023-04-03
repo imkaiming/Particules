@@ -1,0 +1,59 @@
+/*
+  ==============================================================================
+
+	PhaseMod.h
+	Created: 3 Apr 2023 12:02:48am
+	Author:  user
+
+  ==============================================================================
+*/
+
+#include <JuceHeader.h>
+#include <random>
+
+#pragma once
+
+enum Mod {
+	Sinus,
+	Triangular,
+	Square,
+	Random,
+	None
+};
+
+class PhaseMod// : public juce::dsp::Phase<float>
+{
+public:
+	PhaseMod(double sampleRate, float frequency, int mod);
+	PhaseMod(double sampleRate);
+	~PhaseMod();
+
+	void setFrequency(float);
+	void setMod(int);
+
+	float getFrequency();
+	int getMod();
+
+	void reset();
+	void advance();
+	float getValue();
+
+private:
+	void nextSine();
+	void nextTriangular();
+	void nextSquare();
+	void nextRandom();
+	//void nextPhase();
+
+	void updateDelta();
+
+	int mod;
+	double sampleRate;
+	float frequency;
+	//float phase;
+	float value;
+	float delta;
+	juce::dsp::Phase<float> phase;
+	juce::Random r;
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PhaseMod)
+};

@@ -132,6 +132,8 @@
               file="Source/Utils/CustomLookAndFeel.h"/>
         <FILE id="wvmaoy" name="MyColours.h" compile="0" resource="0" file="Source/Utils/MyColours.h"/>
         <FILE id="nUQXlw" name="ParamsID.h" compile="0" resource="0" file="Source/Utils/ParamsID.h"/>
+        <FILE id="xRAV12" name="PhaseMod.cpp" compile="1" resource="0" file="Source/Utils/PhaseMod.cpp"/>
+        <FILE id="IRZPxA" name="PhaseMod.h" compile="0" resource="0" file="Source/Utils/PhaseMod.h"/>
         <FILE id="YybEWZ" name="PositionOverlay.cpp" compile="1" resource="0"
               file="Source/Utils/PositionOverlay.cpp"/>
         <FILE id="DpNBxS" name="PositionOverlay.h" compile="0" resource="0"

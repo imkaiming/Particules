@@ -42,7 +42,7 @@ WindowingMethod Grain::getWindowingMethod(int val) {
 }
 
 
-Grain::Grain(int duration, int numChannels, int envelopeType, float speed, int envelopeWidth, int position, int selection, juce::AudioBuffer<float>* buffer) :
+Grain::Grain(int duration, int numChannels, int envelopeType, float speed, int envelopeWidth, int position, juce::AudioBuffer<float>* buffer) :
 	duration(duration),
 	numChannels(numChannels),
 	position(position),
@@ -100,11 +100,9 @@ float Grain::getCurrentSample(const int channel)
 		return sample[readPosition];
 	}
 
-
-
 }
 
-void Grain::update() // int channel)
+void Grain::update()
 {
 	currentTime++;
 }

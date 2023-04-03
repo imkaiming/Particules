@@ -28,7 +28,7 @@ class Grain
 {
 
 public:
-	Grain(int duration, int numChannel, int envelopeType, float speed, int envelopeWidth, int position, int selection, juce::AudioBuffer<float>* buffer);
+	Grain(int duration, int numChannel, int envelopeType, float speed, int envelopeWidth, int position, juce::AudioBuffer<float>* buffer);
 	~Grain();
 	float getCurrentSample(const int channel);
 	bool isActive();

@@ -10,10 +10,15 @@
 
 #include "Scheduler.h"
 
-Scheduler::Scheduler(StateParameters* stateParams) : stateParams(stateParams)
+Scheduler::Scheduler(StateParameters* stateParams) : stateParams(stateParams),
+phaseMod(stateParams->getSampleRate(), 1 / stateParams->getTraversalTimeValue(), stateParams->getTraversalModeValue())
 {
+	DBG("sample rate : " << stateParams->getSampleRate());
+	DBG("getTraversalTimeValue : " << stateParams->getTraversalTimeValue());
+	DBG("getTraversalModeValue : " << stateParams->getTraversalModeValue());
 	nextOnset = 1;
 	nbActiveGrains = 0;
+	numChannels = 0;
 }
 
 Scheduler::~Scheduler()
@@ -50,10 +55,12 @@ Grain* Scheduler::generateGrain(int numSamples)
 	int selectionSamples = static_cast<int>(stateParams->getNumSamples() * stateParams->getWindowSelection());
 
 
-	float traversalTime = stateParams->getTraversalTimeValue();
-	int traversalMode = stateParams->getTraversalModeValue();
+	phaseMod.setFrequency(1 / stateParams->getTraversalTimeValue());
+	phaseMod.setMod(stateParams->getTraversalModeValue());
 
+	DBG("phaseMod.getValue() : " << phaseMod.getValue());
 
+	positionSamples += phaseMod.getValue() * selectionSamples;
 
 	//DBG("duration : " << duration);
 	//DBG("fadeIn : " << fadeIn);
@@ -64,13 +71,12 @@ Grain* Scheduler::generateGrain(int numSamples)
 
 	return new Grain(
 		//round(stateParams->getDuration() / stateParams->getDensity() * stateParams->getSampleRate()),
-		durationSamples,
+		durationSamples, // le nombre total de sample dans le grain
 		numChannels,
 		stateParams->getEnvelopeType(),
 		stateParams->getSpeed(),
-		widthSamples,
-		positionSamples,
-		selectionSamples,
+		widthSamples, // le nombre de sample qu'il y a entre la fin du fade in et le debut du fade out
+		positionSamples, // le nombre de sample qui determine la position dans le fichier pour le depart
 		stateParams->getAudioBuffer()
 	);
 
@@ -144,6 +150,8 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 	else {
 		nextOnset = 1;
 	}
+
+	phaseMod.advance();
 
 	// pour le controle de la sommation (on ne veut pas de division par zero)
 	//float weight = 1.0f / static_cast<float>(nbActiveGrains + 1);

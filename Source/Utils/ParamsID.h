@@ -81,6 +81,8 @@
 #define TRAVERSALMODE_3 "Triangular"
 #define TRAVERSALMODE_4 "Random"
 #define TRAVERSALMODE_5 "None" // sampler mode
+//#define TRAVERSALMODE_6 "Saw Tooth"
+//#define TRAVERSALMODE_7 "Reverse Saw Tooth" 
 
 
 #define TRAVERSALTIME_ID "TRAVERSALTIME"

@@ -29,6 +29,7 @@ StateParameters::~StateParameters()
 
 void StateParameters::init(ValueTreeState* apvts, int numChannels)
 {
+	this->numChannels = numChannels;
 	setMix(apvts->getRawParameterValue(MIX_ID)->load());
 	setGain(apvts->getRawParameterValue(GAIN_ID)->load());
 	setDensity(apvts->getRawParameterValue(DENSITY_ID)->load());
@@ -39,7 +40,6 @@ void StateParameters::init(ValueTreeState* apvts, int numChannels)
 	setEnvWidth(apvts->getRawParameterValue(ENVWIDTH_ID)->load());
 	setTraversalModeValue(apvts->getRawParameterValue(TRAVERSALMODE_ID)->load());
 	setTraversalTimeValue(apvts->getRawParameterValue(TRAVERSALTIME_ID)->load());
-	this->numChannels = numChannels;
 }
 
 
@@ -168,7 +168,6 @@ void StateParameters::setTraversalModeValue(int newValue)
 
 void StateParameters::setTraversalTimeValue(float newValue)
 {
-	DBG("traversalTime" << newValue);
 	traversalTime = newValue;
 }
 

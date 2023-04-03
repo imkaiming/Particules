@@ -48,7 +48,7 @@ public:
 	void setEnvWidth(float);
 	void setNumSamples(float);
 	void setIsGrainsEmpty(bool);
-	void setTraversalModeValue(float);
+	void setTraversalModeValue(int);
 	void setTraversalTimeValue(float);
 
 	// getters

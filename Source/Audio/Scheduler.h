@@ -16,6 +16,7 @@
 
 #include "../Utils/StateParameters.h"
 #include "Grain.h"
+#include "../Utils/PhaseMod.h"
 
 using AudioBlock = juce::dsp::AudioBlock<float>;
 using Buffer = juce::AudioBuffer<float>;
@@ -42,4 +43,5 @@ private:
 	int numChannels;
 
 	//juce::dsp::Oscillator<float> lfoTraversal;
+	PhaseMod phaseMod;
 };
