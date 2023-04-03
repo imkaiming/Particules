@@ -16,6 +16,7 @@ StateParameters::StateParameters()
 	numChannels = 0;
 	isAudioLoaded = false;
 	numSamples = 0;
+	isGrainsEmpty = true;
 	//isAudioLoaded.addListener(this);
 
 
@@ -72,7 +73,6 @@ void StateParameters::init(ValueTreeState* apvts, int numChannels)
 void StateParameters::setGain(float newValue)
 {
 	gain = juce::Decibels::decibelsToGain(newValue);
-	//smoothedGain.setTargetValue(newValue);
 }
 
 void StateParameters::setDensity(float newValue)
@@ -89,13 +89,11 @@ void StateParameters::setDuration(float newValue)
 void StateParameters::setMix(float newValue)
 {
 	mix = newValue / 100.f;
-	//juce::Logger::outputDebugString((juce::String)mix);
 
 }
 
 void StateParameters::setSpeed(float newValue)
 {
-	//juce::Logger::outputDebugString("speed is " + (juce::String)speed);
 	speed = newValue;
 }
 
@@ -107,7 +105,6 @@ void StateParameters::setInterOnSet()
 void StateParameters::setEnvelopeType(int newValue)
 {
 	envelopeType = newValue;
-	//juce::Logger::outputDebugString((juce::String)envelopeType);
 }
 
 void StateParameters::setSampleRate(double sampleRate) {
@@ -155,6 +152,11 @@ void StateParameters::setEnvWidth(float newValue)
 void StateParameters::setNumSamples(float newValue)
 {
 	numSamples = newValue;
+}
+
+void StateParameters::setIsGrainsEmpty(bool newValue)
+{
+	isGrainsEmpty = newValue;
 }
 
 // getters
@@ -238,4 +240,9 @@ float StateParameters::getEnvWidth()
 float StateParameters::getNumSamples()
 {
 	return numSamples;
+}
+
+bool StateParameters::getIsGrainsEmpty()
+{
+	return isGrainsEmpty;
 }

@@ -47,6 +47,7 @@ public:
 	void setFilePosition(float);
 	void setEnvWidth(float);
 	void setNumSamples(float);
+	void setIsGrainsEmpty(bool);
 
 	// getters
 	float getGain();
@@ -65,6 +66,7 @@ public:
 	float getFilePosition();
 	float getEnvWidth();
 	float getNumSamples();
+	bool getIsGrainsEmpty();
 	juce::AudioBuffer<float>* StateParameters::getAudioBuffer();
 
 	//void valueChanged(juce::Value& value) override;
@@ -93,8 +95,9 @@ private:
 	bool isPlaying;
 	int numSamples;
 	juce::AudioBuffer<float>* audioFileBuffer;
-	float filePosition; 
+	float filePosition;
 	float windowSelection;
+	bool isGrainsEmpty;
 	//juce::String filePath;
 	//Playback playback; // grain can play in reverse
 

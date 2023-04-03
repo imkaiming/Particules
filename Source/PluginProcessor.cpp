@@ -170,8 +170,11 @@ void ParticulesAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
 	//}
 
 	// let the engine operate under the given buffer if the button is press
-	bool loaded = stateParams.getAudioLoaded()->getValue();
-	if (loaded == true && stateParams.getIsPlaying() == true) {
+	bool loaded = stateParams.getAudioLoaded()->getValue(); // implicit conversion from juce::Value to bool
+
+	if ((loaded == true && stateParams.getIsPlaying() == true) ||
+		!stateParams.getIsGrainsEmpty())
+	{
 		grainEngine.process(buffer, numSamples);
 	}
 

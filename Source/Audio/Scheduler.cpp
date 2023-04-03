@@ -97,28 +97,28 @@ Grain* Scheduler::generateGrain(int numSamples)
 // Realtime distribution of grains must be activated in timesequential order.
 // Non realtime distribution ofgrains must be activated in random order according to the required density (nextOnset).
 // generate one active grain at a time and set the inter-onset value for the next grain
+
 void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 {
 	// si on a aucun grain alors on écrit du silence dans le buffer
 	if (grains.isEmpty())
 	{
+
 		for (size_t channel = 0; channel < numChannels; channel++) {
 			audioBlock->addSample(channel, sample, 0.f);
 		}
 	}
 	else
 	{
+
 		for (Grain* grain : grains)
 		{
-			//if (sample == 0) {
-			//	grain->updateBuffer(buffer);
-			//}
+
 
 			for (size_t channel = 0; channel < numChannels; ++channel)
 			{
-				// gérer le pan ici 
-				//float* channelData = buffer->getWritePointer(channel);
-				//channelData[sample] += grain->getCurrentSample(channel); // add rms here + amplitude to the grains
+
+				// add rms here + amplitude to the grains
 				float* blockPointer = audioBlock->getChannelPointer(channel);
 				blockPointer[sample] += grain->getCurrentSample(channel); // add rms here
 			}
@@ -131,41 +131,44 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 				delete grain;
 				--nbActiveGrains;
 
+				if (grains.isEmpty())
+					stateParams->setIsGrainsEmpty(true);
+
+
 			}
 		}
 
 	}
 
-	if (--nextOnset == 0) // on avance à chaque sample
-	{
-		// TODO : récupérer les valeur random du stateParam pour les donner au grain avant de le générer.
-		Grain* unGrain = generateGrain(numSamples);
-		++nbActiveGrains;
+	if (stateParams->getIsPlaying() == true) {
+		if (--nextOnset == 0) // on avance à chaque sample
+		{
+			// TODO : récupérer les valeur random du stateParam pour les donner au grain avant de le générer.
 
-		//if (!grains.isEmpty()) // if(nbActiveGrains != 0)
-		//{
-		//	// on veut le crossfade du dernier grain avant 
-		//	// pour synchroniser les rampes du dernier grains et de celui qu'on va ajouter
-		//	// TODO a remplacer part grain->applyEnvelope() avec un paramètre envelopeWidth 
-		//	int crossfade = grains.getLast()->remainingLife();
-		//	grains.getLast()->applyCrossFade(crossfade, false);
-		//	unGrain->applyCrossFade(crossfade, true);
+			Grain* unGrain = generateGrain(numSamples);
+			++nbActiveGrains;
 
-		//}
+			stateParams->setIsGrainsEmpty(false);
 
 
-		grains.add(unGrain);
-		int interOnset = stateParams->getInterOnset(); // ajouter le random ici
-		nextOnset += interOnset; // determine le moment où prochain grain sera créer
+			grains.add(unGrain);
+			int interOnset = stateParams->getInterOnset(); // ajouter le random ici
+			nextOnset += interOnset; // determine le moment où prochain grain sera créer
+		}
 	}
-
+	//else if (grains.isEmpty()) { // ça sonne moins réactif
+	//	nextOnset = 1;
+	//}
+	else {
+		nextOnset = 1;
+	}
 
 	// pour le controle de la sommation (on ne veut pas de division par zero)
 	//float weight = 1.0f / static_cast<float>(nbActiveGrains + 1);
 
 	//float linearCoef = juce::Decibels::decibelsToGain(-3.f); // logarithmique... max 1 - min 0.7
 	// 0.707 = 10 ^ (-3 / 10)
-
+					// on vérifie si il reste encore des grains sinon on met à jours le verrou de play
 
 }
 
