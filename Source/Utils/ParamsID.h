@@ -39,7 +39,7 @@
 #define SPEED_DEFAULT 1.f
 
 #define ENVTYPE_ID "ENVTYPE"
-#define ENVTYPE_NAME "EnvType"
+#define ENVTYPE_NAME "Envelope Type"
 #define ENVTYPE_DEFAULT 1
 #define ENVTYPE_1 "Hann"
 #define ENVTYPE_2 "Triangular"
@@ -65,13 +65,30 @@
 #define SELECTION_NAME "Selection"
 #define SELECTION_MIN 0.01f
 #define SELECTION_MAX 1.0f
-#define SELECTION_DEFAULT 1.0f
+#define SELECTION_DEFAULT 0.5f
 
 #define ENVWIDTH_ID "ENVWIDTH"
 #define ENVWIDTH_NAME "EnvWidth"
 #define ENVWIDTH_MIN 0.f
 #define ENVWIDTH_MAX 1.0f
 #define ENVWIDTH_DEFAULT 0.5f
+
+#define TRAVERSALMODE_ID "TRAVERSALMODE"
+#define TRAVERSALMODE_NAME "Traversal Mode"
+#define TRAVERSALMODE_DEFAULT 1
+#define TRAVERSALMODE_1 "Sinus"
+#define TRAVERSALMODE_2 "Square"
+#define TRAVERSALMODE_3 "Triangular"
+#define TRAVERSALMODE_4 "Random"
+#define TRAVERSALMODE_5 "None" // sampler mode
+
+
+#define TRAVERSALTIME_ID "TRAVERSALTIME"
+#define TRAVERSALTIME_NAME "Traversal Time"
+#define TRAVERSALTIME_DEFAULT 1
+#define TRAVERSALTIME_MIN 0.002f
+#define TRAVERSALTIME_MAX 10.f
+
 
 typedef juce::AudioProcessorValueTreeState ValueTreeState;
 

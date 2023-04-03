@@ -55,13 +55,11 @@ Grain::Grain(int duration, int numChannels, int envelopeType, float speed, int e
 	fadeOut(fadeIn + envelopeWidth),
 	envelopeSize(duration - envelopeWidth)//, window(getWindowingMethod(envelopeType))
 {
-
 	currentTime = 0;
 	// on resample le buffer en fonction de la vitesse en appliquant le phase vocoder algorithme
 
 	//DBG("speed : " << speed);
-
-	float interval = 1.0f / speed;
+	//float interval = 1.0f / speed;
 
 
 

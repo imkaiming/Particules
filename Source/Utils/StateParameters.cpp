@@ -37,6 +37,8 @@ void StateParameters::init(ValueTreeState* apvts, int numChannels)
 	setFilePosition(apvts->getRawParameterValue(POSITION_ID)->load());
 	setWindowSelection(apvts->getRawParameterValue(SELECTION_ID)->load());
 	setEnvWidth(apvts->getRawParameterValue(ENVWIDTH_ID)->load());
+	setTraversalModeValue(apvts->getRawParameterValue(TRAVERSALMODE_ID)->load());
+	setTraversalTimeValue(apvts->getRawParameterValue(TRAVERSALTIME_ID)->load());
 	this->numChannels = numChannels;
 }
 
@@ -159,6 +161,17 @@ void StateParameters::setIsGrainsEmpty(bool newValue)
 	isGrainsEmpty = newValue;
 }
 
+void StateParameters::setTraversalModeValue(int newValue)
+{
+	traversalMode = newValue;
+}
+
+void StateParameters::setTraversalTimeValue(float newValue)
+{
+	DBG("traversalTime" << newValue);
+	traversalTime = newValue;
+}
+
 // getters
 
 float StateParameters::getGain()
@@ -246,3 +259,14 @@ bool StateParameters::getIsGrainsEmpty()
 {
 	return isGrainsEmpty;
 }
+
+int StateParameters::getTraversalModeValue()
+{
+	return traversalMode;
+}
+
+float StateParameters::getTraversalTimeValue()
+{
+	return traversalTime;
+}
+

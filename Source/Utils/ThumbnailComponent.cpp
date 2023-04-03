@@ -14,8 +14,8 @@ ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail,
 	juce::AudioFormatManager& formatManager, juce::AudioThumbnailCache& cache)
 	: thumbnail(samplesPerThumbnail, formatManager, cache)
 {
-	positionValue = 0.f;
-	selectionValue = 1.f;
+	positionValue = POSITION_DEFAULT;
+	selectionValue = SELECTION_DEFAULT;
 	updatePosition(positionValue);
 	updateSelection(selectionValue);
 	updateOverflow(positionValue);

@@ -41,4 +41,5 @@ private:
 	int nbActiveGrains;
 	int numChannels;
 
+	//juce::dsp::Oscillator<float> lfoTraversal;
 };

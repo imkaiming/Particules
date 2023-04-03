@@ -39,7 +39,7 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	mixSlider.setRange(0.0, 100.0);
 	mixSlider.setTextValueSuffix(" %");
 	mixSlider.addListener(this);
-
+	mixSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
 	mixLabel.setText((const juce::String)MIX_NAME, juce::dontSendNotification);
 	mixLabel.attachToComponent(&mixSlider, false);
@@ -54,7 +54,7 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	gainSlider.setSkewFactorFromMidPoint(-12.0);
 	gainSlider.setTextValueSuffix(" dB");
 	gainSlider.addListener(this);
-
+	gainSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
 	gainLabel.setText((const juce::String)GAIN_NAME, juce::dontSendNotification);
 	gainLabel.attachToComponent(&gainSlider, false);

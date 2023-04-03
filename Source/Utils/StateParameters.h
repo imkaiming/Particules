@@ -48,6 +48,8 @@ public:
 	void setEnvWidth(float);
 	void setNumSamples(float);
 	void setIsGrainsEmpty(bool);
+	void setTraversalModeValue(float);
+	void setTraversalTimeValue(float);
 
 	// getters
 	float getGain();
@@ -67,13 +69,15 @@ public:
 	float getEnvWidth();
 	float getNumSamples();
 	bool getIsGrainsEmpty();
+	int getTraversalModeValue();
+	float getTraversalTimeValue();
 	juce::AudioBuffer<float>* StateParameters::getAudioBuffer();
 
 	//void valueChanged(juce::Value& value) override;
 private:
 
 	// Listened Parameters
-	float mix;			// [0.0; 1.0]
+	float mix;
 	float density;		// number of grains per second emitted
 	float duration;		// grain duration in ms
 	float speed;
@@ -96,6 +100,8 @@ private:
 	int numSamples;
 	juce::AudioBuffer<float>* audioFileBuffer;
 	float filePosition;
+	int traversalMode; // this is added value from the position to the end of the window selected by the user
+	float traversalTime;
 	float windowSelection;
 	bool isGrainsEmpty;
 	//juce::String filePath;

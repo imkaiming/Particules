@@ -243,6 +243,7 @@ void ParticulesAudioProcessor::initValueTreeState() {
 	apvts.getRawParameterValue(POSITION_ID)->store(POSITION_DEFAULT);
 	apvts.getRawParameterValue(SELECTION_ID)->store(SELECTION_DEFAULT);
 	apvts.getRawParameterValue(ENVWIDTH_ID)->store(ENVWIDTH_DEFAULT);
+	apvts.getRawParameterValue(TRAVERSALMODE_ID)->store(TRAVERSALMODE_DEFAULT);
 }
 
 StateParameters* ParticulesAudioProcessor::getStateParameters() {
@@ -334,7 +335,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 
 	layout.add(
 		std::make_unique<juce::AudioParameterInt>(
-			ENVTYPE_ID, ENVTYPE_NAME, 1, 3, ENVTYPE_DEFAULT)
+			ENVTYPE_ID, ENVTYPE_NAME, 1, 7, ENVTYPE_DEFAULT)
 	);
 
 	layout.add(
@@ -344,6 +345,21 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 			juce::NormalisableRange<float>(ENVWIDTH_MIN, ENVWIDTH_MAX, 0.01f),
 			ENVWIDTH_DEFAULT)
 	);
+
+
+	layout.add(
+		std::make_unique<juce::AudioParameterInt>(
+			TRAVERSALMODE_ID, TRAVERSALMODE_NAME, 1, 5, TRAVERSALMODE_DEFAULT)
+	);
+
+
+	layout.add(
+		std::make_unique<juce::AudioParameterFloat>(
+			TRAVERSALTIME_ID,
+			TRAVERSALTIME_NAME,
+			TRAVERSALTIME_MIN, TRAVERSALTIME_MAX, TRAVERSALTIME_DEFAULT)
+	);
+
 	// ajouter pan, direction 
 	// randomDensity, randomDuration, randomPan, randomDirection, randomPitch
 

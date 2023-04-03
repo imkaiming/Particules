@@ -49,28 +49,10 @@ Grain* Scheduler::generateGrain(int numSamples)
 	int positionSamples = static_cast<int>(stateParams->getNumSamples() * stateParams->getFilePosition());
 	int selectionSamples = static_cast<int>(stateParams->getNumSamples() * stateParams->getWindowSelection());
 
-	// Si selectionSamples est supérieur à numSamples, alors on loop le samples
 
+	float traversalTime = stateParams->getTraversalTimeValue();
+	int traversalMode = stateParams->getTraversalModeValue();
 
-	//if (duration / getSampleRate() > selectionSamples) ?
-	//	if (positionSamples + selectionSamples > numSamples) ?
-	//		1 soit on bloque les limites
-	//		2 soit on retourne en arrière (reverse)
-	//		2 soit on retourne au début  (modulo)
-	//		3 soit on va au dela (libre)
-
-	// définir les MODES de gestion des limites du buffer pour les grains ici
-	// utiliser un switch case (1, 2, 3, 4)
-
-	// 1. on ne veut pas que les samples aillent au delà des limites accordées par le buffer
-	//if (positionSamples + selectionSamples > stateParams->getNumSamples())
-	//{
-	//	selectionSamples = stateParams->getNumSamples() - positionSamples;
-	//}
-	//if (durationSamples > selectionSamples)
-	//{
-	//	durationSamples = selectionSamples;
-	//}
 
 
 	//DBG("duration : " << duration);
