@@ -76,7 +76,7 @@ float Grain::getCurrentSample(const int channel)
 
 	// on veut récupérer le sample dans une fenetre de positionSamples à positionSamples + selectionSamples 
 	//return grainBuffer.getSample(channel, currentTime);
-	const float* sample = buffer->getReadPointer(channel % numChannels);
+	const float* sample = buffer->getReadPointer(channel);//% numChannels);
 
 
 	// On a la position, la selection, l'envelopeWidth et la duration

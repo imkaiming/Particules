@@ -10,8 +10,9 @@
 
 #include <JuceHeader.h>
 #include <random>
-
 #pragma once
+
+
 
 enum Mod {
 	Sinus,
@@ -21,13 +22,20 @@ enum Mod {
 	None
 };
 
+constexpr float twoPi = juce::MathConstants<float>::twoPi;
+constexpr float pi = juce::MathConstants<float>::pi;
+
+
+
 class PhaseMod// : public juce::dsp::Phase<float>
 {
 public:
 	PhaseMod(double sampleRate, float frequency, int mod);
 	PhaseMod(double sampleRate);
+	PhaseMod();
 	~PhaseMod();
 
+	void setSampleRate(double);
 	void setFrequency(float);
 	void setMod(int);
 
@@ -39,21 +47,20 @@ public:
 	float getValue();
 
 private:
-	void nextSine();
-	void nextTriangular();
-	void nextSquare();
-	void nextRandom();
-	//void nextPhase();
 
+	float nextSine(float);
+	float nextTriangular(float);
+	float nextSquare(float);
+	float nextRandom();
 	void updateDelta();
 
-	int mod;
+	int mod;			// the modulation switch for the function to compute
 	double sampleRate;
 	float frequency;
-	//float phase;
+	float phase;
 	float value;
-	float delta;
-	juce::dsp::Phase<float> phase;
+	float delta;		// frequency / sampleRate
 	juce::Random r;
+
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PhaseMod)
 };

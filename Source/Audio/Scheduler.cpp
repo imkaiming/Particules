@@ -10,12 +10,8 @@
 
 #include "Scheduler.h"
 
-Scheduler::Scheduler(StateParameters* stateParams) : stateParams(stateParams),
-phaseMod(stateParams->getSampleRate(), 1 / stateParams->getTraversalTimeValue(), stateParams->getTraversalModeValue())
+Scheduler::Scheduler(StateParameters* stateParams) : stateParams(stateParams)
 {
-	DBG("sample rate : " << stateParams->getSampleRate());
-	DBG("getTraversalTimeValue : " << stateParams->getTraversalTimeValue());
-	DBG("getTraversalModeValue : " << stateParams->getTraversalModeValue());
 	nextOnset = 1;
 	nbActiveGrains = 0;
 	numChannels = 0;
@@ -42,6 +38,11 @@ void Scheduler::init(int numChannels)
 	this->numChannels = numChannels;
 	nextOnset = 1;
 	nbActiveGrains = 0;
+
+	phaseMod.reset();
+	phaseMod.setSampleRate(stateParams->getSampleRate());
+	phaseMod.setMod(stateParams->getTraversalModeValue());
+	phaseMod.setFrequency(1 / stateParams->getTraversalTimeValue());
 }
 
 
@@ -58,19 +59,20 @@ Grain* Scheduler::generateGrain(int numSamples)
 	phaseMod.setFrequency(1 / stateParams->getTraversalTimeValue());
 	phaseMod.setMod(stateParams->getTraversalModeValue());
 
-	DBG("phaseMod.getValue() : " << phaseMod.getValue());
+	//DBG("mod : " << phaseMod.mod);
+	//DBG("sampleRate : " << phaseMod.sampleRate);
+	//DBG("frequency : " << phaseMod.frequency);
+	//DBG("phase : " << phaseMod.phase);
+	//DBG("value : " << phaseMod.value);
+	//DBG("delta : " << phaseMod.delta);
 
 	positionSamples += phaseMod.getValue() * selectionSamples;
 
-	//DBG("duration : " << duration);
-	//DBG("fadeIn : " << fadeIn);
-	//DBG("fadeOut : " << fadeOut);
-	//DBG("envelopeSize : " << envelopeSize);
-	//DBG("envelopeWidth : " << envelopeWidth);
-
+	//DBG("value : " << phaseMod.getValue());
+	//DBG("selectionSamples : " << selectionSamples);
+	//DBG("positionSamples : " << positionSamples);
 
 	return new Grain(
-		//round(stateParams->getDuration() / stateParams->getDensity() * stateParams->getSampleRate()),
 		durationSamples, // le nombre total de sample dans le grain
 		numChannels,
 		stateParams->getEnvelopeType(),
@@ -98,14 +100,10 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 	}
 	else
 	{
-
 		for (Grain* grain : grains)
 		{
-
-
 			for (size_t channel = 0; channel < numChannels; ++channel)
 			{
-
 				// add rms here + amplitude to the grains
 				float* blockPointer = audioBlock->getChannelPointer(channel);
 				blockPointer[sample] += grain->getCurrentSample(channel); // add rms here

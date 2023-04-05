@@ -11,16 +11,22 @@
 #include "PhaseMod.h"
 #include "ParamsID.h"
 
-PhaseMod::PhaseMod(double sampleRate) : sampleRate(sampleRate)
-{
-	setFrequency(TRAVERSALTIME_DEFAULT);
-	setMod(TRAVERSALMODE_DEFAULT);
-	reset();
-}
 
-PhaseMod::PhaseMod(double sampleRate, float frequency, int mod) : sampleRate(sampleRate), frequency(frequency), mod(mod)
+//PhaseMod::PhaseMod(double sampleRate) : sampleRate(sampleRate)
+//{
+//	setFrequency(TRAVERSALTIME_DEFAULT);
+//	setMod(TRAVERSALMODE_DEFAULT);
+//	reset();
+//}
+//
+//PhaseMod::PhaseMod(double sampleRate, float frequency, int mod) : sampleRate(sampleRate), frequency(frequency), mod(mod)
+//{
+//	updateDelta();
+//	reset();
+//}
+
+PhaseMod::PhaseMod()
 {
-	updateDelta();
 	reset();
 }
 
@@ -34,16 +40,20 @@ void PhaseMod::setFrequency(float newValue)
 	updateDelta();
 }
 
+void PhaseMod::setSampleRate(double newValue) {
+	jassert(newValue != 0);
+	sampleRate = newValue;
+}
+
 void PhaseMod::setMod(int newValue)
 {
 	mod = newValue;
-	reset();
+	//reset();
 }
 
 void PhaseMod::updateDelta()
 {
 	delta = frequency / static_cast<float>(sampleRate);
-	DBG("delta : " << delta);
 }
 
 float PhaseMod::getFrequency()
@@ -58,25 +68,24 @@ int PhaseMod::getMod()
 
 void PhaseMod::reset()
 {
-	phase.reset();
+	phase = 0.f;
 	value = 0.f;
 }
 
 void PhaseMod::advance()
 {
-	phase.advance(delta);
 	switch (mod) {
 	case 1:
-		nextSine();
+		value = nextSine(phase);
 		break;
 	case 2:
-		nextTriangular();
+		value = nextTriangular(phase);
 		break;
 	case 3:
-		nextSquare();
+		value = nextSquare(phase);
 		break;
 	case 4:
-		nextRandom();
+		value = nextRandom();
 		break;
 	case 5:
 		value = 0;
@@ -84,37 +93,35 @@ void PhaseMod::advance()
 	default:
 		break;
 	}
+
+	phase += delta;
+	while (phase >= twoPi)
+		phase -= twoPi;
 }
 
-void PhaseMod::nextSine()
+float PhaseMod::nextSine(float phase)
 {
-	// (sin(2pix) + 1) / 2
-	value = (std::sin(juce::MathConstants<float>::twoPi * phase.phase) + 1) / 2;
+	float offset = pi / 2; // so it start à pos 0
+	return (std::sin(juce::MathConstants<float>::twoPi * phase + offset) + 1) / 2;
 }
 
-void PhaseMod::nextTriangular()
+float PhaseMod::nextTriangular(float phase)
 {
 	// 2|x - floor(x + 0.5)| 
-	value = 2 * std::abs(phase.phase - std::floorf(phase.phase + 0.5f));
+	return 2 * std::abs(phase - std::floorf(phase + 0.5f));
 }
 
-void PhaseMod::nextSquare()
+float PhaseMod::nextSquare(float phase)
 {
-	value = phase.phase < 0.5f ? 0.f : 1.f;
+	return phase < (twoPi / 2) ? 0.f : 1.f;
 }
 
-void PhaseMod::nextRandom()
+float PhaseMod::nextRandom()
 {
-	value = r.nextFloat();
+	return r.nextFloat();
 }
 
 float PhaseMod::getValue()
 {
 	return value;
 }
-//void PhaseMod::nextPhase()
-//{
-//	phase += juce::MathConstants<float>::twoPi * delta;
-//	if (phase > juce::MathConstants<float>::twoPi)
-//		phase -= juce::MathConstants<float>::twoPi;
-//}
