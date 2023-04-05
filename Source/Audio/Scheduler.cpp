@@ -58,14 +58,6 @@ Grain* Scheduler::generateGrain(int numSamples)
 
 	phaseMod.setFrequency(1 / stateParams->getTraversalTimeValue());
 	phaseMod.setMod(stateParams->getTraversalModeValue());
-
-	//DBG("mod : " << phaseMod.mod);
-	//DBG("sampleRate : " << phaseMod.sampleRate);
-	//DBG("frequency : " << phaseMod.frequency);
-	//DBG("phase : " << phaseMod.phase);
-	//DBG("value : " << phaseMod.value);
-	//DBG("delta : " << phaseMod.delta);
-
 	positionSamples += phaseMod.getValue() * selectionSamples;
 
 	//DBG("value : " << phaseMod.getValue());

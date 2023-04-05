@@ -83,7 +83,8 @@ void ThumbnailComponent::updatePosition(float value)
 	float overflow = selectionValue * getWidth() + positionValue * getWidth() - (float)getWidth();
 	if (overflow >= 0.f)
 		updateOverflow(overflow);
-
+	else
+		updateOverflow(0.f);
 }
 
 void ThumbnailComponent::updateSelection(float value)
@@ -94,13 +95,14 @@ void ThumbnailComponent::updateSelection(float value)
 	float overflow = selectionValue * getWidth() + positionValue * getWidth() - (float)getWidth();
 	if (overflow >= 0.f)
 		updateOverflow(overflow);
+	else
+		updateOverflow(0.f);
 
 }
 
 void ThumbnailComponent::updateOverflow(float value)
 {
 	overflowComponent.setSelection(value);
-
 }
 
 void ThumbnailComponent::resized()
