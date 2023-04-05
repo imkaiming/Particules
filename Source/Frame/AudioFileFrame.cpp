@@ -19,7 +19,6 @@ AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* statePara
 	loader(stateParams, &thumbnailComponent), thumbnailComponent(5, *loader.getFormatManager(), thumbnailCache) //, stateParams)
 {
 	synthFrame->init(&thumbnailComponent);
-	//loader = std::make_unique<AudioFileLoader>(stateParams);
 
 	setOpenButtonImageOpen();
 	setStopButtonImageStop();
@@ -39,7 +38,6 @@ AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* statePara
 	addAndMakeVisible(&open_btn);
 	addAndMakeVisible(&play_btn);
 	addAndMakeVisible(&stop_btn);
-
 	addAndMakeVisible(&thumbnailComponent);
 
 	//play_btn.setToggleState(false, juce::NotificationType::dontSendNotification);
@@ -206,8 +204,7 @@ void AudioFileFrame::filesDropped(const juce::StringArray& files, int x, int y)
 {
 	for (juce::String file : files) {
 		if (isInterestedInFileDrag(file)) {
-			// load this file.
-			//loader->loadFile(file);
+			loader.loadFile(file);
 		}
 	}
 }
