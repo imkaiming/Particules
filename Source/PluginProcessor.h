@@ -1,4 +1,4 @@
-/*
+﻿/*
   ==============================================================================
 
 	This file contains the basic framework code for a JUCE plugin processor.
@@ -59,9 +59,9 @@ public:
 
 private:
 
-	ValueTreeState apvts;			// connecte les slider avec les param�tres
+	ValueTreeState apvts;			// connecte les slider avec les paramètres
 	StateParameters stateParams;	// fait le pont entre apvts et le synth
-	GranularEngine grainEngine;		// le synth
+	GranularEngine grainEngine;		// le moteur de la synthèse granulaire
 
 	//juce::ADSR::Parameters adsrParameters;
 	//juce::ADSR adsr;

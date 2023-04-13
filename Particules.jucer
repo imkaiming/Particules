@@ -130,6 +130,10 @@
               file="Source/Utils/CustomLookAndFeel.cpp"/>
         <FILE id="Motre4" name="CustomLookAndFeel.h" compile="0" resource="0"
               file="Source/Utils/CustomLookAndFeel.h"/>
+        <FILE id="hvNSeO" name="GrainVisualizer.cpp" compile="1" resource="0"
+              file="Source/Utils/GrainVisualizer.cpp"/>
+        <FILE id="s1esO8" name="GrainVisualizer.h" compile="0" resource="0"
+              file="Source/Utils/GrainVisualizer.h"/>
         <FILE id="wvmaoy" name="MyColours.h" compile="0" resource="0" file="Source/Utils/MyColours.h"/>
         <FILE id="nUQXlw" name="ParamsID.h" compile="0" resource="0" file="Source/Utils/ParamsID.h"/>
         <FILE id="xRAV12" name="PhaseMod.cpp" compile="1" resource="0" file="Source/Utils/PhaseMod.cpp"/>
