@@ -171,6 +171,11 @@ void StateParameters::setTraversalTimeValue(float newValue)
 	traversalTime = newValue;
 }
 
+void StateParameters::setGrains(juce::Array<Grain*>* grains)
+{
+	grains = grains;
+}
+
 // getters
 
 float StateParameters::getGain()
@@ -269,3 +274,7 @@ float StateParameters::getTraversalTimeValue()
 	return traversalTime;
 }
 
+
+juce::Array<Grain*>* StateParameters::getGrains() {
+	return grains;
+}

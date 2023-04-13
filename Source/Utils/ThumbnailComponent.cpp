@@ -11,11 +11,12 @@
 #include "ThumbnailComponent.h", 
 
 ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail,
-	juce::AudioFormatManager& formatManager, juce::AudioThumbnailCache& cache)
-	: thumbnail(samplesPerThumbnail, formatManager, cache)
+	juce::AudioFormatManager& formatManager, juce::AudioThumbnailCache& cache, StateParameters* stateParams)
+	: thumbnail(samplesPerThumbnail, formatManager, cache), grainVisualizer(stateParams)//, stateParams(stateParams)
 {
 	positionValue = POSITION_DEFAULT;
 	selectionValue = SELECTION_DEFAULT;
+
 	updatePosition(positionValue);
 	updateSelection(selectionValue);
 	updateOverflow(positionValue);

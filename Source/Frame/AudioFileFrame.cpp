@@ -10,13 +10,15 @@
 
 #include "AudioFileFrame.h"
 
-AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* stateParams, SynthFrame* synthFrame)
-	: apvts(apvts), stateParams(stateParams),
+AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* stateParams, SynthFrame* synthFrame)	: 
+	apvts(apvts), stateParams(stateParams),
 	open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-	isAudioLoaded(stateParams->getAudioLoaded()), thumbnailCache(5),
-	loader(stateParams, &thumbnailComponent), thumbnailComponent(5, *loader.getFormatManager(), thumbnailCache) //, stateParams)
+	isAudioLoaded(stateParams->getAudioLoaded()), 
+	thumbnailCache(5),
+	loader(stateParams, &thumbnailComponent), 
+	thumbnailComponent(5, *loader.getFormatManager(), thumbnailCache , stateParams)
 {
 	synthFrame->init(&thumbnailComponent);
 
@@ -185,8 +187,6 @@ void AudioFileFrame::valueChanged(juce::Value& value)
 		// on ne peut pas play le son mais on ne laisse le btn play
 	}
 }
-
-// marche pas
 
 bool AudioFileFrame::isInterestedInFileDrag(const juce::StringArray& files)
 {
