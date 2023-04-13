@@ -23,7 +23,7 @@
 class ThumbnailComponent : public juce::Component, private juce::ChangeListener //, public juce::Value::Listener
 {
 public:
-	ThumbnailComponent(int, juce::AudioFormatManager&, juce::AudioThumbnailCache&);// , StateParameters*);
+	ThumbnailComponent(int, juce::AudioFormatManager&, juce::AudioThumbnailCache& , StateParameters*);
 	~ThumbnailComponent();
 
 	void setFile(const juce::File&);
@@ -46,6 +46,7 @@ private:
 
 	float positionValue;
 	float selectionValue;
+	StateParameters* stateParams;
 
 	juce::AudioThumbnail thumbnail;
 	PositionOverlay positionComponent;

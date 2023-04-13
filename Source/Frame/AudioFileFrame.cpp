@@ -18,11 +18,9 @@ AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* statePara
 	isAudioLoaded(stateParams->getAudioLoaded()), 
 	thumbnailCache(5),
 	loader(stateParams, &thumbnailComponent), 
-	thumbnailComponent(5, *loader.getFormatManager(), thumbnailCache)
+	thumbnailComponent(5, *loader.getFormatManager(), thumbnailCache, stateParams)
 {
 	synthFrame->init(&thumbnailComponent);
-
-	stateParams->setGrainVisualizer(thumbnailComponent.getGrainVisualizer());
 
 	setOpenButtonImageOpen();
 	setStopButtonImageStop();

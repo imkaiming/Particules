@@ -10,7 +10,7 @@
 
 #include "GrainVisualizer.h"
 
-GrainVisualizer::GrainVisualizer() //: grains(grains)
+GrainVisualizer::GrainVisualizer(juce::Array<Grain*>* grains) : grains(grains)
 {
 	this->grains = nullptr;
 }
@@ -20,10 +20,11 @@ GrainVisualizer::~GrainVisualizer()
 	this->grains = nullptr;
 }
 
-void GrainVisualizer::setGrains(juce::Array<Grain*>* grains)
-{
-	this->grains = grains;
-}
+//void GrainVisualizer::setGrains(juce::Array<Grain*>* grains)
+//{
+//	DBG("GrainVisualizer::setGrains");
+//	this->grains = grains;
+//}
 
 void GrainVisualizer::paint(juce::Graphics& g)
 {

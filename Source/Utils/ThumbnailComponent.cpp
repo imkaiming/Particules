@@ -11,8 +11,8 @@
 #include "ThumbnailComponent.h", 
 
 ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail,
-	juce::AudioFormatManager& formatManager, juce::AudioThumbnailCache& cache)
-	: thumbnail(samplesPerThumbnail, formatManager, cache)
+	juce::AudioFormatManager& formatManager, juce::AudioThumbnailCache& cache, StateParameters* stateParams)
+	: thumbnail(samplesPerThumbnail, formatManager, cache), stateParams(stateParams), grainVisualizer(stateParams->getGrains())
 {
 	positionValue = POSITION_DEFAULT;
 	selectionValue = SELECTION_DEFAULT;
@@ -115,8 +115,3 @@ void ThumbnailComponent::resized()
 	overflowComponent.setBounds(getLocalBounds());
 }
 
-
-GrainVisualizer* ThumbnailComponent::getGrainVisualizer()
-{
-	return &grainVisualizer;
-}

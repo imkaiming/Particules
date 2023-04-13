@@ -33,14 +33,14 @@ struct grainPoint
 class GrainVisualizer : public juce::Component
 {
 public:
-    GrainVisualizer();
+    GrainVisualizer(juce::Array<Grain*>* grains);
     ~GrainVisualizer() override;
 
     void paint(juce::Graphics&) override;
     void resized() override;
 
     void update();
-    void setGrains(juce::Array<Grain*>*);
+    //void setGrains(juce::Array<Grain*>*);
 
 private:
     // the number of grains in the scheduler is the same as the number of grainPoints.
