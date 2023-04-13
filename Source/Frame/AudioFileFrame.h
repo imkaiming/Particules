@@ -58,8 +58,6 @@ private:
 	void stopFileButtonClicked();
 	void playFileButtonClicked();
 
-
-	// marche pas
 	bool isInterestedInFileDrag(const juce::StringArray&);
 	void filesDropped(const juce::StringArray&, int, int);
 

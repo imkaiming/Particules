@@ -17,9 +17,11 @@
 #include "../Utils/StateParameters.h"
 #include "Grain.h"
 #include "../Utils/PhaseMod.h"
+#include "../Utils/GrainVisualizer.h"
 
 using AudioBlock = juce::dsp::AudioBlock<float>;
 using Buffer = juce::AudioBuffer<float>;
+
 
 class Scheduler
 {
@@ -29,6 +31,8 @@ public:
 	void synthesize(AudioBlock*, int, int); // , juce::AudioBuffer<float>*);
 	Grain* generateGrain(int);
 	void init(int);
+
+	void setGrainVisualizer(GrainVisualizer*);
 
 private:
 	void freeActiveGrains();
@@ -44,4 +48,10 @@ private:
 
 	//juce::dsp::Oscillator<float> lfoTraversal;
 	PhaseMod phaseMod;
+
+
+	// Quand on ouvre un fichier audio pour la première fois, on init le pointeur 
+	// du visualizer avec le scheduler qui sera en charge d'updater la visualisation
+	// des grains et de synchroniser le tableau de grains.
+	GrainVisualizer* grainVisualizer; 
 };

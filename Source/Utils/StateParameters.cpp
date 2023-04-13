@@ -171,6 +171,11 @@ void StateParameters::setTraversalTimeValue(float newValue)
 	traversalTime = newValue;
 }
 
+void StateParameters::setGrainVisualizer(GrainVisualizer* grainVisualizer)
+{
+	this->grainVisualizer = grainVisualizer;
+}
+
 // getters
 
 float StateParameters::getGain()
@@ -269,3 +274,7 @@ float StateParameters::getTraversalTimeValue()
 	return traversalTime;
 }
 
+GrainVisualizer* StateParameters::getGrainVisualizer()
+{
+	return grainVisualizer;
+}

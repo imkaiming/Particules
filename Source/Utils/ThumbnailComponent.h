@@ -14,6 +14,7 @@
 #include "PositionOverlay.h"
 #include "StateParameters.h"
 #include "SelectionOverlay.h"
+#include "GrainVisualizer.h"
 
 #pragma once
 
@@ -37,6 +38,8 @@ public:
 	void updatePosition(float value); // update the position marker when changing the file position slider value
 	void updateSelection(float value);
 
+	GrainVisualizer* getGrainVisualizer();
+
 private:
 	void updateOverflow(float value);
 
@@ -48,6 +51,8 @@ private:
 	PositionOverlay positionComponent;
 	SelectionOverlay selectionComponent;
 	SelectionOverlay overflowComponent; // its when the selection is higher than the width
+
+	GrainVisualizer grainVisualizer;
 
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ThumbnailComponent)

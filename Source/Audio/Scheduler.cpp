@@ -43,6 +43,11 @@ void Scheduler::init(int numChannels)
 	phaseMod.setSampleRate(stateParams->getSampleRate());
 	phaseMod.setMod(stateParams->getTraversalModeValue());
 	phaseMod.setFrequency(1 / stateParams->getTraversalTimeValue());
+
+	// on connecte le scheduler avec le grainVisualizer qui se charge 
+	// d'envoyer les mises à jours des positions des grains.
+	setGrainVisualizer(stateParams->getGrainVisualizer());
+	grainVisualizer->setGrains(&grains);
 }
 
 
@@ -176,3 +181,10 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 //
 //	return weight;
 //}
+
+
+// Cette fonction est appelé lorsqu'on charge pour la première fois un fichier audio.
+void Scheduler::setGrainVisualizer(GrainVisualizer* grainVisualizer)
+{
+	this->grainVisualizer = grainVisualizer;
+}

@@ -16,6 +16,7 @@ ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail,
 {
 	positionValue = POSITION_DEFAULT;
 	selectionValue = SELECTION_DEFAULT;
+
 	updatePosition(positionValue);
 	updateSelection(selectionValue);
 	updateOverflow(positionValue);
@@ -112,4 +113,10 @@ void ThumbnailComponent::resized()
 	positionComponent.setBounds(getLocalBounds());
 	selectionComponent.setBounds(getLocalBounds());
 	overflowComponent.setBounds(getLocalBounds());
+}
+
+
+GrainVisualizer* ThumbnailComponent::getGrainVisualizer()
+{
+	return &grainVisualizer;
 }

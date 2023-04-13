@@ -1,9 +1,9 @@
 /*
   ==============================================================================
 
-    GrainVisualizer.cpp
-    Created: 12 Apr 2023 1:47:43pm
-    Author:  user
+	GrainVisualizer.cpp
+	Created: 12 Apr 2023 1:47:43pm
+	Author:  user
 
   ==============================================================================
 */
@@ -12,43 +12,42 @@
 
 GrainVisualizer::GrainVisualizer() //: grains(grains)
 {
-    this->grains = nullptr;
+	this->grains = nullptr;
 }
 
 GrainVisualizer::~GrainVisualizer()
 {
-    this->grains = nullptr;
+	this->grains = nullptr;
 }
 
-void GrainVisualizer::initGrains()
+void GrainVisualizer::setGrains(juce::Array<Grain*>* grains)
 {
-    //grains = stateParams->getGrains();
+	this->grains = grains;
 }
 
 void GrainVisualizer::paint(juce::Graphics& g)
 {
-    // Clear the background
-    g.fillAll(juce::Colours::black);
+	// Clear the background
+	g.fillAll(juce::Colours::black);
 
-    // Draw the grains visualization
-    for (const auto& grain : grains)
-    {
-        // Determine the position, size, and color of the grain based on its properties
-        // You may want to normalize and scale values based on the component's size and the desired appearance
+	// Draw the grains visualization
+	//for (const auto& grain : grains)
+	//{
+	//	// Determine the position, size, and color of the grain based on its properties
+	//	// You may want to normalize and scale values based on the component's size and the desired appearance
 
-        juce::Rectangle<float> grainRect(grain.x, grain.y, grain.width, grain.height);
-        juce::Colour grainColor = juce::Colour::fromHSV(grain.hue, grain.saturation, grain.brightness, 1.0f);
+	//	juce::Rectangle<float> grainRect(grain.x, grain.y, grain.width, grain.height);
+	//	juce::Colour grainColor = juce::Colour::fromHSV(grain.hue, grain.saturation, grain.brightness, 1.0f);
 
-        // Draw the grain
-        g.setColour(grainColor);
-        g.fillRect(grainRect);
-    }
+	//	// Draw the grain
+	//	g.setColour(grainColor);
+	//	g.fillRect(grainRect);
+	//}
 }
 
-void GrainVisualizer::updateGrains(const std::vector<GrainData>& newGrains)
+void GrainVisualizer::update()
 {
-    grains = newGrains;
-    repaint();
+	repaint();
 }
 
 void GrainVisualizer::resized()

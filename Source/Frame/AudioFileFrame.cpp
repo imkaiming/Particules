@@ -15,10 +15,14 @@ AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* statePara
 	open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-	isAudioLoaded(stateParams->getAudioLoaded()), thumbnailCache(5),
-	loader(stateParams, &thumbnailComponent), thumbnailComponent(5, *loader.getFormatManager(), thumbnailCache) //, stateParams)
+	isAudioLoaded(stateParams->getAudioLoaded()), 
+	thumbnailCache(5),
+	loader(stateParams, &thumbnailComponent), 
+	thumbnailComponent(5, *loader.getFormatManager(), thumbnailCache)
 {
 	synthFrame->init(&thumbnailComponent);
+
+	stateParams->setGrainVisualizer(thumbnailComponent.getGrainVisualizer());
 
 	setOpenButtonImageOpen();
 	setStopButtonImageStop();
