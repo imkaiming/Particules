@@ -14,17 +14,15 @@
 #include "PositionOverlay.h"
 #include "StateParameters.h"
 #include "SelectionOverlay.h"
-#include "GrainVisualizer.h"
 
 #pragma once
 
 
 
-class ThumbnailComponent : public juce::Component, private juce::ChangeListener
+class ThumbnailComponent : public juce::Component, private juce::ChangeListener //, public juce::Value::Listener
 {
 public:
-	ThumbnailComponent(int, juce::AudioFormatManager&, 
-		juce::AudioThumbnailCache&, StateParameters* stateParams);
+	ThumbnailComponent(int, juce::AudioFormatManager&, juce::AudioThumbnailCache&);// , StateParameters*);
 	~ThumbnailComponent();
 
 	void setFile(const juce::File&);
@@ -34,11 +32,9 @@ public:
 	void paintIfNoFileLoaded(juce::Graphics&);
 	void paintIfFileLoaded(juce::Graphics&);
 
-	// We change the waveform when we change the audio
-	void changeListenerCallback(juce::ChangeBroadcaster*) override; 
+	void changeListenerCallback(juce::ChangeBroadcaster*) override; // to change the waveform when changing the audio
 
-	// update the position marker when changing the file position slider value
-	void updatePosition(float value); 
+	void updatePosition(float value); // update the position marker when changing the file position slider value
 	void updateSelection(float value);
 
 private:
@@ -53,8 +49,6 @@ private:
 	SelectionOverlay selectionComponent;
 	SelectionOverlay overflowComponent; // its when the selection is higher than the width
 
-	GrainVisualizer grainVisualizer;
-	//StateParameters* stateParams;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ThumbnailComponent)
 };

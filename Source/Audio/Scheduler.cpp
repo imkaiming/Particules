@@ -15,7 +15,6 @@ Scheduler::Scheduler(StateParameters* stateParams) : stateParams(stateParams)
 	nextOnset = 1;
 	nbActiveGrains = 0;
 	numChannels = 0;
-	stateParams->setGrains(&grains); // on place le pointeur de talbeau de grains dans le model
 }
 
 Scheduler::~Scheduler()
@@ -153,27 +152,27 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 
 }
 
-float getWeight(const juce::AudioBuffer<float>& grain)
-{
-	float rms = 0.0f;
-
-	for (int ch = 0; ch < grain.getNumChannels(); ++ch)
-	{
-		const float* channelData = grain.getReadPointer(ch);
-		for (int i = 0; i < grain.getNumSamples(); ++i)
-		{
-			rms += channelData[i] * channelData[i];
-		}
-	}
-	rms = std::sqrt(rms / (grain.getNumChannels() * grain.getNumSamples()));
-
-	// Calculate the gain factor to prevent saturation
-	const float maxGain = 1.0f / std::sqrt(2.0f);
-	const float targetRMS = 0.707f; // Target RMS value for the overall mix
-	const float gain = std::min(maxGain, targetRMS / rms);
-
-	// Calculate the weight as the reciprocal of the gain factor
-	const float weight = 1.0f / gain;
-
-	return weight;
-}
+//float getWeight(const juce::AudioBuffer<float>& grain)
+//{
+//
+//	float rms = 0.0f;
+//	for (int ch = 0; ch < grain.getNumChannels(); ++ch)
+//	{
+//		const float* channelData = grain.getReadPointer(ch);
+//		for (int i = 0; i < grain.getNumSamples(); ++i)
+//		{
+//			rms += channelData[i] * channelData[i];
+//		}
+//	}
+//	rms = std::sqrt(rms / (grain.getNumChannels() * grain.getNumSamples()));
+//
+//	// Calculate the gain factor to prevent saturation
+//	const float maxGain = 1.0f / std::sqrt(2.0f);
+//	const float targetRMS = 0.707f; // Target RMS value for the overall mix
+//	const float gain = std::min(maxGain, targetRMS / rms);
+//
+//	// Calculate the weight as the reciprocal of the gain factor
+//	const float weight = 1.0f / gain;
+//
+//	return weight;
+//}

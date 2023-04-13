@@ -61,12 +61,13 @@ private:
 
 	ValueTreeState apvts;			// connecte les slider avec les paramètres
 	StateParameters stateParams;	// fait le pont entre apvts et le synth
-	GranularEngine grainEngine;		// le moteur de la synthèse granulaire
+	GranularEngine grainEngine;		// le synth
 
 	//juce::ADSR::Parameters adsrParameters;
 	//juce::ADSR adsr;
 
 
 	//juce::UndoManager undoManager;
+	// juce::AudioSampleBuffer grainBuffer;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessor)
 };

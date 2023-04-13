@@ -55,6 +55,7 @@ void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 	mixerProcessor.pushDrySamples(audioBlock);
 
 
+	//juce::Logger::outputDebugString("block : " + (juce::String)numSamples);
 	for (int sample = 0; sample < numSamples; ++sample)
 	{
 		scheduler.synthesize(&audioBlock, sample, numSamples);

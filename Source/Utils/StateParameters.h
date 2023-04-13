@@ -11,7 +11,6 @@
 #include <JuceHeader.h>
 #include <juce_dsp/juce_dsp.h>
 #include "ParamsID.h"
-#include "../Audio/Grain.h"	
 
 #pragma once
 
@@ -51,7 +50,6 @@ public:
 	void setIsGrainsEmpty(bool);
 	void setTraversalModeValue(int);
 	void setTraversalTimeValue(float);
-	void setGrains(juce::Array<Grain*>* grains);
 
 	// getters
 	float getGain();
@@ -76,10 +74,6 @@ public:
 	juce::AudioBuffer<float>* StateParameters::getAudioBuffer();
 
 	//void valueChanged(juce::Value& value) override;
-
-	juce::Array<Grain*>* getGrains();
-
-
 private:
 
 	// Listened Parameters
@@ -115,6 +109,4 @@ private:
 
 	// Random parameters
 	//juce::Random random; // random modulator to affect the parameters
-
-	juce::Array<Grain*>* grains;
 };
