@@ -80,10 +80,9 @@ public:
 	void setGrains(juce::Array<Grain*>* grains);
 	void setGrainVisualizer(GrainVisualizer*);
 
-	//void updateGrainVisualizer();
-
 	juce::Array<Grain*>* getGrains();
 	GrainVisualizer* getGrainVisualizer();
+
 	//void valueChanged(juce::Value& value) override;
 private:
 

@@ -49,9 +49,4 @@ private:
 	//juce::dsp::Oscillator<float> lfoTraversal;
 	PhaseMod phaseMod;
 
-
-	// Quand on ouvre un fichier audio pour la première fois, on init le pointeur 
-	// du visualizer avec le scheduler qui sera en charge d'updater la visualisation
-	// des grains et de synchroniser le tableau de grains.
-	//GrainVisualizer* grainVisualizer;
 };

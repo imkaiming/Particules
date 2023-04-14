@@ -32,10 +32,11 @@ public:
 	GrainVisualizer(juce::Array<Grain*>* grains);
 	~GrainVisualizer() override;
 
-	void paint(juce::Graphics&) override;
+	void paint(juce::Graphics& g) override;
 	void resized() override;
 
 	void setNumSamples(int);
+	void setGrains(juce::Array<Grain*>* grains);
 
 private:
 

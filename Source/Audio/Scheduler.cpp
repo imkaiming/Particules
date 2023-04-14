@@ -179,11 +179,3 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 //	return weight;
 //}
 
-
-// on connecte le scheduler avec le grainVisualizer qui se charge 
-// d'envoyer les mises à jours des positions des grains.
-//void Scheduler::setGrainVisualizer()
-//{
-//	this->grainVisualizer =  stateParams->getGrainVisualizer();
-//	grainVisualizer->setGrains(&grains);
-//}

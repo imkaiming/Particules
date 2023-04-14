@@ -84,6 +84,8 @@ void AudioFileLoader::loadAudio(juce::File& file)
 
 	stateParams->setAudioBuffer(buffer);
 	stateParams->setAudioLoaded(true);
+	stateParams->getGrainVisualizer()->setGrains(stateParams->getGrains());
+
 
 
 }
