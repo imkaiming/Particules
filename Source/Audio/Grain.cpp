@@ -104,7 +104,8 @@ float Grain::getCurrentSample(const int channel)
 		sampleValue = sample[readPosition];
 	}
 
-	grainPoint.setOpacity(sampleValue);
+	float x = std::clamp(sampleValue, 0.f, 1.f);
+	grainPoint.setOpacity(curve(x, 5.f)); 
 	return sampleValue;
 
 }
@@ -238,4 +239,9 @@ float Grain::flatTopEnvelope(const int index)
 GrainPoint* Grain::getGrainPoint()
 {
 	return &grainPoint;
+}
+
+float Grain::curve(float x, float coefficient)
+{
+	return 1.0f - std::pow(1.0f - x, coefficient);
 }

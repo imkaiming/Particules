@@ -42,10 +42,6 @@ void GrainVisualizer::paint(juce::Graphics& g)
 		int yPos = grain->getGrainPoint()->getYpos() * getHeight();
 		float opacity = grain->getGrainPoint()->getOpacity();
 
-		DBG("samplePos : " << samplePos);
-		DBG("yPos : " << yPos);
-		DBG("opacity : " << opacity);
-
 		g.setColour(colour.withAlpha(opacity));
 		g.fillEllipse(samplePos, yPos, GRAINPOINT_SIZE, GRAINPOINT_SIZE);
 	}

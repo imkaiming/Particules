@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <JuceHeader.h>
 #include "../Utils/GrainPoint.h"
 #include <juce_dsp/juce_dsp.h>
@@ -38,6 +39,8 @@ public:
 	GrainPoint* getGrainPoint();
 
 private:
+
+	float curve(float, float);
 
 	// envelope type function
 	float ncos(size_t, size_t, size_t);
