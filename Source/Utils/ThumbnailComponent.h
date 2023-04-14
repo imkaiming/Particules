@@ -49,6 +49,7 @@ private:
 	StateParameters* stateParams;
 
 	juce::AudioThumbnail thumbnail;
+
 	PositionOverlay positionComponent;
 	SelectionOverlay selectionComponent;
 	SelectionOverlay overflowComponent; // its when the selection is higher than the width

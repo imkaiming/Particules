@@ -61,8 +61,8 @@ void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 
 		// Si on a construit le pluginEditor alors on a un pointeur valide de GrainVisualizer
 		// Dans ce cas, on met à jours les grains visuellement dans le thumbnails.
-		if (stateParams->getGrainVisualizer() != nullptr) 
-			stateParams->updateGrainVisualizer();
+		//if (stateParams->getGrainVisualizer() != nullptr) 
+		//	stateParams->updateGrainVisualizer();
 	}
 
 

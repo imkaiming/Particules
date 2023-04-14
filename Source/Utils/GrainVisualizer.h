@@ -26,7 +26,7 @@
 */
 
 
-class GrainVisualizer : public juce::Component
+class GrainVisualizer : public juce::Component, private juce::Timer
 {
 public:
 	GrainVisualizer(juce::Array<Grain*>* grains);
@@ -35,10 +35,12 @@ public:
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
-	void update();
 	void setNumSamples(int);
 
 private:
+
+	void timerCallback() override;
+
 	juce::Colour colour;
 	juce::Array<Grain*>* grains;
 	int numSamples;

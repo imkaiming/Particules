@@ -184,10 +184,10 @@ void StateParameters::setGrainVisualizer(GrainVisualizer* grainVisualizer)
 	this->grainVisualizer = grainVisualizer;
 }
 
-void StateParameters::updateGrainVisualizer()
-{
-	grainVisualizer->update();
-}
+//void StateParameters::updateGrainVisualizer()
+//{
+//	grainVisualizer->update();
+//}
 
 // getters
 

@@ -189,8 +189,6 @@ void AudioFileFrame::valueChanged(juce::Value& value)
 	}
 }
 
-// marche pas
-
 bool AudioFileFrame::isInterestedInFileDrag(const juce::StringArray& files)
 {
 	// is it an audio file ?
@@ -251,8 +249,6 @@ void AudioFileFrame::resized() {
 	flexboxRight.alignContent = juce::FlexBox::AlignContent::stretch;
 	flexboxRight.alignItems = juce::FlexBox::AlignItems::stretch;
 
-
-
 	// on ajoute les items dans les flexbox
 
 	flexboxLeft.items.add(juce::FlexItem(open_btn).withHeight(buttonsArea.getWidth() * 2));
@@ -267,11 +263,3 @@ void AudioFileFrame::resized() {
 
 }
 
-//void AudioFileComponent::resized() {
-//	juce::Rectangle<int> area = getLocalBounds();
-//	int h = getHeight() / 3;
-//
-//	open_btn->setBounds(area.removeFromTop(h));
-//	play_btn->setBounds(area.removeFromTop(h));
-//	stop_btn->setBounds(area.removeFromTop(h));
-//}

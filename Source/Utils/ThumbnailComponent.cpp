@@ -55,7 +55,8 @@ void ThumbnailComponent::paintIfNoFileLoaded(juce::Graphics& g)
 {
 	g.fillAll(MyColours::black);
 	g.setColour(MyColours::cream);
-	g.drawFittedText("No File Loaded",
+	g.drawFittedText(
+		"No File Loaded",	
 		getLocalBounds(),
 		juce::Justification::centred,
 		1);
@@ -66,7 +67,8 @@ void ThumbnailComponent::paintIfFileLoaded(juce::Graphics& g)
 	g.fillAll(MyColours::black);
 
 	g.setColour(MyColours::brightBlue);
-	thumbnail.drawChannels(g,
+	thumbnail.drawChannels(
+		g,
 		getLocalBounds(),
 		0.0,
 		thumbnail.getTotalLength(),
@@ -115,11 +117,10 @@ void ThumbnailComponent::resized()
 {
 	updatePosition(positionValue);
 	updateSelection(selectionValue);
+
 	positionComponent.setBounds(getLocalBounds());
 	selectionComponent.setBounds(getLocalBounds());
 	overflowComponent.setBounds(getLocalBounds());
-
-
 	grainVisualizer.setBounds(getLocalBounds());
 }
 

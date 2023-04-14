@@ -80,7 +80,7 @@ public:
 	void setGrains(juce::Array<Grain*>* grains);
 	void setGrainVisualizer(GrainVisualizer*);
 
-	void updateGrainVisualizer();
+	//void updateGrainVisualizer();
 
 	juce::Array<Grain*>* getGrains();
 	GrainVisualizer* getGrainVisualizer();

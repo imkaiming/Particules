@@ -14,8 +14,6 @@ float PositionOverlay::getPosition()
 	return positionValue;
 }
 
-
-
 void PositionOverlay::setPosition(float newValue)
 {
 	positionValue = newValue;

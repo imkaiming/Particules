@@ -12,6 +12,7 @@
 
 GrainVisualizer::GrainVisualizer(juce::Array<Grain*>* grains) : grains(grains)
 {
+	startTimerHz(30);
 	colour = MyColours::lavender;
 	this->grains = nullptr;
 	numSamples = 0;
@@ -31,17 +32,30 @@ void GrainVisualizer::paint(juce::Graphics& g)
 		return;
 	}
 
-	for (Grain* const& grain : *grains)
-	{
-		int samplePos = grain->getGrainPoint()->getSamplePos() / numSamples * getWidth();
-		int yPos = grain->getGrainPoint()->getYpos() * getHeight();
+	Grain* grain = grains->getFirst();
+	/*for (Grain* const& grain : *grains)
+	{*/
+	int samplePos = grain->getGrainPoint()->getSamplePos() / numSamples * getWidth();
+	int yPos = grain->getGrainPoint()->getYpos() * getHeight();
 
-		g.setColour(colour.withAlpha(grain->getGrainPoint()->getOpacity()));
-		g.fillEllipse(samplePos, yPos, GRAINPOINT_SIZE, GRAINPOINT_SIZE);
-	}
+	g.setColour(colour.withAlpha(grain->getGrainPoint()->getOpacity()));
+	g.fillEllipse(samplePos, yPos, GRAINPOINT_SIZE, GRAINPOINT_SIZE);
+	//}
 }
 
-void GrainVisualizer::update()
+//void GrainVisualizer::update()
+//{
+//	repaint();
+//}
+
+
+void GrainVisualizer::setNumSamples(int numSamples)
+{
+	this->numSamples = numSamples;
+}
+
+
+void GrainVisualizer::timerCallback()
 {
 	repaint();
 }
@@ -49,9 +63,4 @@ void GrainVisualizer::update()
 void GrainVisualizer::resized()
 {
 
-}
-
-void GrainVisualizer::setNumSamples(int numSamples)
-{
-	this->numSamples = numSamples;
 }
