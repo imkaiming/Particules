@@ -16,10 +16,12 @@ StatusBarFrame::StatusBarFrame(StateParameters* stateParams) : stateParams(state
 	addAndMakeVisible(&statusLabel);
 
 }
+
 StatusBarFrame::~StatusBarFrame()
 {
 	stateParams = nullptr;
 }
+
 void StatusBarFrame::paint(juce::Graphics& g) {
 	g.fillAll(MyColours::black);
 

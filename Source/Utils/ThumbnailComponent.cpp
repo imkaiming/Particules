@@ -31,7 +31,8 @@ ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail,
 
 ThumbnailComponent::~ThumbnailComponent()
 {
-
+	stateParams->setGrainVisualizer(nullptr);
+	stateParams = nullptr;
 }
 
 void ThumbnailComponent::setFile(const juce::File& file)

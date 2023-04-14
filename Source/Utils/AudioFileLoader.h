@@ -37,8 +37,6 @@ private:
 
 	void showErrorWindow(juce::String message);
 
-
-
 	ThumbnailComponent* thumbnailComponent;
 	juce::AudioFormatManager formatManager; // classe qui traite les formats de fichier tq wav, aiff, ogg, vorbis ou mp3
 	std::unique_ptr<juce::AudioFormatReaderSource>* readerSource;

@@ -26,6 +26,7 @@ StateParameters::~StateParameters()
 {
 	audioFileBuffer = nullptr;
 	grains = nullptr;
+	grainVisualizer = nullptr;
 }
 
 void StateParameters::init(ValueTreeState* apvts, int numChannels)
@@ -177,6 +178,16 @@ void StateParameters::setGrains(juce::Array<Grain*>* grains)
 	this->grains = grains;
 }
 
+void StateParameters::setGrainVisualizer(GrainVisualizer* grainVisualizer)
+{
+	this->grainVisualizer = grainVisualizer;
+}
+
+void StateParameters::updateGrainVisualizer()
+{
+	grainVisualizer->update();
+}
+
 // getters
 
 float StateParameters::getGain()
@@ -278,4 +289,9 @@ float StateParameters::getTraversalTimeValue()
 juce::Array<Grain*>* StateParameters::getGrains()
 {
 	return grains;
+}
+
+GrainVisualizer* StateParameters::getGrainVisualizer()
+{
+	return grainVisualizer;
 }

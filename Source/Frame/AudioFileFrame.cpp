@@ -59,6 +59,7 @@ AudioFileFrame::~AudioFileFrame()
 	//loader.reset();
 	apvts = nullptr;
 	stateParams = nullptr;
+	isAudioLoaded = nullptr;
 }
 
 void AudioFileFrame::openFileButtonClicked()

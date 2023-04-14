@@ -19,10 +19,6 @@ ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(
 	setSize(width, heigth);
 
 	addAndMakeVisible(&mainFrame);
-
-	//juce::Typeface::createSystemTypefaceFor(
-	//	BinaryData::CascadiaMonoPLRegular_otf,
-	//	BinaryData::CascadiaMonoPLRegular_otfSize));
 }
 
 ParticulesAudioProcessorEditor::~ParticulesAudioProcessorEditor()

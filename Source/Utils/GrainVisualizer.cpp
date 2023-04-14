@@ -48,7 +48,8 @@ void GrainVisualizer::paint(juce::Graphics& g)
 
 void GrainVisualizer::update()
 {
-	repaint();
+	DBG("GrainVisualizer::update()");
+	//repaint();
 }
 
 void GrainVisualizer::resized()

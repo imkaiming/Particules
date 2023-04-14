@@ -21,6 +21,7 @@ Scheduler::Scheduler(StateParameters* stateParams) : stateParams(stateParams)
 Scheduler::~Scheduler()
 {
 	freeActiveGrains();
+	stateParams = nullptr;
 }
 
 void Scheduler::freeActiveGrains()

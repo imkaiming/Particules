@@ -58,6 +58,11 @@ void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 	for (int sample = 0; sample < numSamples; ++sample)
 	{
 		scheduler.synthesize(&audioBlock, sample, numSamples);
+
+		// Si on a construit le pluginEditor alors on a un pointeur valide de GrainVisualizer
+		// Dans ce cas, on met à jours les grains visuellement dans le thumbnails.
+		if (stateParams->getGrainVisualizer() != nullptr) 
+			stateParams->updateGrainVisualizer();
 	}
 
 	//audioBlock.copyFrom(buffer);

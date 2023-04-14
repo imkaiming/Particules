@@ -67,6 +67,7 @@ Grain::Grain(int duration, int numChannels, int envelopeType, float speed, int e
 
 Grain::~Grain()
 {
+	buffer = nullptr;
 }
 
 // on prend un grain du buffer du sample d'entré pour le mettre dans le buffer des grains

@@ -20,7 +20,7 @@
 
 #include <JuceHeader.h>
 #include <juce_dsp/juce_dsp.h>
-#include "Grain.h"
+//#include "Grain.h"
 #include "Scheduler.h"
 #include "../Utils/StateParameters.h"
 
@@ -31,8 +31,10 @@ class GranularEngine
 public:
 	GranularEngine(StateParameters*);
 	~GranularEngine();
+
 	void process(juce::AudioBuffer<float>& buffer, int numSamples);
 	void init(int, int, int);
+
 private:
 
 	void mixingProcess(AudioBlock);
