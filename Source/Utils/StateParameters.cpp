@@ -156,6 +156,7 @@ void StateParameters::setEnvWidth(float newValue)
 void StateParameters::setNumSamples(float newValue)
 {
 	numSamples = newValue;
+	grainVisualizer->setNumSamples(newValue);
 }
 
 void StateParameters::setIsGrainsEmpty(bool newValue)

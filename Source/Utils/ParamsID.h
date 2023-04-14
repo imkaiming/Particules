@@ -91,6 +91,8 @@
 #define TRAVERSALTIME_MIN 0.01f
 #define TRAVERSALTIME_MAX 10.f
 
+#define GRAINPOINT_SIZE 10.f
+
 
 typedef juce::AudioProcessorValueTreeState ValueTreeState;
 

@@ -14,6 +14,8 @@ ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail,
 	juce::AudioFormatManager& formatManager, juce::AudioThumbnailCache& cache, StateParameters* stateParams)
 	: thumbnail(samplesPerThumbnail, formatManager, cache), stateParams(stateParams), grainVisualizer(stateParams->getGrains())
 {
+	stateParams->setGrainVisualizer(&grainVisualizer);
+
 	positionValue = POSITION_DEFAULT;
 	selectionValue = SELECTION_DEFAULT;
 
@@ -26,6 +28,7 @@ ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail,
 	addAndMakeVisible(&selectionComponent);
 	addAndMakeVisible(&positionComponent);
 	addAndMakeVisible(&overflowComponent);
+	addAndMakeVisible(&grainVisualizer);
 
 }
 
@@ -72,8 +75,9 @@ void ThumbnailComponent::paintIfFileLoaded(juce::Graphics& g)
 
 void ThumbnailComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-	if (source == &thumbnail)
+	if (source == &thumbnail) {
 		repaint();
+	}
 }
 
 void ThumbnailComponent::updatePosition(float value)
@@ -114,5 +118,8 @@ void ThumbnailComponent::resized()
 	positionComponent.setBounds(getLocalBounds());
 	selectionComponent.setBounds(getLocalBounds());
 	overflowComponent.setBounds(getLocalBounds());
+
+
+	grainVisualizer.setBounds(getLocalBounds());
 }
 

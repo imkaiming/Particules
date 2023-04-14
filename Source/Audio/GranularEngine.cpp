@@ -65,8 +65,6 @@ void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 			stateParams->updateGrainVisualizer();
 	}
 
-	//audioBlock.copyFrom(buffer);
-
 
 	//reverbProcess(audioBlock); // ok
 	mixingProcess(audioBlock); // ok

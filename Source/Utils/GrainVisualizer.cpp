@@ -12,7 +12,9 @@
 
 GrainVisualizer::GrainVisualizer(juce::Array<Grain*>* grains) : grains(grains)
 {
+	colour = MyColours::lavender;
 	this->grains = nullptr;
+	numSamples = 0;
 }
 
 GrainVisualizer::~GrainVisualizer()
@@ -20,38 +22,36 @@ GrainVisualizer::~GrainVisualizer()
 	this->grains = nullptr;
 }
 
-//void GrainVisualizer::setGrains(juce::Array<Grain*>* grains)
-//{
-//	DBG("GrainVisualizer::setGrains");
-//	this->grains = grains;
-//}
 
 void GrainVisualizer::paint(juce::Graphics& g)
 {
-	// Clear the background
-	g.fillAll(juce::Colours::black);
+	// on évite le premier paint qui est appeler lors de la construction.
+	if (grains == nullptr)
+	{
+		return;
+	}
 
-	// Draw the grains visualization
-	//for (const auto& grain : grains)
-	//{
-	//	// Determine the position, size, and color of the grain based on its properties
-	//	// You may want to normalize and scale values based on the component's size and the desired appearance
+	for (Grain* const& grain : *grains)
+	{
+		int samplePos = grain->getGrainPoint()->getSamplePos() / numSamples * getWidth();
+		int yPos = grain->getGrainPoint()->getYpos() * getHeight();
 
-	//	juce::Rectangle<float> grainRect(grain.x, grain.y, grain.width, grain.height);
-	//	juce::Colour grainColor = juce::Colour::fromHSV(grain.hue, grain.saturation, grain.brightness, 1.0f);
-
-	//	// Draw the grain
-	//	g.setColour(grainColor);
-	//	g.fillRect(grainRect);
-	//}
+		g.setColour(colour.withAlpha(grain->getGrainPoint()->getOpacity()));
+		g.fillEllipse(samplePos, yPos, GRAINPOINT_SIZE, GRAINPOINT_SIZE);
+	}
 }
 
 void GrainVisualizer::update()
 {
-	DBG("GrainVisualizer::update()");
-	//repaint();
+	repaint();
 }
 
 void GrainVisualizer::resized()
 {
+
+}
+
+void GrainVisualizer::setNumSamples(int numSamples)
+{
+	this->numSamples = numSamples;
 }

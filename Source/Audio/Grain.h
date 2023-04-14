@@ -11,6 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "../Utils/GrainPoint.h"
 #include <juce_dsp/juce_dsp.h>
 
 enum WindowingMethod
@@ -33,6 +34,8 @@ public:
 	float getCurrentSample(const int channel);
 	bool isActive();
 	void update();
+
+	GrainPoint* getGrainPoint();
 
 private:
 
@@ -69,5 +72,6 @@ private:
 	//double frequency;
 	//float amplitude;
 
+	GrainPoint grainPoint;
 };
 

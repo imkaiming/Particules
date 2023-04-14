@@ -86,22 +86,29 @@ float Grain::getCurrentSample(const int channel)
 	int readPosition = currentTime + position;
 	readPosition %= buffer->getNumSamples();
 
+	grainPoint.setSamplePos(readPosition);
+
 	// on applique l'envelope sur le grain en fonction de l'envelope type
+	float sampleValue = 0.0f;
 
 	if (currentTime < fadeIn)
 	{
-		return sample[readPosition] * applyEnvelope(currentTime);
+		sampleValue = sample[readPosition] * applyEnvelope(currentTime);
 	}
 	else if (fadeOut <= currentTime)
 	{
-		return sample[readPosition] * applyEnvelope(duration - currentTime);
+		sampleValue = sample[readPosition] * applyEnvelope(duration - currentTime);
 	}
 	else
 	{
-		return sample[readPosition];
+		sampleValue = sample[readPosition];
 	}
 
+	grainPoint.setOpacity(sampleValue);
+	return sampleValue;
+
 }
+
 
 void Grain::update()
 {
@@ -168,13 +175,11 @@ float Grain::applyEnvelope(const int index)
 
 // envelope types computations
 
-
 float Grain::ncos(size_t order, size_t i, size_t size)
 {
 	return std::cos(static_cast<float> (order * i)
 		* juce::MathConstants<float>::pi / static_cast<float> (size - 1));
 }
-
 
 float Grain::hannEnvelope(const int index)
 {
@@ -228,4 +233,9 @@ float Grain::flatTopEnvelope(const int index)
 
 	return static_cast<float> (1.0 - 1.93 * cos2 + 1.29 * cos4 - 0.388 * cos6 + 0.028 * cos8);
 
+}
+
+GrainPoint* Grain::getGrainPoint()
+{
+	return &grainPoint;
 }

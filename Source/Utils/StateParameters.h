@@ -96,7 +96,6 @@ private:
 	float gain;
 	float envWidth;
 
-
 	// Parameters relative to the AudioProcessor
 	double sampleRate;
 	int numChannels;
@@ -119,9 +118,6 @@ private:
 	//Playback playback; // grain can play in reverse
 
 
-	//GrainVisualizer* grainVisualizer;
 	juce::Array<Grain*>* grains;
 	GrainVisualizer* grainVisualizer;
-	// Random parameters
-	//juce::Random random; // random modulator to affect the parameters
 };
