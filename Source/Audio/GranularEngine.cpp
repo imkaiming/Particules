@@ -11,7 +11,12 @@
 #include "GranularEngine.h"
 
 GranularEngine::GranularEngine(StateParameters* stateParams) :
-	stateParams(stateParams), scheduler(stateParams)
+	stateParams(stateParams),
+	scheduler(stateParams),
+	fft(FFTSIZE_ORDER),
+	phaseVocoderBuffer(stateParams->getNumChannels(), FFTSIZE),
+	window(FFTSIZE, juce::dsp::WindowingFunction<float>::hann)
+	//circularBuffer(stateParams->getNumChannels(), static_cast<int>(std::pow(2, FFTSIZE)))
 {
 }
 
@@ -41,12 +46,13 @@ void GranularEngine::reverbProcess(juce::dsp::ProcessContextReplacing<float> con
 
 void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 {
-	int numChannel = buffer.getNumChannels();
+	//int numChannel = buffer.getNumChannels();
 	//grainBuffer.setSize(numChannel, numSamples);
 
 	//juce::AudioBuffer<float> grainBuffer(buffer.getNumChannels(), buffer.getNumSamples());
 
 	AudioBlock audioBlock(buffer);
+	AudioBlock phaseVocoderBlock(phaseVocoderBuffer);
 	//AudioBlock grainBlock(grainBuffer);
 	//grainBlock.fill(0.0f);
 
@@ -55,9 +61,25 @@ void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 	mixerProcessor.pushDrySamples(audioBlock);
 
 
-	for (int sample = 0; sample < numSamples; ++sample)
+	for (int sample = 0; sample < numSamples; ++sample) {
 		scheduler.synthesize(&audioBlock, sample, numSamples);
 
+		// 1. on met les samples dans le phasevocoder
+		//phaseVocoderBuffer.addSample();
+
+		// 2. quand le buffer est plein on multiplie par la window
+		//window.multiplyWithWindowingTable(phaseVocoderBuffer.getWritePointer(channel), FFTSIZE);
+
+		// 3. on applique le fft
+		//fft.performFrequencyOnlyForwardTransform(phaseVocoderBuffer.getWritePointer(channel));
+
+		// 4. on manipule le block
+
+		// 5. on réassemble le contenu du block dans le buffer.
+		// la taille du block n'est pas la même que la taille de déplacement de la région
+		// On calcule tous les block de N samples mais on incrémente dans le buffer tous les M samples
+		// Ce qui resulte à des block overlappé
+	}
 
 	//reverbProcess(audioBlock); // ok
 	mixingProcess(audioBlock); // ok

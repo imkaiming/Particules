@@ -20,11 +20,12 @@
 
 #include <JuceHeader.h>
 #include <juce_dsp/juce_dsp.h>
-//#include "Grain.h"
 #include "Scheduler.h"
+#include "../Utils/ParamsID.h"
+#include "../Utils/CircularBuffer.h"
 #include "../Utils/StateParameters.h"
 
-using AudioBlock = juce::dsp::AudioBlock<float> ;
+using AudioBlock = juce::dsp::AudioBlock<float>;
 
 class GranularEngine
 {
@@ -43,8 +44,12 @@ private:
 
 	Scheduler scheduler;
 	StateParameters* stateParams;
+	//CircularBuffer<float> circularBuffer;
+	juce::AudioBuffer<float> phaseVocoderBuffer;
+	juce::dsp::WindowingFunction<float> window;
 
 	juce::dsp::DryWetMixer<float> mixerProcessor;
+	juce::dsp::FFT fft;
 	juce::dsp::Gain<float> gainProcessor;
 	juce::dsp::Reverb reverbProcessor;
 	juce::dsp::Reverb::Parameters params;

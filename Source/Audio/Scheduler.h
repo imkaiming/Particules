@@ -32,8 +32,6 @@ public:
 	Grain* generateGrain(int);
 	void init(int);
 
-	void setGrainVisualizer();
-
 private:
 	void freeActiveGrains();
 

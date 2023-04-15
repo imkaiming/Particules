@@ -41,7 +41,7 @@ void MainFrame::resized()
 {
 	//juce::Rectangle<int> area = getLocalBounds();
 	float heightComp = getHeight() / 30.f;
-	float widthComp = getWidth() / 10.f;
+	//float widthComp = getWidth() / 10.f;
 
 	//float w = getWidth() / 300.f;
 

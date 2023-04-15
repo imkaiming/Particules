@@ -105,7 +105,7 @@ float Grain::getCurrentSample(const int channel)
 	}
 
 	float x = std::clamp(sampleValue, 0.f, 1.f);
-	grainPoint.setOpacity(curve(x, 5.f)); 
+	grainPoint.setOpacity(curve(x, 5.f));
 	return sampleValue;
 
 }
@@ -175,6 +175,7 @@ float Grain::applyEnvelope(const int index)
 }
 
 // envelope types computations
+// https://en.wikipedia.org/wiki/Window_function#A_list_of_window_functions
 
 float Grain::ncos(size_t order, size_t i, size_t size)
 {
@@ -245,3 +246,9 @@ float Grain::curve(float x, float coefficient)
 {
 	return 1.0f - std::pow(1.0f - x, coefficient);
 }
+
+
+//float Grain::logInterpolation(float x)
+//{
+//	return std::log10(1 + x) / std::log10(2);
+//}

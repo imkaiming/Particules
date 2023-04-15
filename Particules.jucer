@@ -126,10 +126,16 @@
               file="Source/Utils/AudioFileLoader.cpp"/>
         <FILE id="OzTHmU" name="AudioFileLoader.h" compile="0" resource="0"
               file="Source/Utils/AudioFileLoader.h"/>
+        <FILE id="ZjH04u" name="CircularBuffer.cpp" compile="1" resource="0"
+              file="Source/Utils/CircularBuffer.cpp"/>
+        <FILE id="UWcOfV" name="CircularBuffer.h" compile="0" resource="0"
+              file="Source/Utils/CircularBuffer.h"/>
         <FILE id="MJphO1" name="CustomLookAndFeel.cpp" compile="1" resource="0"
               file="Source/Utils/CustomLookAndFeel.cpp"/>
         <FILE id="Motre4" name="CustomLookAndFeel.h" compile="0" resource="0"
               file="Source/Utils/CustomLookAndFeel.h"/>
+        <FILE id="SOUzqF" name="GrainPoint.cpp" compile="1" resource="0" file="Source/Utils/GrainPoint.cpp"/>
+        <FILE id="CDf1x1" name="GrainPoint.h" compile="0" resource="0" file="Source/Utils/GrainPoint.h"/>
         <FILE id="hvNSeO" name="GrainVisualizer.cpp" compile="1" resource="0"
               file="Source/Utils/GrainVisualizer.cpp"/>
         <FILE id="s1esO8" name="GrainVisualizer.h" compile="0" resource="0"

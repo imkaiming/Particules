@@ -129,16 +129,16 @@ void SynthFrame::resized()
 	flexBox1.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
 	flexBox1.alignContent = juce::FlexBox::AlignContent::center;
 
-	flexBox1.items.add(juce::FlexItem(mixSlider).withFlex(0.8).withMargin(h));
-	flexBox1.items.add(juce::FlexItem(mixLabel).withFlex(0.2));
+	flexBox1.items.add(juce::FlexItem(mixSlider).withFlex(0.8f).withMargin(h));
+	flexBox1.items.add(juce::FlexItem(mixLabel).withFlex(0.2f));
 
 	juce::FlexBox flexBox2;
 	flexBox2.flexDirection = juce::FlexBox::Direction::column;
 	flexBox2.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
 	flexBox2.alignContent = juce::FlexBox::AlignContent::center;
 
-	flexBox2.items.add(juce::FlexItem(gainSlider).withFlex(0.8).withMargin(h));
-	flexBox2.items.add(juce::FlexItem(gainLabel).withFlex(0.2));
+	flexBox2.items.add(juce::FlexItem(gainSlider).withFlex(0.8f).withMargin(h));
+	flexBox2.items.add(juce::FlexItem(gainLabel).withFlex(0.2f));
 
 
 	juce::FlexBox flexBox3;
@@ -147,8 +147,8 @@ void SynthFrame::resized()
 	flexBox3.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
 	flexBox3.alignContent = juce::FlexBox::AlignContent::center;
 
-	flexBox3.items.add(juce::FlexItem(filePosLabel).withFlex(0.2).withMargin(h));
-	flexBox3.items.add(juce::FlexItem(filePosSlider).withFlex(0.5));
+	flexBox3.items.add(juce::FlexItem(filePosLabel).withFlex(0.2f).withMargin(h));
+	flexBox3.items.add(juce::FlexItem(filePosSlider).withFlex(0.5f));
 
 	juce::FlexBox flexBox4;
 	flexBox4.flexDirection = juce::FlexBox::Direction::column;
@@ -156,18 +156,18 @@ void SynthFrame::resized()
 	flexBox4.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
 	flexBox4.alignContent = juce::FlexBox::AlignContent::center;
 
-	flexBox4.items.add(juce::FlexItem(windowSelectionLabel).withFlex(0.2).withMargin(h));
-	flexBox4.items.add(juce::FlexItem(windowSelectionSlider).withFlex(0.5));
+	flexBox4.items.add(juce::FlexItem(windowSelectionLabel).withFlex(0.2f).withMargin(h));
+	flexBox4.items.add(juce::FlexItem(windowSelectionSlider).withFlex(0.5f));
 
 	juce::FlexBox flexBox5;
 	flexBox5.flexDirection = juce::FlexBox::Direction::column;
 
-	flexBox5.items.add(juce::FlexItem(flexBox3).withFlex(0.5).withMargin(h));
-	flexBox5.items.add(juce::FlexItem(flexBox4).withFlex(0.5).withMargin(h));
+	flexBox5.items.add(juce::FlexItem(flexBox3).withFlex(0.5f).withMargin(h));
+	flexBox5.items.add(juce::FlexItem(flexBox4).withFlex(0.5f).withMargin(h));
 
-	mainFlexBox.items.add(juce::FlexItem(flexBox5).withFlex(0.66));
-	mainFlexBox.items.add(juce::FlexItem(flexBox1).withFlex(0.25));
-	mainFlexBox.items.add(juce::FlexItem(flexBox2).withFlex(0.25)); // .withMargin(h));
+	mainFlexBox.items.add(juce::FlexItem(flexBox5).withFlex(0.66f));
+	mainFlexBox.items.add(juce::FlexItem(flexBox1).withFlex(0.25f));
+	mainFlexBox.items.add(juce::FlexItem(flexBox2).withFlex(0.25f)); // .withMargin(h));
 
 	mainFlexBox.performLayout(getLocalBounds().toFloat());
 }
@@ -204,7 +204,7 @@ void SynthFrame::sliderValueChanged(juce::Slider* slider)
 
 }
 
-void SynthFrame::init(ThumbnailComponent* thumbnailComponent)
+void SynthFrame::init(ThumbnailComponent* thumbnail)
 {
-	this->thumbnailComponent = thumbnailComponent;
+	this->thumbnailComponent = thumbnail;
 }

@@ -10,7 +10,7 @@
 #define GAIN_NAME "Gain"
 #define GAIN_MIN -96.0
 #define GAIN_MAX 0.0
-#define GAIN_DEFAULT -1.0
+#define GAIN_DEFAULT -3.0
 
 // grain emissions per sec
 #define DENSITY_ID "DENSITY"
@@ -92,7 +92,8 @@
 #define TRAVERSALTIME_MAX 10.f
 
 #define GRAINPOINT_SIZE 10.f
-
+#define FFTSIZE_ORDER 10
+#define FFTSIZE  static_cast<int>(std::pow(2, FFTSIZE_ORDER))
 
 typedef juce::AudioProcessorValueTreeState ValueTreeState;
 

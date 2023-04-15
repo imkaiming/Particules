@@ -107,7 +107,7 @@ void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
 	// On synchronise le samplerate des classes avant de jouer
 	this->stateParams.setSampleRate(sampleRate);
 	//this->stateParams.getNumChannels(getTotalNumInputChannels()) // préférer ça que passer la variable
-	grainEngine.init(sampleRate, getTotalNumOutputChannels(), samplesPerBlock);
+	grainEngine.init(static_cast<int>(sampleRate), getTotalNumOutputChannels(), samplesPerBlock);
 
 	//adsr.setSampleRate(sampleRate);
 	//adsr.setParameters(adsrParameters);
