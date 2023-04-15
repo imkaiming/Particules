@@ -44,7 +44,7 @@ private:
 
 	Scheduler scheduler;
 	StateParameters* stateParams;
-	//CircularBuffer<float> circularBuffer;
+	CircularBuffer circularBuffer;
 	juce::AudioBuffer<float> phaseVocoderBuffer;
 	juce::dsp::WindowingFunction<float> window;
 

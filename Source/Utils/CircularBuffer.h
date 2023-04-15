@@ -12,18 +12,19 @@
 
 #pragma once
 
-template <typename Type>
-class CircularBuffer : public juce::AudioBuffer<Type>
+//template <typename Type>
+class CircularBuffer : public juce::AudioBuffer<float>
 {
 public:
 	CircularBuffer(int numChannels, int numSamples);
 	~CircularBuffer();
 
 	void clear();
-	void pushSamples(const juce::AudioBuffer<Type>& bufferToPush);
-
+	//void pushSamples(const juce::AudioBuffer<float>& bufferToPush);
+	void fillBuffer(const juce::AudioBuffer<float>& buffer);
 
 private:
+	void updatePosition(int samples));
 	//juce::AudioBuffer<float> audioBuffer;
 	int writePosition;
 };

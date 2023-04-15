@@ -15,8 +15,8 @@ GranularEngine::GranularEngine(StateParameters* stateParams) :
 	scheduler(stateParams),
 	fft(FFTSIZE_ORDER),
 	phaseVocoderBuffer(stateParams->getNumChannels(), FFTSIZE),
-	window(FFTSIZE, juce::dsp::WindowingFunction<float>::hann)
-	//circularBuffer(stateParams->getNumChannels(), static_cast<int>(std::pow(2, FFTSIZE)))
+	window(FFTSIZE, juce::dsp::WindowingFunction<float>::hann),
+	circularBuffer(stateParams->getNumChannels(), FFTSIZE)
 {
 }
 
