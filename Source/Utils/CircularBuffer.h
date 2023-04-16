@@ -24,7 +24,7 @@ public:
 	void fillBuffer(const juce::AudioBuffer<float>& buffer);
 
 private:
-	void updatePosition(int samples));
+	void updatePosition(int samples);
 	//juce::AudioBuffer<float> audioBuffer;
 	int writePosition;
 };

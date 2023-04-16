@@ -13,11 +13,12 @@
 GranularEngine::GranularEngine(StateParameters* stateParams) :
 	stateParams(stateParams),
 	scheduler(stateParams),
-	fft(FFTSIZE_ORDER),
-	phaseVocoderBuffer(stateParams->getNumChannels(), FFTSIZE),
-	window(FFTSIZE, juce::dsp::WindowingFunction<float>::hann),
-	circularBuffer(stateParams->getNumChannels(), FFTSIZE)
+	//fft(FFTSIZE_ORDER),
+	//phaseVocoderBuffer(stateParams->getNumChannels(), FFTSIZE),
+	//window(FFTSIZE, juce::dsp::WindowingFunction<float>::hann),
+	//circularBuffer(stateParams->getNumChannels(), FFTSIZE)
 {
+	fft.init(FFTSIZE);
 }
 
 GranularEngine::~GranularEngine()
@@ -44,6 +45,7 @@ void GranularEngine::reverbProcess(juce::dsp::ProcessContextReplacing<float> con
 	reverbProcessor.process(context);
 }
 
+
 void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 {
 	//int numChannel = buffer.getNumChannels();
@@ -53,6 +55,7 @@ void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 
 	AudioBlock audioBlock(buffer);
 	AudioBlock phaseVocoderBlock(phaseVocoderBuffer);
+
 	//AudioBlock grainBlock(grainBuffer);
 	//grainBlock.fill(0.0f);
 
@@ -80,15 +83,13 @@ void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 		// On calcule tous les block de N samples mais on incrémente dans le buffer tous les M samples
 		// Ce qui resulte à des block overlappé
 	}
+	//fft.performRealOnlyForwardTransform()
+
 
 	//reverbProcess(audioBlock); // ok
 	mixingProcess(audioBlock); // ok
 	gainProcess(audioBlock); // ok
 
-
-	//buffer.applyGainRamp(0, numSamples, stateParams->getPreviousGain(), stateParams->getGain());
-	//stateParams->setPreviousGain(stateParams->getGain());
-	//buffer.applyGain(stateParams->getGain());
 }
 
 // called by prepare to play method

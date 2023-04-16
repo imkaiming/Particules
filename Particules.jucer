@@ -4,6 +4,10 @@
               addUsingNamespaceToJuceHeader="0" displaySplashScreen="1" jucerFormatVersion="1"
               pluginFormats="buildVST3" pluginCharacteristicsValue="pluginIsSynth,pluginProducesMidiOut,pluginWantsMidiIn">
   <MAINGROUP id="Ws3dtU" name="Particules">
+    <GROUP id="{6F7E7781-65E6-B43A-28E6-FFD3F3D53843}" name="Lib">
+      <FILE id="bMO5P3" name="AudioFFT.cpp" compile="1" resource="0" file="Source/Lib/AudioFFT.cpp"/>
+      <FILE id="TIhx2n" name="AudioFFT.h" compile="0" resource="0" file="Source/Lib/AudioFFT.h"/>
+    </GROUP>
     <GROUP id="{DB3001AB-CCB9-3FBE-26C8-CF464BB94FFA}" name="Ressources">
       <GROUP id="{915EB23D-5885-38D3-75E2-ED10E0D3DB5B}" name="AudioSource">
         <FILE id="Nbunbd" name="01_Piano_E.wav" compile="0" resource="1" file="Ressources/AudioSource/01_Piano_E.wav"/>

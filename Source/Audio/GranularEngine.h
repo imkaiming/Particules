@@ -24,6 +24,7 @@
 #include "../Utils/ParamsID.h"
 #include "../Utils/CircularBuffer.h"
 #include "../Utils/StateParameters.h"
+#include "../Lib/AudioFFT.h"
 
 using AudioBlock = juce::dsp::AudioBlock<float>;
 
@@ -44,12 +45,15 @@ private:
 
 	Scheduler scheduler;
 	StateParameters* stateParams;
-	CircularBuffer circularBuffer;
-	juce::AudioBuffer<float> phaseVocoderBuffer;
-	juce::dsp::WindowingFunction<float> window;
+
+	//CircularBuffer circularBuffer;
+	//juce::AudioBuffer<float> phaseVocoderBuffer;
+	//juce::dsp::WindowingFunction<float> window;
+	//juce::dsp::FFT fft;
+	audiofft::AudioFFT fft;
 
 	juce::dsp::DryWetMixer<float> mixerProcessor;
-	juce::dsp::FFT fft;
+
 	juce::dsp::Gain<float> gainProcessor;
 	juce::dsp::Reverb reverbProcessor;
 	juce::dsp::Reverb::Parameters params;
