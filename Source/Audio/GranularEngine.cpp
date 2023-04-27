@@ -12,7 +12,7 @@
 
 GranularEngine::GranularEngine(StateParameters* stateParams) :
 	stateParams(stateParams),
-	scheduler(stateParams),
+	scheduler(stateParams)//,
 	//fft(FFTSIZE_ORDER),
 	//phaseVocoderBuffer(stateParams->getNumChannels(), FFTSIZE),
 	//window(FFTSIZE, juce::dsp::WindowingFunction<float>::hann),
@@ -54,7 +54,7 @@ void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 	//juce::AudioBuffer<float> grainBuffer(buffer.getNumChannels(), buffer.getNumSamples());
 
 	AudioBlock audioBlock(buffer);
-	AudioBlock phaseVocoderBlock(phaseVocoderBuffer);
+	//AudioBlock phaseVocoderBlock(phaseVocoderBuffer);
 
 	//AudioBlock grainBlock(grainBuffer);
 	//grainBlock.fill(0.0f);
