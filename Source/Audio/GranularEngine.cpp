@@ -78,10 +78,10 @@ void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 
 		// 4. on manipule le block
 
-		// 5. on réassemble le contenu du block dans le buffer.
-		// la taille du block n'est pas la même que la taille de déplacement de la région
-		// On calcule tous les block de N samples mais on incrémente dans le buffer tous les M samples
-		// Ce qui resulte à des block overlappé
+		// 5. on rÃ©assemble le contenu du block dans le buffer.
+		// la taille du block n'est pas la mÃªme que la taille de dÃ©placement de la rÃ©gion
+		// On calcule tous les block de N samples mais on incrÃ©mente dans le buffer tous les M samples
+		// Ce qui resulte Ã  des block overlappÃ©
 	}
 	//fft.performRealOnlyForwardTransform()
 

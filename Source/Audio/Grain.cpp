@@ -70,19 +70,19 @@ Grain::~Grain()
 	buffer = nullptr;
 }
 
-// on prend un grain du buffer du sample d'entré pour le mettre dans le buffer des grains
+// on prend un grain du buffer du sample d'entrÃ© pour le mettre dans le buffer des grains
 // si la duration est plus grande que la selection alors on loop 
 float Grain::getCurrentSample(const int channel)
 {
 
-	// on veut récupérer le sample dans une fenetre de positionSamples à positionSamples + selectionSamples 
+	// on veut rÃ©cupÃ©rer le sample dans une fenetre de positionSamples Ã  positionSamples + selectionSamples 
 	//return grainBuffer.getSample(channel, currentTime);
-	const float* sample = buffer->getReadPointer(channel);//% numChannels);
+	const float* sample = buffer->getReadPointer(channel % numChannels);
 
 
 	// On a la position, la selection, l'envelopeWidth et la duration
 	// On veut la position de l'index dans l'envelope
-	// on vérifie la position du grain a extraire
+	// on vÃ©rifie la position du grain a extraire
 	int readPosition = currentTime + position;
 	readPosition %= buffer->getNumSamples();
 

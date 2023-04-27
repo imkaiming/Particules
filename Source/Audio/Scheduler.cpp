@@ -50,7 +50,7 @@ void Scheduler::init(int numChannels)
 
 Grain* Scheduler::generateGrain(int numSamples)
 {
-	// on récupère la valeur en samples par rapport au pourcentage de la position dans le fichier audio
+	// on rÃ©cupÃ¨re la valeur en samples par rapport au pourcentage de la position dans le fichier audio
 
 	int durationSamples = static_cast<int>(stateParams->getDuration() * stateParams->getSampleRate());
 	int widthSamples = static_cast<int>(durationSamples * stateParams->getEnvWidth());
@@ -84,7 +84,7 @@ Grain* Scheduler::generateGrain(int numSamples)
 
 void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 {
-	// si on a aucun grain alors on écrit du silence dans le buffer
+	// si on a aucun grain alors on Ã©crit du silence dans le buffer
 	if (grains.isEmpty())
 	{
 
@@ -121,9 +121,9 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 	}
 
 	if (stateParams->getIsPlaying() == true) {
-		if (--nextOnset == 0) // on avance à chaque sample
+		if (--nextOnset == 0) // on avance Ã  chaque sample
 		{
-			// TODO : récupérer les valeur random du stateParam pour les donner au grain avant de le générer.
+			// TODO : rÃ©cupÃ©rer les valeur random du stateParam pour les donner au grain avant de le gÃ©nÃ©rer.
 
 			Grain* unGrain = generateGrain(numSamples);
 			++nbActiveGrains;
@@ -133,10 +133,10 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 
 			grains.add(unGrain);
 			int interOnset = stateParams->getInterOnset(); // ajouter le random ici
-			nextOnset += interOnset; // determine le moment où prochain grain sera créer
+			nextOnset += interOnset; // determine le moment oÃ¹ prochain grain sera crÃ©er
 		}
 	}
-	//else if (grains.isEmpty()) { // ça sonne moins réactif
+	//else if (grains.isEmpty()) { // Ã§a sonne moins rÃ©actif
 	//	nextOnset = 1;
 	//}
 	else {
@@ -150,7 +150,7 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 
 	//float linearCoef = juce::Decibels::decibelsToGain(-3.f); // logarithmique... max 1 - min 0.7
 	// 0.707 = 10 ^ (-3 / 10)
-					// on vérifie si il reste encore des grains sinon on met à jours le verrou de play
+					// on vÃ©rifie si il reste encore des grains sinon on met Ã  jours le verrou de play
 
 }
 
