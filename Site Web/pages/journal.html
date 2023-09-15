@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr" data-cbscriptallow="true">
+
+<head>
+    <title>IFT3150 - Conception d'un synthétiseur granulaire avec JUCE Framework</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="../css/style.css" media="screen">
+    <link rel="icon" type="image/png" href="https://">
+</head>
+
+<body>
+    <div id="conteneur">
+        <header>
+            <h1>IFT3150 - Conception d'un synthétiseur granulaire avec JUCE Framework</h1>
+        </header>
+        <hr>
+        <table id="tableau-de-presentation">
+            <tbody>
+                <tr>
+                    <td> Majeure en informatique</td>
+                    <td style="text-align :right;"> Université de Montréal </td>
+                </tr>
+                <tr>
+                    <td>Pierre Janier-Dubry</td>
+                    <td style="text-align :right;"> pierre.janier.dubry@umontreal.ca</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr style="margin:0;">
+        <nav>
+            <table id="tableNav">
+                <tr>
+                    <th><a href="../Rapport.html">RAPPORT</a></th>
+                    <th><a href="presentation.html">PR&Eacute;SENTATION</a></th>
+                    <th class="selectionner"><a href="journal.html">JOURNAL</a></th>
+                    <th><a href="specification.html">SP&Eacute;CIFICATION</a></th>
+                    <th><a href="plan.html">PLAN</a> </th>
+                </tr>
+            </table>
+        </nav>
+        <main>
+            <div>
+                <br>
+                <h4>JOURNAL D'AVANCEMENTS</h4>
+                <hr>
+                <p>2023-01-13 : Première rencontre avec le professeur pour parler du projet. Il m'a aidé à cadrer mon
+                    sujet et à m'orienter quant à l'approche que je devais choisir pour intégrer la synthèse granulaire.
+                    J'ai effectué un cahier des charges en élaboration les grands principes de mon projet ainsi que la
+                    liste des paramètres intrinsèques à la synthèse granulaire. Et à mettre en place mon plan de
+                    travail.
+                </p>
+                <br>
+                <p>
+                    2023-01-27 : Lecture et documentation sur la programmation audio en général en C/C++. Et test du
+                    Framework JUCE en créant des petits plugins simples. Visionnage de tutoriels et de la documentation
+                    JUCE pour maitriser la partie création de GUI.
+                </p>
+                <br>
+                <p>
+                    2023-02-03 : Test de plugin de générateur à table d'onde pour s'entrainer à travailler avec un
+                    buffer et création du repos Git. On choisit d'écrire un synthétiseur granulaire en ligne à
+                    retardement.
+                </p>
+                <br>
+                <p>
+                    2023-02-04 : Commence à réfléchir à l'interface graphique et on continue à se documenter et perdre
+                    deux jours de travail pour essayer d'inclure des fichiers SVG comme boutton interactifs. Importation
+                    de la police d'écriture. Mise en place des fonctions d'interactions basiques.
+                </p>
+                <br>
+                <p>
+                    2023-02-06 : Prise de notes pour étayer le rapport final. Et création de la classe pour charger un
+                    fichier sonore suite à une interaction de l'utilisateur. Création de la classe de Model
+                    StateParameters pour garder un oeil sur l'état global du système.
+                </p>
+                <br>
+                <p>
+                    2023-02-09 : L'APVTS fonctionne mal avec les SliderListeners, les valeurs se mette à jours une
+                    fois sur deux. Sur les forums il est dit que c'est un problème connus. Je me passe de Listener et je
+                    met à jours les valeurs directement avec un appel à un Getter/Setter au StateParameter. Le problème
+                    de cette méthode est le nombre conséquent d'appels.
+                </p>
+                <br>
+                <p>
+                    2023-02-10 : On refactorise toutes l'interface graphique parce que c'était pas terrible ce qu'on
+                    avait fait finalement.
+                </p>
+                <br>
+                <p>
+                    2023-02-12 : On implémente la lambda fonction pour l'activation de l'effet en se basant sur le
+                    tutoriel de JUCE sur les interfaces. Et on créer des petits plugin à côté pour s'entrainer.
+                </p>
+                <br>
+                <p>
+                    2023-02-14 : Pause dans le code et on reprend les tutos JUCE et les vidéos Youtube à fond parce
+                    qu'on comprend pas comment les choses fonctionnent et comment elles sont censées fonctionner entre
+                    elles.
+                </p>
+                <br>
+                <p>
+                    2023-02-19 : Ajout de la classe CustomLookAndFeel pour le PluginEditor. Et de la fonction de la
+                    fenêtre redimensionable. Et création d'un plugin de gain qu'on implémentera par la suite.
+                </p>
+                <br>
+                <p>
+                    2023-02-23 : Impossible de faire fonctionner le plugiciel correctement. Alors on recommence tout
+                    depuis zéro et on change d'architecture et surtout de type de synthétiseur granulaire. On passe
+                    maintenant mode de synthèse par stockage d'échantillons.
+                </p>
+                <br>
+                <p>
+                    2023-03-02 : Le chargement et la validation du fichier son se fait grâce à l'objet
+                    AudioFormatReaderSource, mais on a pas accès au processeur du son malgré le fait qu'on arrive à
+                    mettre à jours l'état à cause des lambda fonctions. La solution serait d'implémenter un callback. On
+                    y arrive en héritant la classe PluginEditor avec un BroadcastListener
+                </p>
+                <p>
+                    2023-03-05 : Interpolation de fréquence avec LagrangeInterpolator. Mais le glisser déposer ne marche
+                    toujours pas.
+                </p>
+                <p>
+                    2023-03-10 : Je supprime le BroadcastListener parce que en fait, on peut utiliser un verrou qui se
+                    met à jours en fonction de si on charge le buffer pour la première fois. Je décide de faire en sorte
+                    qu'on ne puisse pas décharger le buffer mais seulement le remplacer par un autre. C'est plus simple.
+                </p>
+                <p>
+                    2023-03-12 : Ajout de sliders circulaire custom et mise à jours dans le modèle.
+                </p>
+                <p>
+                    2023-03-13 : On ajoute les controles de position et selections qui mettent à jours le modèle.
+                </p>
+                <p>
+                    2023-03-19 :
+                </p>
+            </div>
+        </main>
+    </div>
+    <footer>
+        <br>
+        <br>
+    </footer>
+</body>

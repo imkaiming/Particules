@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr" data-cbscriptallow="true">
+
+<head>
+    <title>IFT3150 - Conception d'un synthétiseur granulaire avec JUCE Framework</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="../css/style.css" media="screen">
+    <link rel="icon" type="image/png" href="https://">
+</head>
+
+<body>
+    <div id="conteneur">
+        <header>
+            <h1>IFT3150 - Conception d'un synthétiseur granulaire avec JUCE Framework</h1>
+        </header>
+        <hr>
+        <table id="tableau-de-presentation">
+            <tbody>
+                <tr>
+                    <td> Majeure en informatique</td>
+                    <td style="text-align :right;"> Université de Montréal </td>
+                </tr>
+                <tr>
+                    <td>Pierre Janier-Dubry</td>
+                    <td style="text-align :right;"> pierre.janier.dubry@umontreal.ca</td>
+                </tr>
+            </tbody>
+        </table>
+        <hr style="margin:0;">
+        <nav>
+            <table id="tableNav">
+                <tr>
+                    <th><a href="../Rapport.html">RAPPORT</a></th>
+                    <th><a href="presentation.html">PRESENTATION</a></th>
+                    <th><a href="journal.html">JOURNAL</a></th>
+                    <th class="selectionner"><a href="specification.html">SPECIFICATION</a></th>
+                    <th><a href="plan.html">PLAN</a> </th>
+                </tr>
+            </table>
+        </nav>
+        <main>
+            <div>
+                <br>
+                <h4>SPECIFICATIONS (Cahier des charges)</h4>
+                <hr>
+                <ol>
+                    <li>
+                        Le plugiciel doit pouvoir extraire les grains d’une source sonore donnée et permettre la
+                        relecture en petits fragments (grains) par de multiples instances.
+                    </li>
+                    <li>
+                        Le plugiciel doit être au format vst, vst3 et au.
+                    </li>
+                    <li>
+                        L’utilisateur doit facilement pouvoir contrôler un certain ensemble de paramètres relatif à
+                        la
+                        synthèse par le biais de l’interface graphique.
+                    </li>
+                    <li>
+                        L’utilisateur doit pouvoir charger en mémoire une source sonore de son choix. (drag & drop ou
+                        non-modal dialog file loader)
+                    </li>
+                    <li>
+                        Le plugiciel doit pouvoir supporter une sortie stéréo (2 canaux de sorties standard)
+                    </li>
+                    <li>
+                        Une méthode de visualisation de la source chargée
+                    </li>
+                    <li>
+                        Une méthode de visualisation des grains générés
+                    </li>
+                    <li>
+                        Les valeurs des paramètres doivent être visible pour l’utilisateur
+                    </li>
+                    <li>
+                        L’utilisateur doit pouvoir visualiser l’état des paramètres modifiés.
+                    </li>
+                </ol>
+
+                <br>
+                <h4>PARAMETRES DES GRAINS (micro)</h4>
+                <hr>
+                <ol>
+                    <li>L’enveloppe des grains (ADSR)</li>
+                    <li>La durée de chaque grains (en milliseconde)</li>
+                    <li>Leur transposition</li>
+                    <li>La panoramique du grain extrait dans le champ stéréophonique</li>
+                </ol>
+                <br>
+                <h4>PARAMETRES DU SYNTHETISEUR (macro)</h4>
+                <hr>
+                <ol>
+                    <li>Choix de la source sonore</li>
+                    <li>Le gain général en sortie</li>
+                    <li>Modulateur des grains (forme d’ondes, vitesse, le paramètre micro lié à ce modulateur et une
+                        valeur
+                    </li>
+                    d’application de la modulation)
+                    <li>Le temps entre chaque apparition des grains (en fréquence)</li>
+                    <li>Pouvoir verrouiller les valeurs de temps d’apparition et la durée des grains</li>
+                    <li>La position dans le fichier source</li>
+                </ol>
+
+
+                <br>
+                <h4>POUR ALLER PLUS LOIN</h4>
+                <hr>
+                <ol>
+                    <li>Filtre coupe-bas et coupe-haut sur les grains (macro)</li>
+                    <li>Réception de signal MIDI pour déclencher le synthétiseur</li>
+                    <li>La vitesse de lecture général (macro, allant de -1 à +1)</li>
+                    <li>Shift fréquentiel (macro)</li>
+                    <li>Possibilité de drag & drop les modulateurs sur les paramètres micros.</li>
+                    <li>Changer l’unipolarité des modulateur (positive, négative ou bipolaire)</li>
+                    <li>Changer le comportement des modulateurs (% ou hz)</li>
+                    <li>Appliquer plusieurs modulations sur un même paramètre</li>
+                    <li>Pouvoir appliquer les modulateurs sur les paramètres macro aussi.</li>
+                    <li>Pouvoir choisir des modulateurs et leur forme de modulation (sinusoïde, triangle, scie positive,
+                        aléatoire, …) pour appliquer cette modulation à un paramètre des grains.</li>
+                </ol>
+
+
+            </div>
+        </main>
+    </div>
+    <footer>
+        <br>
+        <br>
+    </footer>
+</body>
