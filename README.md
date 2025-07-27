@@ -1,14 +1,11 @@
 # Particules
 
-Contexte : 
-Ce projet est fait dans le cadre du cours IFT 3150 - Projet en Informatique.
-Le sujet a été proposé et conçut par Pierre Janier Dubry en Janvier 2023.
-Le dérouelement de ce projet s'est fait sous la supervision du professeur Dominic Thibault.
+A minimalist granular synth using JUCE Framework v7.0.5.
 
 Installation :
-Avant tout, il vous faudra télécharger JUCE Framework version 7.0.5 minimum. https://github.com/juce-framework/JUCE
-Une fois le Framework téléchargé, vous devrez compiler le Projucer avec votre IDE.
-A partir du Projucer, si c'est la première fois que vous l'utilisez, vous devez le configurer en choisissant votre IDE. 
-Créez un nouveau projet de type Audio Plugin VST, puis importez le dossier Source du projet Particules dans le Projucer
-Alternativement, vous pouvez manuellement récupérer le fichier Particules.vst3 qui se trouve dans le dossier Build et l'importer dans votre DAW.
+1. download and install JUCE Framework https://github.com/juce-framework/JUCE
+2. Compile Projucer with your IDE
+3. Configure Projucer and choose your IDE 
+4. Now you can create a new project for Audio Plugin VST
+5. Import Particules source folder in the projucer.
 
