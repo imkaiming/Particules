@@ -1,6 +1,24 @@
-# This .gitignore file should be placed at the root of your project directory
-
-Builds/
+# Projucer / JUCE generated
 JuceLibraryCode/
+*.jucer
 
-Particules.jucer
+# IDE / build output
+.vs/
+Builds/
+build/
+out/
+cmake-build-*/
+
+# Visual Studio
+*.sln
+*.vcxproj*
+*.vcxproj.filters
+*.vcxproj.user
+
+# macOS / Xcode
+*.xcodeproj/
+*.xcworkspace/
+DerivedData/
+
+# Misc
+.DS_Store
