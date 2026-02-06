@@ -15,9 +15,9 @@ AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* statePara
 	open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 	stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-	isAudioLoaded(stateParams->getAudioLoaded()), 
+	isAudioLoaded(juce::Value(stateParams->getAudioLoaded())),
 	thumbnailCache(5),
-	loader(stateParams, &thumbnailComponent), 
+	loader(stateParams, &thumbnailComponent),
 	thumbnailComponent(5, *loader.getFormatManager(), thumbnailCache, stateParams)
 {
 	synthFrame->init(&thumbnailComponent);
@@ -26,13 +26,16 @@ AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* statePara
 	setStopButtonImageStop();
 	setPlayButtonImagePlay();
 
-	open_btn.onClick = [this]() {
+	open_btn.onClick = [this]()
+	{
 		openFileButtonClicked();
 	};
-	stop_btn.onClick = [this]() {
+	stop_btn.onClick = [this]()
+	{
 		stopFileButtonClicked();
 	};
-	play_btn.onClick = [this]() {
+	play_btn.onClick = [this]()
+	{
 		playFileButtonClicked();
 	};
 
@@ -46,7 +49,7 @@ AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* statePara
 	play_btn.setEnabled(false);
 
 	// on écoute la value dans le stateParams
-	isAudioLoaded->addListener(this);
+	isAudioLoaded.addListener(this);
 }
 
 AudioFileFrame::~AudioFileFrame()
@@ -54,12 +57,11 @@ AudioFileFrame::~AudioFileFrame()
 	//open_btn.removeListener(this);
 	//play_btn.removeListener(this);
 	//stop_btn.removeListener(this);
-	isAudioLoaded->removeListener(this);
+	isAudioLoaded.removeListener(this);
 
 	//loader.reset();
 	apvts = nullptr;
 	stateParams = nullptr;
-	isAudioLoaded = nullptr;
 }
 
 void AudioFileFrame::openFileButtonClicked()
@@ -76,12 +78,12 @@ void AudioFileFrame::stopFileButtonClicked()
 
 void AudioFileFrame::playFileButtonClicked()
 {
-	if (stateParams->getIsPlaying() == true)
+	if(stateParams->getIsPlaying() == true)
 	{
 		stateParams->setIsPlaying(false);
 		setPlayButtonImagePause();
-	}
-	else {
+	} else
+	{
 		stateParams->setIsPlaying(true);
 		setPlayButtonImagePlay();
 	}
@@ -165,14 +167,14 @@ void AudioFileFrame::setStopButtonImageStop()
 void AudioFileFrame::valueChanged(juce::Value& value)
 {
 
-	isAudioLoaded->setValue(value);
+	isAudioLoaded.setValue(value);
 
-	if (value == true)
+	if(value == true)
 	{
 		//DBG("isAudioLoaded = true");
 
 		// on test le buffer
-		if (stateParams->getAudioBuffer() == nullptr)
+		if(stateParams->getAudioBuffer() == nullptr)
 		{
 			return;
 		}
@@ -180,8 +182,7 @@ void AudioFileFrame::valueChanged(juce::Value& value)
 		//alors on peut activer le bouton play
 		//play_btn.setToggleState(true, juce::NotificationType::dontSendNotification);
 		play_btn.setEnabled(true);
-	}
-	else
+	} else
 	{
 		//DBG("isAudioLoaded = false");
 
@@ -192,8 +193,9 @@ void AudioFileFrame::valueChanged(juce::Value& value)
 bool AudioFileFrame::isInterestedInFileDrag(const juce::StringArray& files)
 {
 	// is it an audio file ?
-	for (juce::String file : files) {
-		if (file.contains(".wav") || (".aif") || (".mp3"))
+	for(juce::String file : files)
+	{
+		if(file.contains(".wav") || (".aif") || (".mp3"))
 		{
 			return true;
 		}
@@ -203,8 +205,10 @@ bool AudioFileFrame::isInterestedInFileDrag(const juce::StringArray& files)
 
 void AudioFileFrame::filesDropped(const juce::StringArray& files, int x, int y)
 {
-	for (juce::String file : files) {
-		if (isInterestedInFileDrag(file)) {
+	for(juce::String file : files)
+	{
+		if(isInterestedInFileDrag(file))
+		{
 			loader.loadFile(file);
 		}
 	}
@@ -212,11 +216,13 @@ void AudioFileFrame::filesDropped(const juce::StringArray& files, int x, int y)
 
 // component section
 
-void AudioFileFrame::paint(juce::Graphics& g) {
+void AudioFileFrame::paint(juce::Graphics& g)
+{
 	g.fillAll(MyColours::brightBlue);
 }
 
-void AudioFileFrame::resized() {
+void AudioFileFrame::resized()
+{
 
 	juce::Rectangle<int> localArea = getLocalBounds();
 	float w = getWidth() / 30.f;

@@ -8,43 +8,49 @@
   ==============================================================================
 */
 
+
 #include "StateParameters.h"
 
-StateParameters::StateParameters()
+StateParameters::StateParameters(): mSampleRate{0.0}, mNumChannels{0}, mNumSamples{0}, mIsGrainsEmpty{true}, mIsPlaying{false}, mIsAudioLoaded{false}, mInterOnset{0}
 {
-	sampleRate = 0;
-	numChannels = 0;
-	isAudioLoaded = false;
-	numSamples = 0;
-	isGrainsEmpty = true;
-	//isAudioLoaded.addListener(this);
-
-
 }
 
 StateParameters::~StateParameters()
 {
-	audioFileBuffer = nullptr;
-	grains = nullptr;
-	grainVisualizer = nullptr;
+	mMix = nullptr;
+	mGain = nullptr;
+	mDensity = nullptr;
+	mDuration = nullptr;
+	mSpeed = nullptr;
+	mFilePosition = nullptr;
+	mWindowSelection = nullptr;
+	mEnvWidth = nullptr;
+	mEnvelopeType = nullptr;
+	mTraversalMode = nullptr;
+	mTraversalTime = nullptr;
+
+	mAudioFileBuffer = nullptr;
+	mGrains = nullptr;
+	mGrainVisualizer = nullptr;
 }
 
-void StateParameters::init(ValueTreeState* apvts, int numChannels)
+void StateParameters::init(ValueTreeState& apvts, int numChannels, double sampleRate)
 {
-	this->numChannels = numChannels;
-	setMix(apvts->getRawParameterValue(MIX_ID)->load());
-	setGain(apvts->getRawParameterValue(GAIN_ID)->load());
-	setDensity(apvts->getRawParameterValue(DENSITY_ID)->load());
-	setDuration(apvts->getRawParameterValue(DURATION_ID)->load());
-	setSpeed(apvts->getRawParameterValue(SPEED_ID)->load());
-	setFilePosition(apvts->getRawParameterValue(POSITION_ID)->load());
-	setWindowSelection(apvts->getRawParameterValue(SELECTION_ID)->load());
-	setEnvWidth(apvts->getRawParameterValue(ENVWIDTH_ID)->load());
-	setTraversalModeValue(apvts->getRawParameterValue(TRAVERSALMODE_ID)->load());
-	setTraversalTimeValue(apvts->getRawParameterValue(TRAVERSALTIME_ID)->load());
+	mNumChannels.store(numChannels, std::memory_order_relaxed);
+	mSampleRate.store(sampleRate, std::memory_order_relaxed);
+	mMix = apvts.getRawParameterValue(Param::Mix::id);
+	mGain = apvts.getRawParameterValue(Param::Gain::id);
+	mDensity = apvts.getRawParameterValue(Param::Density::id);
+	mDuration = apvts.getRawParameterValue(Param::Duration::id);
+	mSpeed = apvts.getRawParameterValue(Param::Speed::id);
+	mFilePosition = apvts.getRawParameterValue(Param::Position::id);
+	mWindowSelection = apvts.getRawParameterValue(Param::Selection::id);
+	mEnvelopeType = apvts.getRawParameterValue(Param::EnvelopeType::id);
+	mEnvWidth = apvts.getRawParameterValue(Param::EnvelopeWidth::id);
+	mTraversalMode = apvts.getRawParameterValue(Param::TraversalMode::id);
+	mTraversalTime = apvts.getRawParameterValue(Param::TraversalTime::id);
+
 }
-
-
 // Le callback qui envoit newValue ne provient pas du apvts mais du slider associé au Listener
 /*void StateParameters::parameterChanged(const juce::String& parameterID, float newValue)
 {
@@ -72,227 +78,23 @@ void StateParameters::init(ValueTreeState* apvts, int numChannels)
 }*/
 
 
-// setters 
-
-void StateParameters::setGain(float newValue)
-{
-	gain = juce::Decibels::decibelsToGain(newValue);
-}
-
-void StateParameters::setDensity(float newValue)
-{
-	density = newValue;
-	setInterOnSet();
-}
-
-void StateParameters::setDuration(float newValue)
-{
-	duration = newValue;
-}
-
-void StateParameters::setMix(float newValue)
-{
-	mix = newValue / 100.f;
-
-}
-
-void StateParameters::setSpeed(float newValue)
-{
-	speed = newValue;
-}
-
 void StateParameters::setInterOnSet()
 {
-	interOnset = static_cast<int>(round(getSampleRate() / getDensity()));
+	//mInterOnset->store(static_cast<int>(round(getSampleRate() / getDensity()), std::memory_order_release));
+	const float density = getDensity();
+	if(density <= 0.0) return;
+
+	const int sr = getNumSamples();
+	const int inter = static_cast<int>(std::lround(mSampleRate / density));
+	mInterOnset.store(inter, std::memory_order_relaxed);
+
+
 }
 
-void StateParameters::setEnvelopeType(int newValue)
-{
-	envelopeType = newValue;
-}
 
-void StateParameters::setSampleRate(double sampleRate) {
-	this->sampleRate = sampleRate;
-	setInterOnSet();
-}
 
-void StateParameters::setAudioLoaded(bool newValue)
-{
-	if (newValue == false)
-	{
-		audioFileBuffer = nullptr;
-	}
-
-	isAudioLoaded.setValue(newValue);
-}
-
-void StateParameters::setAudioBuffer(juce::AudioBuffer<float>* newValue)
-{
-	audioFileBuffer = newValue;
-	if (newValue != nullptr)
-		setNumSamples(audioFileBuffer->getNumSamples());
-}
-
-void StateParameters::setIsPlaying(bool newValue)
-{
-	isPlaying = newValue;
-}
-
-void StateParameters::setFilePosition(float newValue)
-{
-	filePosition = newValue;
-}
-
-void StateParameters::setWindowSelection(float newValue)
-{
-	windowSelection = newValue;
-}
-
-void StateParameters::setEnvWidth(float newValue)
-{
-	envWidth = newValue;
-}
-
-void StateParameters::setNumSamples(float newValue)
-{
-	numSamples = newValue;
-	grainVisualizer->setNumSamples(newValue);
-}
-
-void StateParameters::setIsGrainsEmpty(bool newValue)
-{
-	isGrainsEmpty = newValue;
-}
-
-void StateParameters::setTraversalModeValue(int newValue)
-{
-	traversalMode = newValue;
-}
-
-void StateParameters::setTraversalTimeValue(float newValue)
-{
-	traversalTime = newValue;
-}
-
-void StateParameters::setGrains(juce::Array<Grain*>* grains)
-{
-	this->grains = grains;
-}
-
-void StateParameters::setGrainVisualizer(GrainVisualizer* grainVisualizer)
-{
-	this->grainVisualizer = grainVisualizer;
-}
 
 //void StateParameters::updateGrainVisualizer()
 //{
 //	grainVisualizer->update();
 //}
-
-// getters
-
-float StateParameters::getGain()
-{
-	return gain;
-}
-
-float StateParameters::getDensity()
-{
-	return density;
-}
-
-float StateParameters::getDuration()
-{
-	return duration;
-}
-
-float StateParameters::getSpeed()
-{
-	return speed;
-}
-
-double StateParameters::getSampleRate()
-{
-	return sampleRate;
-}
-
-float StateParameters::getMix()
-{
-	return mix;
-}
-
-int StateParameters::getInterOnset()
-{
-	return interOnset;
-}
-
-int StateParameters::getNumChannels()
-{
-	return numChannels;
-}
-
-int StateParameters::getEnvelopeType()
-{
-	return envelopeType;
-}
-
-juce::Value* StateParameters::getAudioLoaded()
-{
-	//return isAudioLoaded.getValue();
-	return &isAudioLoaded;
-}
-
-bool StateParameters::getIsPlaying()
-{
-	return isPlaying;
-}
-
-juce::AudioBuffer<float>* StateParameters::getAudioBuffer()
-{
-	return audioFileBuffer;
-}
-
-float StateParameters::getWindowSelection()
-{
-	return windowSelection;
-}
-
-float StateParameters::getFilePosition()
-{
-	return filePosition;
-}
-
-float StateParameters::getEnvWidth()
-{
-	return envWidth;
-}
-
-float StateParameters::getNumSamples()
-{
-	return numSamples;
-}
-
-bool StateParameters::getIsGrainsEmpty()
-{
-	return isGrainsEmpty;
-}
-
-int StateParameters::getTraversalModeValue()
-{
-	return traversalMode;
-}
-
-float StateParameters::getTraversalTimeValue()
-{
-	return traversalTime;
-}
-
-juce::Array<Grain*>* StateParameters::getGrains()
-{
-	return grains;
-}
-
-GrainVisualizer* StateParameters::getGrainVisualizer()
-{
-	return grainVisualizer;
-}

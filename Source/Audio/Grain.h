@@ -10,10 +10,10 @@
 
 #pragma once
 
-#include <algorithm>
+//#include <algorithm>
 #include <JuceHeader.h>
 #include "../Utils/GrainPoint.h"
-#include <juce_dsp/juce_dsp.h>
+//#include <juce_dsp/juce_dsp.h>
 
 enum WindowingMethod
 {
@@ -72,8 +72,6 @@ private:
 
 
 	juce::AudioBuffer<float>* buffer;
-	//double frequency;
-	//float amplitude;
 
 	GrainPoint grainPoint;
 };

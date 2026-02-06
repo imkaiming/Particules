@@ -16,8 +16,8 @@ ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail,
 {
 	stateParams->setGrainVisualizer(&grainVisualizer);
 
-	positionValue = POSITION_DEFAULT;
-	selectionValue = SELECTION_DEFAULT;
+	positionValue = Param::Position::init;
+	selectionValue = Param::Selection::init;
 
 	updatePosition(positionValue);
 	updateSelection(selectionValue);

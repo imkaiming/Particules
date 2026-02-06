@@ -9,12 +9,13 @@
 */
 
 #include <JuceHeader.h>
-#include "../Utils/StateParameters.h"
 #include "../Utils/MyColours.h"
+#include "../Framework/Core.h"
 
 #pragma once
 
-class GrainsFrame : public juce::Component, public juce::Slider::Listener
+class StateParameters;
+class GrainsFrame : public juce::Component //, public juce::Slider::Listener
 {
 public:
 	GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams);
@@ -23,7 +24,7 @@ public:
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
-	void sliderValueChanged(juce::Slider* slider) override;
+	//void sliderValueChanged(juce::Slider* slider) override;
 
 private:
 

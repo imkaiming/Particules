@@ -37,7 +37,7 @@ private:
 	juce::AudioThumbnailCache thumbnailCache;
 	ThumbnailComponent thumbnailComponent; // after the file is loaded draw the waveform
 
-	juce::Value* isAudioLoaded;
+	juce::Value isAudioLoaded;
 	ValueTreeState* apvts;
 	StateParameters* stateParams;
 

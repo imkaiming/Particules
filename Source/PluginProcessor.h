@@ -53,13 +53,13 @@ public:
 
 	StateParameters* getStateParameters();
 	ValueTreeState* getValueTreeState();
-	void initValueTreeState();
+	//void initValueTreeState();
 	//void setParameters(juce::AudioProcessorValueTreeState& apvts);
 	static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
 private:
 
-	ValueTreeState apvts;			// connecte les slider avec les paramètres
+	ValueTreeState apvts;			// connecte les slider du GUI et les paramètres (fourni des valeurs atomiques)
 	StateParameters stateParams;	// fait le pont entre apvts et le synth
 	GranularEngine grainEngine;		// le moteur de la synthèse granulaire
 

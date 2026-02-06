@@ -9,13 +9,13 @@
 */
 
 #include "Scheduler.h"
+#include "../Utils/StateParameters.h"
 
-Scheduler::Scheduler(StateParameters* stateParams) : stateParams(stateParams)
+Scheduler::Scheduler()//StateParameters* stateParams) //: stateParams(stateParams)
 {
 	nextOnset = 1;
 	nbActiveGrains = 0;
 	numChannels = 0;
-	stateParams->setGrains(&grains);
 }
 
 Scheduler::~Scheduler()
@@ -26,7 +26,7 @@ Scheduler::~Scheduler()
 
 void Scheduler::freeActiveGrains()
 {
-	for (int i = 0; i < this->grains.size(); ++i)
+	for(int i = 0; i < this->grains.size(); ++i)
 	{
 		Grain* grain = this->grains.removeAndReturn(i);
 		delete grain;
@@ -36,6 +36,7 @@ void Scheduler::freeActiveGrains()
 // restore the default value
 void Scheduler::init(int numChannels)
 {
+	stateParams->setGrains(&grains);
 	freeActiveGrains();
 	this->numChannels = numChannels;
 	nextOnset = 1;
@@ -43,8 +44,8 @@ void Scheduler::init(int numChannels)
 
 	phaseMod.reset();
 	phaseMod.setSampleRate(stateParams->getSampleRate());
-	phaseMod.setMod(stateParams->getTraversalModeValue());
-	phaseMod.setFrequency(1 / stateParams->getTraversalTimeValue());
+	phaseMod.setMod(stateParams->getTraversalMode());
+	phaseMod.setFrequency(1 / stateParams->getTraversalTime());
 
 }
 
@@ -58,8 +59,8 @@ Grain* Scheduler::generateGrain(int numSamples)
 	int selectionSamples = static_cast<int>(stateParams->getNumSamples() * stateParams->getWindowSelection());
 
 
-	phaseMod.setFrequency(1 / stateParams->getTraversalTimeValue());
-	phaseMod.setMod(stateParams->getTraversalModeValue());
+	phaseMod.setFrequency(1 / stateParams->getTraversalTime());
+	phaseMod.setMod(stateParams->getTraversalMode());
 	positionSamples += phaseMod.getValue() * selectionSamples;
 
 	//DBG("value : " << phaseMod.getValue());
@@ -78,6 +79,11 @@ Grain* Scheduler::generateGrain(int numSamples)
 
 }
 
+void Scheduler::setStateParameters(StateParameters* sp)
+{
+	stateParams = sp;
+}
+
 // Realtime distribution of grains must be activated in timesequential order.
 // Non realtime distribution ofgrains must be activated in random order according to the required density (nextOnset).
 // generate one active grain at a time and set the inter-onset value for the next grain
@@ -85,18 +91,18 @@ Grain* Scheduler::generateGrain(int numSamples)
 void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 {
 	// si on a aucun grain alors on écrit du silence dans le buffer
-	if (grains.isEmpty())
+	if(grains.isEmpty())
 	{
 
-		for (size_t channel = 0; channel < numChannels; channel++) {
+		for(size_t channel = 0; channel < numChannels; channel++)
+		{
 			audioBlock->addSample(channel, sample, 0.f);
 		}
-	}
-	else
+	} else
 	{
-		for (Grain* grain : grains)
+		for(Grain* grain : grains)
 		{
-			for (size_t channel = 0; channel < numChannels; ++channel)
+			for(size_t channel = 0; channel < numChannels; ++channel)
 			{
 				// add rms here + amplitude to the grains
 				float* blockPointer = audioBlock->getChannelPointer(channel);
@@ -105,13 +111,13 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 
 			grain->update();
 
-			if (!grain->isActive())
+			if(!grain->isActive())
 			{
 				grains.remove(grains.indexOf(grain));
 				delete grain;
 				--nbActiveGrains;
 
-				if (grains.isEmpty())
+				if(grains.isEmpty())
 					stateParams->setIsGrainsEmpty(true);
 
 
@@ -120,8 +126,9 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 
 	}
 
-	if (stateParams->getIsPlaying() == true) {
-		if (--nextOnset == 0) // on avance à chaque sample
+	if(stateParams->getIsPlaying() == true)
+	{
+		if(--nextOnset == 0) // on avance à chaque sample
 		{
 			// TODO : récupérer les valeur random du stateParam pour les donner au grain avant de le générer.
 
@@ -132,14 +139,15 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 
 
 			grains.add(unGrain);
-			int interOnset = stateParams->getInterOnset(); // ajouter le random ici
+			int interOnset = stateParams->getInterOnSet(); // ajouter le random ici
 			nextOnset += interOnset; // determine le moment où prochain grain sera créer
 		}
 	}
 	//else if (grains.isEmpty()) { // ça sonne moins réactif
 	//	nextOnset = 1;
 	//}
-	else {
+	else
+	{
 		nextOnset = 1;
 	}
 

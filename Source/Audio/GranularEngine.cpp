@@ -10,9 +10,9 @@
 
 #include "GranularEngine.h"
 
-GranularEngine::GranularEngine(StateParameters* stateParams) :
-	stateParams(stateParams),
-	scheduler(stateParams)//,
+GranularEngine::GranularEngine() : scheduler()
+	//stateParams(stateParams),
+	//scheduler(stateParams),
 	//fft(FFTSIZE_ORDER),
 	//phaseVocoderBuffer(stateParams->getNumChannels(), FFTSIZE),
 	//window(FFTSIZE, juce::dsp::WindowingFunction<float>::hann),
@@ -28,7 +28,6 @@ GranularEngine::~GranularEngine()
 
 void GranularEngine::mixingProcess(AudioBlock wetBlock)
 {
-	//juce::Logger::outputDebugString("mix : " + (juce::String)stateParams->getMix());
 	mixerProcessor.setWetMixProportion(stateParams->getMix());
 	mixerProcessor.mixWetSamples(wetBlock);
 }
@@ -37,7 +36,6 @@ void GranularEngine::gainProcess(juce::dsp::ProcessContextReplacing<float> conte
 {
 	gainProcessor.setGainLinear(stateParams->getGain());
 	gainProcessor.process(context);
-	//juce::Logger::outputDebugString("gain : " + (const juce::String)stateParams->getGain());
 }
 
 void GranularEngine::reverbProcess(juce::dsp::ProcessContextReplacing<float> context)
@@ -45,6 +43,12 @@ void GranularEngine::reverbProcess(juce::dsp::ProcessContextReplacing<float> con
 	reverbProcessor.process(context);
 }
 
+
+void GranularEngine::setStateParameters(StateParameters* sp)
+{
+	stateParams = sp;
+	scheduler.setStateParameters(sp);
+}
 
 void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 {
@@ -93,8 +97,9 @@ void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
 }
 
 // called by prepare to play method
-void GranularEngine::init(int sampleRate, int numChannel, int samplePerBlocks)
+void GranularEngine::init(StateParameters* sp, int sampleRate, int numChannel, int samplePerBlocks)
 {
+	setStateParameters(sp);
 	scheduler.init(numChannel);
 
 	juce::dsp::ProcessSpec spec;

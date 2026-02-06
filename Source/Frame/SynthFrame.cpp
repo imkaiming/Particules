@@ -15,19 +15,19 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 {
 	mixSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, MIX_ID, mixSlider);
+			*apvts, Param::Mix::id, mixSlider);
 
 	gainSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, GAIN_ID, gainSlider);
+			*apvts, Param::Gain::id, gainSlider);
 
 	filePosSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, POSITION_ID, filePosSlider);
+			*apvts, Param::Position::id, filePosSlider);
 
 	windowSelectionSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, SELECTION_ID, windowSelectionSlider);
+			*apvts, Param::Selection::id, windowSelectionSlider);
 
 
 
@@ -38,10 +38,10 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	mixSlider.setTextBoxIsEditable(true);
 	mixSlider.setRange(0.0, 100.0);
 	mixSlider.setTextValueSuffix(" %");
-	mixSlider.addListener(this);
+	//mixSlider.addListener(this);
 	mixSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	mixLabel.setText((const juce::String)MIX_NAME, juce::dontSendNotification);
+	mixLabel.setText((const juce::String)Param::Mix::name, juce::dontSendNotification);
 	mixLabel.attachToComponent(&mixSlider, false);
 	mixLabel.setJustificationType(juce::Justification::centred);
 
@@ -50,13 +50,13 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
 		true, 100, 25);
 	gainSlider.setTextBoxIsEditable(true);
-	gainSlider.setRange(GAIN_MIN, GAIN_MAX);
+	gainSlider.setRange(Param::Gain::min, Param::Gain::max);
 	gainSlider.setSkewFactorFromMidPoint(-12.0);
 	gainSlider.setTextValueSuffix(" dB");
-	gainSlider.addListener(this);
+	//gainSlider.addListener(this);
 	gainSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	gainLabel.setText((const juce::String)GAIN_NAME, juce::dontSendNotification);
+	gainLabel.setText((const juce::String)Param::Gain::name, juce::dontSendNotification);
 	gainLabel.attachToComponent(&gainSlider, false);
 	gainLabel.setJustificationType(juce::Justification::centred);
 
@@ -71,11 +71,11 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	filePosSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
 	filePosSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
 	filePosSlider.setTextBoxIsEditable(true);
-	filePosSlider.setRange(POSITION_MIN, POSITION_MAX);
-	filePosSlider.addListener(this);
+	filePosSlider.setRange(Param::Position::min, Param::Position::max);
+	//filePosSlider.addListener(this);
 
 
-	filePosLabel.setText((const juce::String)POSITION_NAME, juce::dontSendNotification);
+	filePosLabel.setText((const juce::String)Param::Position::name, juce::dontSendNotification);
 	filePosLabel.attachToComponent(&filePosSlider, false);
 	filePosLabel.setJustificationType(juce::Justification::centred);
 
@@ -83,11 +83,11 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	windowSelectionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
 	windowSelectionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
 	windowSelectionSlider.setTextBoxIsEditable(true);
-	windowSelectionSlider.setRange(SELECTION_MIN, SELECTION_MAX);
-	windowSelectionSlider.addListener(this);
+	windowSelectionSlider.setRange(Param::Selection::min, Param::Selection::max);
+	//windowSelectionSlider.addListener(this);
 
 
-	windowSelectionLabel.setText((const juce::String)SELECTION_NAME, juce::dontSendNotification);
+	windowSelectionLabel.setText((const juce::String)Param::Selection::name, juce::dontSendNotification);
 	windowSelectionLabel.attachToComponent(&windowSelectionSlider, false);
 	windowSelectionLabel.setJustificationType(juce::Justification::centred);
 
@@ -99,8 +99,8 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 
 SynthFrame::~SynthFrame()
 {
-	mixSlider.removeListener(this);
-	gainSlider.removeListener(this);
+	//mixSlider.removeListener(this);
+	//gainSlider.removeListener(this);
 	apvts = nullptr;
 	stateParams = nullptr;
 }
@@ -172,37 +172,39 @@ void SynthFrame::resized()
 	mainFlexBox.performLayout(getLocalBounds().toFloat());
 }
 
+/*
 void SynthFrame::sliderValueChanged(juce::Slider* slider)
 {
 	if (slider == &mixSlider)
 	{
 		float mixValue = static_cast<float>(mixSlider.getValue());
-		apvts->getRawParameterValue(MIX_ID)->store(mixValue);
+		apvts->getRawParameterValue(Param::Mix::id)->store(mixValue);
 		stateParams->setMix(mixValue);
 		//this->apvts->mix = mixSlider.getValue();
 	}
 	if (slider == &gainSlider)
 	{
 		float gainValue = static_cast<float>(gainSlider.getValue());
-		apvts->getRawParameterValue(GAIN_ID)->store(gainValue);
+		apvts->getRawParameterValue(Param::Gain::id)->store(gainValue);
 		stateParams->setGain(gainValue);
 	}
 	if (slider == &filePosSlider)
 	{
 		float filePosValue = static_cast<float>(filePosSlider.getValue());
-		apvts->getRawParameterValue(POSITION_ID)->store(filePosValue);
+		apvts->getRawParameterValue(Param::Position::id)->store(filePosValue);
 		stateParams->setFilePosition(filePosValue);
 		thumbnailComponent->updatePosition(filePosValue);
 	}
 	if (slider == &windowSelectionSlider)
 	{
 		float windowValue = static_cast<float>(windowSelectionSlider.getValue());
-		apvts->getRawParameterValue(SELECTION_ID)->store(windowValue);
+		apvts->getRawParameterValue(Param::Selection::id)->store(windowValue);
 		stateParams->setWindowSelection(windowValue);
 		thumbnailComponent->updateSelection(windowValue);
 	}
 
 }
+*/
 
 void SynthFrame::init(ThumbnailComponent* thumbnail)
 {

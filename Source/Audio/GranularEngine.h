@@ -18,27 +18,24 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include <juce_dsp/juce_dsp.h>
 #include "Scheduler.h"
-#include "../Utils/ParamsID.h"
 #include "../Utils/CircularBuffer.h"
 #include "../Utils/StateParameters.h"
-#include "../Lib/AudioFFT.h"
+#include "../FrameWork/Core.h"
 
-using AudioBlock = juce::dsp::AudioBlock<float>;
 
 class GranularEngine
 {
 public:
-	GranularEngine(StateParameters*);
+	GranularEngine();
 	~GranularEngine();
 
+	void setStateParameters(StateParameters* sp);
 	void process(juce::AudioBuffer<float>& buffer, int numSamples);
-	void init(int, int, int);
+	void init(StateParameters* sp, int sampleRate, int numChannel, int samplePerBlocks);
 
 private:
-
 	void mixingProcess(AudioBlock);
 	void gainProcess(juce::dsp::ProcessContextReplacing<float>);
 	void reverbProcess(juce::dsp::ProcessContextReplacing<float>);

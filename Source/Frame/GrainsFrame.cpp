@@ -9,29 +9,31 @@
 */
 
 #include "GrainsFrame.h"
+#include "../Utils/StateParameters.h"
 
-GrainsFrame::GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams) :
+
+GrainsFrame::GrainsFrame(juce::AudioProcessorValueTreeState* apvts, StateParameters* stateParams) :
 	apvts(apvts), stateParams(stateParams)
 {
 	densitySliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, DENSITY_ID, densitySlider);
+			*apvts, Param::Density::id, densitySlider);
 
 	durationSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, DURATION_ID, durationSlider);
+			*apvts, Param::Duration::id, durationSlider);
 
 	speedSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, SPEED_ID, speedSlider);
+			*apvts, Param::Speed::id, speedSlider);
 
 	envWidthSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, ENVWIDTH_ID, envWidthSlider);
+			*apvts, Param::EnvelopeWidth::id, envWidthSlider);
 
 	traversalTimeSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, TRAVERSALTIME_ID, traversalTimeSlider);
+			*apvts, Param::TraversalTime::id, traversalTimeSlider);
 
 	//pitchSliderAttachment =
 	//	std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
@@ -42,13 +44,13 @@ GrainsFrame::GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	densitySlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
 		true, 100, 25);
 	densitySlider.setTextBoxIsEditable(true);
-	densitySlider.setRange(DENSITY_MIN, DENSITY_MAX);
-	densitySlider.setSkewFactorFromMidPoint(DENSITY_DEFAULT);
+	densitySlider.setRange(Param::Density::min, Param::Density::max);
+	densitySlider.setSkewFactorFromMidPoint(Param::Density::init);
 	densitySlider.setTextValueSuffix(" g");
-	densitySlider.addListener(this);
+	//densitySlider.addListener(this);
 	densitySlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	densityLabel.setText((const juce::String)DENSITY_NAME, juce::dontSendNotification);
+	densityLabel.setText((const juce::String)Param::Density::name, juce::dontSendNotification);
 	densityLabel.attachToComponent(&densitySlider, false);
 	densityLabel.setJustificationType(juce::Justification::centred);
 
@@ -57,13 +59,13 @@ GrainsFrame::GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	durationSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
 		true, 100, 25);
 	durationSlider.setTextBoxIsEditable(true);
-	durationSlider.setRange(DURATION_MIN, DURATION_MAX);
-	durationSlider.setSkewFactorFromMidPoint(DURATION_DEFAULT);
+	durationSlider.setRange(Param::Duration::min, Param::Duration::max);
+	durationSlider.setSkewFactorFromMidPoint(Param::Duration::init);
 	durationSlider.setTextValueSuffix(" s");
-	durationSlider.addListener(this);
+	//durationSlider.addListener(this);
 	durationSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	durationLabel.setText((const juce::String)DURATION_NAME, juce::dontSendNotification);
+	durationLabel.setText((const juce::String)Param::Duration::name, juce::dontSendNotification);
 	durationLabel.attachToComponent(&durationSlider, false);
 	durationLabel.setJustificationType(juce::Justification::centred);
 
@@ -72,11 +74,11 @@ GrainsFrame::GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	speedSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
 		true, 100, 25);
 	speedSlider.setTextBoxIsEditable(true);
-	speedSlider.setRange(SPEED_MIN, SPEED_MAX);
-	speedSlider.addListener(this);
+	speedSlider.setRange(Param::Speed::min, Param::Speed::max);
+	//speedSlider.addListener(this);
 	speedSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	speedLabel.setText((const juce::String)SPEED_NAME, juce::dontSendNotification);
+	speedLabel.setText((const juce::String)Param::Speed::name, juce::dontSendNotification);
 	speedLabel.attachToComponent(&speedSlider, false);
 	speedLabel.setJustificationType(juce::Justification::centred);
 
@@ -86,13 +88,13 @@ GrainsFrame::GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	envWidthSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
 		true, 100, 25);
 	envWidthSlider.setTextBoxIsEditable(true);
-	envWidthSlider.setRange(ENVWIDTH_MIN, ENVWIDTH_MAX);
-	envWidthSlider.setSkewFactorFromMidPoint(ENVWIDTH_DEFAULT);
+	envWidthSlider.setRange(Param::EnvelopeWidth::min, Param::EnvelopeWidth::max);
+	envWidthSlider.setSkewFactorFromMidPoint(Param::EnvelopeWidth::init);
 	//envWidthSlider.setTextValueSuffix(" g");
-	envWidthSlider.addListener(this);
+	//envWidthSlider.addListener(this);
 	envWidthSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	envWidthLabel.setText((const juce::String)ENVWIDTH_NAME, juce::dontSendNotification);
+	envWidthLabel.setText((const juce::String)Param::EnvelopeWidth::name, juce::dontSendNotification);
 	envWidthLabel.attachToComponent(&envWidthSlider, false);
 	envWidthLabel.setJustificationType(juce::Justification::centred);
 
@@ -102,13 +104,13 @@ GrainsFrame::GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	traversalTimeSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
 		true, 100, 25);
 	traversalTimeSlider.setTextBoxIsEditable(true);
-	traversalTimeSlider.setRange(TRAVERSALTIME_MIN, TRAVERSALTIME_MAX);
-	traversalTimeSlider.setSkewFactorFromMidPoint(TRAVERSALTIME_DEFAULT);
+	traversalTimeSlider.setRange(Param::TraversalTime::min, Param::TraversalTime::max);
+	traversalTimeSlider.setSkewFactorFromMidPoint(Param::TraversalTime::init);
 	traversalTimeSlider.setTextValueSuffix(" s");
-	traversalTimeSlider.addListener(this);
+	//traversalTimeSlider.addListener(this);
 	traversalTimeSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	traversalTimeLabel.setText((const juce::String)TRAVERSALTIME_NAME, juce::dontSendNotification);
+	traversalTimeLabel.setText((const juce::String)Param::TraversalTime::name, juce::dontSendNotification);
 	traversalTimeLabel.attachToComponent(&traversalTimeSlider, false);
 	traversalTimeLabel.setJustificationType(juce::Justification::centred);
 
@@ -129,38 +131,39 @@ GrainsFrame::GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	//	UndoManager* undoManager = nullptr);
 
 
-	envelopeList.addItem(ENVTYPE_1, 1);
-	envelopeList.addItem(ENVTYPE_2, 2);
-	envelopeList.addItem(ENVTYPE_3, 3);
-	envelopeList.addItem(ENVTYPE_4, 4);
-	envelopeList.addItem(ENVTYPE_5, 5);
-	envelopeList.addItem(ENVTYPE_6, 6);
-	envelopeList.addItem(ENVTYPE_7, 7);
+	envelopeList.addItem(Param::EnvelopeType::ENVTYPE_1, 1);
+	envelopeList.addItem(Param::EnvelopeType::ENVTYPE_2, 2);
+	envelopeList.addItem(Param::EnvelopeType::ENVTYPE_3, 3);
+	envelopeList.addItem(Param::EnvelopeType::ENVTYPE_4, 4);
+	envelopeList.addItem(Param::EnvelopeType::ENVTYPE_5, 5);
+	envelopeList.addItem(Param::EnvelopeType::ENVTYPE_6, 6);
+	envelopeList.addItem(Param::EnvelopeType::ENVTYPE_7, 7);
 	envelopeList.setSelectedId(1, juce::dontSendNotification); // default value set to Hann window
 
-	traversalModeList.addItem(TRAVERSALMODE_1, 1);
-	traversalModeList.addItem(TRAVERSALMODE_2, 2);
-	traversalModeList.addItem(TRAVERSALMODE_3, 3);
-	traversalModeList.addItem(TRAVERSALMODE_4, 4);
-	traversalModeList.addItem(TRAVERSALMODE_5, 5);
+	traversalModeList.addItem(Param::TraversalMode::TraversalMode_1, 1);
+	traversalModeList.addItem(Param::TraversalMode::TraversalMode_2, 2);
+	traversalModeList.addItem(Param::TraversalMode::TraversalMode_3, 3);
+	traversalModeList.addItem(Param::TraversalMode::TraversalMode_4, 4);
+	traversalModeList.addItem(Param::TraversalMode::TraversalMode_5, 5);
 	traversalModeList.setSelectedId(1, juce::dontSendNotification); // default value set to sinus mode
 
 	envelopeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
-		*apvts, ENVTYPE_ID, envelopeList);
+		*apvts, Param::EnvelopeType::id, envelopeList);
 	//envelopeAttachment = std::make_unique<juce::ComboBoxParameterAttachment>(
 	//	apvts->getParameter(ENVTYPE_ID), envelopeList);
 
 	traversalModeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
-		*apvts, TRAVERSALMODE_ID, traversalModeList);
+		*apvts, Param::TraversalMode::id, traversalModeList);
 
-	envTypeLabel.setText((const juce::String)ENVTYPE_NAME, juce::dontSendNotification);
+	envTypeLabel.setText((const juce::String)Param::EnvelopeType::name, juce::dontSendNotification);
 	envTypeLabel.attachToComponent(&envelopeList, false);
 	envTypeLabel.setJustificationType(juce::Justification::centred);
 
-	traversalModeLabel.setText((const juce::String)TRAVERSALMODE_NAME, juce::dontSendNotification);
+	traversalModeLabel.setText((const juce::String)Param::TraversalMode::name, juce::dontSendNotification);
 	traversalModeLabel.attachToComponent(&traversalModeList, false);
 	traversalModeLabel.setJustificationType(juce::Justification::centred);
 
+	/*
 	envelopeList.onChange = [this] {
 		this->stateParams->setEnvelopeType(envelopeList.getSelectedId());
 	};
@@ -168,6 +171,7 @@ GrainsFrame::GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	traversalModeList.onChange = [this] {
 		this->stateParams->setTraversalModeValue(traversalModeList.getSelectedId());
 	};
+	*/
 
 	addAndMakeVisible(&envelopeList);
 	addAndMakeVisible(&envTypeLabel);
@@ -177,11 +181,11 @@ GrainsFrame::GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 }
 GrainsFrame::~GrainsFrame()
 {
-	densitySlider.removeListener(this);
-	durationSlider.removeListener(this);
-	speedSlider.removeListener(this);
-	envWidthSlider.removeListener(this);
-	traversalTimeSlider.removeListener(this);
+	//densitySlider.removeListener(this);
+	//durationSlider.removeListener(this);
+	//speedSlider.removeListener(this);
+	//envWidthSlider.removeListener(this);
+	//traversalTimeSlider.removeListener(this);
 
 	apvts = nullptr;
 	stateParams = nullptr;
@@ -264,28 +268,28 @@ void GrainsFrame::resized()
 // Note that calling getRawParameterValue() within a 
 // AudioProcessorValueTreeState::Listener::ParameterChanged()
 // WILL NOT RETURN A UP-TO-DATE VALUE !!
+/*
 void GrainsFrame::sliderValueChanged(juce::Slider* slider)
 {
 
 	if (slider == &densitySlider) {
-		apvts->getRawParameterValue(DENSITY_ID)->store(static_cast<float>(densitySlider.getValue()));
+		apvts->getRawParameterValue(Param::Density::id)->store(static_cast<float>(densitySlider.getValue()));
 		stateParams->setDensity(static_cast<float>(densitySlider.getValue()));
 	}
 	if (slider == &durationSlider) {
-		apvts->getRawParameterValue(DURATION_ID)->store(static_cast<float>(durationSlider.getValue()));
+		apvts->getRawParameterValue(Param::Duration::id)->store(static_cast<float>(durationSlider.getValue()));
 		stateParams->setDuration(static_cast<float>(durationSlider.getValue()));
 	}
 	if (slider == &speedSlider) {
-		apvts->getRawParameterValue(SPEED_ID)->store(static_cast<float>(speedSlider.getValue()));
+		apvts->getRawParameterValue(Param::Speed::id)->store(static_cast<float>(speedSlider.getValue()));
 		stateParams->setSpeed(static_cast<float>(speedSlider.getValue()));
 	}
 	if (slider == &envWidthSlider) {
-		apvts->getRawParameterValue(ENVWIDTH_ID)->store(static_cast<float>(envWidthSlider.getValue()));
+		apvts->getRawParameterValue(Param::EnvelopeWidth::id)->store(static_cast<float>(envWidthSlider.getValue()));
 		stateParams->setEnvWidth(static_cast<float>(envWidthSlider.getValue()));
 	}
 	if (slider == &traversalTimeSlider) {
-		apvts->getRawParameterValue(TRAVERSALTIME_ID)->store(static_cast<float>(traversalTimeSlider.getValue()));
+		apvts->getRawParameterValue(Param::TraversalTime::id)->store(static_cast<float>(traversalTimeSlider.getValue()));
 		stateParams->setTraversalTimeValue(static_cast<float>(traversalTimeSlider.getValue()));
 	}
-
-}
+}*/

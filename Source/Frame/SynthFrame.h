@@ -14,7 +14,7 @@
 #include "../Utils//ThumbnailComponent.h"
 #pragma once
 
-class SynthFrame : public juce::Component, public juce::Slider::Listener
+class SynthFrame : public juce::Component//, public juce::Slider::Listener
 {
 public:
 	SynthFrame(ValueTreeState* apvts, StateParameters* stateParams);
@@ -23,7 +23,7 @@ public:
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
-	void sliderValueChanged(juce::Slider* slider) override;
+	//void sliderValueChanged(juce::Slider* slider) override;
 
 	void init(ThumbnailComponent*);
 

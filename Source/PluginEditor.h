@@ -9,8 +9,8 @@
 #include "PluginProcessor.h"
 #include "Frame/MainFrame.h"
 #include "Utils/CustomLookAndFeel.h"
-#include "Utils/StateParameters.h"
-#include "Utils/MyColours.h"
+//#include "Utils/StateParameters.h"
+//#include "Utils/MyColours.h"
 
 
 class ParticulesAudioProcessorEditor : public juce::AudioProcessorEditor

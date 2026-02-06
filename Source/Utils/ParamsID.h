@@ -1,95 +1,126 @@
-// definition des macros à utiliser pour les variables et parametres
+#pragma once
 
-#define MIX_ID "MIX"
-#define MIX_NAME "Mix"
-#define MIX_MIN 0 
-#define MIX_MAX 100
-#define MIX_DEFAULT 100
+namespace Param
+{
+	namespace Mix
+	{
+		inline constexpr const char* id = "MIX";
+		inline constexpr const char* name = "Mix";
+		inline constexpr float min = 0.0f;
+		inline constexpr float max = 100.0f;
+		inline constexpr float init = 100.0f;
+	}
+	namespace Gain
+	{
+		inline constexpr const char* id = "GAIN";
+		inline constexpr const char* name = "Gain";
+		inline constexpr float min = -96.0f;
+		inline constexpr float max = 0.0f;
+		inline constexpr float init = -3.0f;
+	}
+	namespace Density
+	{
+		inline constexpr const char* id = "DENSITY";// grain emissions per sec
+		inline constexpr const char* name = "Density";
+		inline constexpr float min = 0.1f; // 0.1 grain per seconds (1 grain / 10 sec)
+		inline constexpr float max = 500.0f; // 500 grains per seconds (1 grain / 0.002 s)
+		inline constexpr float init = 1.0f;
+	}
+	namespace Duration
+	{
+		inline constexpr const char* id = "DURATION";// length of emitted grains in sec
+		inline constexpr const char* name = "Duration";
+		inline constexpr float min = 0.002f; // 0.002s for every emitted grains (1/ 0.002 = 500)
+		inline constexpr float max = 10.0f; // 10 sec for every emitted grains (1/ 10 = 0.1)
+		inline constexpr float init = 1.0f;
+	}
+	namespace Pitch
+	{
+		inline constexpr const char* id = "PITCH";
+		inline constexpr const char* name = "Pitch";
+		inline constexpr float min = -12.f;
+		inline constexpr float max = 12.f;
+		inline constexpr float init = 0.0f;
+	}
+	namespace Speed
+	{
+		inline constexpr const char* id = "SPEED";
+		inline constexpr const char* name = "Speed";
+		inline constexpr float min = 0.1f;
+		inline constexpr float max = 2.f;
+		inline constexpr float init = 1.f;
+	}
 
-#define GAIN_ID "GAIN"
-#define GAIN_NAME "Gain"
-#define GAIN_MIN -96.0
-#define GAIN_MAX 0.0
-#define GAIN_DEFAULT -3.0
+	namespace EnvelopeType
+	{
+		inline constexpr const char* id = "ENVTYPE";
+		inline constexpr const char* name = "Envelope Type";
+		inline constexpr int init = 1;
+		inline constexpr const char* ENVTYPE_1 = "Hann";
+		inline constexpr const char* ENVTYPE_2 = "Triangular";
+		inline constexpr const char* ENVTYPE_3 = "Hamming";
+		inline constexpr const char* ENVTYPE_4 = "Rectangular";
+		inline constexpr const char* ENVTYPE_5 = "Blackman";
+		inline constexpr const char* ENVTYPE_6 = "BlackmanHarris";
+		inline constexpr const char* ENVTYPE_7 = "FlatTop";
+	}
 
-// grain emissions per sec
-#define DENSITY_ID "DENSITY"
-#define DENSITY_NAME "Density"
-#define DENSITY_MIN 0.1f // 0.1 grain per seconds (1 grain / 10 sec)
-#define DENSITY_MAX 500.0f // 500 grains per seconds (1 grain / 0.002 s)
-#define DENSITY_DEFAULT 1.0f
+	namespace Position
+	{
+		inline constexpr const char* id = "POSITION";
+		inline constexpr const char* name = "Position";
+		inline constexpr float min = 0.0f;
+		inline constexpr float max = 1.f;
+		inline constexpr float init = .0f;
+	}
+	namespace Selection
+	{
+		inline constexpr const char* id = "SELECTION";
+		inline constexpr const char* name = "Selection";
+		inline constexpr float min = 0.01f;
+		inline constexpr float max = 1.f;
+		inline constexpr float init = 0.0f;
+	}
+	namespace EnvelopeWidth
+	{
+		inline constexpr const char* id = "ENVWIDTH";
+		inline constexpr const char* name = "EnvWidth";
+		inline constexpr float min = 0.f;
+		inline constexpr float max = 1.f;
+		inline constexpr float init = 0.5f;
+	}
 
-// length of emitted grains in sec
-#define DURATION_ID "DURATION"
-#define DURATION_NAME "Duration"
-#define DURATION_MIN 0.002f // 0.002s for every emitted grains (1/ 0.002 = 500)
-#define DURATION_MAX 10.0f // 10 sec for every emitted grains (1/ 10 = 0.1)
-#define DURATION_DEFAULT 1.0f
+	namespace TraversalMode
+	{
+		inline constexpr const char* id = "TRAVERSALMODE";
+		inline constexpr const char* name = "Traversal Mode";
+		inline constexpr int init = 1;
+		inline constexpr const char* TraversalMode_1 = "Sinus";
+		inline constexpr const char* TraversalMode_2 = "Square";
+		inline constexpr const char* TraversalMode_3 = "Triangular";
+		inline constexpr const char* TraversalMode_4 = "Random";
+		inline constexpr const char* TraversalMode_5 = "None";
 
-#define PITCH_ID "PITCH"
-#define PITCH_NAME "Pitch"
-#define PITCH_MIN (-12.f)
-#define PITCH_MAX 12.f
-#define PITCH_DEFAULT 0.f
+		//#define TRAVERSALMODE_6 "Saw Tooth"
+		//#define TRAVERSALMODE_7 "Reverse Saw Tooth" 
+	}
 
-#define SPEED_ID "SPEED"
-#define SPEED_NAME "Speed"
-#define SPEED_MIN 0.1f
-#define SPEED_MAX 2.f
-#define SPEED_DEFAULT 1.f
+	namespace TraversalTime
+	{
+		inline constexpr const char* id = "TRAVERSALTIME";
+		inline constexpr const char* name = "Traversal Time";
+		inline constexpr float min = 0.01f;
+		inline constexpr float max = 10.f;
+		inline constexpr float init = 1.0f;
+	}
+	namespace Util
+	{
 
-#define ENVTYPE_ID "ENVTYPE"
-#define ENVTYPE_NAME "Envelope Type"
-#define ENVTYPE_DEFAULT 1
-#define ENVTYPE_1 "Hann"
-#define ENVTYPE_2 "Triangular"
-#define ENVTYPE_3 "Hamming"
-#define ENVTYPE_4 "Rectangular"
-#define ENVTYPE_5 "Blackman"
-#define ENVTYPE_6 "BlackmanHarris"
-#define ENVTYPE_7 "FlatTop"
-
-
-
-//#define FILEPATH_ID "FILEPATH"
-//#define FILEPATH_NAME "FilePath"
-//#define FILEPATH_DEFAULT ""
-
-#define POSITION_ID "POSITION"
-#define POSITION_NAME "Position"
-#define POSITION_MIN 0.0f
-#define POSITION_MAX 1.0f
-#define POSITION_DEFAULT 0.0f
-
-#define SELECTION_ID "SELECTION"
-#define SELECTION_NAME "Selection"
-#define SELECTION_MIN 0.01f
-#define SELECTION_MAX 1.0f
-#define SELECTION_DEFAULT 0.5f
-
-#define ENVWIDTH_ID "ENVWIDTH"
-#define ENVWIDTH_NAME "EnvWidth"
-#define ENVWIDTH_MIN 0.f
-#define ENVWIDTH_MAX 1.0f
-#define ENVWIDTH_DEFAULT 0.5f
-
-#define TRAVERSALMODE_ID "TRAVERSALMODE"
-#define TRAVERSALMODE_NAME "Traversal Mode"
-#define TRAVERSALMODE_DEFAULT 1
-#define TRAVERSALMODE_1 "Sinus"
-#define TRAVERSALMODE_2 "Square"
-#define TRAVERSALMODE_3 "Triangular"
-#define TRAVERSALMODE_4 "Random"
-#define TRAVERSALMODE_5 "None" // sampler mode
-//#define TRAVERSALMODE_6 "Saw Tooth"
-//#define TRAVERSALMODE_7 "Reverse Saw Tooth" 
-
-
-#define TRAVERSALTIME_ID "TRAVERSALTIME"
-#define TRAVERSALTIME_NAME "Traversal Time"
-#define TRAVERSALTIME_DEFAULT 1
-#define TRAVERSALTIME_MIN 0.01f
-#define TRAVERSALTIME_MAX 10.f
+		inline constexpr float grainPointSize = 10.f;
+		inline constexpr float fftSizeOrder = 10.f;
+		//inline constexpr float init = 1.0f;
+	}
+}
 
 #define GRAINPOINT_SIZE 10.f
 #define FFTSIZE_ORDER 10

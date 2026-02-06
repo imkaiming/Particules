@@ -23,7 +23,7 @@ class AudioFileLoader : public juce::Component
 public:
 	AudioFileLoader(StateParameters*, ThumbnailComponent*);
 	~AudioFileLoader();
-	void AudioFileLoader::loadAudio(juce::File&);
+	void loadAudio(juce::File&);
 	void loadFile();
 	void loadFile(const juce::String&);
 

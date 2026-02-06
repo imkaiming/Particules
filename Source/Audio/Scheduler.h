@@ -14,22 +14,23 @@
 
 #pragma once
 
-#include "../Utils/StateParameters.h"
 #include "Grain.h"
 #include "../Utils/PhaseMod.h"
+#include "../Framework/Core.h"
 #include "../Utils/GrainVisualizer.h"
 
-using AudioBlock = juce::dsp::AudioBlock<float>;
-using Buffer = juce::AudioBuffer<float>;
 
 
+class StateParameters;
 class Scheduler
 {
 public:
-	Scheduler(StateParameters*); // , juce::AudioBuffer<float>*);
+	Scheduler(); // , juce::AudioBuffer<float>*);
 	~Scheduler();
+
 	void synthesize(AudioBlock*, int, int); // , juce::AudioBuffer<float>*);
 	Grain* generateGrain(int);
+	void setStateParameters(StateParameters* sp);
 	void init(int);
 
 private:
