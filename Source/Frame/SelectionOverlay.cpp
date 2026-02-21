@@ -11,25 +11,19 @@
 #include "SelectionOverlay.h"
 
 
-SelectionOverlay::SelectionOverlay()
-{
-	positionValue = 0.f;
-	selectionValue = 1.f;
-}
-
-SelectionOverlay::~SelectionOverlay()
+SelectionOverlay::SelectionOverlay() : start{0.f}, width{1.f}
 {
 }
 
 void SelectionOverlay::setPosition(float newValue)
 {
-	positionValue = newValue;
+	start = newValue;
 	repaint();
 }
 
 void SelectionOverlay::setSelection(float newValue)
 {
-	selectionValue = newValue;
+	width = newValue;
 	repaint();
 }
 
@@ -37,13 +31,13 @@ void SelectionOverlay::paint(juce::Graphics& g)
 {
 	g.setColour(MyColours::red);
 
-	if (positionValue + selectionValue > getWidth())
+	if (start + width > getWidth())
 	{
-		g.fillRect(positionValue + 1.f, (float)getHeight() - 2.f, getWidth() - positionValue, 4.f);
+		g.fillRect(start + 1.f, (float)getHeight() - 2.f, getWidth() - start, 4.f);
 	}
 	else
 	{
-		g.fillRect(positionValue + 1.f, (float)getHeight() - 2.f, selectionValue, 4.f);
+		g.fillRect(start + 1.f, (float)getHeight() - 2.f, width, 4.f);
 	}
 }
 

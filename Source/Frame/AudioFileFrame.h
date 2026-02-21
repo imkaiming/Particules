@@ -10,36 +10,31 @@
 
 #pragma once
 
-#include <JuceHeader.h>
-#include "../Utils/ThumbnailComponent.h"
-#include "../Utils/AudioFileLoader.h"
-#include "../Utils/StateParameters.h"
-#include "../Frame/SynthFrame.h"
-#include "../Utils/MyColours.h"
 
+#include "ThumbnailComponent.h"
+#include "../Framework/AudioFileLoader.h"
 
+// the Audio File Frame provide the control to load and play the audio.
 
-class AudioFileFrame :
-	public juce::Component, public juce::FileDragAndDropTarget, public juce::Value::Listener // public juce::DrawableButton::Listener,
+//class ParameterView;
+//class SynthFrame;
+struct UIContext;
+class AudioFileFrame:	public juce::Component, public juce::FileDragAndDropTarget
 {
 public:
-	AudioFileFrame(ValueTreeState*, StateParameters*, SynthFrame*);
-	~AudioFileFrame() override;
+	//AudioFileFrame(ParameterView&, SynthFrame&);
+	AudioFileFrame(UIContext& uic);
+	~AudioFileFrame() = default;
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
-	void valueChanged(juce::Value& value) override;
-
 private:
 
-	//std::unique_ptr<AudioFileLoader> loader; // load the audio file and pass it to the stateparameter
+	ParameterView& paramsView;
 	AudioFileLoader loader;
 	juce::AudioThumbnailCache thumbnailCache;
 	ThumbnailComponent thumbnailComponent; // after the file is loaded draw the waveform
 
-	juce::Value isAudioLoaded;
-	ValueTreeState* apvts;
-	StateParameters* stateParams;
 
 	// Buttons parameters
 	juce::DrawableButton open_btn;

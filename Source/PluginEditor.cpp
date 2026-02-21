@@ -2,8 +2,7 @@
 #include "PluginEditor.h"
 
 ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(
-	ParticulesAudioProcessor& p) : AudioProcessorEditor(&p), audioProcessor(p), 
-	mainFrame(p.getValueTreeState(), p.getStateParameters())
+	ParticulesAudioProcessor& p): AudioProcessorEditor(&p), audioProcessor(p), mainFrame(p.getUIContext()), customLookAndFeel(p.getUIContext().customLookAndFeel)
 {
 
 	this->setLookAndFeel(&customLookAndFeel);
@@ -14,7 +13,7 @@ ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(
 	const float ratio = 2.f;
 	getConstrainer()->setFixedAspectRatio(ratio);
 
-	width = 700; 
+	width = 700;
 	heigth = 350;
 	setSize(width, heigth);
 

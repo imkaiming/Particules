@@ -9,51 +9,80 @@
 */
 
 #include "Grain.h"
+#include "../Framework/ParameterSnapshot.h"
+#include "../Framework/SampleSource.h"
 
-WindowingMethod Grain::getWindowingMethod(int val) {
+WindowingMethod Grain::getWindowingMethod(int val)
+{
 	WindowingMethod window = WindowingMethod::hann;
-	switch (val) {
-	case 1:
-		window = WindowingMethod::hann;
-		break;
-	case 2:
-		window = WindowingMethod::triangular;
-		break;
-	case 3:
-		window = WindowingMethod::hamming;
-		break;
-	case 4:
-		window = WindowingMethod::rectangular;
-		break;
-	case 5:
-		window = WindowingMethod::blackman;
-		break;
-	case 6:
-		window = WindowingMethod::blackmanHarris;
-		break;
-	case 7:
-		window = WindowingMethod::flatTop;
-		break;
-	default:
-		break;
+	switch(val)
+	{
+		case 1:
+			window = WindowingMethod::hann;
+			break;
+		case 2:
+			window = WindowingMethod::triangular;
+			break;
+		case 3:
+			window = WindowingMethod::hamming;
+			break;
+		case 4:
+			window = WindowingMethod::rectangular;
+			break;
+		case 5:
+			window = WindowingMethod::blackman;
+			break;
+		case 6:
+			window = WindowingMethod::blackmanHarris;
+			break;
+		case 7:
+			window = WindowingMethod::flatTop;
+			break;
+		default:
+			break;
 	}
 
 	return window;
 }
 
+Grain::Grain(): duration(0), position(0), speed(1.f), envelopeWidth(0), envelopeType(0), envelopeSize(0), fadeIn(0), fadeOut(0), currentTime(0), offset{0}
+{
+	reset();
+}
 
-Grain::Grain(int duration, int numChannels, int envelopeType, float speed, int envelopeWidth, int position, juce::AudioBuffer<float>* buffer) :
+void Grain::config(const ParameterSnapshot& snapshot, int sample)
+{
+	// TODO make the float to int converstion here
+	duration = static_cast<int>(snapshot.duration);
+	position = static_cast<int>(snapshot.position);
+	envelopeType = getWindowingMethod(static_cast<int>(snapshot.envType));
+	envelopeWidth = static_cast<int>(snapshot.envWidth * duration);
+
+	speed = snapshot.speed;
+	offset = sample;
+
+	fadeIn = static_cast<int>((snapshot.duration - envelopeWidth) / 2.0);
+	fadeOut = fadeIn + envelopeWidth;
+	envelopeSize = duration - envelopeWidth;
+
+
+	//traversalMode = snapshot.traversalMode;
+	//traversalTime = snapshot.traversalTime;
+	//selection = snapshot.selection;
+	//gain = snapshot.gain;
+
+
+}
+
+/*
+Grain::Grain(int duration, int numChannels, int envelopeType, float speed, int envelopeWidth, int position):
 	duration(duration),
-	numChannels(numChannels),
 	position(position),
-	//selection(selection),
 	speed(speed),
-	envelopeWidth(static_cast<int>(envelopeWidth* duration)),
-	buffer(buffer),
 	envelopeType(getWindowingMethod(envelopeType)),
 	fadeIn((duration - envelopeWidth) / 2),
 	fadeOut(fadeIn + envelopeWidth),
-	envelopeSize(duration - envelopeWidth)//, window(getWindowingMethod(envelopeType))
+	envelopeSize(duration - envelopeWidth)
 {
 	currentTime = 0;
 	// on resample le buffer en fonction de la vitesse en appliquant le phase vocoder algorithme
@@ -61,15 +90,56 @@ Grain::Grain(int duration, int numChannels, int envelopeType, float speed, int e
 	//DBG("speed : " << speed);
 	//float interval = 1.0f / speed;
 
-
-
 }
 
-Grain::~Grain()
+*/
+void Grain::reset()
 {
-	buffer = nullptr;
+	duration = 0;
+	position = 0;
+	speed = 1.f;
+	fadeIn = 0;
+	fadeOut = 0;
+	offset = 0;
+	envelopeWidth = 0;
+	envelopeType = 0;
+	envelopeSize = 0;
+	currentTime = 0;
+	generation = 0;
 }
 
+float Grain::getNextSample(const SampleSource* source, const int channel, const int outNumChannel) noexcept
+{
+	const AudioBuffer& inputbuffer = source->inputBuffer;
+	//int sourceChannel = source.numChannels;
+
+	const float* sample = inputbuffer.getReadPointer(channel % outNumChannel);
+
+	int readPosition = position + static_cast<int>(currentTime * speed);
+	readPosition %= inputbuffer.getNumSamples();
+
+	grainPoint.setSamplePos(readPosition);
+
+	float sampleValue = 0.0f;
+
+	if(currentTime < fadeIn)
+	{
+		sampleValue = sample[readPosition] * applyEnvelope(currentTime);
+	} else if(fadeOut <= currentTime)
+	{
+		sampleValue = sample[readPosition] * applyEnvelope(duration - currentTime);
+	} else
+	{
+		sampleValue = sample[readPosition];
+	}
+
+	float x = std::clamp(sampleValue, 0.f, 1.f);
+	grainPoint.setOpacity(curve(x, 5.f));
+
+	return sampleValue;
+}
+
+/*
 // on prend un grain du buffer du sample d'entré pour le mettre dans le buffer des grains
 // si la duration est plus grande que la selection alors on loop 
 float Grain::getCurrentSample(const int channel)
@@ -86,20 +156,18 @@ float Grain::getCurrentSample(const int channel)
 	int readPosition = currentTime + position;
 	readPosition %= buffer->getNumSamples();
 
-	grainPoint.setSamplePos(readPosition);
+	grainPoint.setSamplePos(static_cast<float>(readPosition));
 
 	// on applique l'envelope sur le grain en fonction de l'envelope type
 	float sampleValue = 0.0f;
 
-	if (currentTime < fadeIn)
+	if(currentTime < fadeIn)
 	{
 		sampleValue = sample[readPosition] * applyEnvelope(currentTime);
-	}
-	else if (fadeOut <= currentTime)
+	} else if(fadeOut <= currentTime)
 	{
 		sampleValue = sample[readPosition] * applyEnvelope(duration - currentTime);
-	}
-	else
+	} else
 	{
 		sampleValue = sample[readPosition];
 	}
@@ -109,6 +177,7 @@ float Grain::getCurrentSample(const int channel)
 	return sampleValue;
 
 }
+*/
 
 
 void Grain::update()
@@ -116,61 +185,62 @@ void Grain::update()
 	currentTime++;
 }
 
-bool Grain::isActive()
+bool Grain::isExhausted()
 {
-	if (currentTime >= duration) {
+	if(currentTime >= duration)
+	{
 		return false;
 	}
-
 	return true;
 }
 
 float Grain::applyEnvelope(const int index)
 {
 
-	switch (envelopeType)
+	switch(envelopeType)
 	{
-	case hann:
-	{
-		return hannEnvelope(index);
-	}
-	break;
-
-	case triangular:
-	{
-		return triangularEnvelope(index);
-	}
-	break;
-	case hamming:
-	{
-		return hammingEnvelope(index);
-	}
-	break;
-
-	case rectangular:
-	{
-		return rectangularEnvelope(index);
-	}
-	break;
-	case blackman:
-	{
-		return blackmanEnvelope(index);
-	}
-	break;
-
-	case blackmanHarris:
-	{
-		return blackmanHarrisEnvelope(index);
-	}
-	break;
-	case flatTop:
-	{
-		return flatTopEnvelope(index);
-	}
-	break;
-	default:
-		jassertfalse;
+		case hann:
+		{
+			return hannEnvelope(index);
+		}
 		break;
+
+		case triangular:
+		{
+			return triangularEnvelope(index);
+		}
+		break;
+		case hamming:
+		{
+			return hammingEnvelope(index);
+		}
+		break;
+
+		case rectangular:
+		{
+			return rectangularEnvelope(index);
+		}
+		break;
+		case blackman:
+		{
+			return blackmanEnvelope(index);
+		}
+		break;
+
+		case blackmanHarris:
+		{
+			return blackmanHarrisEnvelope(index);
+		}
+		break;
+		case flatTop:
+		{
+			return flatTopEnvelope(index);
+		}
+		break;
+		default:
+			jassertfalse;
+			return -1.0f;
+			break;
 	}
 }
 
@@ -180,13 +250,13 @@ float Grain::applyEnvelope(const int index)
 float Grain::ncos(size_t order, size_t i, size_t size)
 {
 	return std::cos(static_cast<float> (order * i)
-		* juce::MathConstants<float>::pi / static_cast<float> (size - 1));
+					* juce::MathConstants<float>::pi / static_cast<float> (size - 1));
 }
 
 float Grain::hannEnvelope(const int index)
 {
 	float cos2 = ncos(2, index, envelopeSize);
-	return (0.5 - 0.5 * cos2);
+	return (0.5f - 0.5f * cos2);
 
 }
 

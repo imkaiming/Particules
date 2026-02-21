@@ -9,21 +9,7 @@
 */
 
 #include "PhaseMod.h"
-#include "ParamsID.h"
-
-
-//PhaseMod::PhaseMod(double sampleRate) : sampleRate(sampleRate)
-//{
-//	setFrequency(TRAVERSALTIME_DEFAULT);
-//	setMod(TRAVERSALMODE_DEFAULT);
-//	reset();
-//}
-//
-//PhaseMod::PhaseMod(double sampleRate, float frequency, int mod) : sampleRate(sampleRate), frequency(frequency), mod(mod)
-//{
-//	updateDelta();
-//	reset();
-//}
+#include "../Framework/ParamsID.h"
 
 PhaseMod::PhaseMod()
 {
@@ -36,67 +22,66 @@ PhaseMod::~PhaseMod()
 
 void PhaseMod::setFrequency(float newValue)
 {
-	frequency = newValue;
+	mFrequency = newValue;
 	updateDelta();
 }
 
 void PhaseMod::setSampleRate(double newValue) {
 	jassert(newValue != 0);
-	sampleRate = newValue;
+	mSampleRate = newValue;
 }
 
 void PhaseMod::setMod(int newValue)
 {
-	mod = newValue;
-	//reset();
+	mMod = newValue;
 }
 
 void PhaseMod::updateDelta()
 {
-	delta = frequency / static_cast<float>(sampleRate);
+	mDelta = mFrequency / static_cast<float>(mSampleRate);
 }
 
 float PhaseMod::getFrequency()
 {
-	return frequency;
+	return mFrequency;
 }
 
 int PhaseMod::getMod()
 {
-	return mod;
+	return mMod;
 }
 
 void PhaseMod::reset()
 {
-	phase = 0.f;
-	value = 0.f;
+	mPhase = 0.f;
+	mValue = 0.f;
 }
 
 void PhaseMod::advance()
 {
-	switch (mod) {
+	switch (mMod) {
 	case 1:
-		value = nextSine(phase);
+		mValue = nextSine(mPhase);
 		break;
 	case 2:
-		value = nextTriangular(phase);
+		mValue = nextTriangular(mPhase);
 		break;
 	case 3:
-		value = nextSquare(phase);
+		mValue = nextSquare(mPhase);
 		break;
 	case 4:
-		value = nextRandom();
+		mValue = nextRandom();
 		break;
 	case 5:
-		value = 0;
+		mValue = 0;
 		break;
 	default:
 		break;
 	}
 
-	phase += delta;
-	while (phase >= twoPi)
-		phase -= twoPi;
+	mPhase += mDelta;
+	while (mPhase >= twoPi)
+		mPhase -= twoPi;
 }
 
 float PhaseMod::nextSine(float phase)
@@ -123,5 +108,5 @@ float PhaseMod::nextRandom()
 
 float PhaseMod::getValue()
 {
-	return value;
+	return mValue;
 }

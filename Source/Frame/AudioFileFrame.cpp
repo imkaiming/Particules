@@ -9,18 +9,19 @@
 */
 
 #include "AudioFileFrame.h"
+#include "../Utils/MyColours.h"
+#include "../Framework/ParameterView.h"
+#include "../Framework/UIContext.h"
+//#include "../Frame/SynthFrame.h"
 
-AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* stateParams, SynthFrame* synthFrame)
-	: apvts(apvts), stateParams(stateParams),
-	open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-	play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-	stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-	isAudioLoaded(juce::Value(stateParams->getAudioLoaded())),
-	thumbnailCache(5),
-	loader(stateParams, &thumbnailComponent),
-	thumbnailComponent(5, *loader.getFormatManager(), thumbnailCache, stateParams)
+
+//AudioFileFrame::AudioFileFrame(ParameterView& pv, SynthFrame& synthFrame): paramsView(pv), //synthFrame.init(&thumbnailComponent);
+AudioFileFrame::AudioFileFrame(UIContext& uic): paramsView(uic.paramsView),
+open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
+play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
+stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
+thumbnailCache(5), loader(uic.paramsView, thumbnailComponent), thumbnailComponent(5, loader.getFormatManager(), thumbnailCache, uic)
 {
-	synthFrame->init(&thumbnailComponent);
 
 	setOpenButtonImageOpen();
 	setStopButtonImageStop();
@@ -48,43 +49,59 @@ AudioFileFrame::AudioFileFrame(ValueTreeState* apvts, StateParameters* statePara
 	//play_btn.setToggleState(false, juce::NotificationType::dontSendNotification);
 	play_btn.setEnabled(false);
 
-	// on écoute la value dans le stateParams
-	isAudioLoaded.addListener(this);
-}
+	std::function<void()> callbackOnThumbnailReady = [this]()
+	{
+		juce::Logger::outputDebugString("callback after thumbnail painted");
+		//play_btn.setEnabled(true);
+	};
 
-AudioFileFrame::~AudioFileFrame()
-{
-	//open_btn.removeListener(this);
-	//play_btn.removeListener(this);
-	//stop_btn.removeListener(this);
-	isAudioLoaded.removeListener(this);
+	thumbnailComponent.setCallbackOnThumbnailReady(callbackOnThumbnailReady);
 
-	//loader.reset();
-	apvts = nullptr;
-	stateParams = nullptr;
+	// audio file loader is a variable of audio file frame so it cannot outlive his parent.
+	std::function<void(bool)> callbackOnFileLoaded = [this](bool ok)
+	{
+		// UI operation on the message thread
+		juce::MessageManager::callAsync([this, ok]()
+		{
+			if(juce::MessageManager* m = juce::MessageManager::getInstance())
+			{
+				if(m->currentThreadHasLockedMessageManager())
+				{
+					//std::shared_ptr<const SampleSource> src = paramsView.getSampleSource();
+					play_btn.setEnabled(ok); //&& src);
+				}
+			}
+		});
+	};
+
+	loader.setOnFileLoadedCallBack(callbackOnFileLoaded);
 }
 
 void AudioFileFrame::openFileButtonClicked()
 {
-	//stateParams->setAudioLoaded(false);
+	//juce::Logger::outputDebugString("openFileButtonClicked() ");
+	play_btn.setEnabled(false);
+	paramsView.setIsPlaying(false);
 	loader.loadFile();
-	//loader->loadFile();
+
+	//(paramsView.getAudioLoaded() == true) ? juce::Logger::outputDebugString("paramsView.getAudioLoaded() true") : juce::Logger::outputDebugString("paramsView.getAudioLoaded() false");
+	//(paramsView.getAudioBuffer() == nullptr) ? juce::Logger::outputDebugString("paramsView.getAudioBuffer() nullptr") : juce::Logger::outputDebugString("paramsView.getAudioBuffer() not nullptr");
 }
 
 void AudioFileFrame::stopFileButtonClicked()
 {
-	stateParams->setIsPlaying(false);
+	paramsView.setIsPlaying(false);
 }
 
 void AudioFileFrame::playFileButtonClicked()
 {
-	if(stateParams->getIsPlaying() == true)
+	if(paramsView.getIsPlaying() == true)
 	{
-		stateParams->setIsPlaying(false);
+		paramsView.setIsPlaying(false);
 		setPlayButtonImagePause();
 	} else
 	{
-		stateParams->setIsPlaying(true);
+		paramsView.setIsPlaying(true);
 		setPlayButtonImagePlay();
 	}
 
@@ -110,7 +127,7 @@ void AudioFileFrame::setPlayButtonImagePlay()
 
 void AudioFileFrame::setPlayButtonImagePause()
 {
-	stateParams->setIsPlaying(false);
+	paramsView.setIsPlaying(false);
 	play_btn.setImages(
 		juce::Drawable::createFromImageData(
 			BinaryData::Pause_svg,
@@ -163,33 +180,6 @@ void AudioFileFrame::setStopButtonImageStop()
 	);
 }
 
-// si le boolean à changer alors on execute cette fonction.
-void AudioFileFrame::valueChanged(juce::Value& value)
-{
-
-	isAudioLoaded.setValue(value);
-
-	if(value == true)
-	{
-		//DBG("isAudioLoaded = true");
-
-		// on test le buffer
-		if(stateParams->getAudioBuffer() == nullptr)
-		{
-			return;
-		}
-
-		//alors on peut activer le bouton play
-		//play_btn.setToggleState(true, juce::NotificationType::dontSendNotification);
-		play_btn.setEnabled(true);
-	} else
-	{
-		//DBG("isAudioLoaded = false");
-
-		// on ne peut pas play le son mais on ne laisse le btn play
-	}
-}
-
 bool AudioFileFrame::isInterestedInFileDrag(const juce::StringArray& files)
 {
 	// is it an audio file ?
@@ -230,14 +220,14 @@ void AudioFileFrame::resized()
 
 	localArea.removeFromTop(static_cast<int>(h));
 	localArea.removeFromBottom(static_cast<int>(h));
-	//audioFileComponent.setBounds(area.removeFromLeft(static_cast<int>(w)));
+
 	juce::Rectangle<int> buttonsArea = localArea.removeFromLeft(static_cast<int>(w));
 	localArea.removeFromLeft(static_cast<int>(h));
 	localArea.removeFromRight(static_cast<int>(h));
 
 	juce::Rectangle<int> SpectrumArea = localArea.removeFromLeft(localArea.getWidth());
 
-	// on déclare les flexbox	
+	// on d	clare les flexbox	
 	juce::FlexBox flexboxMain;
 	flexboxMain.flexDirection = juce::FlexBox::Direction::row;
 
@@ -257,14 +247,13 @@ void AudioFileFrame::resized()
 
 	// on ajoute les items dans les flexbox
 
-	flexboxLeft.items.add(juce::FlexItem(open_btn).withHeight(buttonsArea.getWidth() * 2));
-	flexboxLeft.items.add(juce::FlexItem(play_btn).withHeight(buttonsArea.getWidth() * 1.33));
-	//flexboxLeft.items.add(juce::FlexItem(stop_btn).withHeight(buttonsArea.getWidth()));
+	flexboxLeft.items.add(juce::FlexItem(open_btn).withHeight(buttonsArea.getWidth() * 2.f));
+	flexboxLeft.items.add(juce::FlexItem(play_btn).withHeight(buttonsArea.getWidth() * 1.33f));
 
-	flexboxRight.items.add(juce::FlexItem(thumbnailComponent).withHeight(SpectrumArea.getHeight()));
+	flexboxRight.items.add(juce::FlexItem(thumbnailComponent).withHeight(SpectrumArea.getHeight() * 1.f));
 
-	flexboxMain.items.add(juce::FlexItem(flexboxLeft).withFlex(0.05).withMargin(h));
-	flexboxMain.items.add(juce::FlexItem(flexboxRight).withFlex(0.95).withMargin(h));
+	flexboxMain.items.add(juce::FlexItem(flexboxLeft).withFlex(0.05f).withMargin(h));
+	flexboxMain.items.add(juce::FlexItem(flexboxRight).withFlex(0.95f).withMargin(h));
 	flexboxMain.performLayout(getLocalBounds().toFloat());
 
 }

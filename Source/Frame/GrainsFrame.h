@@ -7,30 +7,21 @@
 
   ==============================================================================
 */
-
-#include <JuceHeader.h>
-#include "../Utils/MyColours.h"
-#include "../Framework/Core.h"
-
 #pragma once
 
-class StateParameters;
-class GrainsFrame : public juce::Component //, public juce::Slider::Listener
+
+#include "../Framework/Core.h"
+
+class GrainsFrame: public juce::Component
 {
 public:
-	GrainsFrame(ValueTreeState* apvts, StateParameters* stateParams);
-	~GrainsFrame() override;
+	GrainsFrame(ValueTreeState& apvts);
+	~GrainsFrame() = default;
 
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
-	//void sliderValueChanged(juce::Slider* slider) override;
-
 private:
-
-	StateParameters* stateParams;
-	ValueTreeState* apvts;
-
 	juce::Slider densitySlider;
 	juce::Slider durationSlider;
 	juce::Slider speedSlider;
@@ -58,9 +49,6 @@ private:
 
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> envelopeAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> traversalModeAttachment;
-
-
-
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainsFrame)
 };

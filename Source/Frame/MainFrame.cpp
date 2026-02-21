@@ -9,11 +9,13 @@
 */
 
 #include "MainFrame.h"
+#include "../Framework/ParameterView.h"
+#include "../Framework/UIContext.h"
+#include "../Utils/MyColours.h"
 
-MainFrame::MainFrame(ValueTreeState* apvts, StateParameters* stateParams) : 
-	titleFrame(), synthFrame(apvts, stateParams), 
-	grainsFrame(apvts, stateParams), audioFileFrame(apvts, stateParams, &synthFrame), 
-	statusBarFrame(stateParams)
+
+MainFrame::MainFrame(UIContext& uic):	titleFrame(uic.customLookAndFeel), synthFrame(uic.apvts), 
+grainsFrame(uic.apvts), audioFileFrame(uic), statusBarFrame()
 {
 	addAndMakeVisible(&titleFrame);
 	addAndMakeVisible(&synthFrame);
@@ -22,47 +24,18 @@ MainFrame::MainFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	addAndMakeVisible(&statusBarFrame);
 }
 
-MainFrame::~MainFrame() 
+MainFrame::~MainFrame()
 {
 }
 
-void MainFrame::paint(juce::Graphics& g) 
+void MainFrame::paint(juce::Graphics& g)
 {
 	g.fillAll(MyColours::black);
-	//juce::Rectangle<float> mainFrame(5.f, 0.f, getWidth() - 10.f, getHeight());
-	//g.setColour(juce::Colours::grey);
-	//g.fillRect(mainFrame);
-	//g.drawRect(mainFrame);
-	//g.fillAll(juce)
-
 }
 
 void MainFrame::resized()
 {
-	//juce::Rectangle<int> area = getLocalBounds();
 	float heightComp = getHeight() / 30.f;
-	//float widthComp = getWidth() / 10.f;
-
-	//float w = getWidth() / 300.f;
-
-	// old positionning V2
-	//titleFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 1)));
-	//area.removeFromTop(static_cast<int>(w));
-	//synthFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 9)));
-	//area.removeFromTop(static_cast<int>(w));
-	//grainsFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 9)));
-	//area.removeFromTop(static_cast<int>(w));
-	//audioFileFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 9)));
-	//area.removeFromTop(static_cast<int>(w));
-	//statusBarFrame.setBounds(area.removeFromTop(static_cast<int>(heightComp * 2)));
-
-
-	// old positionning
-	//titleFrame.setBounds(0.f, 0.f, widthComp * 10, heightComp * 1);
-	//statusBarFrame.setBounds(0.f, 0.f, widthComp * 10, heightComp * 9);
-	//synthFrame.setBounds(0.f, 0.f, widthComp * 10, heightComp * 9);
-	//grainsFrame.setBounds(0.f, 0.f, widthComp * 10, heightComp * 9);
-	//audioFileFrame.setBounds(0.f, 0.f, widthComp * 10, heightComp * 2);
 
 	juce::FlexBox flexbox;
 	flexbox.flexDirection = juce::FlexBox::Direction::column;

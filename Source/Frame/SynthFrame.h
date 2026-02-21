@@ -8,30 +8,31 @@
   ==============================================================================
 */
 
-#include <JuceHeader.h>
-#include "../Utils/StateParameters.h"
-#include "../Utils/MyColours.h"
-#include "../Utils//ThumbnailComponent.h"
+
 #pragma once
 
-class SynthFrame : public juce::Component//, public juce::Slider::Listener
+#include <JuceHeader.h>
+#include "../Frame/ThumbnailComponent.h"
+
+// the Synth Frame provide UI control that modify the apvts values only
+
+class SynthFrame : public juce::Component
 {
 public:
-	SynthFrame(ValueTreeState* apvts, StateParameters* stateParams);
-	~SynthFrame();
+	SynthFrame(ValueTreeState& apvts);
+	~SynthFrame() = default;
 
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
 	//void sliderValueChanged(juce::Slider* slider) override;
 
-	void init(ThumbnailComponent*);
+	//void init(ThumbnailComponent&);
 
 private:
 
-	ValueTreeState* apvts;
-	StateParameters* stateParams;
-	ThumbnailComponent* thumbnailComponent;
+	//ThumbnailComponent& thumbnailComponent;
+	//ValueTreeState& apvts;
 
 	juce::Slider mixSlider;
 	juce::Slider gainSlider;

@@ -28,7 +28,7 @@ GrainVisualizer::~GrainVisualizer()
 void GrainVisualizer::paint(juce::Graphics& g)
 {
 
-	// on évite le premier paint qui est appeler lors de la construction.
+	// on 	te le premier paint qui est appeler lors de la construction.
 	if (grains == nullptr)
 	{
 		return;
@@ -38,12 +38,12 @@ void GrainVisualizer::paint(juce::Graphics& g)
 	//Grain* grain = grains->getFirst();
 	for (Grain* grain : *grains)
 	{
-		int samplePos = grain->getGrainPoint()->getSamplePos() / numSamples * getWidth();
-		int yPos = grain->getGrainPoint()->getYpos() * getHeight();
+		int samplePos = static_cast<int>(grain->getGrainPoint()->getSamplePos() / numSamples * getWidth());
+		int yPos = static_cast<int>(grain->getGrainPoint()->getYpos() * getHeight());
 		float opacity = grain->getGrainPoint()->getOpacity();
 
 		g.setColour(colour.withAlpha(opacity));
-		g.fillEllipse(samplePos, yPos, GRAINPOINT_SIZE, GRAINPOINT_SIZE);
+		g.fillEllipse((float)samplePos, (float)yPos, GRAINPOINT_SIZE, GRAINPOINT_SIZE);
 	}
 }
 

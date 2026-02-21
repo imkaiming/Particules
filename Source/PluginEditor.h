@@ -9,11 +9,11 @@
 #include "PluginProcessor.h"
 #include "Frame/MainFrame.h"
 #include "Utils/CustomLookAndFeel.h"
-//#include "Utils/StateParameters.h"
+//#include "Utils/ParameterView.h"
 //#include "Utils/MyColours.h"
 
 
-class ParticulesAudioProcessorEditor : public juce::AudioProcessorEditor
+class ParticulesAudioProcessorEditor: public juce::AudioProcessorEditor
 {
 public:
 	ParticulesAudioProcessorEditor(ParticulesAudioProcessor&);
@@ -21,14 +21,15 @@ public:
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
+	CustomLookAndFeel& getCustomLook() { return customLookAndFeel; };
+	const MainFrame& getMainFrame() const noexcept { return mainFrame; };
 private:
 
 	ParticulesAudioProcessor& audioProcessor;
 	MainFrame mainFrame;
-	CustomLookAndFeel customLookAndFeel;
+	CustomLookAndFeel& customLookAndFeel;
 	int width, heigth;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessorEditor)
-
 
 };

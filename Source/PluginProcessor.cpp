@@ -9,7 +9,6 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-
 //==============================================================================
 ParticulesAudioProcessor::ParticulesAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -21,18 +20,9 @@ ParticulesAudioProcessor::ParticulesAudioProcessor()
 					 .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
 	), apvts(*this, nullptr, "Parameters", createParameterLayout()), //apvts stands for audio processor value tree state
-	grainEngine(), stateParams()
+	paramsView(), grainEngine(paramsView)
 #endif
 {
-	// la connection entre le ValueTreeState et le StateParameters ce fait ici
-	//apvts.addParameterListener(MIX_ID, &stateParams);
-	//apvts.addParameterListener(GAIN_ID, &stateParams);
-	//apvts.addParameterListener(DENSITY_ID, &stateParams);
-	//apvts.addParameterListener(DURATION_ID, &stateParams);
-	//apvts.addParameterListener(PITCH_ID, &stateParams);
-
-	// add the pan
-
 }
 
 ParticulesAudioProcessor::~ParticulesAudioProcessor()
@@ -102,25 +92,18 @@ void ParticulesAudioProcessor::changeProgramName(int index, const juce::String& 
 
 void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
-	stateParams.init(apvts, getTotalNumInputChannels(), sampleRate);
+	int numChannels = getTotalNumOutputChannels();
+	paramsView.init(apvts, sampleRate);
+	grainEngine.init(static_cast<int>(sampleRate), numChannels, samplesPerBlock);
 
-	//stateParams.setSampleRate();
-	//this->stateParams.getNumChannels(getTotalNumInputChannels()) // préférer ça que passer la variable
-	grainEngine.init(&stateParams, static_cast<int>(sampleRate), getTotalNumOutputChannels(), samplesPerBlock);
-
-	//adsr.setSampleRate(sampleRate);
-	//adsr.setParameters(adsrParameters);
-
-
-
-	//juce::Logger::outputDebugString("density : " + (const juce::String)this->stateParams.getDensity()
-	//	+ " duration : " + (const juce::String)this->stateParams.getDuration());
-
+	//juce::Logger::outputDebugString("density : " + (const juce::String)this->paramsView.getDensity() + " duration : " + (const juce::String)this->paramsView.getDuration());
+#if ENABLE_DEBUG_PRESET // exist also in the audio file loader
+	loadDebugPreset();
+#endif
 }
 
 void ParticulesAudioProcessor::releaseResources()
 {
-	//grainEngine.initialization();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -158,17 +141,7 @@ void ParticulesAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
 	for(int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
 		buffer.clear(i, 0, numSamples);
 
-	//adsrParameters.attack = stateParams->getAttack();
-	//adsrParameters.decay = stateParams->getDecay();
-	//adsrParameters.sustain = stateParams->getSustain();
-	//adsrParameters.release = stateParams->getRelease();
-
-	//for (int channel = 0; channel < buffer.getNumChannels(); ++channel) {
-	//	juce::ADSR::applyEnvelopeToBuffer(buffer, channel, numSamples);
-	//}
-
-	// let the engine operate under the given buffer if the button is press
-	if(stateParams.getAudioLoaded() && stateParams.getIsPlaying() || !stateParams.getIsGrainsEmpty())
+	if(paramsView.getSampleSource() && paramsView.getIsPlaying() || !paramsView.getIsGrainsEmpty())
 	{
 		grainEngine.process(buffer, numSamples);
 	}
@@ -181,8 +154,8 @@ bool ParticulesAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* ParticulesAudioProcessor::createEditor()
 {
-	return new ParticulesAudioProcessorEditor(*this);
-	//return new juce::GenericAudioProcessorEditor(*this);
+	ParticulesAudioProcessorEditor* editor = new ParticulesAudioProcessorEditor(*this);
+	return editor;
 }
 
 void ParticulesAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
@@ -198,13 +171,11 @@ void ParticulesAudioProcessor::setStateInformation(const void* data, int sizeInB
 
 	if(xmlState.get() != nullptr)
 	{
-		// si on trouve un fichier xml alors on met à jours les données dans apvts
+		// si on trouve un fichier xml alors on met Ã  jours les donnÃ©es dans apvts
 		if(xmlState->hasTagName(apvts.state.getType()))
 			apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
 	} else
 	{
-		// on initialise tout avec les valeurs de base
-		//initValueTreeState();
 	}
 
 	//juce::Logger::outputDebugString("apvts mix : " + (juce::String)apvts.getRawParameterValue(MIX_ID)->load());
@@ -213,32 +184,6 @@ void ParticulesAudioProcessor::setStateInformation(const void* data, int sizeInB
 	//juce::Logger::outputDebugString("apvts dur : " + (juce::String)apvts.getRawParameterValue(DURATION_ID)->load());
 	//juce::Logger::outputDebugString("apvts pitch : " + (juce::String)apvts.getRawParameterValue(PITCH_ID)->load());
 
-	//stateParams.print();
-}
-
-//void ParticulesAudioProcessor::initValueTreeState()
-//{
-//	apvts.getRawParameterValue(Param::Mix::id)->store(Param::Mix::init);
-//	apvts.getRawParameterValue(Param::Gain::id)->store(Param::Gain::init);
-//	apvts.getRawParameterValue(Param::Density::id)->store(Param::Density::init);
-//	apvts.getRawParameterValue(Param::Duration::id)->store(Param::Duration::init);
-//	apvts.getRawParameterValue(Param::Speed::id)->store(Param::Speed::init);
-//	apvts.getRawParameterValue(Param::EnvelopeType::id)->store(Param::EnvelopeType::init);
-//	apvts.getRawParameterValue(Param::Position::id)->store(Param::Position::init);
-//	apvts.getRawParameterValue(Param::Selection::id)->store(Param::Selection::init);
-//	apvts.getRawParameterValue(Param::EnvelopeWidth::id)->store(Param::EnvelopeWidth::init);
-//	apvts.getRawParameterValue(Param::TraversalMode::id)->store(Param::TraversalMode::init);
-//	apvts.getRawParameterValue(Param::TraversalTime::id)->store(Param::TraversalTime::init);
-//}
-
-StateParameters* ParticulesAudioProcessor::getStateParameters()
-{
-	return &stateParams;
-}
-
-ValueTreeState* ParticulesAudioProcessor::getValueTreeState()
-{
-	return &apvts;
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::createParameterLayout()
@@ -246,18 +191,17 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 	juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
 	layout.add(
-		std::make_unique<juce::AudioParameterInt>(
-			Param::Mix::id,
-			Param::Mix::name,
-			Param::Mix::min, Param::Mix::max, Param::Mix::init)
+		std::make_unique<juce::AudioParameterFloat>(
+			Param::Mix::id, Param::Mix::name, juce::NormalisableRange<float>(Param::Mix::min, Param::Mix::max, 0.01f),
+			Param::Mix::init, " %", juce::AudioProcessorParameter::genericParameter,
+			[](float v, int) { return juce::String(v, 1) + "%"; }, [](const juce::String& s) { return s.getFloatValue(); })
 	);
 
 	layout.add(
 		std::make_unique<juce::AudioParameterFloat>(
-			Param::Gain::id,
-			Param::Gain::name,
-			juce::NormalisableRange<float>(Param::Gain::min, Param::Gain::max, 0.01f),
-			Param::Gain::init)
+			Param::Gain::id, Param::Gain::name, juce::NormalisableRange<float>(Param::Gain::min, Param::Gain::max, 0.01f),
+			Param::Gain::init, " dB", juce::AudioProcessorParameter::genericParameter,
+			[](float v, int) { return juce::String(v, 3) + " dB"; }, [](const juce::String& s) { return s.getFloatValue(); })
 	);
 
 	layout.add(
@@ -315,17 +259,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 			Param::Selection::init)
 	);
 
-	const juce::StringArray& choices{Param::EnvelopeType::ENVTYPE_1,
-		Param::EnvelopeType::ENVTYPE_2,
-		Param::EnvelopeType::ENVTYPE_3,
-		Param::EnvelopeType::ENVTYPE_4,
-		Param::EnvelopeType::ENVTYPE_5,
-		Param::EnvelopeType::ENVTYPE_6,
-		Param::EnvelopeType::ENVTYPE_7};
+	const juce::StringArray choicesEnvTypeNames(Param::EnvelopeType::envTypeNames.data(), Param::EnvelopeType::envTypeNames.size());
+	//const juce::StringArray choices{Param::EnvelopeType::envTypeNames, sizeof(Param::EnvelopeType::envTypeNames)};
 
 	layout.add(
-		std::make_unique<juce::AudioParameterInt>(
-			Param::EnvelopeType::id, Param::EnvelopeType::name, 1, 7, Param::EnvelopeType::init)
+		std::make_unique<juce::AudioParameterChoice>(
+			Param::EnvelopeType::id, Param::EnvelopeType::name, choicesEnvTypeNames, 0)
 	);
 
 	layout.add(
@@ -336,6 +275,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 			Param::EnvelopeWidth::init)
 	);
 
+	//const juce::StringArray choicesTraversalModeNames(Param::TraversalMode::traversalModeNames.data(), Param::TraversalMode::traversalModeNames.size());
 
 	layout.add(
 		std::make_unique<juce::AudioParameterInt>(
@@ -355,6 +295,28 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 	// randomDensity, randomDuration, randomPan, randomDirection, randomPitch
 
 	return layout;
+}
+
+void ParticulesAudioProcessor::loadDebugPreset()
+{
+	if(debugPresetLoaded) return;
+	apvts.getParameter(Param::Mix::id)->setValueNotifyingHost(1.f);// MIX100%
+	apvts.getParameter(Param::Gain::id)->setValueNotifyingHost(juce::Decibels::decibelsToGain(-3.f));
+	apvts.getParameter(Param::Density::id)->setValueNotifyingHost(1.f);
+	apvts.getParameter(Param::Duration::id)->setValueNotifyingHost(1.f);
+	apvts.getParameter(Param::Speed::id)->setValueNotifyingHost(1.f);
+	apvts.getParameter(Param::Position::id)->setValueNotifyingHost(0.5f);
+	apvts.getParameter(Param::Selection::id)->setValueNotifyingHost(0.25f);
+	apvts.getParameter(Param::EnvelopeType::id)->setValueNotifyingHost(1.f);
+
+	//apvts.getParameter(Param::EnvelopeWidth::id)->setValueNotifyingHost(100.f);
+	//apvts.getParameter(Param::TraversalMode::id)->;
+	//apvts.getParameter(Param::TraversalTime::id)->;
+
+	// charger le fichier dans le audio file loader
+
+
+	debugPresetLoaded = true;
 }
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()

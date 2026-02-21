@@ -10,10 +10,13 @@
 
 #pragma once
 
-//#include <algorithm>
-#include <JuceHeader.h>
+
+#include "../Framework/Core.h"
 #include "../Utils/GrainPoint.h"
-//#include <juce_dsp/juce_dsp.h>
+
+
+// Grain is the unit that read samples the buffer
+// TODO rename it GrainPOD
 
 enum WindowingMethod
 {
@@ -26,17 +29,31 @@ enum WindowingMethod
 	flatTop
 };
 
+struct ParameterSnapshot;
+struct SampleSource;
 class Grain
 {
 
 public:
-	Grain(int duration, int numChannel, int envelopeType, float speed, int envelopeWidth, int position, juce::AudioBuffer<float>* buffer);
-	~Grain();
-	float getCurrentSample(const int channel);
-	bool isActive();
+	//Grain(int duration, int numChannel, int envelopeType, float speed, int envelopeWidth, int position);
+	Grain();
+	~Grain() = default;
+
+	void reset();
+	void config(const ParameterSnapshot& snapshot, int sample);
+
+	//float getCurrentSample(const int channel);
+	float getNextSample(const SampleSource* source, const int channel, const int outChannel) noexcept;
 	void update();
+	bool isExhausted();
 
 	GrainPoint* getGrainPoint();
+
+	bool getActive() const noexcept { return active; };
+	void setActive(bool b) noexcept { active = b; };
+
+	uint16_t getGeneration() const noexcept { return generation; };
+	void incrementGen() noexcept { generation++; };
 
 private:
 
@@ -55,24 +72,29 @@ private:
 
 	WindowingMethod getWindowingMethod(int);
 
-	const int envelopeType;	// on associe un grain a une envelope
+	int envelopeType;	// on associe un grain a une envelope
 
 	int currentTime;		// le compteur interne du grain
-	const int numChannels;	// le grain est le même pour chaque channel
-	float speed;
-	const int duration;		// définie la durée en nombre de sample
-	const int position;		// définie la position en sample dans le buffer
+	float speed = 0.0f;
+	//int numChannels = 0;	// le grain est le même pour chaque channel
+	int duration = 0;		// définie la durée en nombre de sample
+	int position = 0;		// définie la position en sample dans le buffer
 	// const int selection;	// définie la position maximale qu'un grain peut atteindre dans le buffer
-	const int envelopeWidth;// définie la taille des rampes d'amplitude en entré et en sortie du grain
+	int envelopeWidth = 0;// définie la taille des rampes d'amplitude en entré et en sortie du grain
+	int offset = 0;
+
+	int fadeIn = 0;		// 0 to fadeIn
+	int fadeOut = 0;		// fadeOut to numSamples
+	int envelopeSize = 0;	// utile pour calculer les fade d'entrés et de sorties des envelopes selon les functions données
 
 
-	const int fadeIn;		// 0 to fadeIn
-	const int fadeOut;		// fadeOut to numSamples
-	const int envelopeSize;	// utile pour calculer les fade d'entrés et de sorties des envelopes selon les functions données
-
-
-	juce::AudioBuffer<float>* buffer;
+	//juce::AudioBuffer<float>* buffer; // replace with sample source
 
 	GrainPoint grainPoint;
+
+	// lifecycle 
+	uint16_t generation = 0;
+	bool active = false;
+
 };
 

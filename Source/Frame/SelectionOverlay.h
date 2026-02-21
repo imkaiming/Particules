@@ -12,7 +12,7 @@
 
 
 #include <JuceHeader.h>
-#include "MyColours.h"
+#include "../Utils/MyColours.h"
 #pragma once
 
 
@@ -21,7 +21,7 @@ class SelectionOverlay : public juce::Component
 {
 public:
 	SelectionOverlay();
-	~SelectionOverlay();
+	~SelectionOverlay() = default;
 
 	void paint(juce::Graphics&) override;
 	void setPosition(float);
@@ -29,8 +29,8 @@ public:
 
 private:
 
-	float positionValue;
-	float selectionValue;
+	float start;
+	float width;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SelectionOverlay)
 };

@@ -9,20 +9,18 @@
 */
 
 #include "Scheduler.h"
-#include "../Utils/StateParameters.h"
+#include "../Framework/ParameterView.h"
 
-Scheduler::Scheduler()//StateParameters* stateParams) //: stateParams(stateParams)
+Scheduler::Scheduler(ParameterView& paramsView): paramsView(paramsView), nextOnSet{0}
 {
-	nextOnset = 1;
-	nbActiveGrains = 0;
-	numChannels = 0;
 }
 
+/*
 Scheduler::~Scheduler()
 {
 	freeActiveGrains();
-	stateParams = nullptr;
 }
+
 
 void Scheduler::freeActiveGrains()
 {
@@ -33,34 +31,19 @@ void Scheduler::freeActiveGrains()
 	}
 }
 
-// restore the default value
-void Scheduler::init(int numChannels)
-{
-	stateParams->setGrains(&grains);
-	freeActiveGrains();
-	this->numChannels = numChannels;
-	nextOnset = 1;
-	nbActiveGrains = 0;
-
-	phaseMod.reset();
-	phaseMod.setSampleRate(stateParams->getSampleRate());
-	phaseMod.setMod(stateParams->getTraversalMode());
-	phaseMod.setFrequency(1 / stateParams->getTraversalTime());
-
-}
 
 Grain* Scheduler::generateGrain(int numSamples)
 {
 	// on récupère la valeur en samples par rapport au pourcentage de la position dans le fichier audio
 
-	int durationSamples = static_cast<int>(stateParams->getDuration() * stateParams->getSampleRate());
-	int widthSamples = static_cast<int>(durationSamples * stateParams->getEnvWidth());
-	int positionSamples = static_cast<int>(stateParams->getNumSamples() * stateParams->getFilePosition());
-	int selectionSamples = static_cast<int>(stateParams->getNumSamples() * stateParams->getWindowSelection());
+	int durationSamples = static_cast<int>(paramsView.getDuration() * paramsView.getSampleRate());
+	int widthSamples = static_cast<int>(durationSamples * paramsView.getEnvWidth());
+	int positionSamples = static_cast<int>(paramsView.getNumSamples() * paramsView.getFilePosition());
+	int selectionSamples = static_cast<int>(paramsView.getNumSamples() * paramsView.getWindowSelection());
 
 
-	phaseMod.setFrequency(1 / stateParams->getTraversalTime());
-	phaseMod.setMod(stateParams->getTraversalMode());
+	phaseMod.setFrequency(1 / paramsView.getTraversalTime());
+	phaseMod.setMod(paramsView.getTraversalMode());
 	positionSamples += phaseMod.getValue() * selectionSamples;
 
 	//DBG("value : " << phaseMod.getValue());
@@ -70,18 +53,13 @@ Grain* Scheduler::generateGrain(int numSamples)
 	return new Grain(
 		durationSamples, // le nombre total de sample dans le grain
 		numChannels,
-		stateParams->getEnvelopeType(),
-		stateParams->getSpeed(),
+		paramsView.getEnvelopeType(),
+		paramsView.getSpeed(),
 		widthSamples, // le nombre de sample qu'il y a entre la fin du fade in et le debut du fade out
-		positionSamples, // le nombre de sample qui determine la position dans le fichier pour le depart
-		stateParams->getAudioBuffer()
+		positionSamples // le nombre de sample qui determine la position dans le fichier pour le depart
+		//paramsView.getAudioBuffer()
 	);
 
-}
-
-void Scheduler::setStateParameters(StateParameters* sp)
-{
-	stateParams = sp;
 }
 
 // Realtime distribution of grains must be activated in timesequential order.
@@ -118,7 +96,7 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 				--nbActiveGrains;
 
 				if(grains.isEmpty())
-					stateParams->setIsGrainsEmpty(true);
+					paramsView.setIsGrainsEmpty(true);
 
 
 			}
@@ -126,21 +104,21 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 
 	}
 
-	if(stateParams->getIsPlaying() == true)
+	if(paramsView.getIsPlaying() == true)
 	{
-		if(--nextOnset == 0) // on avance à chaque sample
+		if(--nextOnSet == 0) // on avance à chaque sample
 		{
 			// TODO : récupérer les valeur random du stateParam pour les donner au grain avant de le générer.
 
 			Grain* unGrain = generateGrain(numSamples);
 			++nbActiveGrains;
 
-			stateParams->setIsGrainsEmpty(false);
+			paramsView.setIsGrainsEmpty(false);
 
 
 			grains.add(unGrain);
-			int interOnset = stateParams->getInterOnSet(); // ajouter le random ici
-			nextOnset += interOnset; // determine le moment où prochain grain sera créer
+			int interOnset = paramsView.getInterOnSet(); // ajouter le random ici
+			nextOnSet += interOnset; // determine le moment où prochain grain sera créer
 		}
 	}
 	//else if (grains.isEmpty()) { // ça sonne moins réactif
@@ -148,7 +126,7 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 	//}
 	else
 	{
-		nextOnset = 1;
+		nextOnSet = 1;
 	}
 
 	phaseMod.advance();
@@ -187,3 +165,29 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 //	return weight;
 //}
 
+*/
+
+double Scheduler::getInterOnSet(float density, double sampleRate) const noexcept
+{
+	if(density <= 0.0) return -1.0;
+	return static_cast<int>(sampleRate / (double)density);
+}
+/*
+int Scheduler::computeEvents(int bufferSize, double sampleRate, float density, std::array<uint16_t, Param::MaxEvents>& events)
+{
+	const double interOnSet = getInterOnSet(density, sampleRate);
+	if(interOnSet <= 1) { setOffset(0.0);	return -1; }
+
+	int count = 0;
+	double offset = getOffset(); // offset of the next outBuffer call
+	while(offset < bufferSize && count < mCapacity)
+	{
+		events[count] = static_cast<uint16_t>(std::floor(offset));
+		offset += interOnSet;
+		count++;
+	}
+
+	setOffset(offset - bufferSize);
+	return count;
+}
+*/

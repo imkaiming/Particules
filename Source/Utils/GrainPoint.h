@@ -8,8 +8,6 @@
   ==============================================================================
 */
 
-#include <JuceHeader.h>
-
 #pragma once
 
 
@@ -20,11 +18,11 @@ public:
 	~GrainPoint();
 
 	void setOpacity(float);
-	void setSamplePos(float);
+	void setSamplePos(int);
 
 	float getOpacity();
-	float getSamplePos();
-	float getYpos();
+	int getSamplePos();
+	int getYpos();
 
 
 private:

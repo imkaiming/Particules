@@ -9,23 +9,25 @@
 */
 
 #include "TitleFrame.h"
+//#include "../Framework/UIContext.h"
+#include "../Utils/CustomLookAndFeel.h"
+#include "../Utils/MyColours.h"
 
-TitleFrame::TitleFrame() 
+TitleFrame::TitleFrame(CustomLookAndFeel& look): look{look}
 {
-
 	addAndMakeVisible(&titreLabel);
 }
 
-TitleFrame::~TitleFrame() 
+void TitleFrame::paint(juce::Graphics& g)
 {
-}
-
-void TitleFrame::paint(juce::Graphics& g) {
 	titreLabel.setText((const juce::String)"Particules", juce::dontSendNotification);
 	titreLabel.setJustificationType(juce::Justification::centred);
 	titreLabel.setColour(0, juce::Colours::white);
-	titreLabel.setFont(juce::Font(16.0f)); // utile ?
 
+	// TODO check if it worked
+	const juce::Font font(look.getFuturaTypeface());
+	font.withHeight(16.f);
+	titreLabel.setFont(font);
 	g.fillAll(MyColours::smokyBlack);
 
 	//const juce::Font f;
@@ -34,7 +36,7 @@ void TitleFrame::paint(juce::Graphics& g) {
 	//g.drawText("ParticulesS", getLocalBounds(), juce::Justification::centred, true);
 }
 
-void TitleFrame::resized() 
+void TitleFrame::resized()
 {
 	float h = getHeight() / 30.f;
 	juce::FlexBox flexbox;

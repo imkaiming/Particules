@@ -54,12 +54,12 @@ private:
 	float nextRandom();
 	void updateDelta();
 
-	int mod;			// the modulation switch for the function to compute
-	double sampleRate;
-	float frequency;
-	float phase;
-	float value;
-	float delta;		// frequency / sampleRate
+	int mMod;			// the modulation switch for the function to compute
+	double mSampleRate;
+	float mFrequency;
+	float mPhase;
+	float mValue;
+	float mDelta;		// frequency / sampleRate
 	juce::Random r;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PhaseMod)

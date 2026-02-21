@@ -12,12 +12,11 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../../Ressources/Font/FuturaMedium.h"
-#include "ParamsID.h"
-#include "../Utils/MyColours.h"
 
 
-class CustomLookAndFeel : public juce::LookAndFeel_V4 {
+
+class CustomLookAndFeel: public juce::LookAndFeel_V4
+{
 public:
 	CustomLookAndFeel();
 	~CustomLookAndFeel();
@@ -27,10 +26,26 @@ public:
 	//	const juce::Slider::SliderStyle style, juce::Slider& slider) override;
 
 	void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
-		float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider) override;
+						  float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider) override;
 	//void drawLabel(juce::Graphics& g, juce::Label& label) override;
+
+	//juce::Font getTitleFont(juce::Label&) override
+	//{
+	//	return juce::Font("Arial", 16.0f, juce::Font::plain);
+	//}
+
+	//juce::Font getTextButtonFont(juce::TextButton&, int height) override
+	//{
+	//	return juce::Font("Verdana", height * 0.5f, juce::Font::bold);
+	//}
+
+	juce::Typeface::Ptr getFuturaTypeface() const
+	{
+		return futuraTypeface;
+	}
 
 private:
 
+	juce::Typeface::Ptr futuraTypeface;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CustomLookAndFeel)
 };

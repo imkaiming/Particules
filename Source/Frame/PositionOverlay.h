@@ -1,6 +1,6 @@
 
 #include <JuceHeader.h>
-#include "MyColours.h"
+#include "../Utils/MyColours.h"
 #pragma once
 
 
@@ -9,7 +9,7 @@ class PositionOverlay : public juce::Component
 {
 public:
 	PositionOverlay();
-	~PositionOverlay();
+	~PositionOverlay() = default;
 
 	void paint(juce::Graphics&) override;
 	void setPosition(float);
@@ -17,7 +17,7 @@ public:
 
 private:
 
-	float positionValue;
+	float startPos;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PositionOverlay)
 };

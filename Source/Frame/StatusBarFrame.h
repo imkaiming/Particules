@@ -7,21 +7,19 @@
 
   ==============================================================================
 */
+#pragma once
 
 #include <JuceHeader.h>
-#include "../Utils/StateParameters.h"
-#include "../Utils/MyColours.h"
-#pragma once
+
 
 class StatusBarFrame : public juce::Component {
 public:
-    StatusBarFrame(StateParameters* stateParams);
-    ~StatusBarFrame();
+    StatusBarFrame();//UIContext& uic);
+    ~StatusBarFrame() = default;
     void paint(juce::Graphics&) override;
     void resized() override;
 
 private:
-    StateParameters* stateParams;
     juce::Label statusLabel;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatusBarFrame)
 };

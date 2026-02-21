@@ -9,37 +9,37 @@
 */
 
 #include "SynthFrame.h"
+#include "../Utils/MyColours.h"
 
-SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
-	apvts(apvts), stateParams(stateParams)
-{
+
+SynthFrame::SynthFrame(ValueTreeState& apvts) {
 	mixSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, Param::Mix::id, mixSlider);
+			apvts, Param::Mix::id, mixSlider);
 
 	gainSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, Param::Gain::id, gainSlider);
+			apvts, Param::Gain::id, gainSlider);
 
 	filePosSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, Param::Position::id, filePosSlider);
+			apvts, Param::Position::id, filePosSlider);
 
 	windowSelectionSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			*apvts, Param::Selection::id, windowSelectionSlider);
+			apvts, Param::Selection::id, windowSelectionSlider);
 
 
 
 	mixSlider.setName("mixSlider");
 	mixSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-	mixSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
-		true, 100, 25);
+	mixSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
 	mixSlider.setTextBoxIsEditable(true);
 	mixSlider.setRange(0.0, 100.0);
 	mixSlider.setTextValueSuffix(" %");
 	//mixSlider.addListener(this);
 	mixSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+	// mixSlider.onValueChane = [this]() { foo(); } 
 
 	mixLabel.setText((const juce::String)Param::Mix::name, juce::dontSendNotification);
 	mixLabel.attachToComponent(&mixSlider, false);
@@ -47,8 +47,7 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 
 	gainSlider.setName("gainSlider");
 	gainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-	gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
-		true, 100, 25);
+	gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
 	gainSlider.setTextBoxIsEditable(true);
 	gainSlider.setRange(Param::Gain::min, Param::Gain::max);
 	gainSlider.setSkewFactorFromMidPoint(-12.0);
@@ -97,15 +96,8 @@ SynthFrame::SynthFrame(ValueTreeState* apvts, StateParameters* stateParams) :
 	addAndMakeVisible(&windowSelectionLabel);
 }
 
-SynthFrame::~SynthFrame()
+void SynthFrame::paint(juce::Graphics& g)
 {
-	//mixSlider.removeListener(this);
-	//gainSlider.removeListener(this);
-	apvts = nullptr;
-	stateParams = nullptr;
-}
-
-void SynthFrame::paint(juce::Graphics& g) {
 	//juce::Rectangle<float> synthFrame(0.f, 0.f, getWidth(), getHeight());
 	//g.setColour(juce::Colours::slategrey);
 	//g.fillRect(synthFrame);
@@ -117,9 +109,6 @@ void SynthFrame::resized()
 {
 
 	float h = getHeight() / 30.f;
-	//juce::Rectangle<int> localArea = getLocalBounds();
-	//localArea.removeFromTop(h);
-	//localArea.removeFromBottom(h);
 
 	juce::FlexBox mainFlexBox;
 	mainFlexBox.flexDirection = juce::FlexBox::Direction::row;
@@ -172,41 +161,7 @@ void SynthFrame::resized()
 	mainFlexBox.performLayout(getLocalBounds().toFloat());
 }
 
-/*
-void SynthFrame::sliderValueChanged(juce::Slider* slider)
-{
-	if (slider == &mixSlider)
-	{
-		float mixValue = static_cast<float>(mixSlider.getValue());
-		apvts->getRawParameterValue(Param::Mix::id)->store(mixValue);
-		stateParams->setMix(mixValue);
-		//this->apvts->mix = mixSlider.getValue();
-	}
-	if (slider == &gainSlider)
-	{
-		float gainValue = static_cast<float>(gainSlider.getValue());
-		apvts->getRawParameterValue(Param::Gain::id)->store(gainValue);
-		stateParams->setGain(gainValue);
-	}
-	if (slider == &filePosSlider)
-	{
-		float filePosValue = static_cast<float>(filePosSlider.getValue());
-		apvts->getRawParameterValue(Param::Position::id)->store(filePosValue);
-		stateParams->setFilePosition(filePosValue);
-		thumbnailComponent->updatePosition(filePosValue);
-	}
-	if (slider == &windowSelectionSlider)
-	{
-		float windowValue = static_cast<float>(windowSelectionSlider.getValue());
-		apvts->getRawParameterValue(Param::Selection::id)->store(windowValue);
-		stateParams->setWindowSelection(windowValue);
-		thumbnailComponent->updateSelection(windowValue);
-	}
-
-}
-*/
-
-void SynthFrame::init(ThumbnailComponent* thumbnail)
-{
-	this->thumbnailComponent = thumbnail;
-}
+//void SynthFrame::init(ThumbnailComponent& tc)
+//{
+//	thumbnailComponent = tc;
+//}

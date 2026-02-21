@@ -9,20 +9,15 @@
 */
 
 #include "StatusBarFrame.h"
+#include "../Utils/MyColours.h"
 
-
-StatusBarFrame::StatusBarFrame(StateParameters* stateParams) : stateParams(stateParams)
+StatusBarFrame::StatusBarFrame() //UIContext& uic): uic{uic}
 {
 	addAndMakeVisible(&statusLabel);
-
 }
 
-StatusBarFrame::~StatusBarFrame()
+void StatusBarFrame::paint(juce::Graphics& g)
 {
-	stateParams = nullptr;
-}
-
-void StatusBarFrame::paint(juce::Graphics& g) {
 	g.fillAll(MyColours::black);
 
 	statusLabel.setText((const juce::String)"IFT3150", juce::dontSendNotification);

@@ -9,99 +9,51 @@
 */
 
 #include "GranularEngine.h"
+#include "../Framework/ParameterView.h"
 
-GranularEngine::GranularEngine() : scheduler()
-	//stateParams(stateParams),
-	//scheduler(stateParams),
+GranularEngine::GranularEngine(ParameterView& sp): paramsView{sp}, scheduler{sp}, voiceManager{grainPool}, grainPool{}
 	//fft(FFTSIZE_ORDER),
-	//phaseVocoderBuffer(stateParams->getNumChannels(), FFTSIZE),
+	//phaseVocoderBuffer(paramsView->getNumChannels(), FFTSIZE),
 	//window(FFTSIZE, juce::dsp::WindowingFunction<float>::hann),
-	//circularBuffer(stateParams->getNumChannels(), FFTSIZE)
+	//circularBuffer(paramsView->getNumChannels(), FFTSIZE)
 {
-	fft.init(FFTSIZE);
+	//fft.init(FFTSIZE);
 }
 
-GranularEngine::~GranularEngine()
+void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize)
 {
-	stateParams = nullptr;
-}
+	// pour 1024 buffer size en 48kHz on a une fenetre de 21ms par appelle de compute. 
+	// si density = 500g/s (1g chaque 0.002s) alors on a interOnSet = 48000/500 = 96 sample.
+	// 1024/96 = 10.66 grains par appel 
 
-void GranularEngine::mixingProcess(AudioBlock wetBlock)
-{
-	mixerProcessor.setWetMixProportion(stateParams->getMix());
-	mixerProcessor.mixWetSamples(wetBlock);
-}
+	const ParameterSnapshot snapshot = paramsView.getSnapshot();
+	const SampleSource* source = paramsView.getSampleSource().get();
 
-void GranularEngine::gainProcess(juce::dsp::ProcessContextReplacing<float> context)
-{
-	gainProcessor.setGainLinear(stateParams->getGain());
-	gainProcessor.process(context);
-}
-
-void GranularEngine::reverbProcess(juce::dsp::ProcessContextReplacing<float> context)
-{
-	reverbProcessor.process(context);
-}
-
-
-void GranularEngine::setStateParameters(StateParameters* sp)
-{
-	stateParams = sp;
-	scheduler.setStateParameters(sp);
-}
-
-void GranularEngine::process(juce::AudioBuffer<float>& buffer, int numSamples)
-{
-	//int numChannel = buffer.getNumChannels();
-	//grainBuffer.setSize(numChannel, numSamples);
-
-	//juce::AudioBuffer<float> grainBuffer(buffer.getNumChannels(), buffer.getNumSamples());
-
-	AudioBlock audioBlock(buffer);
-	//AudioBlock phaseVocoderBlock(phaseVocoderBuffer);
-
-	//AudioBlock grainBlock(grainBuffer);
-	//grainBlock.fill(0.0f);
-
-	//AudioBlock grainBlock(grainBuffer);
-
-	mixerProcessor.pushDrySamples(audioBlock);
-
-
-	for (int sample = 0; sample < numSamples; ++sample) {
-		scheduler.synthesize(&audioBlock, sample, numSamples);
-
-		// 1. on met les samples dans le phasevocoder
-		//phaseVocoderBuffer.addSample();
-
-		// 2. quand le buffer est plein on multiplie par la window
-		//window.multiplyWithWindowingTable(phaseVocoderBuffer.getWritePointer(channel), FFTSIZE);
-
-		// 3. on applique le fft
-		//fft.performFrequencyOnlyForwardTransform(phaseVocoderBuffer.getWritePointer(channel));
-
-		// 4. on manipule le block
-
-		// 5. on réassemble le contenu du block dans le buffer.
-		// la taille du block n'est pas la même que la taille de déplacement de la région
-		// On calcule tous les block de N samples mais on incrémente dans le buffer tous les M samples
-		// Ce qui resulte à des block overlappé
+	if(!snapshot.isValid())
+	{
+		bufferOut.clear();
+		return;
 	}
-	//fft.performRealOnlyForwardTransform()
 
+	AudioBlock outputBlock(bufferOut);
 
-	//reverbProcess(audioBlock); // ok
-	mixingProcess(audioBlock); // ok
-	gainProcess(audioBlock); // ok
+	mixerProcessor.pushDrySamples(outputBlock);
+
+	scheduler.process(bufferSize, source->sampleRate, snapshot.density, [&](int offset, const ParameterSnapshot& snapshot) { voiceManager.spawn(offset, snapshot); }, snapshot);
+	
+	voiceManager.process(outputBlock, bufferSize, source);
+	
+	//reverbProcess(audioBlock);
+	mixingProcess(outputBlock);
+	gainProcess(outputBlock);
 
 }
 
 // called by prepare to play method
-void GranularEngine::init(StateParameters* sp, int sampleRate, int numChannel, int samplePerBlocks)
+void GranularEngine::init(int sampleRate, int numChannel, int samplePerBlocks)
 {
-	setStateParameters(sp);
-	scheduler.init(numChannel);
-
+	scheduler.reset();
+	//juce::Logger::outputDebugString("Granuler Engine init numChannel is : " + juce::String(numChannel));
 	juce::dsp::ProcessSpec spec;
 
 	spec.maximumBlockSize = samplePerBlocks;
@@ -114,15 +66,34 @@ void GranularEngine::init(StateParameters* sp, int sampleRate, int numChannel, i
 	gainProcessor.prepare(spec);
 	gainProcessor.setRampDurationSeconds(0.02f);
 
+
+	// TODO pre allouer les grains dans le grain pool
+
 	// to debug
-	reverbProcessor.prepare(spec);
-	params.roomSize = 1.0f;
-	params.damping = 0.5f;
-	params.wetLevel = 0.5f;
-	params.dryLevel = 0.0f;
-	params.width = 1.0f;
-	params.freezeMode = false;
-	reverbProcessor.setParameters(params);
+	//reverbProcessor.prepare(spec);
+	//params.roomSize = 1.0f;
+	//params.damping = 0.5f;
+	//params.wetLevel = 0.5f;
+	//params.dryLevel = 0.0f;
+	//params.width = 1.0f;
+	//params.freezeMode = false;
+	//reverbProcessor.setParameters(params);
 
+}
 
+void GranularEngine::mixingProcess(AudioBlock wetBlock)
+{
+	mixerProcessor.setWetMixProportion(paramsView.getMix());
+	mixerProcessor.mixWetSamples(wetBlock);
+}
+
+void GranularEngine::gainProcess(juce::dsp::ProcessContextReplacing<float> context)
+{
+	gainProcessor.setGainLinear(paramsView.getGain());
+	gainProcessor.process(context);
+}
+
+void GranularEngine::reverbProcess(juce::dsp::ProcessContextReplacing<float> context)
+{
+	reverbProcessor.process(context);
 }

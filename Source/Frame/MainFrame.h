@@ -10,18 +10,18 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+//#include <JuceHeader.h>
+
 #include "AudioFileFrame.h"
 #include "SynthFrame.h"
 #include "GrainsFrame.h"
 #include "TitleFrame.h"
 #include "StatusBarFrame.h"
-#include "../Utils/StateParameters.h"
-#include "../Utils/MyColours.h"
 
+struct UIContext;
 class MainFrame : public juce::Component {
 public:
-	MainFrame(ValueTreeState* apvts, StateParameters* stateParams);
+	MainFrame(UIContext& uic);
 	~MainFrame() override;
 	void paint(juce::Graphics&) override;
 	void resized() override;
@@ -34,9 +34,5 @@ private:
 	StatusBarFrame statusBarFrame;
 	TitleFrame titleFrame;
 
-
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainFrame)
-
-
-
 };

@@ -9,11 +9,13 @@
 */
 
 #include "GrainPoint.h"
+#include <JuceHeader.h>
+
 
 GrainPoint::GrainPoint()
 {
 	juce::Random r;
-	Ypos = r.nextFloat();
+	Ypos = static_cast<int>(r.nextFloat());
 
 	opacity = 0.0f;
 	samplePos = 0;
@@ -30,7 +32,7 @@ void GrainPoint::setOpacity(float newValue)
 	opacity = newValue;
 }
 
-void GrainPoint::setSamplePos(float newValue)
+void GrainPoint::setSamplePos(int newValue)
 {
 	samplePos = newValue;
 }
@@ -40,10 +42,10 @@ float GrainPoint::getOpacity()
 	return opacity;
 }
 
-float GrainPoint::getSamplePos() {
+int GrainPoint::getSamplePos() {
 	return samplePos;
 }
 
-float GrainPoint::getYpos() {
+int GrainPoint::getYpos() {
 	return Ypos;
 }

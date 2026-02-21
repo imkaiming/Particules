@@ -1,5 +1,7 @@
 #pragma once
 
+//#include "Core.h"
+
 namespace Param
 {
 	namespace Mix
@@ -7,8 +9,8 @@ namespace Param
 		inline constexpr const char* id = "MIX";
 		inline constexpr const char* name = "Mix";
 		inline constexpr float min = 0.0f;
-		inline constexpr float max = 100.0f;
-		inline constexpr float init = 100.0f;
+		inline constexpr float max = 100.f;
+		inline constexpr float init = 100.f;
 	}
 	namespace Gain
 	{
@@ -23,7 +25,7 @@ namespace Param
 		inline constexpr const char* id = "DENSITY";// grain emissions per sec
 		inline constexpr const char* name = "Density";
 		inline constexpr float min = 0.1f; // 0.1 grain per seconds (1 grain / 10 sec)
-		inline constexpr float max = 500.0f; // 500 grains per seconds (1 grain / 0.002 s)
+		inline constexpr float max = 500.f; // 500 grains per seconds (1 grain / 0.002 s)
 		inline constexpr float init = 1.0f;
 	}
 	namespace Duration
@@ -55,14 +57,16 @@ namespace Param
 	{
 		inline constexpr const char* id = "ENVTYPE";
 		inline constexpr const char* name = "Envelope Type";
-		inline constexpr int init = 1;
-		inline constexpr const char* ENVTYPE_1 = "Hann";
-		inline constexpr const char* ENVTYPE_2 = "Triangular";
-		inline constexpr const char* ENVTYPE_3 = "Hamming";
-		inline constexpr const char* ENVTYPE_4 = "Rectangular";
-		inline constexpr const char* ENVTYPE_5 = "Blackman";
-		inline constexpr const char* ENVTYPE_6 = "BlackmanHarris";
-		inline constexpr const char* ENVTYPE_7 = "FlatTop";
+		inline constexpr const int init = 1;
+		inline constexpr std::array<const char*, 7> envTypeNames = {"Hann", "Triangular", "Hamming", "Rectangular", "Blackman", "BlackmanHarris", "FlatTop"};
+
+		//inline constexpr const char* ENVTYPE_1 = "Hann";
+		//inline constexpr const char* ENVTYPE_2 = "Triangular";
+		//inline constexpr const char* ENVTYPE_3 = "Hamming";
+		//inline constexpr const char* ENVTYPE_4 = "Rectangular";
+		//inline constexpr const char* ENVTYPE_5 = "Blackman";
+		//inline constexpr const char* ENVTYPE_6 = "BlackmanHarris";
+		//inline constexpr const char* ENVTYPE_7 = "FlatTop";
 	}
 
 	namespace Position
@@ -95,6 +99,7 @@ namespace Param
 		inline constexpr const char* id = "TRAVERSALMODE";
 		inline constexpr const char* name = "Traversal Mode";
 		inline constexpr int init = 1;
+		inline constexpr std::array<const char*, 5> traversalModeNames = {"Sinus","Square","Triangular", "Random","None"};
 		inline constexpr const char* TraversalMode_1 = "Sinus";
 		inline constexpr const char* TraversalMode_2 = "Square";
 		inline constexpr const char* TraversalMode_3 = "Triangular";
@@ -121,11 +126,5 @@ namespace Param
 		//inline constexpr float init = 1.0f;
 	}
 }
-
-#define GRAINPOINT_SIZE 10.f
-#define FFTSIZE_ORDER 10
-#define FFTSIZE  static_cast<int>(std::pow(2, FFTSIZE_ORDER))
-
-typedef juce::AudioProcessorValueTreeState ValueTreeState;
 
 

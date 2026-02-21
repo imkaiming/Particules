@@ -9,6 +9,9 @@
 */
 
 #include "CustomLookAndFeel.h"
+#include "../../Ressources/Font/FuturaMedium.h"
+#include "../Framework/ParamsID.h"
+#include "../Utils/MyColours.h"
 
 CustomLookAndFeel::CustomLookAndFeel()
 {
@@ -17,7 +20,7 @@ CustomLookAndFeel::CustomLookAndFeel()
 	//setColour(juce::Slider::textBoxBackgroundColourId, MyColours::black);
 	setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	juce::Typeface::Ptr typeface = juce::Typeface::createSystemTypefaceFor(
+	futuraTypeface = juce::Typeface::createSystemTypefaceFor(
 		FuturaMedium::FuturaMedium_ttf,
 		FuturaMedium::FuturaMedium_ttfSize
 	);
