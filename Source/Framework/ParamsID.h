@@ -85,7 +85,7 @@ namespace Param
 		inline constexpr float max = 1.f;
 		inline constexpr float init = 0.0f;
 	}
-	namespace EnvelopeWidth
+	namespace EnvelopeWidth // TODO to rename to FadeRatio or SustainRatio
 	{
 		inline constexpr const char* id = "ENVWIDTH";
 		inline constexpr const char* name = "EnvWidth";

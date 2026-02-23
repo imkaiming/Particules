@@ -12,15 +12,14 @@
 #include "../Utils/MyColours.h"
 #include "../Framework/ParameterView.h"
 #include "../Framework/UIContext.h"
-//#include "../Frame/SynthFrame.h"
+#include "../PluginProcessor.h"
 
 
-//AudioFileFrame::AudioFileFrame(ParameterView& pv, SynthFrame& synthFrame): paramsView(pv), //synthFrame.init(&thumbnailComponent);
-AudioFileFrame::AudioFileFrame(UIContext& uic): paramsView(uic.paramsView),
+AudioFileFrame::AudioFileFrame(UIContext& uic): paramsView(uic.paramsView), audioProcessor(uic.audioProcessor),
 open_btn((const juce::String)"openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 play_btn((const juce::String)"saveFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
 stop_btn((const juce::String)"stopFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-thumbnailCache(5), loader(uic.paramsView, thumbnailComponent), thumbnailComponent(5, loader.getFormatManager(), thumbnailCache, uic)
+thumbnailComponent(5, audioProcessor.getAudioFileLoader().getFormatManager(), uic)
 {
 
 	setOpenButtonImageOpen();
@@ -51,12 +50,14 @@ thumbnailCache(5), loader(uic.paramsView, thumbnailComponent), thumbnailComponen
 
 	std::function<void()> callbackOnThumbnailReady = [this]()
 	{
-		juce::Logger::outputDebugString("callback after thumbnail painted");
+		juce::Logger::outputDebugString("10) callback after thumbnail painted");
 		//play_btn.setEnabled(true);
 	};
 
 	thumbnailComponent.setCallbackOnThumbnailReady(callbackOnThumbnailReady);
 
+	audioProcessor.addChangeListener(this);
+	/*
 	// audio file loader is a variable of audio file frame so it cannot outlive his parent.
 	std::function<void(bool)> callbackOnFileLoaded = [this](bool ok)
 	{
@@ -74,7 +75,12 @@ thumbnailCache(5), loader(uic.paramsView, thumbnailComponent), thumbnailComponen
 		});
 	};
 
-	loader.setOnFileLoadedCallBack(callbackOnFileLoaded);
+	audioProcessor.getAudioFileLoader().setOnFileLoadedCallBack(callbackOnFileLoaded);
+	*/
+}
+AudioFileFrame::~AudioFileFrame()
+{
+	audioProcessor.removeChangeListener(this);
 }
 
 void AudioFileFrame::openFileButtonClicked()
@@ -82,10 +88,23 @@ void AudioFileFrame::openFileButtonClicked()
 	//juce::Logger::outputDebugString("openFileButtonClicked() ");
 	play_btn.setEnabled(false);
 	paramsView.setIsPlaying(false);
-	loader.loadFile();
+	audioProcessor.loadFile();
 
 	//(paramsView.getAudioLoaded() == true) ? juce::Logger::outputDebugString("paramsView.getAudioLoaded() true") : juce::Logger::outputDebugString("paramsView.getAudioLoaded() false");
 	//(paramsView.getAudioBuffer() == nullptr) ? juce::Logger::outputDebugString("paramsView.getAudioBuffer() nullptr") : juce::Logger::outputDebugString("paramsView.getAudioBuffer() not nullptr");
+}
+
+void AudioFileFrame::filesDropped(const juce::StringArray& files, int x, int y)
+{
+	play_btn.setEnabled(false);
+	paramsView.setIsPlaying(false);
+	for(juce::String file : files)
+	{
+		if(isInterestedInFileDrag(file))
+		{
+			audioProcessor.loadFile(file);
+		}
+	}
 }
 
 void AudioFileFrame::stopFileButtonClicked()
@@ -185,23 +204,12 @@ bool AudioFileFrame::isInterestedInFileDrag(const juce::StringArray& files)
 	// is it an audio file ?
 	for(juce::String file : files)
 	{
-		if(file.contains(".wav") || (".aif") || (".mp3"))
+		if(file.endsWithIgnoreCase(".wav") || file.endsWithIgnoreCase(".aif") || file.endsWithIgnoreCase(".mp3"))
 		{
 			return true;
 		}
 	}
 	return false;
-}
-
-void AudioFileFrame::filesDropped(const juce::StringArray& files, int x, int y)
-{
-	for(juce::String file : files)
-	{
-		if(isInterestedInFileDrag(file))
-		{
-			loader.loadFile(file);
-		}
-	}
 }
 
 // component section
@@ -256,5 +264,17 @@ void AudioFileFrame::resized()
 	flexboxMain.items.add(juce::FlexItem(flexboxRight).withFlex(0.95f).withMargin(h));
 	flexboxMain.performLayout(getLocalBounds().toFloat());
 
+}
+
+void AudioFileFrame::changeListenerCallback(juce::ChangeBroadcaster* source)
+{
+	if(source == &audioProcessor)
+	{
+		const juce::File& f = audioProcessor.getCurrentFile();
+		bool valid = f.existsAsFile();
+		if(valid && paramsView.getSampleSource())
+			thumbnailComponent.setFile(f);
+		play_btn.setEnabled(valid);
+	}
 }
 

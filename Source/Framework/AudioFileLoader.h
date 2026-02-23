@@ -18,27 +18,27 @@ class ParameterView;
 class AudioFileLoader
 {
 public:
-	AudioFileLoader(ParameterView&, ThumbnailComponent&);
+	AudioFileLoader(ParameterView&);
 	~AudioFileLoader() = default;
 
-	bool loadAudio(juce::File&);
-	void loadFile();
-	void loadFile(const juce::String&);
-	
+	void loadFile(std::function<void(juce::File, bool)> completion);
+	void loadFile(const juce::String&, std::function<void(juce::File, bool)> completion);
 
-	void setOnFileLoadedCallBack(std::function<void(bool)> foo);
+	bool loadAudio(juce::File&);
+
+
 	juce::AudioFormatManager& getFormatManager();
 
 private:
 	static constexpr uint64_t maxFileSize = Param::MaxFileSize;
 	static constexpr uint8_t maxDuration = Param::MaxDuration;
 
-	std::function<void(bool)> onFileLoaded;
 
 	void showErrorWindow(juce::String message);
 	std::unique_ptr<juce::FileChooser> chooser;
 
 	ParameterView& paramsView;
-	ThumbnailComponent& thumbnailComponent;
 	juce::AudioFormatManager formatManager; // classe qui traite les formats de fichier tq wav, aiff, ogg, vorbis ou mp3
 };
+//void setOnFileLoadedCallBack(std::function<void(bool)> foo);
+//std::function<void(bool)> onFileLoaded;

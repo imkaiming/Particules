@@ -12,12 +12,13 @@
 #include "Framework/ParameterView.h"
 #include "Audio/GranularEngine.h"
 #include "Framework/UIContext.h"
+#include "Framework/AudioFileLoader.h"
 #include "Utils/CustomLookAndFeel.h"
 
 
 class ParameterView;
 class GranularEngine;
-class ParticulesAudioProcessor: public juce::AudioProcessor
+class ParticulesAudioProcessor: public juce::AudioProcessor, public juce::ChangeBroadcaster
 #if JucePlugin_Enable_ARA
 	, public juce::AudioProcessorARAExtension
 #endif
@@ -60,8 +61,13 @@ public:
 
 	static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
+	void loadFile(const juce::String& path);
+	void loadFile();
+	const juce::File& getCurrentFile() const noexcept { return currentFile; };
+	AudioFileLoader& getAudioFileLoader() noexcept { return loader; };
 private:
 
+	void initOnAudioLoadedCallback();
 	void loadDebugPreset();
 	bool debugPresetLoaded = false;
 
@@ -71,7 +77,12 @@ private:
 
 
 	CustomLookAndFeel customLookAndFeel;
-	UIContext uiContext{apvts, paramsView, customLookAndFeel};
+	UIContext uiContext;
+
+	AudioFileLoader loader;
+	juce::File currentFile;
+	std::function<void(const juce::File, bool)> onAudioLoadedCallback;
+	//AudioBuffer inputBuffer;
 
 	//juce::ADSR::Parameters adsrParameters;
 	//juce::ADSR adsr;

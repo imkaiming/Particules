@@ -12,27 +12,30 @@
 
 
 #include "ThumbnailComponent.h"
-#include "../Framework/AudioFileLoader.h"
+//#include "../Framework/AudioFileLoader.h"
+//#include "../Framework/UIContext.h"
 
 // the Audio File Frame provide the control to load and play the audio.
 
-//class ParameterView;
+class ParameterView;
+class ParticulesAudioProcessor;
 //class SynthFrame;
-struct UIContext;
-class AudioFileFrame:	public juce::Component, public juce::FileDragAndDropTarget
+//struct UIContext;
+class AudioFileFrame:	public juce::Component, public juce::FileDragAndDropTarget, public juce::ChangeListener
 {
 public:
-	//AudioFileFrame(ParameterView&, SynthFrame&);
+
 	AudioFileFrame(UIContext& uic);
-	~AudioFileFrame() = default;
+	~AudioFileFrame();
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
 private:
 
+	void changeListenerCallback(juce::ChangeBroadcaster*) override;
+
 	ParameterView& paramsView;
-	AudioFileLoader loader;
-	juce::AudioThumbnailCache thumbnailCache;
+	ParticulesAudioProcessor& audioProcessor;
 	ThumbnailComponent thumbnailComponent; // after the file is loaded draw the waveform
 
 

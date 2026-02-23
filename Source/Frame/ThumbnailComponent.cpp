@@ -13,23 +13,23 @@
 #include "../Framework/ParamsID.h"
 #include "../Utils/MyColours.h"
 #include "../Framework/ParameterView.h"
-#include "../Framework/UIContext.h"
 
 
-ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail, juce::AudioFormatManager& formatManager, juce::AudioThumbnailCache& cache, UIContext& uic)
-	: thumbnail(samplesPerThumbnail, formatManager, cache), grainVisualizer(uic.paramsView.getGrains()), paramsView(uic.paramsView), apvts{uic.apvts}
+ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail, juce::AudioFormatManager& formatManager, UIContext& uic):
+	uic{uic}, cache(5), audioThumbnail(samplesPerThumbnail, formatManager, cache), grainVisualizer(uic.paramsView.getGrains()),
+	paramsView(uic.paramsView), apvts{uic.apvts}, audioProcessor{uic.audioProcessor}
 {
 	paramsView.setGrainVisualizer(&grainVisualizer);
 
 	positionValue = Param::Position::init;
 	selectionValue = Param::Selection::init;
-	
+
 
 	updatePosition(positionValue);
 	updateSelection(selectionValue);
 	updateOverflow(positionValue);
 
-	thumbnail.addChangeListener(this);
+	audioThumbnail.addChangeListener(this);
 
 	addAndMakeVisible(&selection);
 	addAndMakeVisible(&position);
@@ -43,7 +43,7 @@ ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail, juce::AudioForma
 
 ThumbnailComponent::~ThumbnailComponent()
 {
-	thumbnail.removeChangeListener(this);
+	audioThumbnail.removeChangeListener(this);
 	apvts.removeParameterListener(Param::Position::id, this);
 	apvts.removeParameterListener(Param::Selection::id, this);
 	paramsView.setGrainVisualizer(nullptr);
@@ -51,12 +51,13 @@ ThumbnailComponent::~ThumbnailComponent()
 
 void ThumbnailComponent::setFile(const juce::File& file)
 {
-	thumbnail.setSource(new juce::FileInputSource(file));
+	DBG("8) void ThumbnailComponent::setFile(const juce::File& file)");
+	audioThumbnail.setSource(new juce::FileInputSource(file));
 }
 
 void ThumbnailComponent::paint(juce::Graphics& g)
 {
-	if(thumbnail.getNumChannels() == 0)
+	if(audioThumbnail.getNumChannels() == 0)
 		paintIfNoFileLoaded(g);
 	else
 		paintIfFileLoaded(g);
@@ -74,15 +75,15 @@ void ThumbnailComponent::paintIfFileLoaded(juce::Graphics& g)
 	g.fillAll(MyColours::black);
 
 	g.setColour(MyColours::brightBlue);
-	thumbnail.drawChannels(g, getLocalBounds(), 0.0, thumbnail.getTotalLength(), 1.0f);
+	audioThumbnail.drawChannels(g, getLocalBounds(), 0.0, audioThumbnail.getTotalLength(), 1.0f);
 }
 
 void ThumbnailComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-	if(source == &thumbnail)
+	if(source == &audioThumbnail)
 	{
 		repaint();
-		if(thumbnail.isFullyLoaded())
+		if(audioThumbnail.isFullyLoaded())
 		{
 			//juce::Logger::outputDebugString("FINI DE PEINTURER CALLBACK");
 			// TODO INSERT AUDIO FILE FRAME CALLBACK IF YOU WANT 
@@ -90,7 +91,6 @@ void ThumbnailComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
 
 			if(onThumbnailReady)
 				onThumbnailReady();
-
 		}
 	}
 }
@@ -137,9 +137,9 @@ void ThumbnailComponent::updatePosition(float value)
 	position.setPosition(positionValue * getWidth());
 	selection.setPosition(positionValue * getWidth());
 	//DBG("update pos is called");
-	float overflow = selectionValue * getWidth() + positionValue * getWidth() - (float)getWidth();
-	if(overflow >= 0.f)
-		updateOverflow(overflow);
+	float f = selectionValue * getWidth() + positionValue * getWidth() - (float)getWidth();
+	if(f >= 0.f)
+		updateOverflow(f);
 	else
 		updateOverflow(0.f);
 }
@@ -149,9 +149,9 @@ void ThumbnailComponent::updateSelection(float value)
 	selectionValue = value;
 	selection.setSelection(selectionValue * getWidth());
 
-	float overflow = selectionValue * getWidth() + positionValue * getWidth() - (float)getWidth();
-	if(overflow >= 0.f)
-		updateOverflow(overflow);
+	float f = selectionValue * getWidth() + positionValue * getWidth() - (float)getWidth();
+	if(f >= 0.f)
+		updateOverflow(f);
 	else
 		updateOverflow(0.f);
 

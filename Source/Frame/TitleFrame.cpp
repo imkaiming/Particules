@@ -26,8 +26,8 @@ void TitleFrame::paint(juce::Graphics& g)
 
 	// TODO check if it worked
 	const juce::Font font(look.getFuturaTypeface());
-	font.withHeight(16.f);
-	titreLabel.setFont(font);
+	const juce::Font newFont = font.withHeight(16.f);
+	titreLabel.setFont(newFont);
 	g.fillAll(MyColours::smokyBlack);
 
 	//const juce::Font f;

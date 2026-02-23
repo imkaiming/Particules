@@ -25,14 +25,7 @@ public:
 	void paint(juce::Graphics&) override;
 	void resized() override;
 
-	//void sliderValueChanged(juce::Slider* slider) override;
-
-	//void init(ThumbnailComponent&);
-
 private:
-
-	//ThumbnailComponent& thumbnailComponent;
-	//ValueTreeState& apvts;
 
 	juce::Slider mixSlider;
 	juce::Slider gainSlider;

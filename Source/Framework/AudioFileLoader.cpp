@@ -12,24 +12,20 @@
 #include "../Framework/ParameterView.h"
 #include "../Framework/Core.h"
 
-AudioFileLoader::AudioFileLoader(ParameterView& paramsView, ThumbnailComponent& thumbnailComponent):
-	paramsView{paramsView}, thumbnailComponent{thumbnailComponent}
+AudioFileLoader::AudioFileLoader(ParameterView& paramsView):paramsView{paramsView}
 {
 	// permet au manager de format de gérer les formats WAV, AIFF, MP3, etc.
 	formatManager.registerBasicFormats();
 }
 
-// https://forum.juce.com/t/solved-juce-filechooser-has-no-member-browseforfiletoopen/47793/3
-// https://forum.juce.com/t/filechooser-not-appearing-in-windows/54952/2
-void AudioFileLoader::loadFile()
+void AudioFileLoader::loadFile(std::function<void(const juce::File, bool)> onAudioLoaded)
 {
 	if(!chooser)
 		chooser = std::make_unique<juce::FileChooser>("Select an audio file.", juce::File{}, formatManager.getWildcardForAllFormats());
-
 	int flags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
 
 	//juce::Logger::outputDebugString("chooser.launchAsync(flags, [this](const juce::FileChooser& resultChooser) ");
-	chooser->launchAsync(flags, [this](const juce::FileChooser& resultChooser)
+	chooser->launchAsync(flags, [this, onAudioLoaded](const juce::FileChooser& resultChooser)
 	{
 		juce::File file = resultChooser.getResult();
 		bool ok = false;
@@ -37,18 +33,12 @@ void AudioFileLoader::loadFile()
 		{
 			ok = this->loadAudio(file);
 		}
-
-		if(onFileLoaded)
-		{
-			onFileLoaded(ok);
-		}
+		onAudioLoaded(file, ok);
 	});
 }
 
-// https://www.youtube.com/watch?v=2OErY-qhGyw
-void AudioFileLoader::loadFile(const juce::String& path)
+void AudioFileLoader::loadFile(const juce::String& path, std::function<void(const juce::File, bool)> onAudioLoaded)
 {
-
 	//juce::Logger::outputDebugString("File dragged ! ");
 	juce::File file(path);
 	bool ok = false;
@@ -56,10 +46,7 @@ void AudioFileLoader::loadFile(const juce::String& path)
 	{
 		ok = this->loadAudio(file);
 	}
-	if(onFileLoaded)
-	{
-		onFileLoaded(ok);
-	}
+	onAudioLoaded(file, ok);
 }
 
 bool AudioFileLoader::loadAudio(juce::File& file)
@@ -117,21 +104,21 @@ bool AudioFileLoader::loadAudio(juce::File& file)
 						  resampledSamples);
 	}
 
-	thumbnailComponent.setFile(file);
+	//thumbnailComponent.setFile(file);
 
 	std::shared_ptr<const SampleSource> source = std::make_shared<const SampleSource>(std::move(resampledBuffer), paramsView.getSampleRate());
 
 	//const SampleSource source(resampledBuffer, targetSampleRate);
 	paramsView.setSampleSource(source);
-	paramsView.getGrainVisualizer()->setGrains(paramsView.getGrains());
+	//paramsView.getGrainVisualizer()->setGrains(paramsView.getGrains());
 
 	return true;
 }
 
-void AudioFileLoader::setOnFileLoadedCallBack(std::function<void(bool)> callbackOnFileLoaded)
-{
-	onFileLoaded = std::move(callbackOnFileLoaded);
-}
+//void AudioFileLoader::setOnFileLoadedCallBack(std::function<void(bool)> callbackOnFileLoaded)
+//{
+//	onFileLoaded = std::move(callbackOnFileLoaded);
+//}
 
 juce::AudioFormatManager& AudioFileLoader::getFormatManager()
 {

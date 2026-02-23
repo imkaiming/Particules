@@ -20,9 +20,10 @@ ParticulesAudioProcessor::ParticulesAudioProcessor()
 					 .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
 	), apvts(*this, nullptr, "Parameters", createParameterLayout()), //apvts stands for audio processor value tree state
-	paramsView(), grainEngine(paramsView)
+	paramsView(), grainEngine(paramsView), uiContext{apvts, paramsView, customLookAndFeel, *this}, loader{paramsView}
 #endif
 {
+	initOnAudioLoadedCallback();
 }
 
 ParticulesAudioProcessor::~ParticulesAudioProcessor()
@@ -97,9 +98,6 @@ void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
 	grainEngine.init(static_cast<int>(sampleRate), numChannels, samplesPerBlock);
 
 	//juce::Logger::outputDebugString("density : " + (const juce::String)this->paramsView.getDensity() + " duration : " + (const juce::String)this->paramsView.getDuration());
-#if ENABLE_DEBUG_PRESET // exist also in the audio file loader
-	loadDebugPreset();
-#endif
 }
 
 void ParticulesAudioProcessor::releaseResources()
@@ -155,6 +153,9 @@ bool ParticulesAudioProcessor::hasEditor() const
 juce::AudioProcessorEditor* ParticulesAudioProcessor::createEditor()
 {
 	ParticulesAudioProcessorEditor* editor = new ParticulesAudioProcessorEditor(*this);
+#if ENABLE_DEBUG_PRESET // exist also in the audio file loader
+	loadDebugPreset();
+#endif
 	return editor;
 }
 
@@ -193,14 +194,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 	layout.add(
 		std::make_unique<juce::AudioParameterFloat>(
 			Param::Mix::id, Param::Mix::name, juce::NormalisableRange<float>(Param::Mix::min, Param::Mix::max, 0.01f),
-			Param::Mix::init, " %", juce::AudioProcessorParameter::genericParameter,
+			Param::Mix::init, juce::String(" %"), juce::AudioProcessorParameter::genericParameter,
 			[](float v, int) { return juce::String(v, 1) + "%"; }, [](const juce::String& s) { return s.getFloatValue(); })
 	);
 
 	layout.add(
 		std::make_unique<juce::AudioParameterFloat>(
 			Param::Gain::id, Param::Gain::name, juce::NormalisableRange<float>(Param::Gain::min, Param::Gain::max, 0.01f),
-			Param::Gain::init, " dB", juce::AudioProcessorParameter::genericParameter,
+			Param::Gain::init, juce::String(" dB"), juce::AudioProcessorParameter::genericParameter,
 			[](float v, int) { return juce::String(v, 3) + " dB"; }, [](const juce::String& s) { return s.getFloatValue(); })
 	);
 
@@ -259,7 +260,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 			Param::Selection::init)
 	);
 
-	const juce::StringArray choicesEnvTypeNames(Param::EnvelopeType::envTypeNames.data(), Param::EnvelopeType::envTypeNames.size());
+	const juce::StringArray choicesEnvTypeNames(Param::EnvelopeType::envTypeNames.data(), (int)Param::EnvelopeType::envTypeNames.size());
 	//const juce::StringArray choices{Param::EnvelopeType::envTypeNames, sizeof(Param::EnvelopeType::envTypeNames)};
 
 	layout.add(
@@ -297,23 +298,96 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 	return layout;
 }
 
+void ParticulesAudioProcessor::initOnAudioLoadedCallback()
+{
+	onAudioLoadedCallback = [this](juce::File f, bool ok)
+	{
+		if(ok)
+		{
+			currentFile = f;
+		} else
+		{
+			// TODO send UI Notification but do not change current file
+		}
+		sendChangeMessage();
+	};
+}
+
+void ParticulesAudioProcessor::loadFile(const juce::String& path)
+{
+	loader.loadFile(path, onAudioLoadedCallback);
+}
+
+void ParticulesAudioProcessor::loadFile()
+{
+	loader.loadFile(onAudioLoadedCallback);
+}
+
 void ParticulesAudioProcessor::loadDebugPreset()
 {
+	if(!paramsView.getSampleSource())
+		DBG("SAMPLESOURCE NOT OK");
+
+	juce::File debugAudioPlaceHolder = juce::File::getSpecialLocation(juce::File::currentExecutableFile)
+		.getParentDirectory().getParentDirectory().getParentDirectory().getParentDirectory().getParentDirectory()
+		.getParentDirectory().getChildFile("Ressources").getChildFile("AudioSource")
+		.getChildFile("01_Piano_E.wav");
+
+	//DBG("juce::File::currentApplicationFile " + debugAudioPlaceHolder.getFullPathName());
+
 	if(debugPresetLoaded) return;
+	DBG("LOADDEBUGPRESET");
+
+	//juce::File debugFile = juce::File::getSpecialLocation(
+	//	juce::File::userDesktopDirectory
+	//).getChildFile("test.wav");
+
+
+	juce::NormalisableRange<float> gainRange(Param::Gain::min, Param::Gain::max);
+	float normalizedGain = gainRange.convertTo0to1(-3.f);
+
+	juce::NormalisableRange<float> densityRange(Param::Density::min, Param::Density::max);
+	float normalizedDensity = densityRange.convertTo0to1(1);
+
+	juce::NormalisableRange<float> durationRange(Param::Duration::min, Param::Duration::max);
+	float normalizedDuration = durationRange.convertTo0to1(1);
+
+	juce::NormalisableRange<float> speedRange(Param::Speed::min, Param::Speed::max);
+	float normalizedSpeed = speedRange.convertTo0to1(1);
+
+	juce::NormalisableRange<float> positionRange(Param::Position::min, Param::Position::max);
+	float normalizedPosition = positionRange.convertTo0to1(0.5);
+
+	juce::NormalisableRange<float> selectionRange(Param::Selection::min, Param::Selection::max);
+	float normalizedSelection = selectionRange.convertTo0to1(0.25f);
+
+	juce::NormalisableRange<float> traversalTimeRange(Param::TraversalTime::min, Param::TraversalTime::max);
+	float normalizedTraversalTime = traversalTimeRange.convertTo0to1(1.f);
+
+
 	apvts.getParameter(Param::Mix::id)->setValueNotifyingHost(1.f);// MIX100%
-	apvts.getParameter(Param::Gain::id)->setValueNotifyingHost(juce::Decibels::decibelsToGain(-3.f));
-	apvts.getParameter(Param::Density::id)->setValueNotifyingHost(1.f);
-	apvts.getParameter(Param::Duration::id)->setValueNotifyingHost(1.f);
-	apvts.getParameter(Param::Speed::id)->setValueNotifyingHost(1.f);
-	apvts.getParameter(Param::Position::id)->setValueNotifyingHost(0.5f);
-	apvts.getParameter(Param::Selection::id)->setValueNotifyingHost(0.25f);
+	apvts.getParameter(Param::Gain::id)->setValueNotifyingHost(normalizedGain);
+	apvts.getParameter(Param::Density::id)->setValueNotifyingHost(normalizedDensity);
+	apvts.getParameter(Param::Duration::id)->setValueNotifyingHost(normalizedDuration);
+	apvts.getParameter(Param::Speed::id)->setValueNotifyingHost(normalizedSpeed);
+	apvts.getParameter(Param::Position::id)->setValueNotifyingHost(normalizedPosition);
+	apvts.getParameter(Param::Selection::id)->setValueNotifyingHost(normalizedSelection);
 	apvts.getParameter(Param::EnvelopeType::id)->setValueNotifyingHost(1.f);
+	apvts.getParameter(Param::TraversalTime::id)->setValueNotifyingHost(normalizedTraversalTime);
+
+
+	if(debugAudioPlaceHolder.existsAsFile())
+	{
+		this->loadFile(debugAudioPlaceHolder.getFullPathName());
+	}
+
+	if(paramsView.getSampleSource())
+		DBG("SAMPLESOURCE OK");
 
 	//apvts.getParameter(Param::EnvelopeWidth::id)->setValueNotifyingHost(100.f);
 	//apvts.getParameter(Param::TraversalMode::id)->;
 	//apvts.getParameter(Param::TraversalTime::id)->;
 
-	// charger le fichier dans le audio file loader
 
 
 	debugPresetLoaded = true;

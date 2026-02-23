@@ -17,6 +17,7 @@
 
 #include "../Utils/GrainVisualizer.h"
 #include "../Framework/Core.h"
+#include "../Framework/UIContext.h"
 
 // Thumbnail is where the audio waveform is painted after being loaded by the audio file loader
 
@@ -25,14 +26,11 @@ struct UIContext;
 class ThumbnailComponent: public juce::Component, private juce::ChangeListener, juce::AudioProcessorValueTreeState::Listener
 {
 public:
-	ThumbnailComponent(int, juce::AudioFormatManager&, juce::AudioThumbnailCache&, UIContext&);
+	ThumbnailComponent(int, juce::AudioFormatManager&, UIContext&);
 	~ThumbnailComponent() override;
 
 	void setFile(const juce::File&);
-
-
 	void setCallbackOnThumbnailReady(std::function<void()>);
-
 	GrainVisualizer* getGrainVisualizer() { return &grainVisualizer; };
 
 private:
@@ -49,13 +47,18 @@ private:
 	void updatePosition(float value); // update the position marker when changing the file position slider value
 	void updateSelection(float value);
 
+
+	UIContext& uic;
 	ParameterView& paramsView;
 	ValueTreeState& apvts;
+	ParticulesAudioProcessor& audioProcessor;
 
 	float positionValue;
 	float selectionValue;
 
-	juce::AudioThumbnail thumbnail;
+	juce::AudioThumbnailCache cache;
+	juce::AudioThumbnail audioThumbnail;
+
 	std::function<void()> onThumbnailReady;
 
 	PositionOverlay position;

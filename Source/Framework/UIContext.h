@@ -12,12 +12,13 @@
 
 #include "../Framework/Core.h"
 
-//using ValueTreeState = juce::AudioProcessorValueTreeState;
 class ParameterView;
 class CustomLookAndFeel;
+class ParticulesAudioProcessor;
 struct UIContext
 {
     ValueTreeState& apvts;
     ParameterView& paramsView;
     CustomLookAndFeel& customLookAndFeel;
+    ParticulesAudioProcessor& audioProcessor;
 };
