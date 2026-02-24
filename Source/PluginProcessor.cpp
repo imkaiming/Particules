@@ -325,8 +325,8 @@ void ParticulesAudioProcessor::loadFile()
 
 void ParticulesAudioProcessor::loadDebugPreset()
 {
-	if(!paramsView.getSampleSource())
-		DBG("SAMPLESOURCE NOT OK");
+	//if(!paramsView.getSampleSource())
+	//	DBG("SAMPLESOURCE NOT OK");
 
 	juce::File debugAudioPlaceHolder = juce::File::getSpecialLocation(juce::File::currentExecutableFile)
 		.getParentDirectory().getParentDirectory().getParentDirectory().getParentDirectory().getParentDirectory()

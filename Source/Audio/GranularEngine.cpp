@@ -39,7 +39,8 @@ void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize
 
 	mixerProcessor.pushDrySamples(outputBlock);
 
-	scheduler.process(bufferSize, source->sampleRate, snapshot.density, [&](int offset, const ParameterSnapshot& snapshot) { voiceManager.spawn(offset, snapshot); }, snapshot);
+	scheduler.process(bufferSize, source->sampleRate, snapshot.density, 
+					  [this](int offset, const ParameterSnapshot& snapshot) { voiceManager.spawn(offset, snapshot); }, snapshot);
 	
 	voiceManager.process(outputBlock, bufferSize, source);
 	

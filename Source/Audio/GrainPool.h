@@ -43,9 +43,9 @@ private:
 
 	static constexpr uint16_t mCapacity = Param::MaxGrains; // max grain = 500, 2^16 = 65535 values, 2^8 = 256 not enough
 
-	uint16_t nextFree = 0;
 	std::array<Grain, mCapacity> grains;
 	std::array<uint16_t, mCapacity> freeIndices; // unordered stack of indexes. The most recently freed grain (also cache friendly)
+	uint16_t nextFree = 0;
 };
 
 

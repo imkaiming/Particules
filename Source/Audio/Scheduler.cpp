@@ -170,8 +170,32 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 double Scheduler::getInterOnSet(float density, double sampleRate) const noexcept
 {
 	if(density <= 0.0) return -1.0;
-	return static_cast<int>(sampleRate / (double)density);
+	return sampleRate / (double)density;
 }
+
+void Scheduler::process(int bufferSize, double sampleRate, float density,
+						std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& parameters)
+{
+	const double interOnSet = getInterOnSet(density, sampleRate);
+	if(interOnSet <= 1)
+	{
+		setOffset(0.0);
+		jassertfalse;
+		return;
+	} // dont need 1 grain per sample this is too much
+
+	int count = 0;
+	double offset = getOffset(); // offset of the next outBuffer call
+	while(offset < static_cast<double>(bufferSize) && count < mCapacity)
+	{
+		spawn(static_cast<int>(std::floor(offset)), parameters); // call the voice manager
+		offset += interOnSet;
+		count++;
+	}
+
+	setOffset(offset - static_cast<double>(bufferSize));
+};
+
 /*
 int Scheduler::computeEvents(int bufferSize, double sampleRate, float density, std::array<uint16_t, Param::MaxEvents>& events)
 {

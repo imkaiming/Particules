@@ -25,18 +25,18 @@ void VoiceManager::reset()
 
 }
 
+//source.get()->buffer;
+//source.get()->numChannels;
+//source.get()->numSamples;
+
+// on boucle en sample accurate
+// on saisie le grain avec le handle
+// on update sa position relative au buffer input
+// on ecrit dans le buffer output le resultat 
+// verifier les calculs d'enveloppe et des gains relatif
 void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const SampleSource* source)
 {
-	//source.get()->buffer;
-	//source.get()->numChannels;
-	//source.get()->numSamples;
-
-	// on boucle en sample accurate
-	// on saisie le grain avec le handle
-	// on update sa position relative au buffer input
-	// on ecrit dans le buffer output le resultat 
-	// verifier les calculs d'enveloppe et des gains relatif
-
+	int numChannels = outputBlock.getNumChannels();
 	for(size_t currentSample = 0; currentSample < bufferSize; ++currentSample)
 	{
 		for(size_t i = 0; i < activeCount;)
@@ -48,16 +48,12 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const Sample
 			{
 				removeVoice(i); continue;
 			}
-			//buffer.getNumChannels();
-			//source.get()->numChannels;
-			for(int channel = 0; channel < outputBlock.getNumChannels(); ++channel)
-			{
-				//float* outputPtr = outputBlock.getWritePointer(channel);
-				//outputPtr[currentSample] += g->getNextSample(source, channel, outputBlock.getNumChannels());
-				outputBlock.addSample(channel, currentSample, g->getNextSample(source, channel, outputBlock.getNumChannels()));
-				g->update();
-			}
-			if(!g->isExhausted())
+			for(int channel = 0; channel < numChannels; ++channel)
+				outputBlock.addSample(channel, currentSample, g->getNextSample(source, channel, numChannels));
+
+			g->update();
+
+			if(g->isExhausted())
 			{
 				grainPool.release(handle);
 				removeVoice(i);
@@ -66,6 +62,13 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const Sample
 				i++;
 			}
 		}
+	}
+
+	// TODO : proper AGC automatic gain compensation
+	if(activeCount > 0)
+	{
+		float scale = 1 / std::sqrt(static_cast<float>(activeCount));
+		outputBlock.multiplyBy(scale);
 	}
 }
 

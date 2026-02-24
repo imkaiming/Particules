@@ -39,6 +39,7 @@ public:
 
 
 	// Block based scheduler - might switch to sample accurate scheduler later
+	/*
 	template<typename SpawnFn>
 	void process(int bufferSize, double sampleRate, float density, SpawnFn&& spawn, const ParameterSnapshot& parameters)
 	{
@@ -56,7 +57,9 @@ public:
 
 		setOffset(offset - bufferSize);
 		//return count;
-	};
+	};*/
+
+	void process(int bufferSize, double sampleRate, float density, std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& parameters);
 
 	void reset() { nextOnSet = 0; }
 
