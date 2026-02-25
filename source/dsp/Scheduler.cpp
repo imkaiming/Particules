@@ -9,11 +9,9 @@
 */
 
 #include "Scheduler.h"
-#include "../framework/ParameterView.h"
 
-Scheduler::Scheduler(ParameterView& paramsView): paramsView(paramsView), nextOnSet{0}
-{
-}
+//Scheduler::Scheduler(ParameterView& paramsView): paramsView(paramsView), nextOnSet{0}
+Scheduler::Scheduler() : nextOnSet { 0 } {}
 
 /*
 Scheduler::~Scheduler()
@@ -167,51 +165,31 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 
 */
 
-double Scheduler::getInterOnSet(float density, double sampleRate) const noexcept
+double Scheduler::getInterOnSet (float density, double sampleRate) const noexcept
 {
-	if(density <= 0.0) return -1.0;
-	return sampleRate / (double)density;
+    if (density <= 0.0)
+        return -1.0;
+    return sampleRate / (double) density;
 }
 
-void Scheduler::process(int bufferSize, double sampleRate, float density,
-						std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& parameters)
+void Scheduler::process (int bufferSize, double sampleRate, float density, std::function<void (int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& parameters)
 {
-	const double interOnSet = getInterOnSet(density, sampleRate);
-	if(interOnSet <= 1)
-	{
-		setOffset(0.0);
-		jassertfalse;
-		return;
-	} // dont need 1 grain per sample this is too much
+    const double interOnSet = getInterOnSet (density, sampleRate);
+    if (interOnSet <= 1)
+    {
+        setOffset (0.0);
+        throw std::logic_error ("Density too high for scheduler");
+        return;
+    } // dont need 1 grain per sample this is too much
 
-	int count = 0;
-	double offset = getOffset(); // offset of the next outBuffer call
-	while(offset < static_cast<double>(bufferSize) && count < mCapacity)
-	{
-		spawn(static_cast<int>(std::floor(offset)), parameters); // call the voice manager
-		offset += interOnSet;
-		count++;
-	}
+    int count = 0;
+    double offset = getOffset(); // offset of the next outBuffer call
+    while (offset < static_cast<double> (bufferSize) && count < mCapacity)
+    {
+        spawn (static_cast<int> (std::floor (offset)), parameters); // call the voice manager
+        offset += interOnSet;
+        count++;
+    }
 
-	setOffset(offset - static_cast<double>(bufferSize));
+    setOffset (offset - static_cast<double> (bufferSize));
 };
-
-/*
-int Scheduler::computeEvents(int bufferSize, double sampleRate, float density, std::array<uint16_t, Param::MaxEvents>& events)
-{
-	const double interOnSet = getInterOnSet(density, sampleRate);
-	if(interOnSet <= 1) { setOffset(0.0);	return -1; }
-
-	int count = 0;
-	double offset = getOffset(); // offset of the next outBuffer call
-	while(offset < bufferSize && count < mCapacity)
-	{
-		events[count] = static_cast<uint16_t>(std::floor(offset));
-		offset += interOnSet;
-		count++;
-	}
-
-	setOffset(offset - bufferSize);
-	return count;
-}
-*/

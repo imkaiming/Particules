@@ -16,8 +16,6 @@
 
 #include "VoiceManager.h"
 
-
-//#include "../FrameWork/Core.h"
 #include "Scheduler.h"
 
 
@@ -42,10 +40,6 @@ private :
 	Scheduler scheduler;
 	GrainPool grainPool;
 	VoiceManager voiceManager;
-
-
-
-
 
 	juce::dsp::DryWetMixer<float> mixerProcessor;
 

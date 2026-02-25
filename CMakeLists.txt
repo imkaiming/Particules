@@ -70,7 +70,7 @@ juce_add_plugin("${PROJECT_NAME}"
     BUNDLE_ID "${BUNDLE_ID}"
 
     # On MacOS, plugin is copied to /Users/yourname/Library/Audio/Plug-Ins/
-    COPY_PLUGIN_AFTER_BUILD TRUE
+    COPY_PLUGIN_AFTER_BUILD FALSE
 
     # Change me!
     # A four-character plugin id
@@ -122,7 +122,7 @@ include(Assets)
 
 # MacOS only: Cleans up folder and target organization on Xcode.
 include(XcodePrettify)
-
+ 
 # This is where you can set preprocessor definitions for JUCE and your plugin
 target_compile_definitions(SharedCode
     INTERFACE
@@ -176,6 +176,6 @@ include(Tests)
 
 # A separate target for Benchmarks (keeps the Tests target fast)
 include(Benchmarks)
-
+ 
 # Output some config for CI (like our PRODUCT_NAME)
 include(GitHubENV)

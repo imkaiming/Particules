@@ -11,13 +11,8 @@
 #include "GranularEngine.h"
 #include "../framework/ParameterView.h"
 
-GranularEngine::GranularEngine(ParameterView& sp): paramsView{sp}, scheduler{sp}, voiceManager{grainPool}, grainPool{}
-	//fft(FFTSIZE_ORDER),
-	//phaseVocoderBuffer(paramsView->getNumChannels(), FFTSIZE),
-	//window(FFTSIZE, juce::dsp::WindowingFunction<float>::hann),
-	//circularBuffer(paramsView->getNumChannels(), FFTSIZE)
+GranularEngine::GranularEngine(ParameterView& sp): paramsView{sp}, scheduler{}, voiceManager{grainPool}, grainPool{}
 {
-	//fft.init(FFTSIZE);
 }
 
 void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize)
@@ -53,7 +48,7 @@ void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize
 // called by prepare to play method
 void GranularEngine::init(int sampleRate, int numChannel, int samplePerBlocks)
 {
-	scheduler.reset();
+	//scheduler.reset();
 	//juce::Logger::outputDebugString("Granuler Engine init numChannel is : " + juce::String(numChannel));
 	juce::dsp::ProcessSpec spec;
 
