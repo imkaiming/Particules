@@ -1,6 +1,5 @@
 #include "../source/dsp/Scheduler.h"
 #include "../source/framework/ParameterSnapshot.h"
-#include "../source/framework/SampleSource.h"
 #include <catch2/catch_test_macros.hpp>
 
 namespace audio_plugin_test
@@ -39,36 +38,29 @@ namespace audio_plugin_test
             spawnPositions.clear();
         }
 
-        void spawnCallback (int position, const ParameterSnapshot& p)
+        void spawnCallback(int position, const ParameterSnapshot& p)
         {
             spawnCallCount++;
-            spawnPositions.push_back (position);
+            spawnPositions.push_back(position);
         }
     };
 
-    TEST_CASE ("1# Scheduler ctor", "[scheduler]")
+    TEST_CASE("1# Scheduler ctor", "[scheduler]")
     {
         Scheduler* s = nullptr;
         try
         {
             s = new Scheduler();
-        } catch (...)
-        {
-            REQUIRE (false);
-        }
-
-        try
-        {
             delete s;
-        } catch (...)
+        } catch(...)
         {
-            REQUIRE (false);
+            REQUIRE(false);
         }
 
-        REQUIRE (true);
+        REQUIRE(true);
     }
 
-    TEST_CASE ("2# density = 1.f, sr = 512", "[scheduler]")
+    TEST_CASE("2# density = 1.f, sr = 512", "[scheduler]")
     {
         SchedulerFixture f;
         Scheduler scheduler;
@@ -78,16 +70,16 @@ namespace audio_plugin_test
         f.sampleRate = 48000.0;
         try
         {
-            scheduler.process (f.numSamples, f.sampleRate, f.snapshot.density, [&] (int pos, const ParameterSnapshot& p) { f.spawnCallback (pos, p); }, f.snapshot);
-        } catch (const std::exception& e)
+            scheduler.process(f.numSamples, f.sampleRate, f.snapshot.density, [&](int pos, const ParameterSnapshot& p) { f.spawnCallback(pos, p); }, f.snapshot);
+        } catch(const std::exception& e)
         {
-            printf ("Exception: %s\n", e.what());
+            printf("Exception: %s\n", e.what());
         }
 
-        REQUIRE (f.spawnCallCount == 1);
+        REQUIRE(f.spawnCallCount == 1);
     }
 
-    TEST_CASE ("3# density = 0.f, sr = 512", "[scheduler]")
+    TEST_CASE("3# density = 0.f, sr = 512", "[scheduler]")
     {
         SchedulerFixture f;
         Scheduler scheduler;
@@ -98,16 +90,16 @@ namespace audio_plugin_test
 
         try
         {
-            scheduler.process (f.numSamples, f.sampleRate, f.snapshot.density, [&] (int pos, const ParameterSnapshot& p) { f.spawnCallback (pos, p); }, f.snapshot);
-        } catch (const std::exception& e)
+            scheduler.process(f.numSamples, f.sampleRate, f.snapshot.density, [&](int pos, const ParameterSnapshot& p) { f.spawnCallback(pos, p); }, f.snapshot);
+        } catch(const std::exception& e)
         {
-            printf ("Exception: %s\n", e.what());
+            printf("Exception: %s\n", e.what());
         }
 
-        REQUIRE (f.spawnCallCount == 0);
+        REQUIRE(f.spawnCallCount == 0);
     }
 
-    TEST_CASE ("4# density = 500.f, sr = 64", "[scheduler]")
+    TEST_CASE("4# density = 500.f, sr = 64", "[scheduler]")
     {
         SchedulerFixture f;
         Scheduler scheduler;
@@ -118,16 +110,16 @@ namespace audio_plugin_test
         try
         {
             // 500 / 48000.0 * 64 = 0.66666
-            scheduler.process (f.numSamples, f.sampleRate, f.snapshot.density, [&] (int pos, const ParameterSnapshot& p) { f.spawnCallback (pos, p); }, f.snapshot);
-        } catch (const std::exception& e)
+            scheduler.process(f.numSamples, f.sampleRate, f.snapshot.density, [&](int pos, const ParameterSnapshot& p) { f.spawnCallback(pos, p); }, f.snapshot);
+        } catch(const std::exception& e)
         {
-            printf ("Exception: %s\n", e.what());
+            printf("Exception: %s\n", e.what());
         }
 
-        REQUIRE (f.spawnCallCount == 1);
+        REQUIRE(f.spawnCallCount == 1);
     }
 
-    TEST_CASE ("5# density = 500.f, sr = 128", "[scheduler]")
+    TEST_CASE("5# density = 500.f, sr = 128", "[scheduler]")
     {
         SchedulerFixture f;
         Scheduler scheduler;
@@ -137,12 +129,64 @@ namespace audio_plugin_test
         try
         {
             // 500 / 48000.0 * 64 = 0.66666
-            scheduler.process (f.numSamples, f.sampleRate, f.snapshot.density, [&] (int pos, const ParameterSnapshot& p) { f.spawnCallback (pos, p); }, f.snapshot);
-        } catch (const std::exception& e)
+            scheduler.process(f.numSamples, f.sampleRate, f.snapshot.density, [&](int pos, const ParameterSnapshot& p) { f.spawnCallback(pos, p); }, f.snapshot);
+        } catch(const std::exception& e)
         {
-            printf ("Exception: %s\n", e.what());
+            printf("Exception: %s\n", e.what());
         }
 
-        REQUIRE (f.spawnCallCount == 2);
+        REQUIRE(f.spawnCallCount == 2);
+    }
+
+    TEST_CASE("6# density = 500.f, sr = 64, 3 iterations")
+    {
+        SchedulerFixture f;
+        Scheduler scheduler;
+        f.snapshot.density = 500.0f;
+        f.numSamples = 64;
+        f.sampleRate = 48000.0;
+        try
+        {
+            // 48000 / 500 = 96
+            scheduler.process(f.numSamples, f.sampleRate, f.snapshot.density, [&](int pos, const ParameterSnapshot& p) { f.spawnCallback(pos, p); }, f.snapshot);
+        } catch(const std::exception& e)
+        {
+            printf("Exception: %s\n", e.what());
+        }
+
+        REQUIRE(f.spawnCallCount == 1);
+        REQUIRE(f.spawnPositions.at(0) == 0);
+
+        try
+        {
+            scheduler.process(f.numSamples, f.sampleRate, f.snapshot.density, [&](int pos, const ParameterSnapshot& p) { f.spawnCallback(pos, p); }, f.snapshot);
+        } catch(const std::exception& e)
+        {
+            printf("Exception: %s\n", e.what());
+        }
+
+        REQUIRE(f.spawnCallCount == 2);
+        REQUIRE(f.spawnPositions.at(1) == 32);
+        try
+        {
+            scheduler.process(f.numSamples, f.sampleRate, f.snapshot.density, [&](int pos, const ParameterSnapshot& p) { f.spawnCallback(pos, p); }, f.snapshot);
+        } catch(const std::exception& e)
+        {
+            printf("Exception: %s\n", e.what());
+        }
+
+        REQUIRE(f.spawnCallCount == 2);
+        REQUIRE(f.spawnPositions.size() == 2);
+        try
+        {
+            scheduler.process(f.numSamples, f.sampleRate, f.snapshot.density, [&](int pos, const ParameterSnapshot& p) { f.spawnCallback(pos, p); }, f.snapshot);
+        } catch(const std::exception& e)
+        {
+            printf("Exception: %s\n", e.what());
+        }
+
+        REQUIRE(f.spawnCallCount == 3);
+        REQUIRE(f.spawnPositions.at(2) == 0);
+        REQUIRE(f.spawnPositions.size() == 3);
     }
 }

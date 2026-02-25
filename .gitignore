@@ -18,6 +18,7 @@ cmake-build-*/
 *.opendb
 *.VC.db
 *.VC.opendb
+*.hint
 
 # CMake generated files
 CMakeCache.txt

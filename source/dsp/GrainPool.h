@@ -16,7 +16,6 @@
 // use LIFO
 
 struct GrainHandle;
-//class Grain;
 class GrainPool
 {
 public:

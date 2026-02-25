@@ -10,15 +10,9 @@
 
 #include "Scheduler.h"
 
-//Scheduler::Scheduler(ParameterView& paramsView): paramsView(paramsView), nextOnSet{0}
 Scheduler::Scheduler() : nextOnSet { 0 } {}
 
 /*
-Scheduler::~Scheduler()
-{
-	freeActiveGrains();
-}
-
 
 void Scheduler::freeActiveGrains()
 {
@@ -165,31 +159,31 @@ void Scheduler::synthesize(AudioBlock* audioBlock, int sample, int numSamples)
 
 */
 
-double Scheduler::getInterOnSet (float density, double sampleRate) const noexcept
+double Scheduler::getInterOnSet(float density, double sampleRate) const noexcept
 {
-    if (density <= 0.0)
+    if(density <= 0.0)
         return -1.0;
     return sampleRate / (double) density;
 }
 
-void Scheduler::process (int bufferSize, double sampleRate, float density, std::function<void (int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& parameters)
+void Scheduler::process(int bufferSize, double sampleRate, float density, std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& parameters)
 {
-    const double interOnSet = getInterOnSet (density, sampleRate);
-    if (interOnSet <= 1)
+    const double interOnSet = getInterOnSet(density, sampleRate);
+    if(interOnSet <= 1)
     {
-        setOffset (0.0);
-        throw std::logic_error ("Density too high for scheduler");
+        setOffset(0.0);
+        throw std::logic_error("Density too high for scheduler");
         return;
     } // dont need 1 grain per sample this is too much
 
     int count = 0;
     double offset = getOffset(); // offset of the next outBuffer call
-    while (offset < static_cast<double> (bufferSize) && count < mCapacity)
+    while(offset < static_cast<double>(bufferSize) && count < mCapacity)
     {
-        spawn (static_cast<int> (std::floor (offset)), parameters); // call the voice manager
+        spawn(static_cast<int>(std::floor(offset)), parameters); // call the voice manager
         offset += interOnSet;
         count++;
     }
 
-    setOffset (offset - static_cast<double> (bufferSize));
+    setOffset(offset - static_cast<double>(bufferSize));
 };
