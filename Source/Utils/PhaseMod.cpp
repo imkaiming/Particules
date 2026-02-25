@@ -9,7 +9,6 @@
 */
 
 #include "PhaseMod.h"
-#include "../Framework/ParamsID.h"
 
 PhaseMod::PhaseMod()
 {

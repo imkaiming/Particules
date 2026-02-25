@@ -9,7 +9,6 @@
 */
 
 #include "GrainPoint.h"
-#include <JuceHeader.h>
 
 
 GrainPoint::GrainPoint()

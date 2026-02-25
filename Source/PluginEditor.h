@@ -5,12 +5,9 @@
 
 #pragma once
 
-#include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "Frame/MainFrame.h"
-#include "Utils/CustomLookAndFeel.h"
-//#include "Utils/ParameterView.h"
-//#include "Utils/MyColours.h"
+#include "gui/MainFrame.h"
+#include "utils/CustomLookAndFeel.h"
 
 
 class ParticulesAudioProcessorEditor: public juce::AudioProcessorEditor

@@ -9,10 +9,9 @@
 */
 
 #pragma once
+#include <juce_audio_formats/juce_audio_formats.h>
 
-
-#include <functional>
-#include "../Frame/ThumbnailComponent.h"
+#include "Core.h"
 
 class ParameterView;
 class AudioFileLoader

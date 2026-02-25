@@ -9,9 +9,9 @@
 */
 
 #include "CustomLookAndFeel.h"
-#include "../../Ressources/Font/FuturaMedium.h"
-#include "../Framework/ParamsID.h"
-#include "../Utils/MyColours.h"
+#include "../../resources/font/FuturaMedium.h"
+#include "../framework/ParamsID.h"
+#include "../utils/MyColours.h"
 
 CustomLookAndFeel::CustomLookAndFeel()
 {

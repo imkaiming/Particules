@@ -1,21 +1,11 @@
-/*
-  ==============================================================================
-
-	Core.h
-	Created: 5 Feb 2026 9:54:13pm
-	Author:  kai
-
-  ==============================================================================
-*/
-
 #pragma once
 
-#include <JuceHeader.h>
+
 #include <atomic>
 #include <functional>
 
-#include "../Lib/AudioFFT.h"
-#include "../Framework/ParamsID.h"
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_dsp/juce_dsp.h>
 
 #define GRAINPOINT_SIZE 10.f
 #define FFTSIZE_ORDER 10
@@ -35,6 +25,9 @@ namespace Param
 	constexpr uint8_t MaxDuration = 120;
 	constexpr uint64_t MaxFileSize = 512ULL * 1024 * 1024; // 512MB limits ULL -> Unsigned Long Long
 }
+
+constexpr float twoPi = juce::MathConstants<float>::twoPi;
+constexpr float pi = juce::MathConstants<float>::pi;
 
 // TODO@ separer la definition dans le cpp et la declaration
 inline float convertToPercentage(float toConvert) noexcept

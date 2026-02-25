@@ -9,8 +9,8 @@
 */
 
 #include "AudioFileLoader.h"
-#include "../Framework/ParameterView.h"
-#include "../Framework/Core.h"
+#include "ParameterView.h"
+
 
 AudioFileLoader::AudioFileLoader(ParameterView& paramsView):paramsView{paramsView}
 {

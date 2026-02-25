@@ -9,10 +9,12 @@
   ==============================================================================
 */
 
-#include <JuceHeader.h>
-#include "../Audio/Grain.h"
+#include "juce_events/juce_events.h"
+
+
+#include "../dsp/Grain.h"
 #include "MyColours.h"
-#include "../Framework/ParamsID.h"
+#include "../framework/ParamsID.h"
 
 #pragma once
 

@@ -1,12 +1,9 @@
 #pragma once
 
-//#include <JuceHeader.h>
-
-#include "../Framework/Core.h"
+#include "Core.h"
 #include "ParameterSnapshot.h"
 #include "SampleSource.h"
-//#include "../Audio/Grain.h"
-#include "../Utils/GrainVisualizer.h"
+#include "../utils/GrainVisualizer.h"
 
 
 struct GranularView

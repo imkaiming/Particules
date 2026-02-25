@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "../Framework/Core.h"
+#include "Core.h"
 
 class ParameterView;
 class CustomLookAndFeel;

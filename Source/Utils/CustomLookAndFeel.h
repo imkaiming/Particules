@@ -11,7 +11,8 @@
 
 #pragma once
 
-#include <JuceHeader.h>
+//#include <juce_gui_basics/lookandfeel/juce_LookAndFeel_V4.h>
+#include <juce_gui_basics/juce_gui_basics.h>
 
 
 

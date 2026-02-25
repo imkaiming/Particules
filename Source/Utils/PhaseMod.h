@@ -8,10 +8,11 @@
   ==============================================================================
 */
 
-#include <JuceHeader.h>
 #include <random>
+#include "../framework/Core.h"
 #pragma once
 
+//#include <juce_core/juce_core.h>
 
 
 enum Mod {
@@ -22,16 +23,15 @@ enum Mod {
 	None
 };
 
-constexpr float twoPi = juce::MathConstants<float>::twoPi;
-constexpr float pi = juce::MathConstants<float>::pi;
+
 
 
 
 class PhaseMod// : public juce::dsp::Phase<float>
 {
 public:
-	PhaseMod(double sampleRate, float frequency, int mod);
-	PhaseMod(double sampleRate);
+	//PhaseMod(double sampleRate, float frequency, int mod);
+	//PhaseMod(double sampleRate);
 	PhaseMod();
 	~PhaseMod();
 

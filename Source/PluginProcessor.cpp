@@ -9,6 +9,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#include "framework/ParamsID.h"
+
 //==============================================================================
 ParticulesAudioProcessor::ParticulesAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations

@@ -1,19 +1,13 @@
-/*
-  ==============================================================================
-
-	This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
-
 #pragma once
 
-#include "Framework/ParameterView.h"
-#include "Audio/GranularEngine.h"
-#include "Framework/UIContext.h"
-#include "Framework/AudioFileLoader.h"
-#include "Utils/CustomLookAndFeel.h"
+#include <juce_events/juce_events.h>
+#include <juce_audio_processors/juce_audio_processors.h>
+
+#include "framework/ParameterView.h"
+#include "dsp/GranularEngine.h"
+#include "framework/UIContext.h"
+#include "framework/AudioFileLoader.h"
+#include "utils/CustomLookAndFeel.h"
 
 
 class ParameterView;
