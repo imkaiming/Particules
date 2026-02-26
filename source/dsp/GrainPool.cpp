@@ -13,7 +13,7 @@
 #include "../framework/GrainHandle.h"
 
 
-GrainPool::GrainPool() { reset(); }
+GrainPool::GrainPool() { /* reset(); */}
 
 void GrainPool::reset()
 {
@@ -41,6 +41,7 @@ bool GrainPool::isValid(const GrainHandle handle) const
 	return ((g.getGeneration() == handle.gen) && g.getActive()); // return the grain only if the generation matches 
 }
 
+// always provide and init a grain unless the pool capacity is insufficient
 bool GrainPool::acquire(GrainHandle& outHandle, Grain*& outGrain)
 {
 	if(nextFree >= mCapacity) return false;
@@ -70,47 +71,4 @@ void GrainPool::release(const GrainHandle handle)
 
 	freeIndices[--nextFree] = handle.index;
 }
-
-
-
-
-/*
-void GrainPool::reset()
-{
-	freeTop  = 0;
-	numActive = 0;
-	for(uint16_t i = 0; i < mCapacity; ++i)
-	{
-		freeIndices[freeTop ++] = i;
-	}
-}
-
-Grain* GrainPool::acquireGrain()
-{
-	if(freeTop == 0)return nullptr;
-
-	uint16_t index = freeIndices[--freeTop];
-	Grain* g = &grains[index];
-	g->reset(); // maybe not usefull if we config the grain with the snapshot
-	numActive++;
-	return g;
-}
-
-void GrainPool::releaseGrain(Grain* grain)
-{
-	if(grain == nullptr) return;
-	if(freeTop >= mCapacity) { jassertfalse; return; }
-
-	ptrdiff_t index = grain - grains.data(); // ptr arithmetic
-	if(index < 0 || index >= static_cast<ptrdiff_t>(mCapacity))
-	{
-		jassert(false && "problem with computing index from grain ptr");
-		return;
-	}
-	freeIndices[freeTop++] = static_cast<uint16_t>(index);
-	numActive--;
-
-}
-
-*/
 

@@ -1,6 +1,7 @@
 #include "../source/dsp/Grain.h"
 #include "../source/dsp/GrainPool.h"
 #include "../source/framework/GrainHandle.h"
+#include "../source/framework/ParamsId.h"
 #include <catch2/catch_test_macros.hpp>
 
 /*
@@ -9,8 +10,8 @@
 	bool acquire(GrainHandle& outHandle, Grain*& outGrain);
 	void release(const GrainHandle hadle);
 	void reset();
-
-
+*/
+/*
 struct GrainHandle
 {
     uint16_t index = 0xffff;
@@ -33,34 +34,47 @@ namespace audio_plugin_test
     TEST_CASE("1# GrainPool ctor", "[GrainPool]")
     {
         GrainPool* g;
-        try
-        {
-            g = new GrainPool();
-            delete g;
-        } catch(...)
-        {
-            REQUIRE(false);
-        }
-
-        REQUIRE(true);
+        g = new GrainPool();
+        delete g;
     }
 
-    TEST_CASE("2# get a grain", "[GrainPool]")
+    TEST_CASE_METHOD(GrainPoolFixture, "2# acquire provide a valid grain", "[GrainPool]")
     {
-        GrainPoolFixture f;
-        f.handle.index = 0;
-        f.handle.gen = 0;
+        handle.index = 0;
+        handle.gen = 0;
 
-        try
-        {
-            f.pool.acquire(f.handle, f.grain);
-        } catch(const std::exception& e)
-        {
-            printf("Exception: %s\n", e.what());
-        }
-
-        REQUIRE(f.grain != nullptr);
+        REQUIRE(grain == nullptr);
+        REQUIRE(pool.acquire(handle, grain));
+        REQUIRE_FALSE(grain == nullptr);
+        REQUIRE(pool.isValid(handle));
     }
 
-    //TEST_CASE(GrainPoolFixture, "3#")
+    TEST_CASE_METHOD(GrainPoolFixture, "3# release ", "[GrainPool]")
+    {
+        //handle.index = 0;
+        //pool.acquire(handle, grain);
+        //REQUIRE(grain != nullptr);
+    }
+
+    TEST_CASE_METHOD(GrainPoolFixture, "3# handle at index -1 should acquire grain", "[GrainPool]")
+    {
+        //handle.index = -1;
+        //REQUIRE(!pool.acquire(handle, grain));
+        //REQUIRE(!pool.isValid(handle));
+    }
+
+    TEST_CASE_METHOD(GrainPoolFixture, "4# acquire fails when pool is empty even after reset", "[GrainPool]")
+    {
+        for(size_t i = 0; i < Param::MaxGrains; ++i)
+            REQUIRE(pool.acquire(handle, grain));
+
+        REQUIRE_FALSE(pool.acquire(handle, grain));
+
+        pool.reset();
+
+        for(size_t i = 0; i < Param::MaxGrains; ++i)
+            REQUIRE(pool.acquire(handle, grain));
+
+        REQUIRE_FALSE(pool.acquire(handle, grain));
+    }
 }
