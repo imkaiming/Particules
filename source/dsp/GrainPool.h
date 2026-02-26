@@ -19,32 +19,23 @@ struct GrainHandle;
 class GrainPool
 {
 public:
-	GrainPool();
-	~GrainPool() = default;
+    GrainPool();
+    ~GrainPool() = default;
 
-	Grain* get(const GrainHandle handle) ;
-	bool isValid(const GrainHandle handle) const ;
-	bool acquire(GrainHandle& outHandle, Grain*& outGrain);
-	void release(const GrainHandle hadle);
-	void reset();
+    Grain* get(const GrainHandle handle);
+    bool acquire(GrainHandle& outHandle, Grain*& outGrain);
+    GrainHandle acquire();
+    void release(const GrainHandle hadle);
+    void reset();
 
-
-	//Grain* acquireGrain(); // give the ownership
-	//void releaseGrain(Grain* grain); // return back home
-	//void reset();
-
-	//uint16_t getNumActiveGrains() const noexcept { return numActive; }
-	//bool isFull() const noexcept { return numActive >= mCapacity; }
-	//bool isEmpty() const noexcept { return numActive == 0; }
-
+    //uint16_t getNumActiveGrains() const noexcept { return numActive; }
+    bool isFull() const noexcept { return nextFree - 1 == mCapacity; }
+    bool isEmpty() const noexcept { return nextFree - 1 == 0; }
 
 private:
+    static constexpr uint16_t mCapacity = Param::MaxGrains; // max grain = 500, 2^16 = 65535 values, 2^8 = 256 not enough
 
-	static constexpr uint16_t mCapacity = Param::MaxGrains; // max grain = 500, 2^16 = 65535 values, 2^8 = 256 not enough
-
-	std::array<Grain, mCapacity> grains;
-	std::array<uint16_t, mCapacity> freeIndices; // unordered stack of indexes. The most recently freed grain (also cache friendly)
-	uint16_t nextFree = 0;
+    std::array<Grain, mCapacity> grains;
+    std::array<uint16_t, mCapacity> freeIndices; // unordered stack of indexes. The most recently freed grain (also cache friendly)
+    uint16_t nextFree = 0;
 };
-
-

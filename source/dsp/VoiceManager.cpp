@@ -12,53 +12,40 @@
 #include "../framework/ParameterSnapshot.h"
 #include "../framework/SampleSource.h"
 
-VoiceManager::VoiceManager(GrainPool& pool) : grainPool { pool }, activeCount { 0 } { reset(); }
+VoiceManager::VoiceManager(GrainPool& p) : pool { p }, activeCount { 0 } { reset(); }
 
 void VoiceManager::reset()
 {
     activeCount = 0;
     for(GrainHandle& handle : activeHandles)
         handle = GrainHandle::getInvalidState();
-    grainPool.reset();
+    pool.reset();
 }
 
-//source.get()->buffer;
-//source.get()->numChannels;
-//source.get()->numSamples;
-
-// on boucle en sample accurate
-// on saisie le grain avec le handle
-// on update sa position relative au buffer input
-// on ecrit dans le buffer output le resultat
-// verifier les calculs d'enveloppe et des gains relatif
 void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const SampleSource* source)
 {
-    int numChannels = outputBlock.getNumChannels();
-    for(size_t currentSample = 0; currentSample < bufferSize; ++currentSample)
+    const int numChannels = outputBlock.getNumChannels();
+    const int numSamples = outputBlock.getNumSamples();
+
+    for(size_t currentSample = 0; currentSample < numSamples; currentSample++)
     {
-        for(size_t i = 0; i < activeCount;)
+        for(int i = activeCount - 1; i >= 0; --i) // backward iteration for removing handle securely
         {
-            GrainHandle& handle = activeHandles[i];
-            Grain* g = grainPool.get(handle);
-
-            if(!g)
+            GrainHandle h = activeHandles[i];
+            Grain* g = pool.get(h); 
+            if(!g) // grain has been released already MAY NOT NEEDED
             {
-                removeVoice(i);
-                continue;
+                removeVoice(i); // place the current handle[index] in activeCount index and became
+                continue; // restart the begining of the loop at the same index
             }
-            for(int channel = 0; channel < numChannels; ++channel)
-                outputBlock.addSample(channel, currentSample, g->getNextSample(source, channel, numChannels));
 
+            for(uint16_t channel = 0; channel < numChannels; ++channel)
+                outputBlock.addSample(channel, currentSample, g->getCurrentSample(source, channel, numChannels));
             g->update();
-
             if(g->isExhausted())
             {
-                grainPool.release(handle);
+                pool.release(h);
                 removeVoice(i);
-            }
-            else
-            {
-                i++;
             }
         }
     }
@@ -76,16 +63,19 @@ void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
     if(activeCount >= mCapacity)
         return; // cannot spawn any more grains
 
-    GrainHandle handle;
-    Grain* grain = nullptr;
-    if(!grainPool.acquire(handle, grain))
-        return; // if max pool capacity has been reached
+    GrainHandle handle = pool.acquire();
+    Grain* grain = pool.get(handle);
+    if(grain == nullptr)
+        return;
+
     grain->config(snapshot, offset); // init the grain here before process with the snapshot
     activeHandles[activeCount++] = handle;
 }
 
-// swap with last
-void VoiceManager::removeVoice(uint16_t index)
+// example : after spawning 5 times activeCount = 5
+// removing index 2 then swapping the index 4 with the 2 and
+// after decrementing activeCount is = 4.
+void VoiceManager::removeVoice(uint16_t i)
 {
-    activeHandles[index] = activeHandles[--activeCount];
+    activeHandles[i] = activeHandles[--activeCount];
 }

@@ -6,8 +6,7 @@
 
 /*
 	Grain* get(const GrainHandle handle) ;
-	bool isValid(const GrainHandle handle) const ;
-	bool acquire(GrainHandle& outHandle, Grain*& outGrain);
+	GrainHandle acquire();
 	void release(const GrainHandle hadle);
 	void reset();
 */
@@ -46,22 +45,31 @@ namespace audio_plugin_test
         REQUIRE(grain == nullptr);
         REQUIRE(pool.acquire(handle, grain));
         REQUIRE_FALSE(grain == nullptr);
-        REQUIRE(pool.isValid(handle));
+        //REQUIRE(pool.isValid(handle));
     }
 
-    TEST_CASE_METHOD(GrainPoolFixture, "3# release ", "[GrainPool]")
+    TEST_CASE_METHOD(GrainPoolFixture, "3# release works", "[GrainPool]")
     {
-        //handle.index = 0;
-        //pool.acquire(handle, grain);
-        //REQUIRE(grain != nullptr);
+        GrainHandle h0 = pool.acquire(); // G0, nextFree=1
+        GrainHandle h1 = pool.acquire(); // G1, nextFree=2
+        GrainHandle h2 = pool.acquire(); // G2, nextFree=3
+        GrainHandle h3 = pool.acquire(); // G3, nextFree=4
+
+        pool.release(h2);
+        pool.release(h1);
+        pool.release(h3);
+        pool.release(h0);
+
+        REQUIRE(pool.isEmpty());
+        // test LIFO stack
     }
 
-    TEST_CASE_METHOD(GrainPoolFixture, "3# handle at index -1 should acquire grain", "[GrainPool]")
-    {
+    //TEST_CASE_METHOD(GrainPoolFixture, "3# handle at index -1 should acquire grain", "[GrainPool]")
+    //{
         //handle.index = -1;
         //REQUIRE(!pool.acquire(handle, grain));
         //REQUIRE(!pool.isValid(handle));
-    }
+    //}
 
     TEST_CASE_METHOD(GrainPoolFixture, "4# acquire fails when pool is empty even after reset", "[GrainPool]")
     {

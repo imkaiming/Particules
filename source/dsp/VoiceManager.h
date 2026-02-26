@@ -31,7 +31,7 @@ private:
 	void removeVoice(uint16_t index);
 	static constexpr uint16_t mCapacity = Param::MaxGrains;
 
-	GrainPool& grainPool;
+	GrainPool& pool;
 	std::array<GrainHandle, mCapacity> activeHandles;
 	uint16_t activeCount;
 };

@@ -10,17 +10,14 @@
 
 #pragma once
 
-//#include "../Audio/Grain.h"
 #include "../Framework/Core.h"
 
 struct GrainHandle
 {
-	uint16_t index = 0xFFFF;
-	uint16_t gen = 0; // to detect stale handles
-	bool isValid() const { return index != 0xFFFF; };
-	void invalidate() noexcept
-	{
-		index = 0;
-		gen = 0;
-	}
+    uint16_t index = 0xFFFF;
+    uint16_t gen = 0;
+    GrainHandle() = default;
+    GrainHandle(uint16_t i, uint16_t g) : index { i }, gen { g } {};
+    bool isValid() const noexcept { return index != 0xFFFF; };
+    static GrainHandle getInvalidState() noexcept { return { 0xFFFF, 0 }; };
 };

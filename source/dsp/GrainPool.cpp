@@ -8,67 +8,79 @@
   ==============================================================================
 */
 
-
 #include "GrainPool.h"
 #include "../framework/GrainHandle.h"
 
-
-GrainPool::GrainPool() { /* reset(); */}
+GrainPool::GrainPool() { reset(); }
 
 void GrainPool::reset()
 {
-	nextFree = 0;
-	for(uint16_t i = 0; i < mCapacity; ++i)
-	{
-		freeIndices[i] = i;
-		grains[i].setActive(false);
-		grains[i].reset();
-	}
+    nextFree = 0;
+    for(uint16_t i = 0; i < mCapacity; ++i)
+    {
+        freeIndices[i] = i;
+        grains[i].setActive(false);
+        grains[i].reset();
+    }
 }
 
-Grain* GrainPool::get(const GrainHandle handle) 
+// return grains corresponding handle's index if valid
+Grain* GrainPool::get(const GrainHandle handle)
 {
-	if(!isValid(handle)) return nullptr;
-	return &grains[handle.index]; // return pointer so the pool still have the ownership of its grains baby
-}
+    if(!handle.isValid() || handle.index >= mCapacity) // check if index is not 0xFFFF
+        return nullptr;
 
-bool GrainPool::isValid(const GrainHandle handle) const
-{
-	if(!handle.isValid())	return false; // does the handle has been init first ?
-	if(handle.index >= mCapacity) return false;
-
-	const Grain& g = grains[handle.index];
-	return ((g.getGeneration() == handle.gen) && g.getActive()); // return the grain only if the generation matches 
+    Grain& g = grains[handle.index];
+    if((g.getGeneration() == handle.gen) && g.getActive())
+        return &g;
+    else
+        return nullptr; // return the grain only if the generation matches
 }
 
 // always provide and init a grain unless the pool capacity is insufficient
+// return a valid handle and set active a grain at nextFree position
 bool GrainPool::acquire(GrainHandle& outHandle, Grain*& outGrain)
 {
-	if(nextFree >= mCapacity) return false;
+    if(nextFree >= mCapacity)
+        return false;
 
-	// accessing the next available grain
-	const uint16_t i = freeIndices[nextFree++];
-	Grain& g = grains[i];
+    // accessing the next available grain
+    const uint16_t i = freeIndices[nextFree++];
+    Grain& g = grains[i];
 
-	// setting it up
-	g.setActive(true);
-	outHandle.index = i;
-	outHandle.gen = g.getGeneration();
-	outGrain = &g;
+    g.setActive(true);
+    outHandle.index = i;
+    outHandle.gen = g.getGeneration();
+    outGrain = &g;
 
-	return true;
+    return true;
 }
 
+GrainHandle GrainPool::acquire()
+{
+    if(nextFree >= mCapacity)
+        return GrainHandle::getInvalidState();
 
+    const uint16_t i = freeIndices[nextFree++];
+    Grain& g = grains[i];
+    g.setActive(true);
+
+    return GrainHandle { i, g.getGeneration() };
+}
+
+// set a grain inactive and increment generation
 void GrainPool::release(const GrainHandle handle)
 {
-	if(handle.index >= mCapacity || nextFree == 0) return; // security gards
+    if(handle.index >= mCapacity || !handle.isValid())
+        return; // security gards
 
-	Grain& g = grains[handle.index];
-	if(g.getGeneration() != handle.gen) return; // prevent releasing the wrong grain
+    Grain& g = grains[handle.index];
 
-	g.setActive(false); g.incrementGen();
+    if(g.getGeneration() != handle.gen || !g.getActive())
+        return; // prevent releasing the wrong grain
 
-	freeIndices[--nextFree] = handle.index;
+    g.setActive(false);
+    g.incrementGen();
+
+    freeIndices[--nextFree] = handle.index;
 }
-
