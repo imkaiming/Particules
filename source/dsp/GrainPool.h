@@ -23,14 +23,14 @@ public:
     ~GrainPool() = default;
 
     Grain* get(const GrainHandle handle);
-    bool acquire(GrainHandle& outHandle, Grain*& outGrain);
+    //bool acquire(GrainHandle& outHandle, Grain*& outGrain);
     GrainHandle acquire();
     void release(const GrainHandle hadle);
     void reset();
 
     //uint16_t getNumActiveGrains() const noexcept { return numActive; }
-    bool isFull() const noexcept { return nextFree - 1 == mCapacity; }
-    bool isEmpty() const noexcept { return nextFree - 1 == 0; }
+    //bool isFull() const noexcept { return nextFree - 1 == mCapacity; }
+    //bool isEmpty() const noexcept { return nextFree - 1 == 0; }
 
 private:
     static constexpr uint16_t mCapacity = Param::MaxGrains; // max grain = 500, 2^16 = 65535 values, 2^8 = 256 not enough

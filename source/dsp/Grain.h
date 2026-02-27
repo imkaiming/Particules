@@ -13,8 +13,6 @@
 #include "../framework/Core.h"
 #include "../utils/GrainPoint.h"
 
-// Grain is the unit that read samples the buffer
-// TODO rename it GrainPOD
 
 enum WindowingMethod {
     triangular,
@@ -26,12 +24,14 @@ enum WindowingMethod {
     flatTop
 };
 
+// Grain is the unit that read samples the buffer
+// It have 2 main structure time and amplitude
+// a grain have a fade in then a sustain then a fade out
 struct ParameterSnapshot;
 struct SampleSource;
 class Grain
 {
 public:
-    //Grain(int duration, int numChannel, int envelopeType, float speed, int envelopeWidth, int position);
     Grain();
     ~Grain() = default;
 
@@ -69,20 +69,23 @@ private:
 
     int envelopeType; // on associe un grain a une envelope
 
-    int currentTime; // le compteur interne du grain
-    float speed = 0.0f;
-    //int numChannels = 0;	// le grain est le même pour chaque channel
-    int duration = 0; // définie la durée en nombre de sample
-    int position = 0; // définie la position en sample dans le buffer
-    // const int selection;	// définie la position maximale qu'un grain peut atteindre dans le buffer
-    int envelopeWidth = 0; // définie la taille des rampes d'amplitude en entré et en sortie du grain
-    int offset = 0;
+    // Time related parameters
+    float currentTime;       // le compteur interne du grain
+    float speed = 0.0f;      // change the pitch and accelerate the lecture
+    float duration = 0;      // définie la durée en nombre de sample
+    float position = 0;      // définie la position en sample dans le buffer
+    float selection;	     // définie la position maximale qu'un grain peut atteindre dans le buffer
+    float sustainWidth = 0; // définie la taille des rampes d'amplitude en entré et en sortie du grain
+    float offset = 0;        // act like a little delay to sync scheduler.process() and voiceManager.process()
+    float fadeIn = 0;        // 0 to fadeIn
+    float fadeOut = 0;       // fadeOut to numSamples
+    float envelopeSize = 0;  // utile pour calculer les fade d'entrés et de sorties des envelopes selon les functions données
 
-    int fadeIn = 0; // 0 to fadeIn
-    int fadeOut = 0; // fadeOut to numSamples
-    int envelopeSize = 0; // utile pour calculer les fade d'entrés et de sorties des envelopes selon les functions données
+    int traversalMode;       // change position with phase mode
+    int traversalTime;       // speed of the traversal LFO
 
-    //juce::AudioBuffer<float>* buffer; // replace with sample source
+    // Amplitude related data
+    std::vector<float> envelopeTable; // precompute the entire grain envelope once
 
     GrainPoint grainPoint;
 

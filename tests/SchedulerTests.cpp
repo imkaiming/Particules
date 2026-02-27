@@ -46,10 +46,8 @@ namespace audio_plugin_test
     };
 
     TEST_CASE("1# Scheduler ctor", "[scheduler]")
-    {
-        Scheduler* s = nullptr;
-        s = new Scheduler();
-        delete s;
+    { 
+        Scheduler s;
     }
 
     TEST_CASE("2# density = 1.f, sr = 512", "[scheduler]")

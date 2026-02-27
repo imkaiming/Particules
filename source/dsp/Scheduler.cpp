@@ -69,7 +69,7 @@ void Scheduler::process(int bufferSize, double sampleRate, float density, std::f
     if(interOnSet <= 1)
     {
         setOffset(0.0);
-        throw std::logic_error("Density too high for scheduler");
+        throw std::logic_error("interOnSet too short too schedule grains");
         return;
     } // dont need 1 grain per sample this is too much
 

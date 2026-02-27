@@ -9,6 +9,9 @@
 #include "framework/AudioFileLoader.h"
 #include "utils/CustomLookAndFeel.h"
 
+/*
+TODO : create a grain loop mode or a one shot mode
+*/
 
 class ParameterView;
 class GranularEngine;

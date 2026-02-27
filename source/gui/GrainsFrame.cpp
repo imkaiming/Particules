@@ -26,75 +26,70 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
 			apvts, Param::Speed::id, speedSlider);
 
-	envWidthSliderAttachment =
+	sustainRatioSliderAttachment =
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			apvts, Param::EnvelopeWidth::id, envWidthSlider);
+        apvts, Param::SustainRatio::id, sustainRatioSlider);
 
-	traversalTimeSliderAttachment =
-		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			apvts, Param::TraversalTime::id, traversalTimeSlider);
+    traversalTimeSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        apvts, Param::TraversalTime::id, traversalTimeSlider);
 
-	//pitchSliderAttachment =
-	//	std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-	//		*apvts, PITCH_ID, pitchSlider);
+    //pitchSliderAttachment =
+    //	std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+    //		*apvts, PITCH_ID, pitchSlider);
 
-	densitySlider.setName("densitySlider");
-	densitySlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-	densitySlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
-	densitySlider.setTextBoxIsEditable(true);
-	densitySlider.setRange(Param::Density::min, Param::Density::max);
-	densitySlider.setSkewFactorFromMidPoint(Param::Density::init);
-	densitySlider.setTextValueSuffix(" g");
-	//densitySlider.addListener(this);
-	densitySlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+    densitySlider.setName("densitySlider");
+    densitySlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    densitySlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
+    densitySlider.setTextBoxIsEditable(true);
+    densitySlider.setRange(Param::Density::min, Param::Density::max);
+    densitySlider.setSkewFactorFromMidPoint(Param::Density::init);
+    densitySlider.setTextValueSuffix(" g");
+    //densitySlider.addListener(this);
+    densitySlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	densityLabel.setText((const juce::String)Param::Density::name, juce::dontSendNotification);
-	densityLabel.attachToComponent(&densitySlider, false);
-	densityLabel.setJustificationType(juce::Justification::centred);
+    densityLabel.setText((const juce::String)Param::Density::name, juce::dontSendNotification);
+    densityLabel.attachToComponent(&densitySlider, false);
+    densityLabel.setJustificationType(juce::Justification::centred);
 
-	durationSlider.setName("durationSlider");
-	durationSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-	durationSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
-								   true, 100, 25);
-	durationSlider.setTextBoxIsEditable(true);
-	durationSlider.setRange(Param::Duration::min, Param::Duration::max);
-	durationSlider.setSkewFactorFromMidPoint(Param::Duration::init);
-	durationSlider.setTextValueSuffix(" s");
-	//durationSlider.addListener(this);
-	durationSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+    durationSlider.setName("durationSlider");
+    durationSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    durationSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
+    durationSlider.setTextBoxIsEditable(true);
+    durationSlider.setRange(Param::Duration::min, Param::Duration::max);
+    durationSlider.setSkewFactorFromMidPoint(Param::Duration::init);
+    durationSlider.setTextValueSuffix(" s");
+    //durationSlider.addListener(this);
+    durationSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	durationLabel.setText((const juce::String)Param::Duration::name, juce::dontSendNotification);
-	durationLabel.attachToComponent(&durationSlider, false);
-	durationLabel.setJustificationType(juce::Justification::centred);
+    durationLabel.setText((const juce::String)Param::Duration::name, juce::dontSendNotification);
+    durationLabel.attachToComponent(&durationSlider, false);
+    durationLabel.setJustificationType(juce::Justification::centred);
 
-	speedSlider.setName("speedSlider");
-	speedSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-	speedSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
-								true, 100, 25);
-	speedSlider.setTextBoxIsEditable(true);
-	speedSlider.setRange(Param::Speed::min, Param::Speed::max);
-	//speedSlider.addListener(this);
-	speedSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+    speedSlider.setName("speedSlider");
+    speedSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    speedSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
+    speedSlider.setTextBoxIsEditable(true);
+    speedSlider.setRange(Param::Speed::min, Param::Speed::max);
+    //speedSlider.addListener(this);
+    speedSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	speedLabel.setText((const juce::String)Param::Speed::name, juce::dontSendNotification);
-	speedLabel.attachToComponent(&speedSlider, false);
-	speedLabel.setJustificationType(juce::Justification::centred);
+    speedLabel.setText((const juce::String)Param::Speed::name, juce::dontSendNotification);
+    speedLabel.attachToComponent(&speedSlider, false);
+    speedLabel.setJustificationType(juce::Justification::centred);
 
-
-	envWidthSlider.setName("envWidthSlider");
-	envWidthSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-	envWidthSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
-								   true, 100, 25);
-	envWidthSlider.setTextBoxIsEditable(true);
-	envWidthSlider.setRange(Param::EnvelopeWidth::min, Param::EnvelopeWidth::max);
-	envWidthSlider.setSkewFactorFromMidPoint(Param::EnvelopeWidth::init);
+    sustainRatioSlider.setName("sustainWidthSlider");
+    sustainRatioSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    sustainRatioSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
+    sustainRatioSlider.setTextBoxIsEditable(true);
+    sustainRatioSlider.setRange(Param::SustainRatio::min, Param::SustainRatio::max);
+    sustainRatioSlider.setSkewFactorFromMidPoint(Param::SustainRatio::init);
 	//envWidthSlider.setTextValueSuffix(" g");
 	//envWidthSlider.addListener(this);
-	envWidthSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+    sustainRatioSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	envWidthLabel.setText((const juce::String)Param::EnvelopeWidth::name, juce::dontSendNotification);
-	envWidthLabel.attachToComponent(&envWidthSlider, false);
-	envWidthLabel.setJustificationType(juce::Justification::centred);
+	sustainRatioLabel.setText((const juce::String)Param::SustainRatio::name, juce::dontSendNotification);
+    sustainRatioLabel.attachToComponent(&sustainRatioSlider, false);
+	sustainRatioLabel.setJustificationType(juce::Justification::centred);
 
 
 	traversalTimeSlider.setName("traversalTimeSlider");
@@ -116,13 +111,13 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
 	addAndMakeVisible(&densitySlider);
 	addAndMakeVisible(&durationSlider);
 	addAndMakeVisible(&speedSlider);
-	addAndMakeVisible(&envWidthSlider);
+    addAndMakeVisible(&sustainRatioSlider);
 	addAndMakeVisible(&traversalTimeSlider);
 
 	addAndMakeVisible(&densityLabel);
 	addAndMakeVisible(&durationLabel);
 	addAndMakeVisible(&speedLabel);
-	addAndMakeVisible(&envWidthLabel);
+    addAndMakeVisible(&sustainRatioLabel);
 	addAndMakeVisible(&traversalTimeLabel);
 
 	//ComboBoxParameterAttachment(RangedAudioParameter& parameter, ComboBox& combo,
@@ -223,8 +218,8 @@ void GrainsFrame::resized()
 	flexBox4.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
 	flexBox4.alignContent = juce::FlexBox::AlignContent::center;
 
-	flexBox4.items.add(juce::FlexItem(envWidthLabel).withFlex(0.2f));
-	flexBox4.items.add(juce::FlexItem(envWidthSlider).withFlex(0.8f).withMargin(h));
+	flexBox4.items.add(juce::FlexItem(sustainRatioLabel).withFlex(0.2f));
+    flexBox4.items.add(juce::FlexItem(sustainRatioSlider).withFlex(0.8f).withMargin(h));
 
 	juce::FlexBox flexBox5;
 	flexBox5.flexDirection = juce::FlexBox::Direction::column;

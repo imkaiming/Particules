@@ -39,6 +39,7 @@ Grain* GrainPool::get(const GrainHandle handle)
 
 // always provide and init a grain unless the pool capacity is insufficient
 // return a valid handle and set active a grain at nextFree position
+/*
 bool GrainPool::acquire(GrainHandle& outHandle, Grain*& outGrain)
 {
     if(nextFree >= mCapacity)
@@ -55,6 +56,7 @@ bool GrainPool::acquire(GrainHandle& outHandle, Grain*& outGrain)
 
     return true;
 }
+*/
 
 GrainHandle GrainPool::acquire()
 {

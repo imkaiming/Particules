@@ -104,13 +104,9 @@ bool AudioFileLoader::loadAudio(juce::File& file)
 						  resampledSamples);
 	}
 
-	//thumbnailComponent.setFile(file);
-
 	std::shared_ptr<const SampleSource> source = std::make_shared<const SampleSource>(std::move(resampledBuffer), paramsView.getSampleRate());
 
-	//const SampleSource source(resampledBuffer, targetSampleRate);
 	paramsView.setSampleSource(source);
-	//paramsView.getGrainVisualizer()->setGrains(paramsView.getGrains());
 
 	return true;
 }

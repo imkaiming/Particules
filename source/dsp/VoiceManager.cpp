@@ -25,14 +25,14 @@ void VoiceManager::reset()
 void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const SampleSource* source)
 {
     const int numChannels = outputBlock.getNumChannels();
-    const int numSamples = outputBlock.getNumSamples();
+    //const int numSamples = outputBlock.getNumSamples();
 
-    for(size_t currentSample = 0; currentSample < numSamples; currentSample++)
+    for(size_t currentSample = 0; currentSample < bufferSize; currentSample++)
     {
         for(int i = activeCount - 1; i >= 0; --i) // backward iteration for removing handle securely
         {
             GrainHandle h = activeHandles[i];
-            Grain* g = pool.get(h); 
+            Grain* g = pool.get(h);
             if(!g) // grain has been released already MAY NOT NEEDED
             {
                 removeVoice(i); // place the current handle[index] in activeCount index and became
@@ -75,7 +75,4 @@ void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
 // example : after spawning 5 times activeCount = 5
 // removing index 2 then swapping the index 4 with the 2 and
 // after decrementing activeCount is = 4.
-void VoiceManager::removeVoice(uint16_t i)
-{
-    activeHandles[i] = activeHandles[--activeCount];
-}
+void VoiceManager::removeVoice(uint16_t i) { activeHandles[i] = activeHandles[--activeCount]; }

@@ -12,7 +12,7 @@
 
 struct ParameterSnapshot
 {
-	float duration;
+	float duration; 
 	float density;
 	float fadeInt;
 	float fadeOut;
@@ -21,12 +21,13 @@ struct ParameterSnapshot
 	float mix;
 	float position;
 	float selection;
-	float envWidth;
+    float sustainRatio;
 
 	float envType;
 	float traversalMode;
 	float traversalTime;
 
+	double sampleRate;
 	bool isValid() const
 	{
 		return duration > 0 && speed > 0 && density >= 0;

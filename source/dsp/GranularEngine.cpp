@@ -11,7 +11,7 @@
 #include "GranularEngine.h"
 #include "../framework/ParameterView.h"
 
-GranularEngine::GranularEngine(ParameterView& sp) : paramsView { sp }, scheduler {}, voiceManager { grainPool }, grainPool {} {}
+GranularEngine::GranularEngine(ParameterView& sp) : paramsView{sp}, scheduler{}, voiceManager{grainPool}, grainPool{} {}
 
 void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize)
 {
@@ -32,7 +32,9 @@ void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize
 
     mixerProcessor.pushDrySamples(outputBlock);
 
-    scheduler.process(bufferSize, source->sampleRate, snapshot.density, [this](int offset, const ParameterSnapshot& snapshot) { voiceManager.spawn(offset, snapshot); }, snapshot);
+    scheduler.process(
+        bufferSize, source->sampleRate, snapshot.density,
+        [this](int offset, const ParameterSnapshot& snapshot) { voiceManager.spawn(offset, snapshot); }, snapshot);
 
     voiceManager.process(outputBlock, bufferSize, source);
 
@@ -83,7 +85,4 @@ void GranularEngine::gainProcess(juce::dsp::ProcessContextReplacing<float> conte
     gainProcessor.process(context);
 }
 
-void GranularEngine::reverbProcess(juce::dsp::ProcessContextReplacing<float> context)
-{
-    reverbProcessor.process(context);
-}
+void GranularEngine::reverbProcess(juce::dsp::ProcessContextReplacing<float> context) { reverbProcessor.process(context); }

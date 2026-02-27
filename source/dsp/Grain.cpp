@@ -45,7 +45,9 @@ WindowingMethod Grain::getWindowingMethod(int val)
     return window;
 }
 
-Grain::Grain() : duration(0), position(0), speed(1.f), envelopeWidth(0), envelopeType(0), envelopeSize(0), fadeIn(0), fadeOut(0), currentTime(0), offset { 0 }
+Grain::Grain()
+    : duration{0}, position{0}, speed{1.f}, sustainWidth{0}, envelopeType{0}, envelopeSize{0}, fadeIn{0}, fadeOut{0},
+      currentTime{0}, offset{0}
 {
     reset();
 }
@@ -58,7 +60,7 @@ void Grain::reset()
     fadeIn = 0;
     fadeOut = 0;
     offset = 0;
-    envelopeWidth = 0;
+    sustainWidth = 0;
     envelopeType = 0;
     envelopeSize = 0;
     currentTime = 0;
@@ -67,22 +69,27 @@ void Grain::reset()
 
 void Grain::config(const ParameterSnapshot& snapshot, int sample)
 {
-    // TODO make the float to int converstion here
-    duration = static_cast<int>(snapshot.duration);
-    position = static_cast<int>(snapshot.position);
-    envelopeType = getWindowingMethod(static_cast<int>(snapshot.envType));
-    envelopeWidth = static_cast<int>(snapshot.envWidth * duration);
+    // TODO convert to int ? or keep float
+    //duration = static_cast<int>(snapshot.duration);
+    //position = static_cast<int>(snapshot.position);
+    //sustainWidth = static_cast<int>(snapshot.sustainWidth * duration);
+    duration = snapshot.duration * snapshot.sampleRate;
+    position = snapshot.position * snapshot.sampleRate;
+    selection = snapshot.selection * snapshot.sampleRate;
+
 
     speed = snapshot.speed;
     offset = sample;
 
-    fadeIn = static_cast<int>((snapshot.duration - envelopeWidth) / 2.0);
-    fadeOut = fadeIn + envelopeWidth;
-    envelopeSize = duration - envelopeWidth;
+    //fadeIn = static_cast<int>((snapshot.duration - envelopeWidth) / 2.0);
+    sustainWidth = snapshot.sustainRatio * duration;
+    fadeIn = (duration - sustainWidth) / 2.0;
+    fadeOut = fadeIn + sustainWidth;
+    envelopeSize = duration - sustainWidth;
 
-    //traversalMode = snapshot.traversalMode;
-    //traversalTime = snapshot.traversalTime;
-    //selection = snapshot.selection;
+    envelopeType = getWindowingMethod(static_cast<int>(snapshot.envType));
+    traversalMode = snapshot.traversalMode;
+    traversalTime = snapshot.traversalTime;
     //gain = snapshot.gain;
 
     //TODO@ precalculer la table d'enveloppe et la storer en local
@@ -91,6 +98,12 @@ void Grain::config(const ParameterSnapshot& snapshot, int sample)
 
 float Grain::getCurrentSample(const SampleSource* source, const int channel, const int outNumChannel) noexcept
 {
+    if(offset > 0)
+    {
+        offset--;
+        return 0.f;
+    }
+
     const AudioBuffer& inputbuffer = source->inputBuffer;
     const int sourceChannel = source->numChannels;
     const int inputNumSamples = inputbuffer.getNumSamples();
@@ -100,7 +113,7 @@ float Grain::getCurrentSample(const SampleSource* source, const int channel, con
     if(readPosition >= inputNumSamples)
         readPosition -= inputNumSamples;
 
-    grainPoint.setSamplePos(readPosition);
+    //grainPoint.setSamplePos(readPosition);
 
     float sampleValue = 0.0f;
 
@@ -116,7 +129,6 @@ float Grain::getCurrentSample(const SampleSource* source, const int channel, con
 
     return sampleValue;
 }
-
 
 float Grain::applyEnvelope(const int index)
 {
@@ -172,8 +184,7 @@ float Grain::applyEnvelope(const int index)
 
 float Grain::ncos(size_t order, size_t i, size_t size)
 {
-    return std::cos(static_cast<float>(order * i)
-                    * juce::MathConstants<float>::pi / static_cast<float>(size - 1));
+    return std::cos(static_cast<float>(order * i) * juce::MathConstants<float>::pi / static_cast<float>(size - 1));
 }
 
 float Grain::hannEnvelope(const int index)
@@ -188,10 +199,7 @@ float Grain::triangularEnvelope(const int index)
     return static_cast<float>(1.0) - std::abs((static_cast<float>(index) - halfSlots) / halfSlots);
 }
 
-float Grain::rectangularEnvelope(const int index)
-{
-    return static_cast<float>(1);
-}
+float Grain::rectangularEnvelope(const int index) { return static_cast<float>(1); }
 
 float Grain::hammingEnvelope(const int index)
 {
@@ -227,15 +235,9 @@ float Grain::flatTopEnvelope(const int index)
     return static_cast<float>(1.0 - 1.93 * cos2 + 1.29 * cos4 - 0.388 * cos6 + 0.028 * cos8);
 }
 
-GrainPoint* Grain::getGrainPoint()
-{
-    return &grainPoint;
-}
+GrainPoint* Grain::getGrainPoint() { return &grainPoint; }
 
-float Grain::curve(float x, float coefficient)
-{
-    return 1.0f - std::pow(1.0f - x, coefficient);
-}
+float Grain::curve(float x, float coefficient) { return 1.0f - std::pow(1.0f - x, coefficient); }
 
 //float Grain::logInterpolation(float x)
 //{
