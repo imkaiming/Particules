@@ -46,16 +46,16 @@ WindowingMethod Grain::getWindowingMethod(int val)
 }
 
 Grain::Grain()
-    : duration{0}, position{0}, speed{1.f}, sustainWidth{0}, envelopeType{0}, envelopeSize{0}, fadeIn{0}, fadeOut{0},
-      currentTime{0}, offset{0}
+    : durationSamples{0}, startPosition{0}, speed{1.f}, sustainWidth{0}, envelopeType{0}, envelopeSize{0}, fadeIn{0}, fadeOut{0},
+      elapsedSamples{0}, offset{0}, linearGain{1.f}
 {
     reset();
 }
 
 void Grain::reset()
 {
-    duration = 0;
-    position = 0;
+    durationSamples = 0;
+    startPosition = 0;
     speed = 1.f;
     fadeIn = 0;
     fadeOut = 0;
@@ -63,29 +63,31 @@ void Grain::reset()
     sustainWidth = 0;
     envelopeType = 0;
     envelopeSize = 0;
-    currentTime = 0;
+    elapsedSamples = 0;
     generation = 0;
+    linearGain = 1.f;
 }
 
 void Grain::config(const ParameterSnapshot& snapshot, int sample)
 {
     // TODO convert to int ? or keep float
-    //duration = static_cast<int>(snapshot.duration);
-    //position = static_cast<int>(snapshot.position);
-    //sustainWidth = static_cast<int>(snapshot.sustainWidth * duration);
-    duration = snapshot.duration * snapshot.sampleRate;
-    position = snapshot.position * snapshot.sampleRate;
-    selection = snapshot.selection * snapshot.sampleRate;
+    //durationSamples = static_cast<int>(snapshot.durationSamples);
+    //startPosition = static_cast<int>(snapshot.startPosition);
+    //sustainWidth = static_cast<int>(snapshot.sustainWidth * durationSamples);
+    elapsedSamples = 0;
 
-
+    durationSamples = snapshot.duration* snapshot.sampleRate;
+    startPosition = snapshot.position * snapshot.sampleRate;
+    selectionWindow = snapshot.selection * snapshot.sampleRate;
+    linearGain = snapshot.linearGain;
     speed = snapshot.speed;
     offset = sample;
 
-    //fadeIn = static_cast<int>((snapshot.duration - envelopeWidth) / 2.0);
-    sustainWidth = snapshot.sustainRatio * duration;
-    fadeIn = (duration - sustainWidth) / 2.0;
+    //fadeIn = static_cast<int>((snapshot.durationSamples - envelopeWidth) / 2.0);
+    sustainWidth = snapshot.sustainRatio * durationSamples;
+    fadeIn = (durationSamples - sustainWidth) / 2.0;
     fadeOut = fadeIn + sustainWidth;
-    envelopeSize = duration - sustainWidth;
+    envelopeSize = durationSamples - sustainWidth;
 
     envelopeType = getWindowingMethod(static_cast<int>(snapshot.envType));
     traversalMode = snapshot.traversalMode;
@@ -109,7 +111,7 @@ float Grain::getCurrentSample(const SampleSource* source, const int channel, con
     const int inputNumSamples = inputbuffer.getNumSamples();
     const float* sample = inputbuffer.getReadPointer(channel % sourceChannel);
 
-    int readPosition = position + static_cast<int>(currentTime * speed);
+    int readPosition = startPosition + static_cast<int>(elapsedSamples * speed);
     if(readPosition >= inputNumSamples)
         readPosition -= inputNumSamples;
 
@@ -117,17 +119,17 @@ float Grain::getCurrentSample(const SampleSource* source, const int channel, con
 
     float sampleValue = 0.0f;
 
-    if(currentTime < fadeIn)
-        sampleValue = sample[readPosition] * applyEnvelope(currentTime);
-    else if(fadeOut <= currentTime)
-        sampleValue = sample[readPosition] * applyEnvelope(duration - currentTime);
+    if(elapsedSamples < fadeIn)
+        sampleValue = sample[readPosition] * applyEnvelope(elapsedSamples);
+    else if(fadeOut <= elapsedSamples)
+        sampleValue = sample[readPosition] * applyEnvelope(durationSamples - elapsedSamples);
     else
         sampleValue = sample[readPosition];
 
     float x = std::clamp((sampleValue * 0.5f + 0.5f), 0.f, 1.f);
     grainPoint.setOpacity(curve(x, 5.f));
 
-    return sampleValue;
+    return sampleValue * linearGain;
 }
 
 float Grain::applyEnvelope(const int index)

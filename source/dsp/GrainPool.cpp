@@ -66,7 +66,6 @@ GrainHandle GrainPool::acquire()
     const uint16_t i = freeIndices[nextFree++];
     Grain& g = grains[i];
     g.setActive(true);
-
     return GrainHandle { i, g.getGeneration() };
 }
 

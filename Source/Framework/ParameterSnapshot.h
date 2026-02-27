@@ -16,7 +16,7 @@ struct ParameterSnapshot
 	float density;
 	float fadeInt;
 	float fadeOut;
-	float gain;
+	float linearGain;
 	float speed;
 	float mix;
 	float position;

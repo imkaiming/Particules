@@ -64,6 +64,8 @@ void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
         return; // cannot spawn any more grains
 
     GrainHandle handle = pool.acquire();
+    //DBG("handle index = " + (juce::String)handle.index);
+    //DBG("handle gen = " + (juce::String)handle.gen);
     Grain* grain = pool.get(handle);
     if(grain == nullptr)
         return;

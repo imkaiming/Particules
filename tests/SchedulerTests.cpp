@@ -17,7 +17,7 @@ namespace audio_plugin_test
             snapshot.density = 1.f;
             snapshot.fadeInt = 0.f;
             snapshot.fadeOut = 0.f;
-            snapshot.gain = 1.0f;
+            snapshot.linearGain = 1.0f;
             snapshot.speed = 1.0f;
             snapshot.mix = 1.f;
             snapshot.envType = 1.f;

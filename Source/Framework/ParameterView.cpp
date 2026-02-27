@@ -54,7 +54,7 @@ const ParameterSnapshot ParameterView::getSnapshot() const noexcept
     snapshot.density = getDensity();
     snapshot.envType = getEnvelopeType();
     snapshot.sustainRatio= getSustainRatio();
-    snapshot.gain = getGain();
+    snapshot.linearGain = getDecibelToGain();
     snapshot.position = getFilePosition();
     snapshot.selection = getWindowSelection();
     snapshot.traversalMode = getTraversalMode();
