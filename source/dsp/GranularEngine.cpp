@@ -19,6 +19,7 @@ void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize
     // si density = 500g/s (1g chaque 0.002s) alors on a interOnSet = 48000/500 = 96 sample.
     // 1024/96 = 10.66 grains par appel
 
+
     const ParameterSnapshot snapshot = paramsView.getSnapshot();
     const SampleSource* source = paramsView.getSampleSource().get();
 

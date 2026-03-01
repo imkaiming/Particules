@@ -12,27 +12,22 @@
 
 //template <typename Type>
 //CircularBuffer<Type>::
-CircularBuffer::CircularBuffer(int numChannels, int numSamples) :
-	juce::AudioBuffer<float>(numChannels, numSamples),
-	writePosition(0)
+CircularBuffer::CircularBuffer(int numChannels, int numSamples)
+    : juce::AudioBuffer<float>(numChannels, numSamples), writePosition(0)
 {
-	clear();
+    clear();
 }
-
 
 //template <typename Type>
 //CircularBuffer<Type>::
-CircularBuffer::~CircularBuffer()
-{
-}
-
+CircularBuffer::~CircularBuffer() {}
 
 //template <typename Type>
 //void CircularBuffer<Type>::
 void CircularBuffer::clear()
 {
-	juce::AudioBuffer<float>::clear();
-	writePosition = 0;
+    juce::AudioBuffer<float>::clear();
+    writePosition = 0;
 }
 
 //template <typename Type>
@@ -54,34 +49,32 @@ void CircularBuffer::clear()
 
 void CircularBuffer::fillBuffer(const juce::AudioBuffer<float>& buffer)
 {
-	const int bufferSize = buffer.getNumSamples();
-	const int circularSize = this->getNumSamples();
+    const int bufferSize = buffer.getNumSamples();
+    const int circularSize = this->getNumSamples();
 
-	for (size_t channel = 0; channel < this->getNumChannels(); ++channel)
-	{
+    for(int channel = 0; channel < this->getNumChannels(); ++channel)
+    {
+        if(circularSize >= bufferSize + writePosition)
+        {
+            this->copyFrom(channel, writePosition, buffer.getReadPointer(channel), bufferSize);
+        }
+        else
+        {
+            int numSamplesToEnd = circularSize - writePosition;
+            int numSamplesAtStart = bufferSize - numSamplesToEnd;
 
-		if (circularSize >= bufferSize + writePosition)
-		{
-			this->copyFrom(channel, writePosition,
-				buffer.getReadPointer(channel), bufferSize);
-		}
-		else
-		{
-			int numSamplesToEnd = circularSize - writePosition;
-			int numSamplesAtStart = bufferSize - numSamplesToEnd;
+            copyFrom(channel, writePosition, buffer.getReadPointer(channel), numSamplesToEnd);
+            copyFrom(channel, 0, buffer.getReadPointer(channel, numSamplesToEnd), numSamplesAtStart);
+        }
+    }
 
-			copyFrom(channel, writePosition, buffer.getReadPointer(channel), numSamplesToEnd);
-			copyFrom(channel, 0, buffer.getReadPointer(channel, numSamplesToEnd), numSamplesAtStart);
-		}
-	}
-
-	updatePosition(bufferSize);
+    updatePosition(bufferSize);
 }
 
 void CircularBuffer::updatePosition(int samples)
 {
-	this->writePosition += samples;
-	this->writePosition %= this->getNumSamples();
+    this->writePosition += samples;
+    this->writePosition %= this->getNumSamples();
 }
 
 //void CircularBuffer::pushSamples(const float sample, const int channel)

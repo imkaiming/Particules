@@ -76,9 +76,10 @@ void Grain::config(const ParameterSnapshot& snapshot, int sample)
     //sustainWidth = static_cast<int>(snapshot.sustainWidth * durationSamples);
     elapsedSamples = 0;
 
-    durationSamples = snapshot.duration* snapshot.sampleRate;
-    startPosition = snapshot.position * snapshot.sampleRate;
-    selectionWindow = snapshot.selection * snapshot.sampleRate;
+    durationSamples = snapshot.durationSample;     //*snapshot.sampleRate;
+    startPosition = snapshot.startPositionSample;  //*snapshot.sampleRate;
+    selectionWindow = snapshot.selectionSample;    // * snapshot.sampleRate;
+
     linearGain = snapshot.linearGain;
     speed = snapshot.speed;
     offset = sample;

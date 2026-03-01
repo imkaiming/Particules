@@ -42,19 +42,19 @@ private:
 	// Buttons parameters
 	juce::DrawableButton open_btn;
 	juce::DrawableButton stop_btn;
-	juce::DrawableButton play_btn;
+    juce::DrawableButton play_pause_btn;
 
 	// Button managment
-	void setPlayButtonImagePlay();
-	void setPlayButtonImagePause();
-	void setOpenButtonImageOpen();
-	void setStopButtonImageStop();
+	void setPlayButtonImage();
+	void setPauseButtonImage();
+	void setOpenButtonImage();
+	void setStopButtonImage();
 
 	// Buttons methods
 	//void initDrawableButtons();
 	void openFileButtonClicked();
-	void stopFileButtonClicked();
-	void playFileButtonClicked();
+	void stopAudioButtonClicked();
+	void playAudioButtonClicked();
 
 	bool isInterestedInFileDrag(const juce::StringArray&);
 	void filesDropped(const juce::StringArray&, int, int);

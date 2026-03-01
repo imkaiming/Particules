@@ -48,15 +48,15 @@ const int ParameterView::getNumSamples() const noexcept
 const ParameterSnapshot ParameterView::getSnapshot() const noexcept
 {
     ParameterSnapshot snapshot;
-    snapshot.duration = getDuration();
+    snapshot.durationSample = getDuration() * mSampleRate;
+    snapshot.startPositionSample = getFilePosition() * mSampleRate;
+    snapshot.selectionSample = getWindowSelection() * mSampleRate;
     snapshot.mix = getMix();
     snapshot.speed = getSpeed();
     snapshot.density = getDensity();
     snapshot.envType = getEnvelopeType();
     snapshot.sustainRatio= getSustainRatio();
     snapshot.linearGain = getDecibelToGain();
-    snapshot.position = getFilePosition();
-    snapshot.selection = getWindowSelection();
     snapshot.traversalMode = getTraversalMode();
     snapshot.traversalTime = getTraversalTime();
     snapshot.sampleRate = getSampleRate();

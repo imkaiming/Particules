@@ -13,10 +13,8 @@ namespace audio_plugin_test
 
         SchedulerFixture()
         {
-            snapshot.duration = 1.0f;
+            snapshot.durationSample = 48000.f;
             snapshot.density = 1.f;
-            snapshot.fadeInt = 0.f;
-            snapshot.fadeOut = 0.f;
             snapshot.linearGain = 1.0f;
             snapshot.speed = 1.0f;
             snapshot.mix = 1.f;
