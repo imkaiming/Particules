@@ -15,7 +15,7 @@
 
 
 MainFrame::MainFrame(UIContext& uic):	titleFrame(uic.customLookAndFeel), synthFrame(uic.apvts), 
-grainsFrame(uic.apvts), audioFileFrame(uic), statusBarFrame()
+grainsFrame(uic.apvts), audioFileFrame(uic), statusBarFrame(uic)
 {
 	addAndMakeVisible(&titleFrame);
 	addAndMakeVisible(&synthFrame);

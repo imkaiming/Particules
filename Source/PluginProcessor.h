@@ -62,6 +62,9 @@ public:
 	void loadFile();
 	const juce::File& getCurrentFile() const noexcept { return currentFile; };
 	AudioFileLoader& getAudioFileLoader() noexcept { return loader; };
+
+	uint16_t getNumActiveGrains() const noexcept { return grainEngine.getNumActiveGrains(); };
+
 private:
 
 	void initOnAudioLoadedCallback();

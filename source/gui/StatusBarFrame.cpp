@@ -9,27 +9,35 @@
 */
 
 #include "StatusBarFrame.h"
+#include "../PluginProcessor.h"
+#include "../framework/UIContext.h"
 #include "../utils/MyColours.h"
 
-StatusBarFrame::StatusBarFrame() //UIContext& uic): uic{uic}
+StatusBarFrame::StatusBarFrame(UIContext& uic) : uic{uic}, audioProcessor{uic.audioProcessor}
 {
-	addAndMakeVisible(&statusLabel);
+    addAndMakeVisible(&statusLabel);
+    startTimerHz(10);
+
+    statusLabel.setColour(0, juce::Colours::white);
+    statusLabel.setSize(statusLabel.getWidth() * 0.5f, statusLabel.getHeight() * 0.5f);
+    statusLabel.setJustificationType(juce::Justification::centredLeft);
+    statusLabel.setColour(0, juce::Colours::white);
 }
 
-void StatusBarFrame::paint(juce::Graphics& g)
-{
-	g.fillAll(MyColours::black);
+void StatusBarFrame::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
 
-	statusLabel.setText((const juce::String)"print current active grains here", juce::dontSendNotification);
-	statusLabel.setJustificationType(juce::Justification::centredLeft);
-	statusLabel.setColour(0, juce::Colours::white);
-	//statusLabel.setSize(statusLabel.getWidth() * 0.5f, statusLabel.getHeight() * 0.5f);
-}
 void StatusBarFrame::resized()
 {
-	float h = getHeight() / 30.f;
+    float h = getHeight() / 30.f;
 
-	juce::FlexBox flexbox;
-	flexbox.items.add(juce::FlexItem(statusLabel).withFlex(1).withMargin(h));
-	flexbox.performLayout(getLocalBounds().toFloat());
+    juce::FlexBox flexbox;
+    flexbox.items.add(juce::FlexItem(statusLabel).withFlex(1).withMargin(h));
+    flexbox.performLayout(getLocalBounds().toFloat());
+}
+
+void StatusBarFrame::timerCallback()
+{
+    statusLabel.setText((const juce::String) "active grains: " + (const juce::String)audioProcessor.getNumActiveGrains(),
+        juce::dontSendNotification);
+    repaint();
 }

@@ -28,8 +28,9 @@ public:
 
 	void process(juce::AudioBuffer<float>& output, int bufferSize);
 	void init(int sampleRate, int numChannel, int samplePerBlocks);
+    uint16_t getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); };
 
-private :
+private:
 	void mixingProcess(AudioBlock);
 	void gainProcess(juce::dsp::ProcessContextReplacing<float>);
 	void reverbProcess(juce::dsp::ProcessContextReplacing<float>);
@@ -38,7 +39,7 @@ private :
 	
 	ParameterView& paramsView;
 	Scheduler scheduler;
-	GrainPool grainPool;
+    GrainPool pool;
 	VoiceManager voiceManager;
 
 	juce::dsp::DryWetMixer<float> mixerProcessor;

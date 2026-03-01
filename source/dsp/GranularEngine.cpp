@@ -11,7 +11,7 @@
 #include "GranularEngine.h"
 #include "../framework/ParameterView.h"
 
-GranularEngine::GranularEngine(ParameterView& sp) : paramsView{sp}, scheduler{}, voiceManager{grainPool}, grainPool{} {}
+GranularEngine::GranularEngine(ParameterView& sp) : paramsView{sp}, scheduler{}, voiceManager{pool}, pool{} {}
 
 void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize)
 {
@@ -38,6 +38,7 @@ void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize
         [this](int offset, const ParameterSnapshot& snapshot) { voiceManager.spawn(offset, snapshot); }, snapshot);
 
     voiceManager.process(outputBlock, bufferSize, source);
+
 
     //reverbProcess(audioBlock);
     mixingProcess(outputBlock);
