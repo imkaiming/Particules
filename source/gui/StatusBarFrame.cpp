@@ -19,7 +19,7 @@ StatusBarFrame::StatusBarFrame(UIContext& uic) : uic{uic}, audioProcessor{uic.au
     startTimerHz(10);
 
     statusLabel.setColour(0, juce::Colours::white);
-    statusLabel.setSize(statusLabel.getWidth() * 0.5f, statusLabel.getHeight() * 0.5f);
+    statusLabel.setSize((int)(statusLabel.getWidth() * 0.5f), (int)(statusLabel.getHeight() * 0.5f));
     statusLabel.setJustificationType(juce::Justification::centredLeft);
     statusLabel.setColour(0, juce::Colours::white);
 }

@@ -20,7 +20,7 @@ namespace audio_plugin_test
             snapshot.mix = 1.f;
             snapshot.envType = 1.f;
             snapshot.traversalMode = 1.f;
-            snapshot.traversalTime = 1.f;
+            snapshot.traversalFreq = 1.f;
 
             numSamples = 512;
             numChannels = 2;

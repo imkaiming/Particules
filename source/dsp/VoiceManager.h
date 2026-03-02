@@ -11,6 +11,7 @@
 #pragma once
 
 #include "GrainPool.h"
+#include "PositionModulator.h"
 #include "../framework/GrainHandle.h"
 
 // VoiceManager takes segments from the spawned events and render grains from it
@@ -24,8 +25,8 @@ public:
 	~VoiceManager() = default;
 
 	void reset();
-	void process(AudioBlock& outputBlock, int bufferSize, const SampleSource* source);
-	void spawn(int offset, const ParameterSnapshot& snapshot);
+	void process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
+    void spawn(int offset, const ParameterSnapshot& snapshot, float startPosition);
 
 private:
 	void removeVoice(uint16_t index);

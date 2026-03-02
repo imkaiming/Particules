@@ -19,7 +19,7 @@ struct GranularView
 
     std::atomic<float>* envType = nullptr;
     std::atomic<float>* traversalMode = nullptr;
-    std::atomic<float>* traversalTime = nullptr;
+    std::atomic<float>* traversalFreq = nullptr;
 };
 
 class Grain; // TODO to delete
@@ -33,8 +33,8 @@ public:
 
     // APVTS param reads
     float getMix() const noexcept { return view.mix ? convertToPercentage(view.mix->load(std::memory_order_relaxed)) : 0.0f; }
-    float getGain() const noexcept { return view.gain ? view.gain->load(std::memory_order_relaxed) : 0.0f; }
-    float getDecibelToGain() const noexcept
+    float getDecibelGain() const noexcept { return view.gain ? view.gain->load(std::memory_order_relaxed) : 0.0f; }
+    float getLinearGain() const noexcept
     {
         return view.gain ? juce::Decibels::decibelsToGain(view.gain->load(std::memory_order_relaxed)) : 0.0f;
     }
@@ -47,9 +47,9 @@ public:
     {
         return view.sustainRatio ? view.sustainRatio->load(std::memory_order_relaxed) : 0.0f;
     }
-    float getTraversalTime() const noexcept
+    float getTraversalFreq() const noexcept
     {
-        return view.traversalTime ? view.traversalTime->load(std::memory_order_relaxed) : 0.0f;
+        return view.traversalFreq ? view.traversalFreq->load(std::memory_order_relaxed) : 0.0f;
     }
 
     float getEnvelopeType() const noexcept { return view.envType ? (view.envType->load(std::memory_order_relaxed)) : 0; }
@@ -58,15 +58,15 @@ public:
         return view.traversalMode ? (view.traversalMode->load(std::memory_order_relaxed)) : 0;
     }
 
-    // runtime flags
+    // runFreq flags
     void setIsPlaying(bool b) noexcept { mIsPlaying.store(b, std::memory_order_relaxed); }
     void setIsGrainsEmpty(bool b) noexcept { mIsGrainsEmpty.store(b, std::memory_order_relaxed); }
 
     bool getIsPlaying() const noexcept { return mIsPlaying.load(std::memory_order_relaxed); }
     bool getIsGrainsEmpty() const noexcept { return mIsGrainsEmpty.load(std::memory_order_relaxed); }
 
-    const int getNumChannels() const noexcept;
-    const int getNumSamples() const noexcept;
+    //const int getNumChannels() const noexcept;
+    //const int getNumSamples() const noexcept;
 
     const double getSampleRate() const noexcept { return mSampleRate.load(std::memory_order_relaxed); }
     void setSampleRate(double sr) noexcept { mSampleRate.store(sr, std::memory_order_relaxed); }
@@ -80,18 +80,23 @@ public:
     const GranularView& getView() const noexcept { return view; }
     const ParameterSnapshot getSnapshot() const noexcept;
 
-    //void setSampleSource(const SampleSource* newSource) noexcept { sampleSource.store(newSource, std::memory_order_relaxed); };
-    //const SampleSource* getSampleSource() const noexcept { return sampleSource.load(std::memory_order_relaxed); };
-    void setSampleSource(std::shared_ptr<const SampleSource> source) noexcept
+    //void setSampleSource(std::shared_ptr<const SampleSource> source) noexcept
+    //{
+    //sampleSource.store(std::move(source), std::memory_order_release);
+    //}
+    //std::shared_ptr<const SampleSource> getSampleSource() const noexcept { return sampleSource.load(std::memory_order_acquire); }
+
+    void setAudioSource(std::shared_ptr<const AudioBuffer> ib) noexcept
     {
-        sampleSource.store(std::move(source), std::memory_order_release);
+        inputBuffer.store(std::move(ib), std::memory_order_relaxed);
     }
-    std::shared_ptr<const SampleSource> getSampleSource() const noexcept { return sampleSource.load(std::memory_order_acquire); }
+    std::shared_ptr<const AudioBuffer> getAudioSource() const noexcept { return inputBuffer.load(std::memory_order_acquire); }
 
 private:
-    std::atomic<std::shared_ptr<const SampleSource>> sampleSource;
+    //std::atomic<std::shared_ptr<const SampleSource>> sampleSource;
+    std::atomic<std::shared_ptr<const AudioBuffer>> inputBuffer;
 
-    // runtime flags
+    // runFreq flags
     std::atomic<bool> mIsPlaying;
     std::atomic<bool> mIsGrainsEmpty;
     std::atomic<double> mSampleRate;

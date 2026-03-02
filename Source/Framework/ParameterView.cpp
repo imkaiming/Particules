@@ -28,22 +28,22 @@ void ParameterView::init(ValueTreeState& apvts, double sampleRate)
     view.envType = apvts.getRawParameterValue(Param::EnvelopeType::id);
     view.sustainRatio = apvts.getRawParameterValue(Param::SustainRatio::id);
     view.traversalMode = apvts.getRawParameterValue(Param::TraversalMode::id);
-    view.traversalTime = apvts.getRawParameterValue(Param::TraversalTime::id);
+    view.traversalFreq = apvts.getRawParameterValue(Param::TraversalFreq::id);
 }
 
-const int ParameterView::getNumChannels() const noexcept
-{
-    std::shared_ptr<const SampleSource> source = std::atomic_load(&sampleSource);
-    return source ? source->numChannels : -1;
-    //return sampleSource.load()->numChannels;
-}
-
-const int ParameterView::getNumSamples() const noexcept
-{
-    std::shared_ptr<const SampleSource> source = std::atomic_load(&sampleSource);
-    return source ? source->numSamples : -1;
-    //return sampleSource.load()->numSamples;
-}
+//const int ParameterView::getNumChannels() const noexcept
+//{
+//    std::shared_ptr<const AudioBuffer> source = std::atomic_load(&inputBuffer);
+//    return source ? source->getNumChannels() : -1;
+//    //return sampleSource.load()->numChannels;
+//}
+//
+//const int ParameterView::getNumSamples() const noexcept
+//{
+//    std::shared_ptr<const AudioBuffer> source = std::atomic_load(&inputBuffer);
+//    return source ? source->getNumSamples() : -1;
+//    //return sampleSource.load()->numSamples;
+//}
 
 const ParameterSnapshot ParameterView::getSnapshot() const noexcept
 {
@@ -56,9 +56,9 @@ const ParameterSnapshot ParameterView::getSnapshot() const noexcept
     snapshot.density = getDensity();
     snapshot.envType = getEnvelopeType();
     snapshot.sustainRatio= getSustainRatio();
-    snapshot.linearGain = getDecibelToGain();
-    snapshot.traversalMode = getTraversalMode();
-    snapshot.traversalTime = getTraversalTime();
+    snapshot.linearGain = getLinearGain();
+    snapshot.traversalMode = static_cast<int>(getTraversalMode());
+    snapshot.traversalFreq = getTraversalFreq();
     snapshot.sampleRate = getSampleRate();
     return snapshot;
 };

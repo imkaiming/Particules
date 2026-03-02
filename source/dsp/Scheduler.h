@@ -18,7 +18,6 @@
 
 
 #include "../framework/Core.h"
-#include "../utils/PhaseMod.h"
 #include "../frameWork/ParameterSnapshot.h"
 #include "../utils/GrainVisualizer.h"
 
@@ -43,8 +42,5 @@ private:
 	juce::Random random;		// parameters to set the interOnset
 
 	double nextOnSet;				// Tells us when the next grain should play
-
-	//juce::dsp::Oscillator<float> lfoTraversal;
-	//PhaseMod phaseMod;
 
 };

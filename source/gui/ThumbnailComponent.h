@@ -26,7 +26,7 @@
 
 class ParameterView;
 struct UIContext;
-class ThumbnailComponent: public juce::Component, private juce::ChangeListener, juce::AudioProcessorValueTreeState::Listener
+class ThumbnailComponent: public juce::Component, private juce::ChangeListener, public juce::AudioProcessorValueTreeState::Listener
 {
 public:
 	ThumbnailComponent(int, juce::AudioFormatManager&, UIContext&);
@@ -46,10 +46,10 @@ private:
 
 	void changeListenerCallback(juce::ChangeBroadcaster*) override; // to change the waveform when changing the audio
 	void parameterChanged(const juce::String& parameterID, float newValue) override;
+
 	void updateOverflow(float value);
 	void updatePosition(float value); // update the position marker when changing the file position slider value
 	void updateSelection(float value);
-
 
 	UIContext& uic;
 	ParameterView& paramsView;

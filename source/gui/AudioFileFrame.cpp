@@ -67,6 +67,7 @@ AudioFileFrame::AudioFileFrame(UIContext& uic)
 	audioProcessor.getAudioFileLoader().setOnFileLoadedCallBack(callbackOnFileLoaded);
 	*/
 }
+
 AudioFileFrame::~AudioFileFrame() { audioProcessor.removeChangeListener(this); }
 
 void AudioFileFrame::openFileButtonClicked()
@@ -211,7 +212,7 @@ void AudioFileFrame::changeListenerCallback(juce::ChangeBroadcaster* source)
     {
         const juce::File& f = audioProcessor.getCurrentFile();
         bool valid = f.existsAsFile();
-        if(valid && paramsView.getSampleSource())
+        if(valid && paramsView.getAudioSource())
             thumbnailComponent.setFile(f);
         play_pause_btn.setEnabled(valid);
     }

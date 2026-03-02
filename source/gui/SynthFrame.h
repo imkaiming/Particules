@@ -30,20 +30,16 @@ private:
 
 	juce::Slider mixSlider;
 	juce::Slider gainSlider;
-
-	juce::Label mixLabel;
-	juce::Label gainLabel;
-
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixSliderAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainSliderAttachment;
-
-
 	juce::Slider filePosSlider;
 	juce::Slider windowSelectionSlider;
 
+	juce::Label mixLabel;
+	juce::Label gainLabel;
 	juce::Label filePosLabel;
 	juce::Label windowSelectionLabel;
 
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixSliderAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainSliderAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filePosSliderAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> windowSelectionSliderAttachment;
 

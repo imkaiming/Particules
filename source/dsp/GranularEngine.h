@@ -15,7 +15,6 @@
 #pragma once
 
 #include "VoiceManager.h"
-
 #include "Scheduler.h"
 
 
@@ -31,24 +30,23 @@ public:
     uint16_t getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); };
 
 private:
-	void mixingProcess(AudioBlock);
+	//void mixingProcess(AudioBlock);
 	void gainProcess(juce::dsp::ProcessContextReplacing<float>);
-	void reverbProcess(juce::dsp::ProcessContextReplacing<float>);
+	//void reverbProcess(juce::dsp::ProcessContextReplacing<float>);
 
 	static constexpr uint8_t mMaxEvent = Param::MaxEvents;
 	
 	ParameterView& paramsView;
+    PositionModulator posMod;
 	Scheduler scheduler;
     GrainPool pool;
 	VoiceManager voiceManager;
 
-	juce::dsp::DryWetMixer<float> mixerProcessor;
-
+	//juce::dsp::DryWetMixer<float> mixerProcessor;
 	juce::dsp::Gain<float> gainProcessor;
-	juce::dsp::Reverb reverbProcessor;
-	juce::dsp::Reverb::Parameters params;
+	//juce::dsp::Reverb reverbProcessor;
+	//juce::dsp::Reverb::Parameters params;
 
-	//CircularBuffer circularBuffer;
 	//juce::AudioBuffer<float> phaseVocoderBuffer;
 	//juce::dsp::WindowingFunction<float> window;
 	//juce::dsp::FFT fft;

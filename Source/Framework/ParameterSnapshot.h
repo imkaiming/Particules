@@ -24,8 +24,8 @@ struct ParameterSnapshot
     float sustainRatio;
 
 	float envType;
-	float traversalMode;
-	float traversalTime;
+	int traversalMode;
+	float traversalFreq;
 
 	double sampleRate;
 	bool isValid() const

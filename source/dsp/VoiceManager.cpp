@@ -12,7 +12,7 @@
 #include "../framework/ParameterSnapshot.h"
 #include "../framework/SampleSource.h"
 
-VoiceManager::VoiceManager(GrainPool& p) : pool { p }, activeCount { 0 } { reset(); }
+VoiceManager::VoiceManager(GrainPool& p) : pool{p}, activeCount{0} { reset(); }
 
 void VoiceManager::reset()
 {
@@ -22,9 +22,9 @@ void VoiceManager::reset()
     pool.reset();
 }
 
-void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const SampleSource* source)
+void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)
 {
-    const int numChannels = outputBlock.getNumChannels();
+    const size_t numChannels = outputBlock.getNumChannels();
     //const int numSamples = outputBlock.getNumSamples();
 
     for(size_t currentSample = 0; currentSample < bufferSize; currentSample++)
@@ -35,12 +35,12 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const Sample
             Grain* g = pool.get(h);
             if(!g) // grain has been released already MAY NOT NEEDED
             {
-                removeVoice(i); // place the current handle[index] in activeCount index and became
+                removeVoice((uint16_t)i); // place the current handle[index] in activeCount index and became
                 continue; // restart the begining of the loop at the same index
             }
 
             for(uint16_t channel = 0; channel < numChannels; ++channel)
-                outputBlock.addSample(channel, currentSample, g->getCurrentSample(source, channel, numChannels));
+                outputBlock.addSample((int)channel, currentSample, g->getCurrentSample(inputSource, channel, numChannels));
             g->update();
             if(g->isExhausted())
             {
@@ -58,19 +58,17 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const Sample
     }
 }
 
-void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
+void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot, float startPosition)
 {
     if(activeCount >= mCapacity)
         return; // cannot spawn any more grains
 
     GrainHandle handle = pool.acquire();
-    //DBG("handle index = " + (juce::String)handle.index);
-    //DBG("handle gen = " + (juce::String)handle.gen);
     Grain* grain = pool.get(handle);
     if(grain == nullptr)
         return;
 
-    grain->config(snapshot, offset); // init the grain here before process with the snapshot
+    grain->config(snapshot, offset, startPosition); // init the grain here before process with the snapshot
     activeHandles[activeCount++] = handle;
 }
 

@@ -22,7 +22,7 @@ struct UIContext;
 class MainFrame : public juce::Component {
 public:
 	MainFrame(UIContext& uic);
-	~MainFrame() override;
+	~MainFrame() = default;
 	void paint(juce::Graphics&) override;
 	void resized() override;
 

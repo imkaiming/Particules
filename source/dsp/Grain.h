@@ -27,10 +27,10 @@ public:
     ~Grain() = default;
 
     void reset();
-    void config(const ParameterSnapshot& snapshot, int sample);
+    void config(const ParameterSnapshot&, int, float);
 
     // Runtime functions
-    float getCurrentSample(const SampleSource* source, const int channel, const int outChannel) noexcept;
+    int getCurrentSample(const AudioBuffer*, const int, const int) noexcept;
     bool isExhausted() { return elapsedSamples >= durationSamples; };
     void update() { elapsedSamples++; };
 
@@ -73,8 +73,8 @@ private:
     float envelopeSize = 0; // utile pour calculer les fade d'entrés et de sorties des envelopes selon les functions données
     float linearGain = 1.f;
 
-    int traversalMode; // change position with phase mode
-    int traversalTime; // speed of the traversal LFO
+    //int traversalMode; // change position with phase mode
+    //int traversalTime; // speed of the traversal LFO
 
     // Amplitude related data
     std::vector<float> envelopeTable; // precompute the entire grain envelope once

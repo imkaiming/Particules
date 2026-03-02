@@ -9,8 +9,9 @@
 */
 
 #include "Scheduler.h"
+#include "PositionModulator.h"
 
-Scheduler::Scheduler() : nextOnSet { 0 } {}
+Scheduler::Scheduler() : nextOnSet{0} {}
 
 /*
 
@@ -60,10 +61,11 @@ double Scheduler::getInterOnSet(float density, double sampleRate) const noexcept
 {
     if(density <= 0.0)
         return -1.0;
-    return sampleRate / (double) density;
+    return sampleRate / (double)density;
 }
 
-void Scheduler::process(int bufferSize, double sampleRate, float density, std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& parameters)
+void Scheduler::process(int bufferSize, double sampleRate, float density,
+    std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& parameters)
 {
     const double interOnSet = getInterOnSet(density, sampleRate);
     if(interOnSet <= 1)

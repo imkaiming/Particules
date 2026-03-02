@@ -68,21 +68,21 @@ void Grain::reset()
     linearGain = 1.f;
 }
 
-void Grain::config(const ParameterSnapshot& snapshot, int sample)
+void Grain::config(const ParameterSnapshot& snapshot, int delaySample, float posModSamples)
 {
     // TODO convert to int ? or keep float
     //durationSamples = static_cast<int>(snapshot.durationSamples);
     //startPosition = static_cast<int>(snapshot.startPosition);
     //sustainWidth = static_cast<int>(snapshot.sustainWidth * durationSamples);
     elapsedSamples = 0;
+    startPosition = snapshot.startPositionSample + posModSamples;
+    //DBG(("start position = ") + ((juce::String)startPosition));
+    durationSamples = snapshot.durationSample;
+    selectionWindow = snapshot.selectionSample;
 
-    durationSamples = snapshot.durationSample;     //*snapshot.sampleRate;
-    startPosition = snapshot.startPositionSample;  //*snapshot.sampleRate;
-    selectionWindow = snapshot.selectionSample;    // * snapshot.sampleRate;
-
-    linearGain = snapshot.linearGain;
+    //linearGain = snapshot.linearGain;
     speed = snapshot.speed;
-    offset = sample;
+    offset = delaySample;
 
     //fadeIn = static_cast<int>((snapshot.durationSamples - envelopeWidth) / 2.0);
     sustainWidth = snapshot.sustainRatio * durationSamples;
@@ -91,15 +91,15 @@ void Grain::config(const ParameterSnapshot& snapshot, int sample)
     envelopeSize = durationSamples - sustainWidth;
 
     envelopeType = getWindowingMethod(static_cast<int>(snapshot.envType));
-    traversalMode = snapshot.traversalMode;
-    traversalTime = snapshot.traversalTime;
+    //traversalMode = snapshot.traversalMode;
+    //traversalFreq = snapshot.traversalFreq;
     //gain = snapshot.gain;
 
     //TODO@ precalculer la table d'enveloppe et la storer en local
     //make it not possible to change the envelop type while grain is active
 }
 
-float Grain::getCurrentSample(const SampleSource* source, const int channel, const int outNumChannel) noexcept
+int Grain::getCurrentSample(const AudioBuffer* inputbuffer, const int channel, const int outNumChannel) noexcept
 {
     if(offset > 0)
     {
@@ -107,10 +107,9 @@ float Grain::getCurrentSample(const SampleSource* source, const int channel, con
         return 0.f;
     }
 
-    const AudioBuffer& inputbuffer = source->inputBuffer;
-    const int sourceChannel = source->numChannels;
-    const int inputNumSamples = inputbuffer.getNumSamples();
-    const float* sample = inputbuffer.getReadPointer(channel % sourceChannel);
+    const int sourceChannel = inputbuffer->getNumChannels();
+    const int inputNumSamples = inputbuffer->getNumSamples();
+    const float* sample = inputbuffer->getReadPointer(channel % sourceChannel);
 
     int readPosition = startPosition + static_cast<int>(elapsedSamples * speed);
     if(readPosition >= inputNumSamples)
@@ -130,7 +129,7 @@ float Grain::getCurrentSample(const SampleSource* source, const int channel, con
     float x = std::clamp((sampleValue * 0.5f + 0.5f), 0.f, 1.f);
     grainPoint.setOpacity(curve(x, 5.f));
 
-    return sampleValue * linearGain;
+    return static_cast<int>(std::floor(sampleValue)); // * linearGain;
 }
 
 float Grain::applyEnvelope(const int index)

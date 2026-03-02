@@ -24,10 +24,6 @@ grainsFrame(uic.apvts), audioFileFrame(uic), statusBarFrame(uic)
 	addAndMakeVisible(&statusBarFrame);
 }
 
-MainFrame::~MainFrame()
-{
-}
-
 void MainFrame::paint(juce::Graphics& g)
 {
 	g.fillAll(MyColours::black);

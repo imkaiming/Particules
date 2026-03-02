@@ -12,11 +12,11 @@ namespace Param
     }
     namespace Gain
     {
-        inline constexpr const char* id = "GAIN";
-        inline constexpr const char* name = "Gain";
+        inline constexpr const char* id = "OUTPUT";
+        inline constexpr const char* name = "Output";
         inline constexpr float min = -96.0f;
         inline constexpr float max = 0.0f;
-        inline constexpr float init = -3.0f;
+        inline constexpr float init = -6.0f;
     }
     namespace Density
     {
@@ -116,6 +116,15 @@ namespace Param
         inline constexpr float min = 0.01f;
         inline constexpr float max = 10.f;
         inline constexpr float init = 1.0f;
+    }
+
+        namespace TraversalFreq
+    {
+        inline constexpr const char* id = "TRAVERSALFREQ";
+        inline constexpr const char* name = "Traversal Frequency";
+        inline constexpr float min = 0.01f; // low
+        inline constexpr float max = 100.f; // high
+        inline constexpr float init = 10.0f;
     }
     namespace Util
     {

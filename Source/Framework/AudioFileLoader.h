@@ -38,6 +38,8 @@ private:
 
 	ParameterView& paramsView;
 	juce::AudioFormatManager formatManager; // classe qui traite les formats de fichier tq wav, aiff, ogg, vorbis ou mp3
+
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFileLoader)
 };
 //void setOnFileLoadedCallBack(std::function<void(bool)> foo);
 //std::function<void(bool)> onFileLoaded;

@@ -26,7 +26,7 @@ private:
 	juce::Slider durationSlider;
 	juce::Slider speedSlider;
     juce::Slider sustainRatioSlider;
-	juce::Slider traversalTimeSlider;
+	juce::Slider traversalFreqSlider;
 
 	juce::Label densityLabel;
 	juce::Label durationLabel;
@@ -34,14 +34,14 @@ private:
     juce::Label sustainRatioLabel;
 	juce::Label envTypeLabel;
 	juce::Label traversalModeLabel;
-	juce::Label traversalTimeLabel;
+	juce::Label traversalFreqLabel;
 
 
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> densitySliderAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> durationSliderAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> speedSliderAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainRatioSliderAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> traversalTimeSliderAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> traversalFreqSliderAttachment;
 
 
 	juce::ComboBox envelopeList;

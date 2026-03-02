@@ -17,18 +17,14 @@
 struct SampleSource
 {
     const AudioBuffer inputBuffer;
-    const int numSamples; // total duration in sample length
-    const double sampleRate;
+    const int numSamples;
     const int numChannels;
 
-    SampleSource (AudioBuffer b, double sr) : inputBuffer (std::move (b)),
-                                              numSamples (inputBuffer.getNumSamples()),
-                                              sampleRate (sr),
-                                              numChannels (inputBuffer.getNumChannels())
+    SampleSource(AudioBuffer b)
+        : inputBuffer(std::move(b)), numSamples(inputBuffer.getNumSamples()), numChannels(inputBuffer.getNumChannels())
     {
-        jassert (numSamples > 0 && sampleRate > 0.0);
     }
 
-    SampleSource (const SampleSource&) = delete;
-    SampleSource& operator= (const SampleSource&) = delete;
+    SampleSource(const SampleSource&) = delete;
+    SampleSource& operator=(const SampleSource&) = delete;
 };

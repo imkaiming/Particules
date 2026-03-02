@@ -30,8 +30,8 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
 		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         apvts, Param::SustainRatio::id, sustainRatioSlider);
 
-    traversalTimeSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        apvts, Param::TraversalTime::id, traversalTimeSlider);
+    traversalFreqSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        apvts, Param::TraversalFreq::id, traversalFreqSlider);
 
     //pitchSliderAttachment =
     //	std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
@@ -43,7 +43,7 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
     densitySlider.setTextBoxIsEditable(true);
     densitySlider.setRange(Param::Density::min, Param::Density::max);
     densitySlider.setSkewFactorFromMidPoint(Param::Density::init);
-    densitySlider.setTextValueSuffix(" g");
+    //densitySlider.setTextValueSuffix(" g");
     //densitySlider.addListener(this);
     densitySlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
@@ -57,7 +57,7 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
     durationSlider.setTextBoxIsEditable(true);
     durationSlider.setRange(Param::Duration::min, Param::Duration::max);
     durationSlider.setSkewFactorFromMidPoint(Param::Duration::init);
-    durationSlider.setTextValueSuffix(" s");
+    //durationSlider.setTextValueSuffix(" s");
     //durationSlider.addListener(this);
     durationSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
@@ -92,33 +92,33 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
 	sustainRatioLabel.setJustificationType(juce::Justification::centred);
 
 
-	traversalTimeSlider.setName("traversalTimeSlider");
-	traversalTimeSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-	traversalTimeSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
+	traversalFreqSlider.setName("traversalFreqSlider");
+	traversalFreqSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+	traversalFreqSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
 										true, 100, 25);
-	traversalTimeSlider.setTextBoxIsEditable(true);
-	traversalTimeSlider.setRange(Param::TraversalTime::min, Param::TraversalTime::max);
-	traversalTimeSlider.setSkewFactorFromMidPoint(Param::TraversalTime::init);
-	traversalTimeSlider.setTextValueSuffix(" s");
-	//traversalTimeSlider.addListener(this);
-	traversalTimeSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+	traversalFreqSlider.setTextBoxIsEditable(true);
+	traversalFreqSlider.setRange(Param::TraversalFreq::min, Param::TraversalFreq::max);
+	traversalFreqSlider.setSkewFactorFromMidPoint(Param::TraversalFreq::init);
+	//traversalFreqSlider.setTextValueSuffix(" s");
+	//traversalFreqSlider.addListener(this);
+	traversalFreqSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	traversalTimeLabel.setText((const juce::String)Param::TraversalTime::name, juce::dontSendNotification);
-	traversalTimeLabel.attachToComponent(&traversalTimeSlider, false);
-	traversalTimeLabel.setJustificationType(juce::Justification::centred);
+	traversalFreqLabel.setText((const juce::String)Param::TraversalFreq::name, juce::dontSendNotification);
+	traversalFreqLabel.attachToComponent(&traversalFreqSlider, false);
+	traversalFreqLabel.setJustificationType(juce::Justification::centred);
 
 
 	addAndMakeVisible(&densitySlider);
 	addAndMakeVisible(&durationSlider);
 	addAndMakeVisible(&speedSlider);
     addAndMakeVisible(&sustainRatioSlider);
-	addAndMakeVisible(&traversalTimeSlider);
+	addAndMakeVisible(&traversalFreqSlider);
 
 	addAndMakeVisible(&densityLabel);
 	addAndMakeVisible(&durationLabel);
 	addAndMakeVisible(&speedLabel);
     addAndMakeVisible(&sustainRatioLabel);
-	addAndMakeVisible(&traversalTimeLabel);
+	addAndMakeVisible(&traversalFreqLabel);
 
 	//ComboBoxParameterAttachment(RangedAudioParameter& parameter, ComboBox& combo,
 	//	UndoManager* undoManager = nullptr);
@@ -226,8 +226,8 @@ void GrainsFrame::resized()
 	flexBox5.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
 	flexBox5.alignContent = juce::FlexBox::AlignContent::center;
 
-	flexBox5.items.add(juce::FlexItem(traversalTimeLabel).withFlex(0.2f));
-	flexBox5.items.add(juce::FlexItem(traversalTimeSlider).withFlex(0.8f).withMargin(h));
+	flexBox5.items.add(juce::FlexItem(traversalFreqLabel).withFlex(0.2f));
+	flexBox5.items.add(juce::FlexItem(traversalFreqSlider).withFlex(0.8f).withMargin(h));
 
 	juce::FlexBox flexBox6;
 	flexBox6.flexDirection = juce::FlexBox::Direction::column;
