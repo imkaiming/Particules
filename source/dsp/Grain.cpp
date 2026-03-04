@@ -99,7 +99,7 @@ void Grain::config(const ParameterSnapshot& snapshot, int delaySample, float pos
     //make it not possible to change the envelop type while grain is active
 }
 
-int Grain::getCurrentSample(const AudioBuffer* inputbuffer, const int channel, const int outNumChannel) noexcept
+float Grain::getCurrentSample(const AudioBuffer* inputbuffer, const int channel, const int outNumChannel) noexcept
 {
     if(offset > 0)
     {
@@ -129,6 +129,11 @@ int Grain::getCurrentSample(const AudioBuffer* inputbuffer, const int channel, c
     float x = std::clamp((sampleValue * 0.5f + 0.5f), 0.f, 1.f);
     grainPoint.setOpacity(curve(x, 5.f));
 
+    //jassert(readPosition >= 0);
+    //jassert(readPosition < (int) inputNumSamples);
+    //jassert(!std::isnan(*sample));
+    //jassert(!std::isinf(*sample));
+    return sampleValue;
     return static_cast<int>(std::floor(sampleValue)); // * linearGain;
 }
 

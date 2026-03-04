@@ -36,9 +36,11 @@ void PositionModulator::setSampleRate(double sr)
 // 1 sec pour 48 000hz = 48 000 samples
 void PositionModulator::setParameters(int traversalMod, float traversalFreq)
 {
-    mTraversalMod = traversalMod;
-    mTraversalFreq = traversalFreq;
+    float safeFreq = std::max(traversalFreq, 0.001f); // protect the DSP without throwing an exception
+
+    mTraversalFreq = safeFreq;
     mPhaseIncrement = mTraversalFreq / mSampleRate;
+    mTraversalMod = traversalMod;
 }
 
 void PositionModulator::advanceBlock(int numSamples)
@@ -47,11 +49,17 @@ void PositionModulator::advanceBlock(int numSamples)
     // et on wrap back si on depasse un certains seuil
     // equivalent a 2 pi.
     mPhaseAccumulator += mPhaseIncrement * numSamples;
-    while(mPhaseAccumulator >= 1.f)
-        mPhaseAccumulator -= 1.f;
+    mPhaseAccumulator = std::fmod(mPhaseAccumulator, 1.0f);
+    if(mPhaseAccumulator < 0.f)
+        mPhaseAccumulator += 1.f;
 }
 
-float PositionModulator::getPhaseAtOffset(int offset) { return mPhaseAccumulator + offset / mPhaseIncrement; }
+float PositionModulator::getPhaseAtOffset(int offset)
+{
+    float phase = mPhaseAccumulator + offset * mPhaseIncrement;
+    phase -= std::floor(phase);
+    return phase;
+}
 
 float PositionModulator::computePhaseAtOffset(int offset)
 {

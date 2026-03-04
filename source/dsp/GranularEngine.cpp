@@ -12,7 +12,7 @@
 #include "../framework/ParameterView.h"
 
 GranularEngine::GranularEngine(ParameterView& sp)
-    : paramsView{sp}, scheduler{}, voiceManager{pool}, pool{}, posMod{sp.getSampleRate()}
+    : paramsView{sp}, scheduler{}, voiceManager{pool, posMod}, pool{}, posMod{sp.getSampleRate()}
 {
 }
 
@@ -37,11 +37,7 @@ void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize
 
     scheduler.process(
         bufferSize, snapshot.sampleRate, snapshot.density,
-        [this](int offset, const ParameterSnapshot& snapshot) {
-            float phasePos = posMod.computePhaseAtOffset(offset);
-            voiceManager.spawn(offset, snapshot, phasePos);
-        },
-        snapshot);
+        [this](int offset, const ParameterSnapshot& snapshot) { voiceManager.spawn(offset, snapshot); }, snapshot);
 
     voiceManager.process(outputBlock, bufferSize, inputSource);
 

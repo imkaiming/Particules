@@ -21,7 +21,7 @@ struct VoiceManagerFixture
     AudioBlock outputBlock{inputBuffer};
     ParameterSnapshot snapshot;
 
-    VoiceManagerFixture() : vm{pool}
+    VoiceManagerFixture() : vm{pool, posMod}
     {
         snapshot.durationSample = 48000;
         snapshot.density = 1;

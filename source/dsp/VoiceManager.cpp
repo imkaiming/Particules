@@ -12,7 +12,7 @@
 #include "../framework/ParameterSnapshot.h"
 #include "../framework/SampleSource.h"
 
-VoiceManager::VoiceManager(GrainPool& p) : pool{p}, activeCount{0} { reset(); }
+VoiceManager::VoiceManager(GrainPool& p, PositionModulator& pm) : pool{p}, activeCount{0}, posMod{pm} { reset(); }
 
 void VoiceManager::reset()
 {
@@ -26,6 +26,7 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioB
 {
     const size_t numChannels = outputBlock.getNumChannels();
     //const int numSamples = outputBlock.getNumSamples();
+
 
     for(size_t currentSample = 0; currentSample < bufferSize; currentSample++)
     {
@@ -56,9 +57,11 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioB
         float scale = 1 / std::sqrt(static_cast<float>(activeCount));
         outputBlock.multiplyBy(scale);
     }
+
+    posMod.advanceBlock(bufferSize);
 }
 
-void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot, float startPosition)
+void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
 {
     if(activeCount >= mCapacity)
         return; // cannot spawn any more grains
@@ -67,6 +70,8 @@ void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot, float st
     Grain* grain = pool.get(handle);
     if(grain == nullptr)
         return;
+
+    float startPosition = posMod.computePhaseAtOffset(offset);
 
     grain->config(snapshot, offset, startPosition); // init the grain here before process with the snapshot
     activeHandles[activeCount++] = handle;

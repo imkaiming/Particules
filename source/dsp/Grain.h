@@ -30,7 +30,7 @@ public:
     void config(const ParameterSnapshot&, int, float);
 
     // Runtime functions
-    int getCurrentSample(const AudioBuffer*, const int, const int) noexcept;
+    float getCurrentSample(const AudioBuffer*, const int, const int) noexcept;
     bool isExhausted() { return elapsedSamples >= durationSamples; };
     void update() { elapsedSamples++; };
 
