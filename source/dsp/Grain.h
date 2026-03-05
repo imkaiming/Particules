@@ -13,7 +13,7 @@
 #include "../framework/Core.h"
 #include "../utils/GrainPoint.h"
 
-enum WindowingMethod { triangular, hann, hamming, rectangular, blackman, blackmanHarris, flatTop };
+//enum WindowingMethod { triangular, hann, hamming, rectangular, blackman, blackmanHarris, flatTop };
 
 // Grain is the unit that read samples the buffer
 // It have 2 main structure time and amplitude
@@ -45,33 +45,35 @@ public:
 private:
     float curve(float, float);
 
-    // envelope type function
-    float ncos(size_t, size_t, size_t);
-    float hammingEnvelope(const int index);
-    float triangularEnvelope(const int index);
-    float hannEnvelope(int index);
-    float rectangularEnvelope(const int index);
-    float blackmanEnvelope(const int index);
-    float blackmanHarrisEnvelope(const int index);
-    float flatTopEnvelope(const int index);
-    float applyEnvelope(const int index);
 
-    WindowingMethod getWindowingMethod(int);
+    // envelope type function
+    float ncos(const int order, const int i, const int size) const noexcept;
+    void hannEnvelope(std::vector<float>& table);
+    void hammingEnvelope(std::vector<float>& table);
+    void triangularEnvelope(std::vector<float>& table);
+    void rectangularEnvelope(std::vector<float>& table);
+    void blackmanEnvelope(std::vector<float>& table);
+    void blackmanHarrisEnvelope(std::vector<float>& table);
+    void flatTopEnvelope(std::vector<float>& table);
+    void applyEnvelope(std::vector<float>& table);
+
+    void computeEnvelope(std::vector<float>&) ;
 
     int envelopeType; // on associe un grain a une envelope
 
     // Time related parameters
-    float elapsedSamples; // le compteur interne du grain
-    float speed = 0.0f; // change the pitch and accelerate the lecture
-    float durationSamples = 0; // définie la durée en nombre de sample
-    float startPosition = 0; // définie la position en sample dans le buffer
-    float selectionWindow; // définie la position maximale qu'un grain peut atteindre dans le buffer
-    float sustainWidth = 0; // définie la taille des rampes d'amplitude en entré et en sortie du grain
-    float offset = 0; // act like a little delay to sync scheduler.process() and voiceManager.process()
-    float fadeIn = 0; // 0 to fadeIn
-    float fadeOut = 0; // fadeOut to numSamples
-    float envelopeSize = 0; // utile pour calculer les fade d'entrés et de sorties des envelopes selon les functions données
-    float linearGain = 1.f;
+    int elapsedSamples; // le compteur interne du grain
+    int durationSamples; // définie la durée en nombre de sample
+    int startPositionSamples; // définie la position en sample dans le buffer
+    int selectionWindow; // définie la position maximale qu'un grain peut atteindre dans le buffer
+    int fadeIn; // 0 to fadeIn
+    int fadeOut; // fadeOut to numSamples
+    int offset; // act like a little delay to sync scheduler.process() and voiceManager.process()
+    int sustainWidthSamples; // définie la taille des rampes d'amplitude en entré et en sortie du grain
+    int envelopeSizeSamples; // utile pour calculer les fade d'entrés et de sorties des envelopes selon les functions données
+
+    float speed; // change the pitch and accelerate the lecture
+    //float linearGain;
 
     //int traversalMode; // change position with phase mode
     //int traversalTime; // speed of the traversal LFO

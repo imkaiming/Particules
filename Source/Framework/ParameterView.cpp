@@ -20,7 +20,7 @@ void ParameterView::init(ValueTreeState& apvts, double sampleRate)
     mSampleRate.store(sampleRate, std::memory_order_relaxed);
     view.mix = apvts.getRawParameterValue(Param::Mix::id);
     view.gain = apvts.getRawParameterValue(Param::Gain::id);
-    view.density = apvts.getRawParameterValue(Param::Density::id);
+    view.Emission = apvts.getRawParameterValue(Param::Emission::id);
     view.duration = apvts.getRawParameterValue(Param::Duration::id);
     view.speed = apvts.getRawParameterValue(Param::Speed::id);
     view.position = apvts.getRawParameterValue(Param::Position::id);
@@ -48,12 +48,13 @@ void ParameterView::init(ValueTreeState& apvts, double sampleRate)
 const ParameterSnapshot ParameterView::getSnapshot() const noexcept
 {
     ParameterSnapshot snapshot;
-    snapshot.durationSample = getDuration() * mSampleRate;
-    snapshot.startPositionSample = getFilePosition() * mSampleRate;
-    snapshot.selectionSample = getWindowSelection() * mSampleRate;
+    snapshot.durationSamples = static_cast<int>(getDuration() * mSampleRate);
+    snapshot.startPositionSamples = static_cast<int>(getFilePosition() * mSampleRate);
+    snapshot.selectionSamples = static_cast<int>(getWindowSelection() * mSampleRate);
+
     snapshot.mix = getMix();
     snapshot.speed = getSpeed();
-    snapshot.density = getDensity();
+    snapshot.emission = getEmission();
     snapshot.envType = getEnvelopeType();
     snapshot.sustainRatio= getSustainRatio();
     snapshot.linearGain = getLinearGain();

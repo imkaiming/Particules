@@ -14,20 +14,16 @@
 
 GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(paramsView)
 {
-	densitySliderAttachment =
-		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			apvts, Param::Density::id, densitySlider);
+    EmissionSliderAttachment =
+        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Emission::id, EmissionSlider);
 
-	durationSliderAttachment =
-		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			apvts, Param::Duration::id, durationSlider);
+    durationSliderAttachment =
+        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Duration::id, durationSlider);
 
-	speedSliderAttachment =
-		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-			apvts, Param::Speed::id, speedSlider);
+    speedSliderAttachment =
+        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Speed::id, speedSlider);
 
-	sustainRatioSliderAttachment =
-		std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+    sustainRatioSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         apvts, Param::SustainRatio::id, sustainRatioSlider);
 
     traversalFreqSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
@@ -37,19 +33,19 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
     //	std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
     //		*apvts, PITCH_ID, pitchSlider);
 
-    densitySlider.setName("densitySlider");
-    densitySlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-    densitySlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
-    densitySlider.setTextBoxIsEditable(true);
-    densitySlider.setRange(Param::Density::min, Param::Density::max);
-    densitySlider.setSkewFactorFromMidPoint(Param::Density::init);
-    //densitySlider.setTextValueSuffix(" g");
-    //densitySlider.addListener(this);
-    densitySlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+    EmissionSlider.setName("EmissionSlider");
+    EmissionSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    EmissionSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
+    EmissionSlider.setTextBoxIsEditable(true);
+    EmissionSlider.setRange(Param::Emission::min, Param::Emission::max);
+    EmissionSlider.setSkewFactorFromMidPoint(Param::Emission::init);
+    //EmissionSlider.setTextValueSuffix(" g");
+    //EmissionSlider.addListener(this);
+    EmissionSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-    densityLabel.setText((const juce::String)Param::Density::name, juce::dontSendNotification);
-    densityLabel.attachToComponent(&densitySlider, false);
-    densityLabel.setJustificationType(juce::Justification::centred);
+    EmissionLabel.setText((const juce::String)Param::Emission::name, juce::dontSendNotification);
+    EmissionLabel.attachToComponent(&EmissionSlider, false);
+    EmissionLabel.setJustificationType(juce::Justification::centred);
 
     durationSlider.setName("durationSlider");
     durationSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
@@ -83,82 +79,79 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
     sustainRatioSlider.setTextBoxIsEditable(true);
     sustainRatioSlider.setRange(Param::SustainRatio::min, Param::SustainRatio::max);
     sustainRatioSlider.setSkewFactorFromMidPoint(Param::SustainRatio::init);
-	//envWidthSlider.setTextValueSuffix(" g");
-	//envWidthSlider.addListener(this);
+    //envWidthSlider.setTextValueSuffix(" g");
+    //envWidthSlider.addListener(this);
     sustainRatioSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	sustainRatioLabel.setText((const juce::String)Param::SustainRatio::name, juce::dontSendNotification);
+    sustainRatioLabel.setText((const juce::String)Param::SustainRatio::name, juce::dontSendNotification);
     sustainRatioLabel.attachToComponent(&sustainRatioSlider, false);
-	sustainRatioLabel.setJustificationType(juce::Justification::centred);
+    sustainRatioLabel.setJustificationType(juce::Justification::centred);
 
+    traversalFreqSlider.setName("traversalFreqSlider");
+    traversalFreqSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    traversalFreqSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
+    traversalFreqSlider.setTextBoxIsEditable(true);
+    traversalFreqSlider.setRange(Param::TraversalFreq::min, Param::TraversalFreq::max);
+    traversalFreqSlider.setSkewFactorFromMidPoint(Param::TraversalFreq::init);
+    //traversalFreqSlider.setTextValueSuffix(" s");
+    //traversalFreqSlider.addListener(this);
+    traversalFreqSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-	traversalFreqSlider.setName("traversalFreqSlider");
-	traversalFreqSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-	traversalFreqSlider.setTextBoxStyle(juce::Slider::TextBoxBelow,
-										true, 100, 25);
-	traversalFreqSlider.setTextBoxIsEditable(true);
-	traversalFreqSlider.setRange(Param::TraversalFreq::min, Param::TraversalFreq::max);
-	traversalFreqSlider.setSkewFactorFromMidPoint(Param::TraversalFreq::init);
-	//traversalFreqSlider.setTextValueSuffix(" s");
-	//traversalFreqSlider.addListener(this);
-	traversalFreqSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+    traversalFreqLabel.setText((const juce::String)Param::TraversalFreq::name, juce::dontSendNotification);
+    traversalFreqLabel.attachToComponent(&traversalFreqSlider, false);
+    traversalFreqLabel.setJustificationType(juce::Justification::centred);
 
-	traversalFreqLabel.setText((const juce::String)Param::TraversalFreq::name, juce::dontSendNotification);
-	traversalFreqLabel.attachToComponent(&traversalFreqSlider, false);
-	traversalFreqLabel.setJustificationType(juce::Justification::centred);
-
-
-	addAndMakeVisible(&densitySlider);
-	addAndMakeVisible(&durationSlider);
-	addAndMakeVisible(&speedSlider);
+    addAndMakeVisible(&EmissionSlider);
+    addAndMakeVisible(&durationSlider);
+    addAndMakeVisible(&speedSlider);
     addAndMakeVisible(&sustainRatioSlider);
-	addAndMakeVisible(&traversalFreqSlider);
+    addAndMakeVisible(&traversalFreqSlider);
 
-	addAndMakeVisible(&densityLabel);
-	addAndMakeVisible(&durationLabel);
-	addAndMakeVisible(&speedLabel);
+    addAndMakeVisible(&EmissionLabel);
+    addAndMakeVisible(&durationLabel);
+    addAndMakeVisible(&speedLabel);
     addAndMakeVisible(&sustainRatioLabel);
-	addAndMakeVisible(&traversalFreqLabel);
+    addAndMakeVisible(&traversalFreqLabel);
 
-	//ComboBoxParameterAttachment(RangedAudioParameter& parameter, ComboBox& combo,
-	//	UndoManager* undoManager = nullptr);
+    //ComboBoxParameterAttachment(RangedAudioParameter& parameter, ComboBox& combo,
+    //	UndoManager* undoManager = nullptr);
 
-	envelopeList.addItemList(apvts.getParameter(Param::EnvelopeType::id)->getAllValueStrings(), 1);
+    envelopeList.addItemList(apvts.getParameter(Param::EnvelopeType::id)->getAllValueStrings(), 1);
 
-	//envelopeList.addItem(Param::EnvelopeType::ENVTYPE_1, 1);
-	//envelopeList.addItem(Param::EnvelopeType::ENVTYPE_2, 2);
-	//envelopeList.addItem(Param::EnvelopeType::ENVTYPE_3, 3);
-	//envelopeList.addItem(Param::EnvelopeType::ENVTYPE_4, 4);
-	//envelopeList.addItem(Param::EnvelopeType::ENVTYPE_5, 5);
-	//envelopeList.addItem(Param::EnvelopeType::ENVTYPE_6, 6);
-	//envelopeList.addItem(Param::EnvelopeType::ENVTYPE_7, 7);
-	envelopeList.setSelectedId(1, juce::dontSendNotification); // default value set to Hann window
+    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_1, 1);
+    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_2, 2);
+    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_3, 3);
+    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_4, 4);
+    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_5, 5);
+    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_6, 6);
+    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_7, 7);
+    envelopeList.setSelectedId(1, juce::dontSendNotification); // default value set to Hann window
 
-	envelopeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
-		apvts, Param::EnvelopeType::id, envelopeList);
-	//envelopeAttachment = std::make_unique<juce::ComboBoxParameterAttachment>(
-	//	apvts->getParameter(ENVTYPE_ID), envelopeList);
+    envelopeAttachment =
+        std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(apvts, Param::EnvelopeType::id, envelopeList);
+    //envelopeAttachment = std::make_unique<juce::ComboBoxParameterAttachment>(
+    //	apvts->getParameter(ENVTYPE_ID), envelopeList);
 
-	//traversalModeList.addItemList(apvts.getParameter(Param::TraversalMode::id)->getAllValueStrings(), 1);
-	traversalModeList.addItem(Param::TraversalMode::TraversalMode_1, 1);
-	traversalModeList.addItem(Param::TraversalMode::TraversalMode_2, 2);
-	traversalModeList.addItem(Param::TraversalMode::TraversalMode_3, 3);
-	traversalModeList.addItem(Param::TraversalMode::TraversalMode_4, 4);
-	traversalModeList.addItem(Param::TraversalMode::TraversalMode_5, 5);
-	traversalModeList.setSelectedId(1, juce::dontSendNotification); // default value set to sinus mode
+    //traversalModeList.addItemList(apvts.getParameter(Param::TraversalMode::id)->getAllValueStrings(), 1);
+    traversalModeList.addItem(Param::TraversalMode::TraversalMode_1, 1);
+    traversalModeList.addItem(Param::TraversalMode::TraversalMode_2, 2);
+    traversalModeList.addItem(Param::TraversalMode::TraversalMode_3, 3);
+    traversalModeList.addItem(Param::TraversalMode::TraversalMode_4, 4);
+    traversalModeList.addItem(Param::TraversalMode::TraversalMode_5, 5);
+    traversalModeList.setSelectedId(1, juce::dontSendNotification); // default value set to sinus mode
 
-	traversalModeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
-		apvts, Param::TraversalMode::id, traversalModeList);
+    traversalModeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
+        apvts, Param::TraversalMode::id, traversalModeList);
 
-	envTypeLabel.setText((const juce::String)Param::EnvelopeType::name, juce::dontSendNotification);
-	envTypeLabel.attachToComponent(&envelopeList, false);
-	envTypeLabel.setJustificationType(juce::Justification::centred);
+    envTypeLabel.setText((const juce::String)Param::EnvelopeType::name, juce::dontSendNotification);
+    envTypeLabel.attachToComponent(&envelopeList, false);
+    envTypeLabel.setJustificationType(juce::Justification::centred);
 
-	traversalModeLabel.setText((const juce::String)Param::TraversalMode::name, juce::dontSendNotification);
-	traversalModeLabel.attachToComponent(&traversalModeList, false);
-	traversalModeLabel.setJustificationType(juce::Justification::centred);
+    traversalModeLabel.setText((const juce::String)Param::TraversalMode::name, juce::dontSendNotification);
+    traversalModeLabel.attachToComponent(&traversalModeList, false);
+    traversalModeLabel.setJustificationType(juce::Justification::centred);
 
-	/*
+    /*
 	envelopeList.onChange = [this] {
 		this->paramsView->setEnvelopeType(envelopeList.getSelectedId());
 	};
@@ -168,34 +161,29 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
 	};
 	*/
 
-	addAndMakeVisible(&envelopeList);
-	addAndMakeVisible(&envTypeLabel);
+    addAndMakeVisible(&envelopeList);
+    addAndMakeVisible(&envTypeLabel);
 
-	addAndMakeVisible(&traversalModeList);
-	addAndMakeVisible(&traversalModeLabel);
+    addAndMakeVisible(&traversalModeList);
+    addAndMakeVisible(&traversalModeLabel);
 }
 
-
-void GrainsFrame::paint(juce::Graphics& g)
-{
-	g.fillAll(MyColours::black);
-
-}
+void GrainsFrame::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
 
 void GrainsFrame::resized()
 {
-	float h = getHeight() / 30.f;
+    float h = getHeight() / 30.f;
 
-	juce::FlexBox mainFlexBox;
-	mainFlexBox.flexDirection = juce::FlexBox::Direction::row;
+    juce::FlexBox mainFlexBox;
+    mainFlexBox.flexDirection = juce::FlexBox::Direction::row;
 
-	juce::FlexBox flexBox1;
-	flexBox1.flexDirection = juce::FlexBox::Direction::column;
-	flexBox1.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-	flexBox1.alignContent = juce::FlexBox::AlignContent::center;
+    juce::FlexBox flexBox1;
+    flexBox1.flexDirection = juce::FlexBox::Direction::column;
+    flexBox1.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+    flexBox1.alignContent = juce::FlexBox::AlignContent::center;
 
-	flexBox1.items.add(juce::FlexItem(densityLabel).withFlex(0.2f));
-	flexBox1.items.add(juce::FlexItem(densitySlider).withFlex(0.8f).withMargin(h));
+    flexBox1.items.add(juce::FlexItem(EmissionLabel).withFlex(0.2f));
+    flexBox1.items.add(juce::FlexItem(EmissionSlider).withFlex(0.8f).withMargin(h));
 
 	juce::FlexBox flexBox2;
 	flexBox2.flexDirection = juce::FlexBox::Direction::column;

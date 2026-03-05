@@ -57,23 +57,23 @@ Grain* Scheduler::generateGrain(int numSamples)
 
 */
 
-double Scheduler::getInterOnSet(float density, double sampleRate) const noexcept
+const double Scheduler::getInterOnSet(float Emission, double sampleRate) const noexcept
 {
-    if(density <= 0.0)
-        density = std::max(density, 0.1f);
-    return sampleRate / (double)density;
+    Emission = std::min(Emission, 500.f);
+    if(Emission <= 0.0)
+        Emission = std::max(Emission, 0.1f);
+    return sampleRate / (double)Emission;
 }
 
-void Scheduler::process(int bufferSize, double sampleRate, float density,
+void Scheduler::process(int bufferSize, double sampleRate, float Emission,
     std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& parameters)
 {
-    const double interOnSet = getInterOnSet(density, sampleRate);
-    if(interOnSet <= 1)
+    const double interOnSet = getInterOnSet(Emission, sampleRate);
+    if(interOnSet <= 1) // only occur with uncommon sample rates configs
     {
         setOffset(0.0);
-        //throw std::logic_error("interOnSet too short too schedule grains");
-        return;
-    } // dont need 1 grain per sample this is too much
+        return; // simply dont spawn
+    } 
 
     int count = 0;
     double offset = getOffset(); // offset of the next outBuffer call

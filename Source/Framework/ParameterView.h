@@ -7,7 +7,7 @@
 
 struct GranularView
 {
-    std::atomic<float>* density = nullptr;
+    std::atomic<float>* Emission = nullptr;
     std::atomic<float>* duration = nullptr;
     std::atomic<float>* speed = nullptr;
     std::atomic<float>* mix = nullptr;
@@ -40,7 +40,7 @@ public:
     }
     float getSpeed() const noexcept { return view.speed ? view.speed->load(std::memory_order_relaxed) : 0.0f; }
     float getDuration() const noexcept { return view.duration ? view.duration->load(std::memory_order_relaxed) : 0.0f; }
-    float getDensity() const noexcept { return view.density ? view.density->load(std::memory_order_relaxed) : 0.0f; }
+    float getEmission() const noexcept { return view.Emission ? view.Emission->load(std::memory_order_relaxed) : 0.0f; }
     float getWindowSelection() const noexcept { return view.selection ? view.selection->load(std::memory_order_relaxed) : 0.0f; }
     float getFilePosition() const noexcept { return view.position ? view.position->load(std::memory_order_relaxed) : 0.0f; }
     float getSustainRatio() const noexcept

@@ -30,7 +30,7 @@ SynthFrame::SynthFrame(ValueTreeState& apvts)
     mixSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
     mixSlider.setTextBoxIsEditable(true);
     mixSlider.setRange(0.0, 100.0);
-    mixSlider.setTextValueSuffix(" %");
+    //mixSlider.setTextValueSuffix(" %");
     //mixSlider.addListener(this);
     mixSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
     // mixSlider.onValueChane = [this]() { foo(); }
@@ -45,7 +45,7 @@ SynthFrame::SynthFrame(ValueTreeState& apvts)
     gainSlider.setTextBoxIsEditable(true);
     gainSlider.setRange(Param::Gain::min, Param::Gain::max);
     gainSlider.setSkewFactorFromMidPoint(-12.0);
-    gainSlider.setTextValueSuffix(" dB");
+    //gainSlider.setTextValueSuffix(" dB");
     //gainSlider.addListener(this);
     gainSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 

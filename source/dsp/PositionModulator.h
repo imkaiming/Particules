@@ -35,9 +35,7 @@ public:
 
 private:
     //static constexpr const double twoPi = static_cast<double>(std::_Pi_val / 2.0);
-    static constexpr const float twoPi = juce::MathConstants<float>().twoPi;
-    static constexpr const float pi = juce::MathConstants<float>().pi;
-    static constexpr const float halfPi = juce::MathConstants<float>().halfPi;
+
 
     float getSine(float);
     float getCos(float); // may not be used
@@ -49,7 +47,6 @@ private:
     int mTraversalMod;              // the mod type to compute
     float mTraversalFreq = 1.f;     // frequency of the traversal
     float mPhaseIncrement = 0.f;    // time step per samples
-    //float mCurrentValue = 0.f;      //
     float mPhaseAccumulator = 0.f;  // position of a bufferSize block samples
 
     juce::Random r;

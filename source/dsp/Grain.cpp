@@ -10,44 +10,43 @@
 
 #include "Grain.h"
 #include "../framework/ParameterSnapshot.h"
-#include "../framework/SampleSource.h"
 
-WindowingMethod Grain::getWindowingMethod(int val)
-{
-    WindowingMethod window = WindowingMethod::hann;
-    switch(val)
-    {
-        case 1:
-            window = WindowingMethod::hann;
-            break;
-        case 2:
-            window = WindowingMethod::triangular;
-            break;
-        case 3:
-            window = WindowingMethod::hamming;
-            break;
-        case 4:
-            window = WindowingMethod::rectangular;
-            break;
-        case 5:
-            window = WindowingMethod::blackman;
-            break;
-        case 6:
-            window = WindowingMethod::blackmanHarris;
-            break;
-        case 7:
-            window = WindowingMethod::flatTop;
-            break;
-        default:
-            break;
-    }
-
-    return window;
-}
+//WindowingMethod Grain::getWindowingMethod(int val)
+//{
+//    WindowingMethod window = WindowingMethod::hann;
+//    switch(val)
+//    {
+//        case 1:
+//            window = WindowingMethod::hann;
+//            break;
+//        case 2:
+//            window = WindowingMethod::triangular;
+//            break;
+//        case 3:
+//            window = WindowingMethod::hamming;
+//            break;
+//        case 4:
+//            window = WindowingMethod::rectangular;
+//            break;
+//        case 5:
+//            window = WindowingMethod::blackman;
+//            break;
+//        case 6:
+//            window = WindowingMethod::blackmanHarris;
+//            break;
+//        case 7:
+//            window = WindowingMethod::flatTop;
+//            break;
+//        default:
+//            break;
+//    }
+//
+//    return window;
+//}
 
 Grain::Grain()
-    : durationSamples{0}, startPosition{0}, speed{1.f}, sustainWidth{0}, envelopeType{0}, envelopeSize{0}, fadeIn{0}, fadeOut{0},
-      elapsedSamples{0}, offset{0}, linearGain{1.f}
+    : durationSamples{0}, startPositionSamples{0}, speed{1.f}, sustainWidthSamples{0}, envelopeType{0}, envelopeSizeSamples{0},
+      selectionWindow{0}, fadeIn{0}, fadeOut{0}, elapsedSamples{0}, offset{0}//, linearGain{1.f}
 {
     reset();
 }
@@ -55,45 +54,43 @@ Grain::Grain()
 void Grain::reset()
 {
     durationSamples = 0;
-    startPosition = 0;
-    speed = 1.f;
+    startPositionSamples = 0;
+    sustainWidthSamples = 0;
+    envelopeSizeSamples = 0;
+    elapsedSamples = 0;
     fadeIn = 0;
     fadeOut = 0;
     offset = 0;
-    sustainWidth = 0;
     envelopeType = 0;
-    envelopeSize = 0;
-    elapsedSamples = 0;
     generation = 0;
-    linearGain = 1.f;
+
+    //linearGain = 1.f;
+    speed = 1.f;
 }
 
-void Grain::config(const ParameterSnapshot& snapshot, int delaySample, float posModSamples)
+void Grain::config(const ParameterSnapshot& snapshot, int delaySample, float posMod)
 {
-    // TODO convert to int ? or keep float
-    //durationSamples = static_cast<int>(snapshot.durationSamples);
-    //startPosition = static_cast<int>(snapshot.startPosition);
-    //sustainWidth = static_cast<int>(snapshot.sustainWidth * durationSamples);
     elapsedSamples = 0;
-    startPosition = snapshot.startPositionSample + posModSamples;
-    //DBG(("start position = ") + ((juce::String)startPosition));
-    durationSamples = snapshot.durationSample;
-    selectionWindow = snapshot.selectionSample;
+    durationSamples = snapshot.durationSamples;
 
-    //linearGain = snapshot.linearGain;
+    const int positionModulationSamples = static_cast<int>(posMod * snapshot.selectionSamples);
+    startPositionSamples = snapshot.startPositionSamples + positionModulationSamples;
+    selectionWindow = snapshot.selectionSamples;
+
     speed = snapshot.speed;
     offset = delaySample;
 
-    //fadeIn = static_cast<int>((snapshot.durationSamples - envelopeWidth) / 2.0);
-    sustainWidth = snapshot.sustainRatio * durationSamples;
-    fadeIn = (durationSamples - sustainWidth) / 2.0;
-    fadeOut = fadeIn + sustainWidth;
-    envelopeSize = durationSamples - sustainWidth;
+    sustainWidthSamples = static_cast<int>(snapshot.sustainRatio * durationSamples);
+    fadeIn = static_cast<int>((durationSamples - sustainWidthSamples) / 2.0);
+    fadeOut = fadeIn + sustainWidthSamples;
+    envelopeSizeSamples = durationSamples - sustainWidthSamples;
 
-    envelopeType = getWindowingMethod(static_cast<int>(snapshot.envType));
-    //traversalMode = snapshot.traversalMode;
-    //traversalFreq = snapshot.traversalFreq;
-    //gain = snapshot.gain;
+    envelopeType = static_cast<int>(snapshot.envType);
+
+    envelopeTable.resize((size_t)durationSamples);
+    computeEnvelope(envelopeTable);
+
+    //linearGain = snapshot.linearGain;
 
     //TODO@ precalculer la table d'enveloppe et la storer en local
     //make it not possible to change the envelop type while grain is active
@@ -107,139 +104,210 @@ float Grain::getCurrentSample(const AudioBuffer* inputbuffer, const int channel,
         return 0.f;
     }
 
+    if(isExhausted())
+        return 0.f;
+
     const int sourceChannel = inputbuffer->getNumChannels();
     const int inputNumSamples = inputbuffer->getNumSamples();
     const float* sample = inputbuffer->getReadPointer(channel % sourceChannel);
 
-    int readPosition = startPosition + static_cast<int>(elapsedSamples * speed);
-    if(readPosition >= inputNumSamples)
+    float readPosition = startPositionSamples + elapsedSamples * speed;
+    while(readPosition >= inputNumSamples)
         readPosition -= inputNumSamples;
 
     //grainPoint.setSamplePos(readPosition);
+    int index = static_cast<int>(readPosition);
+    float frac = readPosition - index;
+    const float s0 = sample[index];
+    const float s1 = sample[(index + 1) % inputNumSamples];
 
-    float sampleValue = 0.0f;
-
-    if(elapsedSamples < fadeIn)
-        sampleValue = sample[readPosition] * applyEnvelope(elapsedSamples);
-    else if(fadeOut <= elapsedSamples)
-        sampleValue = sample[readPosition] * applyEnvelope(durationSamples - elapsedSamples);
-    else
-        sampleValue = sample[readPosition];
+    float sampleValue = lerp(s0, s1, frac) * envelopeTable[elapsedSamples]; // need to provide
 
     float x = std::clamp((sampleValue * 0.5f + 0.5f), 0.f, 1.f);
     grainPoint.setOpacity(curve(x, 5.f));
 
-    //jassert(readPosition >= 0);
-    //jassert(readPosition < (int) inputNumSamples);
-    //jassert(!std::isnan(*sample));
-    //jassert(!std::isinf(*sample));
     return sampleValue;
-    return static_cast<int>(std::floor(sampleValue)); // * linearGain;
 }
 
-float Grain::applyEnvelope(const int index)
+void Grain::computeEnvelope(std::vector<float>& table)
 {
     switch(envelopeType)
     {
-        case hann:
-        {
-            return hannEnvelope(index);
-        }
-        break;
-
-        case triangular:
-        {
-            return triangularEnvelope(index);
-        }
-        break;
-        case hamming:
-        {
-            return hammingEnvelope(index);
-        }
-        break;
-
-        case rectangular:
-        {
-            return rectangularEnvelope(index);
-        }
-        break;
-        case blackman:
-        {
-            return blackmanEnvelope(index);
-        }
-        break;
-
-        case blackmanHarris:
-        {
-            return blackmanHarrisEnvelope(index);
-        }
-        break;
-        case flatTop:
-        {
-            return flatTopEnvelope(index);
-        }
-        break;
-        default:
-            throw std::logic_error("wrong case for enveloppe calculation");
-            return -1.0f;
+        case 0:
+            hannEnvelope(table);
             break;
+        case 1:
+            triangularEnvelope(table);
+            break;
+        case 2:
+            hammingEnvelope(table);
+            break;
+        case 3:
+            rectangularEnvelope(table);
+            break;
+        case 4:
+            blackmanEnvelope(table);
+            break;
+        case 5:
+            blackmanHarrisEnvelope(table);
+            break;
+        case 6:
+            flatTopEnvelope(table);
+            break;
+        default:
+            jassertfalse;
     }
 }
 
-// envelope types computations
-// https://en.wikipedia.org/wiki/Window_function#A_list_of_window_functions
-
-float Grain::ncos(size_t order, size_t i, size_t size)
+float Grain::ncos(const int order, const int i, const int size) const noexcept
 {
-    return std::cos(static_cast<float>(order * i) * juce::MathConstants<float>::pi / static_cast<float>(size - 1));
+    return std::cos((float)order * pi * (float)i / (float)(size - 1));
 }
 
-float Grain::hannEnvelope(const int index)
+void Grain::hannEnvelope(std::vector<float>& table)
 {
-    float cos2 = ncos(2, index, envelopeSize);
-    return (0.5f - 0.5f * cos2);
+    for(int i = 0; i < table.size(); i++)
+    {
+        if(i < fadeIn)
+        {
+            const float cos2 = ncos(2, i, envelopeSizeSamples);
+            table[i] = (0.5f - 0.5f * cos2);
+        }
+        else if(i >= fadeOut)
+        {
+            const float cos2 = ncos(2, i - sustainWidthSamples, envelopeSizeSamples);
+            table[i] = (0.5f - 0.5f * cos2);
+        }
+        else
+        {
+            table[i] = 1.f;
+        }
+    }
 }
 
-float Grain::triangularEnvelope(const int index)
+void Grain::triangularEnvelope(std::vector<float>& table)
 {
-    float halfSlots = static_cast<float>(0.5) * static_cast<float>(envelopeSize - 1);
-    return static_cast<float>(1.0) - std::abs((static_cast<float>(index) - halfSlots) / halfSlots);
+    float halfSlots = 0.5f * (envelopeSizeSamples - 1);
+    for(int i = 0; i < table.size(); i++)
+    {
+        if(i < fadeIn)
+        {
+            table[i] = 1.f - std::abs((static_cast<float>(i - halfSlots) / halfSlots));
+        }
+        else if(i >= fadeOut)
+        {
+            table[i] = 1.f - std::abs((static_cast<float>(i - sustainWidthSamples - halfSlots) / halfSlots));
+        }
+        else
+        {
+            table[i] = 1.f;
+        }
+    }
 }
 
-float Grain::rectangularEnvelope(const int index) { return static_cast<float>(1); }
-
-float Grain::hammingEnvelope(const int index)
+void Grain::rectangularEnvelope(std::vector<float>& table)
 {
-    float cos2 = ncos(2, index, envelopeSize);
-    return static_cast<float>(0.54 - 0.46 * cos2);
+    for(int i = 0; i < table.size(); i++)
+    {
+        table[i] = 1.f;
+    }
 }
 
-float Grain::blackmanEnvelope(const int index)
+void Grain::hammingEnvelope(std::vector<float>& table)
 {
-    constexpr float alpha = 0.16f;
-    float cos2 = ncos(2, index, envelopeSize);
-    float cos4 = ncos(4, index, envelopeSize);
-
-    return static_cast<float>(0.5 * (1 - alpha) - 0.5 * cos2 + 0.5 * alpha * cos4);
+    for(int i = 0; i < table.size(); i++)
+    {
+        if(i < fadeIn)
+        {
+            const float cos2 = ncos(2, i, envelopeSizeSamples);
+            table[i] = static_cast<float>(0.54f - 0.46f * cos2);
+        }
+        else if(i >= fadeOut)
+        {
+            const float cos2 = ncos(2, i - sustainWidthSamples, envelopeSizeSamples);
+            table[i] = static_cast<float>(0.54f - 0.46f * cos2);
+        }
+        else
+        {
+            table[i] = 1.f;
+        }
+    }
 }
 
-float Grain::blackmanHarrisEnvelope(const int index)
+void Grain::blackmanEnvelope(std::vector<float>& table)
 {
-    float cos2 = ncos(2, index, envelopeSize);
-    float cos4 = ncos(4, index, envelopeSize);
-    float cos6 = ncos(6, index, envelopeSize);
-
-    return static_cast<float>(0.35875 - 0.48829 * cos2 + 0.14128 * cos4 - 0.01168 * cos6);
+    const float alpha = 0.16f;
+    for(int i = 0; i < table.size(); i++)
+    {
+        if(i < fadeIn)
+        {
+            const float cos2 = ncos(2, i, envelopeSizeSamples);
+            const float cos4 = ncos(4, i, envelopeSizeSamples);
+            table[i] = 0.5f * (1 - alpha) - 0.5 * cos2 + 0.5 * alpha * cos4;
+        }
+        else if(i >= fadeOut)
+        {
+            const float cos2 = ncos(2, i - sustainWidthSamples, envelopeSizeSamples);
+            const float cos4 = ncos(4, i - sustainWidthSamples, envelopeSizeSamples);
+            table[i] = 0.5f * (1 - alpha) - 0.5 * cos2 + 0.5 * alpha * cos4;
+        }
+        else
+        {
+            table[i] = 1.f;
+        }
+    }
 }
 
-float Grain::flatTopEnvelope(const int index)
+void Grain::blackmanHarrisEnvelope(std::vector<float>& table)
 {
-    float cos2 = ncos(2, index, envelopeSize);
-    float cos4 = ncos(4, index, envelopeSize);
-    float cos6 = ncos(6, index, envelopeSize);
-    float cos8 = ncos(8, index, envelopeSize);
+    for(int i = 0; i < table.size(); i++)
+    {
+        if(i < fadeIn)
+        {
+            const float cos2 = ncos(2, i, envelopeSizeSamples);
+            const float cos4 = ncos(4, i, envelopeSizeSamples);
+            const float cos6 = ncos(6, i, envelopeSizeSamples);
+            table[i] = 0.35875f - 0.48829f * cos2 + 0.14128f * cos4 - 0.01168f * cos6;
+        }
+        else if(i >= fadeOut)
+        {
+            const float cos2 = ncos(2, i - sustainWidthSamples, envelopeSizeSamples);
+            const float cos4 = ncos(4, i - sustainWidthSamples, envelopeSizeSamples);
+            const float cos6 = ncos(6, i - sustainWidthSamples, envelopeSizeSamples);
+            table[i] = 0.35875f - 0.48829f * cos2 + 0.14128f * cos4 - 0.01168f * cos6;
+        }
+        else
+        {
+            table[i] = 1.f;
+        }
+    }
+}
 
-    return static_cast<float>(1.0 - 1.93 * cos2 + 1.29 * cos4 - 0.388 * cos6 + 0.028 * cos8);
+void Grain::flatTopEnvelope(std::vector<float>& table)
+{
+    for(int i = 0; i < table.size(); i++)
+    {
+        if(i < fadeIn)
+        {
+            const float cos2 = ncos(2, i, envelopeSizeSamples);
+            const float cos4 = ncos(4, i, envelopeSizeSamples);
+            const float cos6 = ncos(6, i, envelopeSizeSamples);
+            const float cos8 = ncos(8, i, envelopeSizeSamples);
+            table[i] = 1.f - 1.93f * cos2 + 1.29f * cos4 - 0.388f * cos6 + 0.028f * cos8;
+        }
+        else if(i >= fadeOut)
+        {
+            const float cos2 = ncos(2, i - sustainWidthSamples, envelopeSizeSamples);
+            const float cos4 = ncos(4, i - sustainWidthSamples, envelopeSizeSamples);
+            const float cos6 = ncos(6, i - sustainWidthSamples, envelopeSizeSamples);
+            const float cos8 = ncos(8, i - sustainWidthSamples, envelopeSizeSamples);
+            table[i] = 1.f - 1.93f * cos2 + 1.29f * cos4 - 0.388f * cos6 + 0.028f * cos8;
+        }
+        else
+        {
+            table[i] = 1.f;
+        }
+    }
 }
 
 GrainPoint* Grain::getGrainPoint() { return &grainPoint; }

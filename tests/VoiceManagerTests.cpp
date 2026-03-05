@@ -23,11 +23,11 @@ struct VoiceManagerFixture
 
     VoiceManagerFixture() : vm{pool, posMod}
     {
-        snapshot.durationSample = 48000;
-        snapshot.density = 1;
+        snapshot.durationSamples = 48000;
+        snapshot.emission = 1;
         snapshot.linearGain = 0.707946f;
-        snapshot.startPositionSample = 24000;
-        snapshot.selectionSample = 12000;
+        snapshot.startPositionSamples = 24000;
+        snapshot.selectionSamples = 12000;
         snapshot.speed = 1.f;
         snapshot.mix = 1.f;
         snapshot.sustainRatio = 0.5f;

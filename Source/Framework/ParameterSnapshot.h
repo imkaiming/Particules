@@ -12,24 +12,19 @@
 
 struct ParameterSnapshot
 {
-	float durationSample; 
-	float density;
-	float fadeInt;
-	float fadeOut;
-	float linearGain;
-	float speed;
-	float mix;
-	float startPositionSample;
-	float selectionSample;
+    int durationSamples;
+    int startPositionSamples;
+    int selectionSamples;
+    int traversalMode;
+
+    float emission;
+    float linearGain;
+    float speed;
+    float mix;
     float sustainRatio;
+    float envType;
+    float traversalFreq;
 
-	float envType;
-	int traversalMode;
-	float traversalFreq;
-
-	double sampleRate;
-	bool isValid() const
-	{
-		return durationSample > 0 && speed > 0 && density >= 0;
-	}
+    double sampleRate;
+    bool isValid() const { return durationSamples > 0 && speed > 0 && emission >= 0; }
 };

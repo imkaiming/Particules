@@ -15,7 +15,6 @@
 
 PositionModulator::PositionModulator(double sr) : mPhaseAccumulator{0.f}, mTraversalMod{0}, mTraversalFreq{1.f}, mSampleRate{sr}
 {
-    //jassert(sr != 0);
 }
 
 void PositionModulator::reset()

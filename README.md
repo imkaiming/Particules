@@ -10,7 +10,7 @@ The project explores **grain-based sound generation**, real-time parameter contr
 
 - Adjustable grain parameters:
   - grain size
-  - density
+  - Emission
   - position / spread
   - pitch
 - Envelope shaping per grain

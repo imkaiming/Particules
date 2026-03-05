@@ -29,13 +29,13 @@ public:
     explicit Scheduler();
 	~Scheduler() = default;
 
-	void process(int bufferSize, double sampleRate, float density, std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& parameters);
+	void process(int bufferSize, double sampleRate, float Emission, std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& parameters);
 
 private:
 	static constexpr uint16_t mCapacity = (uint16_t)Param::MaxEvents;
 
 	void reset() { nextOnSet = 0; }
-	double getInterOnSet(float density, double sampleRate) const noexcept;
+    const double getInterOnSet(float Emission, double sampleRate) const noexcept;
 	double getOffset() const noexcept { return nextOnSet; };
 	void setOffset(double n) noexcept { nextOnSet = n; };
 

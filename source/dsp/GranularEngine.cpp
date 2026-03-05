@@ -19,7 +19,7 @@ GranularEngine::GranularEngine(ParameterView& sp)
 void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize)
 {
     // pour 1024 buffer size en 48kHz on a une fenetre de 21ms par appelle de compute.
-    // si density = 500g/s (1g chaque 0.002s) alors on a interOnSet = 48000/500 = 96 sample.
+    // si Emission = 500g/s (1g chaque 0.002s) alors on a interOnSet = 48000/500 = 96 sample.
     // 1024/96 = 10.66 grains par appel
 
     const ParameterSnapshot snapshot = paramsView.getSnapshot();
@@ -36,7 +36,7 @@ void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize
     posMod.setParameters(snapshot.traversalMode, snapshot.traversalFreq);
 
     scheduler.process(
-        bufferSize, snapshot.sampleRate, snapshot.density,
+        bufferSize, snapshot.sampleRate, snapshot.emission,
         [this](int offset, const ParameterSnapshot& snapshot) { voiceManager.spawn(offset, snapshot); }, snapshot);
 
     voiceManager.process(outputBlock, bufferSize, inputSource);

@@ -83,7 +83,7 @@ void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
     paramsView.init(apvts, sampleRate);
     grainEngine.init(static_cast<int>(sampleRate), numChannels, samplesPerBlock);
 
-    //juce::Logger::outputDebugString("density : " + (const juce::String)this->paramsView.getDensity() + " duration : " + (const juce::String)this->paramsView.getDuration());
+    //juce::Logger::outputDebugString("EMISSION : " + (const juce::String)this->paramsView.getEMISSION() + " duration : " + (const juce::String)this->paramsView.getDuration());
 #if ENABLE_DEBUG_PRESET // exist also in the audio file loader
     loadDebugPreset();
 #endif
@@ -166,7 +166,7 @@ void ParticulesAudioProcessor::setStateInformation(const void* data, int sizeInB
 
     //juce::Logger::outputDebugString("apvts mix : " + (juce::String)apvts.getRawParameterValue(MIX_ID)->load());
     //juce::Logger::outputDebugString("apvts gain : " + (juce::String)apvts.getRawParameterValue(GAIN_ID)->load());
-    //juce::Logger::outputDebugString("apvts dens : " + (juce::String)apvts.getRawParameterValue(DENSITY_ID)->load());
+    //juce::Logger::outputDebugString("apvts dens : " + (juce::String)apvts.getRawParameterValue(EMISSION_ID)->load());
     //juce::Logger::outputDebugString("apvts dur : " + (juce::String)apvts.getRawParameterValue(DURATION_ID)->load());
     //juce::Logger::outputDebugString("apvts pitch : " + (juce::String)apvts.getRawParameterValue(PITCH_ID)->load());
 }
@@ -183,19 +183,19 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         Param::Gain::id, Param::Gain::name, juce::NormalisableRange<float>(Param::Gain::min, Param::Gain::max, 0.01f),
         Param::Gain::init, juce::String(" dB"), juce::AudioProcessorParameter::genericParameter,
-        [](float v, int) { return juce::String(v, 3) + " dB"; }, [](const juce::String& s) { return s.getFloatValue(); }));
+        [](float v, int) { return juce::String(v, 2) + " dB"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
-        Param::Density::id, Param::Density::name,
-        juce::NormalisableRange<float>(Param::Density::min, Param::Density::max, 0.001f), Param::Density::init,
+        Param::Emission::id, Param::Emission::name,
+        juce::NormalisableRange<float>(Param::Emission::min, Param::Emission::max, 0.001f), Param::Emission::init,
         juce::String(" g/s"), juce::AudioProcessorParameter::genericParameter,
-        [](float v, int) { return juce::String(v, 3) + " g/s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
+        [](float v, int) { return juce::String(v, 2) + " g/s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(
         Param::Duration::id, Param::Duration::name,
         juce::NormalisableRange<float>(Param::Duration::min, Param::Duration::max, 0.001f), Param::Duration::init,
         juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
-        [](float v, int) { return juce::String(v, 3) + " s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
+        [](float v, int) { return juce::String(v, 2) + " s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(Param::Speed::id, Param::Speed::name,
         juce::NormalisableRange<float>(Param::Speed::min, Param::Speed::max, 0.001f), Param::Speed::init));
@@ -240,12 +240,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         Param::TraversalFreq::id, Param::TraversalFreq::name,
-        juce::NormalisableRange<float>(Param::TraversalFreq::min, Param::TraversalFreq::max, 0.001f), Param::TraversalFreq::init,
+        juce::NormalisableRange<float>(Param::TraversalFreq::min, Param::TraversalFreq::max, 0.01f), Param::TraversalFreq::init,
         juce::String(" Hz"), juce::AudioProcessorParameter::genericParameter,
-        [](float v, int) { return juce::String(v, 3) + " Hz"; }, [](const juce::String& s) { return s.getFloatValue(); }));
+        [](float v, int) { return juce::String(v, 2) + " Hz"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
     // ajouter pan, direction
-    // randomDensity, randomDuration, randomPan, randomDirection, randomPitch
+    // randomEMISSION, randomDuration, randomPan, randomDirection, randomPitch
 
     return layout;
 }
@@ -298,8 +298,8 @@ void ParticulesAudioProcessor::loadDebugPreset()
     juce::NormalisableRange<float> gainRange(Param::Gain::min, Param::Gain::max);
     float normalizedGain = gainRange.convertTo0to1(Param::Gain::init);
 
-    juce::NormalisableRange<float> densityRange(Param::Density::min, Param::Density::max);
-    float normalizedDensity = densityRange.convertTo0to1(1);
+    juce::NormalisableRange<float> EmissionRange(Param::Emission::min, Param::Emission::max);
+    float normalizedEmission = EmissionRange.convertTo0to1(1);
 
     juce::NormalisableRange<float> durationRange(Param::Duration::min, Param::Duration::max);
     float normalizedDuration = durationRange.convertTo0to1(1);
@@ -321,12 +321,12 @@ void ParticulesAudioProcessor::loadDebugPreset()
 
     apvts.getParameter(Param::Mix::id)->setValueNotifyingHost(1.f); // MIX100%
     apvts.getParameter(Param::Gain::id)->setValueNotifyingHost(normalizedGain);
-    apvts.getParameter(Param::Density::id)->setValueNotifyingHost(normalizedDensity);
+    apvts.getParameter(Param::Emission::id)->setValueNotifyingHost(normalizedEmission);
     apvts.getParameter(Param::Duration::id)->setValueNotifyingHost(normalizedDuration);
     apvts.getParameter(Param::Speed::id)->setValueNotifyingHost(normalizedSpeed);
     apvts.getParameter(Param::Position::id)->setValueNotifyingHost(normalizedPosition);
     apvts.getParameter(Param::Selection::id)->setValueNotifyingHost(normalizedSelection);
-    apvts.getParameter(Param::EnvelopeType::id)->setValueNotifyingHost(1.f);
+    apvts.getParameter(Param::EnvelopeType::id)->setValueNotifyingHost(0.f);
     apvts.getParameter(Param::TraversalFreq::id)->setValueNotifyingHost(normalizedTraversalFreq);
     apvts.getParameter(Param::SustainRatio::id)->setValueNotifyingHost(normalizedSustainRatio);
 

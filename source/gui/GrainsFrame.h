@@ -22,22 +22,21 @@ public:
 	void resized() override;
 
 private:
-	juce::Slider densitySlider;
+    juce::Slider EmissionSlider;
 	juce::Slider durationSlider;
 	juce::Slider speedSlider;
     juce::Slider sustainRatioSlider;
 	juce::Slider traversalFreqSlider;
 
-	juce::Label densityLabel;
-	juce::Label durationLabel;
-	juce::Label speedLabel;
+	juce::Label EmissionLabel;
+    juce::Label durationLabel;
+    juce::Label speedLabel;
     juce::Label sustainRatioLabel;
-	juce::Label envTypeLabel;
-	juce::Label traversalModeLabel;
-	juce::Label traversalFreqLabel;
+    juce::Label envTypeLabel;
+    juce::Label traversalModeLabel;
+    juce::Label traversalFreqLabel;
 
-
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> densitySliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> EmissionSliderAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> durationSliderAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> speedSliderAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainRatioSliderAttachment;

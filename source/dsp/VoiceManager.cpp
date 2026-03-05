@@ -71,9 +71,7 @@ void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
     if(grain == nullptr)
         return;
 
-    float startPosition = posMod.computePhaseAtOffset(offset);
-
-    grain->config(snapshot, offset, startPosition); // init the grain here before process with the snapshot
+    grain->config(snapshot, offset, posMod.computePhaseAtOffset(offset)); // init the grain here before process with the snapshot
     activeHandles[activeCount++] = handle;
 }
 
