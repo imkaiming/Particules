@@ -66,7 +66,10 @@ public:
     bool getIsGrainsEmpty() const noexcept { return mIsGrainsEmpty.load(std::memory_order_relaxed); }
 
     //const int getNumChannels() const noexcept;
-    //const int getNumSamples() const noexcept;
+    const int getNumSamples() const noexcept { return numSamples.load(std::memory_order_relaxed); }
+    void setNumSamples(const int samples) noexcept { numSamples.store(samples, std::memory_order_relaxed); }
+    const int getNumChannels() const noexcept { return numChannels.load(std::memory_order_relaxed); }
+    void setNumChannels(const int samples) noexcept { numChannels.store(samples, std::memory_order_relaxed); }
 
     const double getSampleRate() const noexcept { return mSampleRate.load(std::memory_order_relaxed); }
     void setSampleRate(double sr) noexcept { mSampleRate.store(sr, std::memory_order_relaxed); }
@@ -86,20 +89,19 @@ public:
     //}
     //std::shared_ptr<const SampleSource> getSampleSource() const noexcept { return sampleSource.load(std::memory_order_acquire); }
 
-    void setAudioSource(std::shared_ptr<const AudioBuffer> ib) noexcept
-    {
-        inputBuffer.store(std::move(ib), std::memory_order_relaxed);
-    }
-    std::shared_ptr<const AudioBuffer> getAudioSource() const noexcept { return inputBuffer.load(std::memory_order_acquire); }
+    void setAudioSource(std::shared_ptr<const AudioBuffer> ib) noexcept;
+    std::shared_ptr<const AudioBuffer> getAudioSource() const noexcept;
 
 private:
     //std::atomic<std::shared_ptr<const SampleSource>> sampleSource;
     std::atomic<std::shared_ptr<const AudioBuffer>> inputBuffer;
 
-    // runFreq flags
+    // runtime flags
     std::atomic<bool> mIsPlaying;
     std::atomic<bool> mIsGrainsEmpty;
     std::atomic<double> mSampleRate;
+    std::atomic<int> numChannels;
+    std::atomic<int> numSamples;
 
     GranularView view;
 

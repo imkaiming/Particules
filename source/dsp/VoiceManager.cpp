@@ -26,7 +26,8 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioB
 {
     const size_t numChannels = outputBlock.getNumChannels();
     //const int numSamples = outputBlock.getNumSamples();
-
+    const int inputNumChannels = inputSource->getNumChannels();
+    const int inputNumSamples = inputSource->getNumSamples();
 
     for(size_t currentSample = 0; currentSample < bufferSize; currentSample++)
     {
@@ -37,11 +38,16 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioB
             if(!g) // grain has been released already MAY NOT NEEDED
             {
                 removeVoice((uint16_t)i); // place the current handle[index] in activeCount index and became
-                continue; // restart the begining of the loop at the same index
+                continue; // restart the beginning of the loop at the same index
             }
 
-            for(uint16_t channel = 0; channel < numChannels; ++channel)
-                outputBlock.addSample((int)channel, currentSample, g->getCurrentSample(inputSource, channel, numChannels));
+
+
+            for(size_t channel = 0; channel < numChannels; ++channel)
+            {
+                const float* sample = inputSource->getReadPointer(channel % inputNumChannels);
+                outputBlock.addSample((int)channel, currentSample, g->getCurrentSample(inputSource, (int)channel, (int)numChannels));
+            }
             g->update();
             if(g->isExhausted())
             {

@@ -46,7 +46,8 @@
 
 Grain::Grain()
     : durationSamples{0}, startPositionSamples{0}, speed{1.f}, sustainWidthSamples{0}, envelopeType{0}, envelopeSizeSamples{0},
-      selectionWindow{0}, fadeIn{0}, fadeOut{0}, elapsedSamples{0}, offset{0}//, linearGain{1.f}
+      selectionWindow{0}, fadeIn{0}, fadeOut{0}, elapsedSamples{0}, offset{0}, readPosition{0.f}, inputNumChannels{0},
+      inputNumSamples{0} //, linearGain{1.f}
 {
     reset();
 }
@@ -63,18 +64,21 @@ void Grain::reset()
     offset = 0;
     envelopeType = 0;
     generation = 0;
-
+    inputNumSamples = 0;
     //linearGain = 1.f;
     speed = 1.f;
+    readPosition = 0.f;
 }
 
 void Grain::config(const ParameterSnapshot& snapshot, int delaySample, float posMod)
 {
     elapsedSamples = 0;
     durationSamples = snapshot.durationSamples;
-
+    inputNumSamples = snapshot.inputNumSamples;
+    inputNumChannels = snapshot.inputNumChannels;
     const int positionModulationSamples = static_cast<int>(posMod * snapshot.selectionSamples);
     startPositionSamples = snapshot.startPositionSamples + positionModulationSamples;
+    readPosition = static_cast<float>(startPositionSamples);
     selectionWindow = snapshot.selectionSamples;
 
     speed = snapshot.speed;
@@ -87,7 +91,7 @@ void Grain::config(const ParameterSnapshot& snapshot, int delaySample, float pos
 
     envelopeType = static_cast<int>(snapshot.envType);
 
-    envelopeTable.resize((size_t)durationSamples);
+    envelopeTable.resize((size_t)durationSamples + offset);
     computeEnvelope(envelopeTable);
 
     //linearGain = snapshot.linearGain;
@@ -107,21 +111,18 @@ float Grain::getCurrentSample(const AudioBuffer* inputbuffer, const int channel,
     if(isExhausted())
         return 0.f;
 
+    // TODO mettre ca dans le VM idealement
     const int sourceChannel = inputbuffer->getNumChannels();
     const int inputNumSamples = inputbuffer->getNumSamples();
     const float* sample = inputbuffer->getReadPointer(channel % sourceChannel);
 
-    float readPosition = startPositionSamples + elapsedSamples * speed;
-    while(readPosition >= inputNumSamples)
-        readPosition -= inputNumSamples;
-
     //grainPoint.setSamplePos(readPosition);
     int index = static_cast<int>(readPosition);
-    float frac = readPosition - index;
+    float frac = readPosition - (float)index;
     const float s0 = sample[index];
     const float s1 = sample[(index + 1) % inputNumSamples];
 
-    float sampleValue = lerp(s0, s1, frac) * envelopeTable[elapsedSamples]; // need to provide
+    float sampleValue = lerp(s0, s1, frac) * envelopeTable[elapsedSamples];
 
     float x = std::clamp((sampleValue * 0.5f + 0.5f), 0.f, 1.f);
     grainPoint.setOpacity(curve(x, 5.f));
@@ -129,8 +130,19 @@ float Grain::getCurrentSample(const AudioBuffer* inputbuffer, const int channel,
     return sampleValue;
 }
 
+void Grain::update()
+{
+    elapsedSamples++;
+    readPosition += speed;
+    while(readPosition >= inputNumSamples)
+        readPosition -= inputNumSamples;
+}
+
 void Grain::computeEnvelope(std::vector<float>& table)
 {
+    if(table.size() == 0)
+        return;
+
     switch(envelopeType)
     {
         case 0:
@@ -161,152 +173,253 @@ void Grain::computeEnvelope(std::vector<float>& table)
 
 float Grain::ncos(const int order, const int i, const int size) const noexcept
 {
-    return std::cos((float)order * pi * (float)i / (float)(size - 1));
+    return std::cos(2.0f * pi * (float)order * (float)i / (float)(size - 1.f));
 }
 
 void Grain::hannEnvelope(std::vector<float>& table)
 {
-    for(int i = 0; i < table.size(); i++)
+    const float phase = 2.f * pi / ((float)envelopeSizeSamples - 1.f);
+    for(size_t i = 0; i < table.size(); i++)
     {
         if(i < fadeIn)
         {
-            const float cos2 = ncos(2, i, envelopeSizeSamples);
-            table[i] = (0.5f - 0.5f * cos2);
+            table[i] = 0.5f - 0.5f * std::cos(phase * (float)i);
         }
         else if(i >= fadeOut)
         {
-            const float cos2 = ncos(2, i - sustainWidthSamples, envelopeSizeSamples);
-            table[i] = (0.5f - 0.5f * cos2);
+            const float out = i - (float)sustainWidthSamples;
+            table[i] = 0.5f - 0.5f * std::cos(phase * out);
         }
         else
         {
             table[i] = 1.f;
         }
+    }
+
+        static bool firstTime = true;
+    if(firstTime)
+    {
+        firstTime = false;
+        DBG("Hann envelope");
+        DBG("Envelope first 5: " << table[0] << ", " << table[1] << ", " << table[2] << ", " << table[3] << ", " << table[4]);
+        DBG("Envelope last 5: " << table[table.size() - 5] << ", " << table[table.size() - 4] << ", " << table[table.size() - 3]
+                                << ", " << table[table.size() - 2] << ", " << table[table.size() - 1]);
     }
 }
 
 void Grain::triangularEnvelope(std::vector<float>& table)
 {
-    float halfSlots = 0.5f * (envelopeSizeSamples - 1);
-    for(int i = 0; i < table.size(); i++)
+    //const float halfSlots = 0.5f * (envelopeSizeSamples - 1.f);
+    //const float fadeOutLen = static_cast<float>(durationSamples - fadeOut);
+    //for(size_t i = 0; i < table.size(); i++)
+    //{
+    //    if(i < fadeIn)
+    //    {
+    //        table[i] = 1.f - std::abs((static_cast<float>(i - halfSlots) / halfSlots));
+    //    }
+    //    else if(i >= fadeOut)
+    //    {
+    //        const float out = i - (float)sustainWidthSamples;
+    //        table[i] = 1.f - std::abs((out - halfSlots) / halfSlots);
+    //    }
+    //    else
+    //    {
+    //        table[i] = 1.f;
+    //    }
+    //}
+
+    const float invSlopeUp = 1.f / std::max(1, fadeIn);
+    const float invSlopeDown = 1.f / std::max(1, envelopeSizeSamples - fadeOut);
+
+    for(size_t i = 0; i < envelopeSizeSamples; ++i)
     {
         if(i < fadeIn)
         {
-            table[i] = 1.f - std::abs((static_cast<float>(i - halfSlots) / halfSlots));
+            table[i] = (float)i * invSlopeUp;
         }
         else if(i >= fadeOut)
         {
-            table[i] = 1.f - std::abs((static_cast<float>(i - sustainWidthSamples - halfSlots) / halfSlots));
+            float remaining = (float)(envelopeSizeSamples - 1 - i);
+            table[i] = remaining * invSlopeDown;
         }
         else
-        {
             table[i] = 1.f;
-        }
+    }
+    static bool firstTime = true;
+    if(firstTime)
+    {
+        firstTime = false;
+        DBG("triangular envelope");
+        DBG("Envelope first 5: " << table[0] << ", " << table[1] << ", " << table[2] << ", " << table[3] << ", " << table[4]);
+        DBG("Envelope last 5: " << table[table.size() - 5] << ", " << table[table.size() - 4] << ", " << table[table.size() - 3]
+                                << ", " << table[table.size() - 2] << ", " << table[table.size() - 1]);
     }
 }
 
 void Grain::rectangularEnvelope(std::vector<float>& table)
 {
-    for(int i = 0; i < table.size(); i++)
+    for(size_t i = 0; i < table.size(); i++)
     {
-        table[i] = 1.f;
+        if(i < fadeIn)
+            table[i] = 0.f;
+
+        if(i >= fadeOut)
+            table[i] = 0.f;
+        else
+
+            table[i] = 1.f;
+    }
+    static bool firstTime = true;
+    if(firstTime)
+    {
+        firstTime = false;
+        DBG("rectangularEnvelope");
+        DBG("Envelope first 5: " << table[0] << ", " << table[1] << ", " << table[2] << ", " << table[3] << ", " << table[4]);
+        DBG("Envelope last 5: " << table[table.size() - 5] << ", " << table[table.size() - 4] << ", " << table[table.size() - 3]
+                                << ", " << table[table.size() - 2] << ", " << table[table.size() - 1]);
     }
 }
 
 void Grain::hammingEnvelope(std::vector<float>& table)
 {
-    for(int i = 0; i < table.size(); i++)
+    const float order = 2.f;
+    const float phase = 2.f * pi * order / ((float)envelopeSizeSamples - 1.f);
+    for(size_t i = 0; i < table.size(); i++)
     {
         if(i < fadeIn)
         {
-            const float cos2 = ncos(2, i, envelopeSizeSamples);
-            table[i] = static_cast<float>(0.54f - 0.46f * cos2);
+            table[i] = static_cast<float>(0.54f - 0.46f * std::cos(phase * (float)i));
         }
         else if(i >= fadeOut)
         {
-            const float cos2 = ncos(2, i - sustainWidthSamples, envelopeSizeSamples);
-            table[i] = static_cast<float>(0.54f - 0.46f * cos2);
+            const float out = i - (float)sustainWidthSamples;
+            table[i] = static_cast<float>(0.54f - 0.46f * std::cos(phase * out));
         }
         else
         {
             table[i] = 1.f;
         }
+    }
+    static bool firstTime = true;
+    if(firstTime)
+    {
+        firstTime = false;
+        DBG("hammingEnvelope");
+        DBG("Envelope first 5: " << table[0] << ", " << table[1] << ", " << table[2] << ", " << table[3] << ", " << table[4]);
+        DBG("Envelope last 5: " << table[table.size() - 5] << ", " << table[table.size() - 4] << ", " << table[table.size() - 3]
+                                << ", " << table[table.size() - 2] << ", " << table[table.size() - 1]);
     }
 }
 
 void Grain::blackmanEnvelope(std::vector<float>& table)
 {
     const float alpha = 0.16f;
-    for(int i = 0; i < table.size(); i++)
+    const float order2 = 2.f;
+    const float order4 = 4.f;
+    const float phase2 = 2.f * pi * order2 / ((float)envelopeSizeSamples - 1.f);
+    const float phase4 = 2.f * pi * order4 / ((float)envelopeSizeSamples - 1.f);
+
+    for(size_t i = 0; i < table.size(); i++)
     {
         if(i < fadeIn)
         {
-            const float cos2 = ncos(2, i, envelopeSizeSamples);
-            const float cos4 = ncos(4, i, envelopeSizeSamples);
-            table[i] = 0.5f * (1 - alpha) - 0.5 * cos2 + 0.5 * alpha * cos4;
+            table[i] = 0.5f * (1 - alpha) - 0.5 * std::cos(phase2 * i) + 0.5 * alpha * std::cos(phase4 * i);
         }
         else if(i >= fadeOut)
         {
-            const float cos2 = ncos(2, i - sustainWidthSamples, envelopeSizeSamples);
-            const float cos4 = ncos(4, i - sustainWidthSamples, envelopeSizeSamples);
-            table[i] = 0.5f * (1 - alpha) - 0.5 * cos2 + 0.5 * alpha * cos4;
+            const float out = i - (float)sustainWidthSamples;
+            table[i] = 0.5f * (1 - alpha) - 0.5 * std::cos(phase2 * out) + 0.5 * alpha * std::cos(phase4 * out);
         }
         else
         {
             table[i] = 1.f;
         }
+    }
+    static bool firstTime = true;
+    if(firstTime)
+    {
+        firstTime = false;
+        DBG("blackman env");
+        DBG("Envelope first 5: " << table[0] << ", " << table[1] << ", " << table[2] << ", " << table[3] << ", " << table[4]);
+        DBG("Envelope last 5: " << table[table.size() - 5] << ", " << table[table.size() - 4] << ", " << table[table.size() - 3]
+                                << ", " << table[table.size() - 2] << ", " << table[table.size() - 1]);
     }
 }
 
 void Grain::blackmanHarrisEnvelope(std::vector<float>& table)
 {
-    for(int i = 0; i < table.size(); i++)
+    const float order2 = 2.f;
+    const float order4 = 4.f;
+    const float order6 = 6.f;
+    const float phase2 = 2.f * pi * order2 / ((float)envelopeSizeSamples - 1.f);
+    const float phase4 = 2.f * pi * order4 / ((float)envelopeSizeSamples - 1.f);
+    const float phase6 = 2.f * pi * order6 / ((float)envelopeSizeSamples - 1.f);
+
+    for(size_t i = 0; i < table.size(); i++)
     {
         if(i < fadeIn)
         {
-            const float cos2 = ncos(2, i, envelopeSizeSamples);
-            const float cos4 = ncos(4, i, envelopeSizeSamples);
-            const float cos6 = ncos(6, i, envelopeSizeSamples);
-            table[i] = 0.35875f - 0.48829f * cos2 + 0.14128f * cos4 - 0.01168f * cos6;
+            table[i] =
+                0.35875f - 0.48829f * std::cos(phase2 * i) + 0.14128f * std::cos(phase4 * i) - 0.01168f * std::cos(phase6 * i);
         }
         else if(i >= fadeOut)
         {
-            const float cos2 = ncos(2, i - sustainWidthSamples, envelopeSizeSamples);
-            const float cos4 = ncos(4, i - sustainWidthSamples, envelopeSizeSamples);
-            const float cos6 = ncos(6, i - sustainWidthSamples, envelopeSizeSamples);
-            table[i] = 0.35875f - 0.48829f * cos2 + 0.14128f * cos4 - 0.01168f * cos6;
+            const float out = (i - (float)sustainWidthSamples);
+            table[i] = 0.35875f - 0.48829f * std::cos(phase2 * out) + 0.14128f * std::cos(phase4 * out)
+                       - 0.01168f * std::cos(phase6 * out);
         }
         else
         {
             table[i] = 1.f;
         }
     }
+    static bool firstTime = true;
+    if(firstTime)
+    {
+        firstTime = false;
+        DBG("blackman harris");
+        DBG("Envelope first 5: " << table[0] << ", " << table[1] << ", " << table[2] << ", " << table[3] << ", " << table[4]);
+        DBG("Envelope last 5: " << table[table.size() - 5] << ", " << table[table.size() - 4] << ", " << table[table.size() - 3]
+                                << ", " << table[table.size() - 2] << ", " << table[table.size() - 1]);
+    }
 }
 
 void Grain::flatTopEnvelope(std::vector<float>& table)
 {
-    for(int i = 0; i < table.size(); i++)
+    const float order2 = 2.f;
+    const float order4 = 4.f;
+    const float order6 = 6.f;
+    const float order8 = 6.f;
+    const float phase2 = 2.f * pi * order2 / ((float)envelopeSizeSamples - 1.f);
+    const float phase4 = 2.f * pi * order4 / ((float)envelopeSizeSamples - 1.f);
+    const float phase6 = 2.f * pi * order6 / ((float)envelopeSizeSamples - 1.f);
+    const float phase8 = 2.f * pi * order8 / ((float)envelopeSizeSamples - 1.f);
+    for(size_t i = 0; i < table.size(); i++)
     {
         if(i < fadeIn)
         {
-            const float cos2 = ncos(2, i, envelopeSizeSamples);
-            const float cos4 = ncos(4, i, envelopeSizeSamples);
-            const float cos6 = ncos(6, i, envelopeSizeSamples);
-            const float cos8 = ncos(8, i, envelopeSizeSamples);
-            table[i] = 1.f - 1.93f * cos2 + 1.29f * cos4 - 0.388f * cos6 + 0.028f * cos8;
+            table[i] = 1.f - 1.93f * std::cos(phase2 * i) + 1.29f * std::cos(phase4 * i) - 0.388f * std::cos(phase6 * i)
+                       + 0.028f * std::cos(phase8 * i);
         }
         else if(i >= fadeOut)
         {
-            const float cos2 = ncos(2, i - sustainWidthSamples, envelopeSizeSamples);
-            const float cos4 = ncos(4, i - sustainWidthSamples, envelopeSizeSamples);
-            const float cos6 = ncos(6, i - sustainWidthSamples, envelopeSizeSamples);
-            const float cos8 = ncos(8, i - sustainWidthSamples, envelopeSizeSamples);
-            table[i] = 1.f - 1.93f * cos2 + 1.29f * cos4 - 0.388f * cos6 + 0.028f * cos8;
+            const float out = (i - (float)sustainWidthSamples);
+            table[i] = 1.f - 1.93f * std::cos(phase2 * out) + 1.29f * std::cos(phase4 * out) - 0.388f * std::cos(phase6 * out)
+                       + 0.028f * std::cos(phase8 * out);
         }
         else
         {
             table[i] = 1.f;
         }
+    }
+    static bool firstTime = true;
+    if(firstTime)
+    {
+        firstTime = false;
+        DBG("flat top");
+        DBG("Envelope first 5: " << table[0] << ", " << table[1] << ", " << table[2] << ", " << table[3] << ", " << table[4]);
+        DBG("Envelope last 5: " << table[table.size() - 5] << ", " << table[table.size() - 4] << ", " << table[table.size() - 3]
+                                << ", " << table[table.size() - 2] << ", " << table[table.size() - 1]);
     }
 }
 

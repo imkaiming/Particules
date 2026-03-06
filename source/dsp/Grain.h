@@ -31,8 +31,8 @@ public:
 
     // Runtime functions
     float getCurrentSample(const AudioBuffer*, const int, const int) noexcept;
-    bool isExhausted() { return elapsedSamples >= durationSamples; };
-    void update() { elapsedSamples++; };
+    bool isExhausted() const noexcept { return elapsedSamples >= durationSamples + offset; };
+    void update();
 
     GrainPoint* getGrainPoint();
 
@@ -45,7 +45,6 @@ public:
 private:
     float curve(float, float);
 
-
     // envelope type function
     float ncos(const int order, const int i, const int size) const noexcept;
     void hannEnvelope(std::vector<float>& table);
@@ -57,7 +56,7 @@ private:
     void flatTopEnvelope(std::vector<float>& table);
     void applyEnvelope(std::vector<float>& table);
 
-    void computeEnvelope(std::vector<float>&) ;
+    void computeEnvelope(std::vector<float>&);
 
     int envelopeType; // on associe un grain a une envelope
 
@@ -71,8 +70,11 @@ private:
     int offset; // act like a little delay to sync scheduler.process() and voiceManager.process()
     int sustainWidthSamples; // définie la taille des rampes d'amplitude en entré et en sortie du grain
     int envelopeSizeSamples; // utile pour calculer les fade d'entrés et de sorties des envelopes selon les functions données
+    int inputNumSamples;
+    int inputNumChannels;
 
     float speed; // change the pitch and accelerate the lecture
+    float readPosition;
     //float linearGain;
 
     //int traversalMode; // change position with phase mode

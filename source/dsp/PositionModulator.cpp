@@ -70,10 +70,10 @@ float PositionModulator::computePhaseAtOffset(int offset)
             value = getSine(normalizedPhase);
             break;
         case 2:
-            value = getTriangular(normalizedPhase);
+            value = getSquare(normalizedPhase);
             break;
         case 3:
-            value = getSquare(normalizedPhase);
+            value = getTriangular(normalizedPhase);
             break;
         case 4:
             value = getRandom();

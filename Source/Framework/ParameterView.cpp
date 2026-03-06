@@ -56,13 +56,27 @@ const ParameterSnapshot ParameterView::getSnapshot() const noexcept
     snapshot.speed = getSpeed();
     snapshot.emission = getEmission();
     snapshot.envType = getEnvelopeType();
-    snapshot.sustainRatio= getSustainRatio();
+    snapshot.sustainRatio = getSustainRatio();
     snapshot.linearGain = getLinearGain();
     snapshot.traversalMode = static_cast<int>(getTraversalMode());
     snapshot.traversalFreq = getTraversalFreq();
     snapshot.sampleRate = getSampleRate();
+    snapshot.inputNumSamples = getNumSamples();
+    snapshot.inputNumChannels = getNumChannels();
     return snapshot;
 };
+
+void ParameterView::setAudioSource(std::shared_ptr<const AudioBuffer> ib) noexcept
+{
+    setNumChannels(ib.get()->getNumChannels());
+    setNumSamples(ib.get()->getNumSamples());
+    inputBuffer.store(std::move(ib), std::memory_order_relaxed);
+}
+
+std::shared_ptr<const AudioBuffer> ParameterView::getAudioSource() const noexcept
+{
+    return inputBuffer.load(std::memory_order_acquire);
+}
 
 //void ParameterView::updateGrainVisualizer()
 //{

@@ -16,6 +16,8 @@ struct ParameterSnapshot
     int startPositionSamples;
     int selectionSamples;
     int traversalMode;
+    int inputNumSamples;
+    int inputNumChannels;
 
     float emission;
     float linearGain;
