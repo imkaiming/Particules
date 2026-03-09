@@ -37,10 +37,10 @@ private:
     //static constexpr const double twoPi = static_cast<double>(std::_Pi_val / 2.0);
 
 
-    float getSine(float);
-    float getCos(float); // may not be used
-    float getTriangular(float);
-    float getSquare(float);
+    float getUnipolarSine(float);
+    float getUnipolarCos(float); // may not be used
+    float getUnipolarTriangular(float);
+    float getUnipolarSquare(float);
     float getRandom() { return r.nextFloat(); };
 
     double mSampleRate;

@@ -13,13 +13,13 @@ namespace audio_plugin_test
 
         SchedulerFixture()
         {
-            snapshot.durationSamples = 48000.f;
+            snapshot.durationSamples = 48000;
             snapshot.emission = 1.f;
             snapshot.linearGain = 1.0f;
             snapshot.speed = 1.0f;
             snapshot.mix = 1.f;
             snapshot.envType = 1.f;
-            snapshot.traversalMode = 1.f;
+            snapshot.traversalMode = 1;
             snapshot.traversalFreq = 1.f;
 
             numSamples = 512;

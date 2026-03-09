@@ -22,13 +22,13 @@ public:
 	void resized() override;
 
 private:
-    juce::Slider EmissionSlider;
+    juce::Slider emissionSlider;
 	juce::Slider durationSlider;
 	juce::Slider speedSlider;
     juce::Slider sustainRatioSlider;
 	juce::Slider traversalFreqSlider;
 
-	juce::Label EmissionLabel;
+	juce::Label emissionLabel;
     juce::Label durationLabel;
     juce::Label speedLabel;
     juce::Label sustainRatioLabel;
@@ -36,14 +36,14 @@ private:
     juce::Label traversalModeLabel;
     juce::Label traversalFreqLabel;
 
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> EmissionSliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> emissionSliderAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> durationSliderAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> speedSliderAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainRatioSliderAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> traversalFreqSliderAttachment;
 
 
-	juce::ComboBox envelopeList;
+	juce::ComboBox envelopeModeList;
 	juce::ComboBox traversalModeList;
 
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> envelopeAttachment;

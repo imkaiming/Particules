@@ -29,7 +29,7 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioB
     const int inputNumChannels = inputSource->getNumChannels();
     const int inputNumSamples = inputSource->getNumSamples();
 
-    for(size_t currentSample = 0; currentSample < bufferSize; currentSample++)
+    for(int currentSample = 0; currentSample < bufferSize; currentSample++)
     {
         for(int i = activeCount - 1; i >= 0; --i) // backward iteration for removing handle securely
         {
@@ -37,16 +37,16 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioB
             Grain* g = pool.get(h);
             if(!g) // grain has been released already MAY NOT NEEDED
             {
-                removeVoice((uint16_t)i); // place the current handle[index] in activeCount index and became
+                removeVoice(i); // place the current handle[index] in activeCount index and became
                 continue; // restart the beginning of the loop at the same index
             }
 
 
 
-            for(size_t channel = 0; channel < numChannels; ++channel)
+            for(int channel = 0; channel < numChannels; ++channel)
             {
-                const float* sample = inputSource->getReadPointer(channel % inputNumChannels);
-                outputBlock.addSample((int)channel, currentSample, g->getCurrentSample(inputSource, (int)channel, (int)numChannels));
+                const float* sample = inputSource->getReadPointer( channel % inputNumChannels);
+                outputBlock.addSample(channel, currentSample, g->getCurrentSample(inputSource, channel, numChannels));
             }
             g->update();
             if(g->isExhausted())
@@ -60,7 +60,7 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioB
     // TODO : proper AGC automatic gain compensation
     if(activeCount > 0)
     {
-        float scale = 1 / std::sqrt(static_cast<float>(activeCount));
+        const float scale = 1 / std::sqrt(static_cast<float>(activeCount));
         outputBlock.multiplyBy(scale);
     }
 
@@ -84,4 +84,4 @@ void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
 // example : after spawning 5 times activeCount = 5
 // removing index 2 then swapping the index 4 with the 2 and
 // after decrementing activeCount is = 4.
-void VoiceManager::removeVoice(uint16_t i) { activeHandles[i] = activeHandles[--activeCount]; }
+void VoiceManager::removeVoice(const int i) { activeHandles[i] = activeHandles[--activeCount]; }

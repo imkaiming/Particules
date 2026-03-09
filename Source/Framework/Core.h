@@ -17,13 +17,14 @@
 using ValueTreeState = juce::AudioProcessorValueTreeState;
 using AudioBlock = juce::dsp::AudioBlock<float>;
 using AudioBuffer = juce::AudioBuffer<float>;
+using str = juce::String;
 
 namespace Param
 {
-    constexpr uint16_t MaxGrains = 500;
-    constexpr uint8_t MaxEvents = 16;
-    constexpr uint8_t MaxDuration = 120;
-    constexpr uint64_t MaxFileSize = 512ULL * 1024 * 1024; // 512MB limits ULL -> Unsigned Long Long
+    constexpr int MaxGrains = 500;
+    constexpr int MaxEvents = 16;
+    constexpr int MaxDuration = 120;
+    constexpr int MaxFileSize = 512ULL * 1024 * 1024; // 512MB limits ULL -> Unsigned Long Long
 }
 
 static constexpr const float pi = juce::MathConstants<float>().pi;
@@ -36,7 +37,7 @@ inline float convertToPercentage(float toConvert) noexcept
     return juce::jlimit(0.0f, 1.0f, toConvert * 0.01f); // 0 .. 100
 }
 
-inline float lerp(float a, float b, float f) { return a * (1.0 - f) + (b * f); };
+inline float lerp(float a, float b, float f) { return a * (1.0f - f) + (b * f); };
 
 #if JUCE_DEBUG
     #define ENABLE_DEBUG_PRESET 1

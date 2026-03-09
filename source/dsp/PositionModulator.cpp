@@ -67,13 +67,13 @@ float PositionModulator::computePhaseAtOffset(int offset)
     switch(mTraversalMod)
     {
         case 1:
-            value = getSine(normalizedPhase);
+            value = getUnipolarSine(normalizedPhase);
             break;
         case 2:
-            value = getSquare(normalizedPhase);
+            value = getUnipolarSquare(normalizedPhase);
             break;
         case 3:
-            value = getTriangular(normalizedPhase);
+            value = getUnipolarTriangular(normalizedPhase);
             break;
         case 4:
             value = getRandom();
@@ -90,20 +90,23 @@ float PositionModulator::computePhaseAtOffset(int offset)
 
 // mod types
 
-float PositionModulator::getCos(float normalizedPhase)
+float PositionModulator::getUnipolarCos(float normalizedPhase)
 {
-    double radian = twoPi * normalizedPhase;
-    return (std::sin(radian + halfPi) + 1) / 2;
+    return 0.5f * (std::cos(twoPi * normalizedPhase) + 1.f);
 }
-float PositionModulator::getSine(float normalizedPhase)
+float PositionModulator::getUnipolarSine(float normalizedPhase)
 {
-    double radian = twoPi * normalizedPhase;
-    return 0.5f * (std::sin(radian + halfPi) + 1.0f);
+    return 0.5f * (std::sin(twoPi * normalizedPhase) + 1.0f);
 }
 
-float PositionModulator::getTriangular(float normalizedPhase)
+float PositionModulator::getUnipolarTriangular(float normalizedPhase)
 {
-    return 2 * std::abs(normalizedPhase - std::floorf(normalizedPhase + 0.5f));
+    const float p = normalizedPhase - std::floor(normalizedPhase);
+    return 1.0f - std::fabs(p * 2.0f - 1.0f);
 }
 
-float PositionModulator::getSquare(float normalizedPhase) { return normalizedPhase < (0.5f) ? 0.f : 1.f; }
+float PositionModulator::getUnipolarSquare(float normalizedPhase)
+{
+    const float p = normalizedPhase - std::floor(normalizedPhase);
+    return (p >= 0.5f);
+}

@@ -48,21 +48,30 @@ void ParameterView::init(ValueTreeState& apvts, double sampleRate)
 const ParameterSnapshot ParameterView::getSnapshot() const noexcept
 {
     ParameterSnapshot snapshot;
-    snapshot.durationSamples = static_cast<int>(getDuration() * mSampleRate);
-    snapshot.startPositionSamples = static_cast<int>(getFilePosition() * mSampleRate);
-    snapshot.selectionSamples = static_cast<int>(getWindowSelection() * mSampleRate);
+
+    // get Buffer data
+    snapshot.sampleRate = getSampleRate();
+    snapshot.inputNumSamples = getNumSamples();
+    snapshot.inputNumChannels = getNumChannels();
+
+    // position data
+    snapshot.startPositionSamples = static_cast<int>(getNormalizedStartPosition() * snapshot.inputNumSamples);
+    snapshot.selectionSamples = static_cast<int>(getNormalizedWindowSelection() * snapshot.inputNumSamples);
+
+    // time data
+    snapshot.durationSamples = static_cast<int>(getNormalizedDuration() * snapshot.sampleRate);
+    //DBG("snap getWindowSelection = " + (str)getWindowSelection());
+    //DBG("snap durationSamples = " + (str)snapshot.durationSamples);
 
     snapshot.mix = getMix();
     snapshot.speed = getSpeed();
     snapshot.emission = getEmission();
     snapshot.envType = getEnvelopeType();
-    snapshot.sustainRatio = getSustainRatio();
+    snapshot.sustainRatio = getNormalizedSustainRatio();
     snapshot.linearGain = getLinearGain();
     snapshot.traversalMode = static_cast<int>(getTraversalMode());
     snapshot.traversalFreq = getTraversalFreq();
-    snapshot.sampleRate = getSampleRate();
-    snapshot.inputNumSamples = getNumSamples();
-    snapshot.inputNumChannels = getNumChannels();
+
     return snapshot;
 };
 

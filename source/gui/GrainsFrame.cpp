@@ -12,10 +12,10 @@
 #include "../utils/MyColours.h"
 #include "../framework/ParamsID.h"
 
-GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(paramsView)
+GrainsFrame::GrainsFrame(ValueTreeState& apvts)
 {
-    EmissionSliderAttachment =
-        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Emission::id, EmissionSlider);
+    emissionSliderAttachment =
+        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Emission::id, emissionSlider);
 
     durationSliderAttachment =
         std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Duration::id, durationSlider);
@@ -33,19 +33,19 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
     //	std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
     //		*apvts, PITCH_ID, pitchSlider);
 
-    EmissionSlider.setName("EmissionSlider");
-    EmissionSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-    EmissionSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
-    EmissionSlider.setTextBoxIsEditable(true);
-    EmissionSlider.setRange(Param::Emission::min, Param::Emission::max);
-    EmissionSlider.setSkewFactorFromMidPoint(Param::Emission::init);
+    emissionSlider.setName("emissionSlider");
+    emissionSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    emissionSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
+    emissionSlider.setTextBoxIsEditable(true);
+    emissionSlider.setRange(Param::Emission::min, Param::Emission::max);
+    emissionSlider.setSkewFactorFromMidPoint(Param::Emission::init);
     //EmissionSlider.setTextValueSuffix(" g");
     //EmissionSlider.addListener(this);
-    EmissionSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+    emissionSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-    EmissionLabel.setText((const juce::String)Param::Emission::name, juce::dontSendNotification);
-    EmissionLabel.attachToComponent(&EmissionSlider, false);
-    EmissionLabel.setJustificationType(juce::Justification::centred);
+    emissionLabel.setText((const juce::String)Param::Emission::name, juce::dontSendNotification);
+    emissionLabel.attachToComponent(&emissionSlider, false);
+    emissionLabel.setJustificationType(juce::Justification::centred);
 
     durationSlider.setName("durationSlider");
     durationSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
@@ -101,13 +101,13 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
     traversalFreqLabel.attachToComponent(&traversalFreqSlider, false);
     traversalFreqLabel.setJustificationType(juce::Justification::centred);
 
-    addAndMakeVisible(&EmissionSlider);
+    addAndMakeVisible(&emissionSlider);
     addAndMakeVisible(&durationSlider);
     addAndMakeVisible(&speedSlider);
     addAndMakeVisible(&sustainRatioSlider);
     addAndMakeVisible(&traversalFreqSlider);
 
-    addAndMakeVisible(&EmissionLabel);
+    addAndMakeVisible(&emissionLabel);
     addAndMakeVisible(&durationLabel);
     addAndMakeVisible(&speedLabel);
     addAndMakeVisible(&sustainRatioLabel);
@@ -116,7 +116,7 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
     //ComboBoxParameterAttachment(RangedAudioParameter& parameter, ComboBox& combo,
     //	UndoManager* undoManager = nullptr);
 
-    envelopeList.addItemList(apvts.getParameter(Param::EnvelopeType::id)->getAllValueStrings(), 1);
+    envelopeModeList.addItemList(apvts.getParameter(Param::EnvelopeType::id)->getAllValueStrings(), 1);
 
     //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_1, 1);
     //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_2, 2);
@@ -125,10 +125,10 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
     //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_5, 5);
     //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_6, 6);
     //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_7, 7);
-    envelopeList.setSelectedId(1, juce::dontSendNotification); // default value set to Hann window
+    envelopeModeList.setSelectedId(1, juce::dontSendNotification); // default value set to Hann window
 
     envelopeAttachment =
-        std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(apvts, Param::EnvelopeType::id, envelopeList);
+        std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(apvts, Param::EnvelopeType::id, envelopeModeList);
     //envelopeAttachment = std::make_unique<juce::ComboBoxParameterAttachment>(
     //	apvts->getParameter(ENVTYPE_ID), envelopeList);
 
@@ -144,7 +144,7 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
         apvts, Param::TraversalMode::id, traversalModeList);
 
     envTypeLabel.setText((const juce::String)Param::EnvelopeType::name, juce::dontSendNotification);
-    envTypeLabel.attachToComponent(&envelopeList, false);
+    envTypeLabel.attachToComponent(&envelopeModeList, false);
     envTypeLabel.setJustificationType(juce::Justification::centred);
 
     traversalModeLabel.setText((const juce::String)Param::TraversalMode::name, juce::dontSendNotification);
@@ -161,7 +161,7 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) //:	apvts(apvts), paramsView(par
 	};
 	*/
 
-    addAndMakeVisible(&envelopeList);
+    addAndMakeVisible(&envelopeModeList);
     addAndMakeVisible(&envTypeLabel);
 
     addAndMakeVisible(&traversalModeList);
@@ -182,8 +182,8 @@ void GrainsFrame::resized()
     flexBox1.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
     flexBox1.alignContent = juce::FlexBox::AlignContent::center;
 
-    flexBox1.items.add(juce::FlexItem(EmissionLabel).withFlex(0.2f));
-    flexBox1.items.add(juce::FlexItem(EmissionSlider).withFlex(0.8f).withMargin(h));
+    flexBox1.items.add(juce::FlexItem(emissionLabel).withFlex(0.2f));
+    flexBox1.items.add(juce::FlexItem(emissionSlider).withFlex(0.8f).withMargin(h));
 
 	juce::FlexBox flexBox2;
 	flexBox2.flexDirection = juce::FlexBox::Direction::column;
@@ -225,7 +225,7 @@ void GrainsFrame::resized()
 	flexBox6.items.add(juce::FlexItem(traversalModeLabel).withFlex(0.1f));
 	flexBox6.items.add(juce::FlexItem(traversalModeList).withFlex(0.4f).withMaxHeight(getHeight() / 4.f).withMargin(h));
 	flexBox6.items.add(juce::FlexItem(envTypeLabel).withFlex(0.1f));
-	flexBox6.items.add(juce::FlexItem(envelopeList).withFlex(0.4f).withMaxHeight(getHeight() / 4.f).withMargin(h));
+	flexBox6.items.add(juce::FlexItem(envelopeModeList).withFlex(0.4f).withMaxHeight(getHeight() / 4.f).withMargin(h));
 
 
 	mainFlexBox.items.add(juce::FlexItem(flexBox1).withFlex(0.2f));

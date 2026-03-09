@@ -31,7 +31,7 @@ public:
 
     // Runtime functions
     float getCurrentSample(const AudioBuffer*, const int, const int) noexcept;
-    bool isExhausted() const noexcept { return elapsedSamples >= durationSamples + offset; };
+    bool isExhausted() const noexcept { return elapsedSamples >= durationSamples; };
     void update();
 
     GrainPoint* getGrainPoint();
@@ -46,16 +46,19 @@ private:
     float curve(float, float);
 
     // envelope type function
-    float ncos(const int order, const int i, const int size) const noexcept;
     void hannEnvelope(std::vector<float>& table);
     void hammingEnvelope(std::vector<float>& table);
     void triangularEnvelope(std::vector<float>& table);
-    void rectangularEnvelope(std::vector<float>& table);
     void blackmanEnvelope(std::vector<float>& table);
     void blackmanHarrisEnvelope(std::vector<float>& table);
     void flatTopEnvelope(std::vector<float>& table);
-    void applyEnvelope(std::vector<float>& table);
+    void gaussianEnvelope(std::vector<float>& table);
+    void exponentialEnvelope(std::vector<float>& table);
+    void smoothedStepEnvelope(std::vector<float>& table);
+    void tukeyEnvelope(std::vector<float>& table);
 
+    void applyEnvelope(std::vector<float>& table);
+    const float smoothedStep(float x) const noexcept { return x * x * (3.f - 2.f * x); };
     void computeEnvelope(std::vector<float>&);
 
     int envelopeType; // on associe un grain a une envelope
@@ -67,7 +70,7 @@ private:
     int selectionWindow; // définie la position maximale qu'un grain peut atteindre dans le buffer
     int fadeIn; // 0 to fadeIn
     int fadeOut; // fadeOut to numSamples
-    int offset; // act like a little delay to sync scheduler.process() and voiceManager.process()
+    int delaySamples ; // act like a little delay to sync scheduler.process() and voiceManager.process()
     int sustainWidthSamples; // définie la taille des rampes d'amplitude en entré et en sortie du grain
     int envelopeSizeSamples; // utile pour calculer les fade d'entrés et de sorties des envelopes selon les functions données
     int inputNumSamples;

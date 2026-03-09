@@ -39,11 +39,17 @@ public:
         return view.gain ? juce::Decibels::decibelsToGain(view.gain->load(std::memory_order_relaxed)) : 0.0f;
     }
     float getSpeed() const noexcept { return view.speed ? view.speed->load(std::memory_order_relaxed) : 0.0f; }
-    float getDuration() const noexcept { return view.duration ? view.duration->load(std::memory_order_relaxed) : 0.0f; }
+    float getNormalizedDuration() const noexcept { return view.duration ? view.duration->load(std::memory_order_relaxed) : 0.0f; }
     float getEmission() const noexcept { return view.Emission ? view.Emission->load(std::memory_order_relaxed) : 0.0f; }
-    float getWindowSelection() const noexcept { return view.selection ? view.selection->load(std::memory_order_relaxed) : 0.0f; }
-    float getFilePosition() const noexcept { return view.position ? view.position->load(std::memory_order_relaxed) : 0.0f; }
-    float getSustainRatio() const noexcept
+    float getNormalizedWindowSelection() const noexcept
+    {
+        return view.selection ? view.selection->load(std::memory_order_relaxed) : 0.0f;
+    }
+    float getNormalizedStartPosition() const noexcept
+    {
+        return view.position ? view.position->load(std::memory_order_relaxed) : 0.0f;
+    }
+    float getNormalizedSustainRatio() const noexcept
     {
         return view.sustainRatio ? view.sustainRatio->load(std::memory_order_relaxed) : 0.0f;
     }

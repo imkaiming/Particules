@@ -32,7 +32,7 @@ public:
 	void process(int bufferSize, double sampleRate, float Emission, std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& parameters);
 
 private:
-	static constexpr uint16_t mCapacity = (uint16_t)Param::MaxEvents;
+	static constexpr int mCapacity = Param::MaxEvents;
 
 	void reset() { nextOnSet = 0; }
     const double getInterOnSet(float Emission, double sampleRate) const noexcept;

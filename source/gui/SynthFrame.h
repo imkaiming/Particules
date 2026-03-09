@@ -30,18 +30,18 @@ private:
 
 	juce::Slider mixSlider;
 	juce::Slider gainSlider;
-	juce::Slider filePosSlider;
-	juce::Slider windowSelectionSlider;
+	juce::Slider positionSlider;
+	juce::Slider selectionSlider;
 
 	juce::Label mixLabel;
 	juce::Label gainLabel;
-	juce::Label filePosLabel;
-	juce::Label windowSelectionLabel;
+    juce::Label positionLabel;
+	juce::Label selectionLabel;
 
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixSliderAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> gainSliderAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> filePosSliderAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> windowSelectionSliderAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> positionSliderAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> selectionSliderAttachment;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SynthFrame)
 

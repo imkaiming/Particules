@@ -56,8 +56,8 @@ namespace Param
         inline constexpr const char* id = "ENVTYPE";
         inline constexpr const char* name = "Envelope Type";
         inline constexpr const int init = 1;
-        inline constexpr std::array<const char*, 7> envTypeNames = {
-            "Hann", "Triangular", "Hamming", "Rectangular", "Blackman", "BlackmanHarris", "FlatTop"};
+        inline constexpr std::array<const char*, 10> envTypeNames = {"Hann", "Triangular", "Hamming", "Blackman", "BlackmanHarris",
+            "FlatTop", "Gaussian", "Exponential", "SmoothedStep", "Tukey"};
 
         //inline constexpr const char* ENVTYPE_1 = "Hann";
         //inline constexpr const char* ENVTYPE_2 = "Triangular";
@@ -89,7 +89,7 @@ namespace Param
         inline constexpr const char* id = "SUSTAINRATIO";
         inline constexpr const char* name = "SustainRatio";
         inline constexpr float min = 0.f;
-        inline constexpr float max = 1.f;
+        inline constexpr float max = 0.9f;
         inline constexpr float init = 0.5f;
     }
 

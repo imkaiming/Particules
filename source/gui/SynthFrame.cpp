@@ -19,11 +19,11 @@ SynthFrame::SynthFrame(ValueTreeState& apvts)
     gainSliderAttachment =
         std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Gain::id, gainSlider);
 
-    filePosSliderAttachment =
-        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Position::id, filePosSlider);
+    positionSliderAttachment =
+        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Position::id, positionSlider);
 
-    windowSelectionSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        apvts, Param::Selection::id, windowSelectionSlider);
+    selectionSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        apvts, Param::Selection::id, selectionSlider);
 
     mixSlider.setName("mixSlider");
     mixSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
@@ -58,32 +58,32 @@ SynthFrame::SynthFrame(ValueTreeState& apvts)
     addAndMakeVisible(&mixLabel);
     addAndMakeVisible(&gainLabel);
 
-    filePosSlider.setName("filePosSlider");
-    filePosSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
-    filePosSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
-    filePosSlider.setTextBoxIsEditable(true);
-    filePosSlider.setRange(Param::Position::min, Param::Position::max);
+    positionSlider.setName("positionSlider");
+    positionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+    positionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
+    positionSlider.setTextBoxIsEditable(true);
+    positionSlider.setRange(Param::Position::min, Param::Position::max);
     //filePosSlider.addListener(this);
 
-    filePosLabel.setText((const juce::String)Param::Position::name, juce::dontSendNotification);
-    filePosLabel.attachToComponent(&filePosSlider, false);
-    filePosLabel.setJustificationType(juce::Justification::centred);
+    positionLabel.setText((const juce::String)Param::Position::name, juce::dontSendNotification);
+    positionLabel.attachToComponent(&positionSlider, false);
+    positionLabel.setJustificationType(juce::Justification::centred);
 
-    windowSelectionSlider.setName("windowSelection");
-    windowSelectionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
-    windowSelectionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
-    windowSelectionSlider.setTextBoxIsEditable(true);
-    windowSelectionSlider.setRange(Param::Selection::min, Param::Selection::max);
+    selectionSlider.setName("selectionSlider");
+    selectionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+    selectionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
+    selectionSlider.setTextBoxIsEditable(true);
+    selectionSlider.setRange(Param::Selection::min, Param::Selection::max);
     //windowSelectionSlider.addListener(this);
 
-    windowSelectionLabel.setText((const juce::String)Param::Selection::name, juce::dontSendNotification);
-    windowSelectionLabel.attachToComponent(&windowSelectionSlider, false);
-    windowSelectionLabel.setJustificationType(juce::Justification::centred);
+    selectionLabel.setText((const juce::String)Param::Selection::name, juce::dontSendNotification);
+    selectionLabel.attachToComponent(&selectionSlider, false);
+    selectionLabel.setJustificationType(juce::Justification::centred);
 
-    addAndMakeVisible(&filePosSlider);
-    addAndMakeVisible(&windowSelectionSlider);
-    addAndMakeVisible(&filePosLabel);
-    addAndMakeVisible(&windowSelectionLabel);
+    addAndMakeVisible(&positionSlider);
+    addAndMakeVisible(&selectionSlider);
+    addAndMakeVisible(&positionLabel);
+    addAndMakeVisible(&selectionLabel);
 }
 
 void SynthFrame::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
@@ -117,8 +117,8 @@ void SynthFrame::resized()
     flexBox3.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
     flexBox3.alignContent = juce::FlexBox::AlignContent::center;
 
-    flexBox3.items.add(juce::FlexItem(filePosLabel).withFlex(0.2f).withMargin(h));
-    flexBox3.items.add(juce::FlexItem(filePosSlider).withFlex(0.5f));
+    flexBox3.items.add(juce::FlexItem(positionLabel).withFlex(0.2f).withMargin(h));
+    flexBox3.items.add(juce::FlexItem(positionSlider).withFlex(0.5f));
 
     juce::FlexBox flexBox4;
     flexBox4.flexDirection = juce::FlexBox::Direction::column;
@@ -126,8 +126,8 @@ void SynthFrame::resized()
     flexBox4.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
     flexBox4.alignContent = juce::FlexBox::AlignContent::center;
 
-    flexBox4.items.add(juce::FlexItem(windowSelectionLabel).withFlex(0.2f).withMargin(h));
-    flexBox4.items.add(juce::FlexItem(windowSelectionSlider).withFlex(0.5f));
+    flexBox4.items.add(juce::FlexItem(selectionLabel).withFlex(0.2f).withMargin(h));
+    flexBox4.items.add(juce::FlexItem(selectionSlider).withFlex(0.5f));
 
     juce::FlexBox flexBox5;
     flexBox5.flexDirection = juce::FlexBox::Direction::column;

@@ -29,8 +29,8 @@ public:
     void spawn(int offset, const ParameterSnapshot& snapshot);
 
 private:
-	void removeVoice(uint16_t index);
-	static constexpr uint16_t mCapacity = Param::MaxGrains;
+	void removeVoice(const int index);
+	static constexpr int mCapacity = Param::MaxGrains;
 
     PositionModulator& posMod;
 	GrainPool& pool;
