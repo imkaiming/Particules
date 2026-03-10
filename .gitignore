@@ -51,10 +51,10 @@ benchmarks/reports/
 *.appcache
 
 # JUCE specific
-/JUCE/extras/
-Builds/
-JuceLibraryCode/
-Binaries/
+# /JUCE/examples/
+# Builds/
+# JuceLibraryCode/
+# Binaries/
 *.jucer
 !JUCE/*.jucer
 
