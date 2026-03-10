@@ -63,7 +63,7 @@ public:
 	const juce::File& getCurrentFile() const noexcept { return currentFile; };
 	AudioFileLoader& getAudioFileLoader() noexcept { return loader; };
 
-	uint16_t getNumActiveGrains() const noexcept { return grainEngine.getNumActiveGrains(); };
+	int getNumActiveGrains() const noexcept { return grainEngine.getNumActiveGrains(); };
 
 private:
 

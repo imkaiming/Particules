@@ -12,7 +12,7 @@
 #include "../framework/ParameterView.h"
 
 GranularEngine::GranularEngine(ParameterView& sp)
-    : paramsView{sp}, scheduler{}, voiceManager{pool, posMod}, pool{}, posMod{sp.getSampleRate()}
+    : paramsView{sp}, scheduler{}, voiceManager{pool, posMod, envLut}, pool{}, posMod{sp.getSampleRate()}
 {
 }
 

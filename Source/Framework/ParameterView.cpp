@@ -20,15 +20,29 @@ void ParameterView::init(ValueTreeState& apvts, double sampleRate)
     mSampleRate.store(sampleRate, std::memory_order_relaxed);
     view.mix = apvts.getRawParameterValue(Param::Mix::id);
     view.gain = apvts.getRawParameterValue(Param::Gain::id);
-    view.Emission = apvts.getRawParameterValue(Param::Emission::id);
+    view.emission = apvts.getRawParameterValue(Param::Emission::id);
     view.duration = apvts.getRawParameterValue(Param::Duration::id);
     view.speed = apvts.getRawParameterValue(Param::Speed::id);
     view.position = apvts.getRawParameterValue(Param::Position::id);
     view.selection = apvts.getRawParameterValue(Param::Selection::id);
-    view.envType = apvts.getRawParameterValue(Param::EnvelopeType::id);
+    view.envMode = apvts.getRawParameterValue(Param::EnvelopeMode::id);
     view.sustainRatio = apvts.getRawParameterValue(Param::SustainRatio::id);
     view.traversalMode = apvts.getRawParameterValue(Param::TraversalMode::id);
     view.traversalFreq = apvts.getRawParameterValue(Param::TraversalFreq::id);
+}
+
+EnvelopeMode ParameterView::getEnvelopeMode() const noexcept
+{
+    if(!view.envMode)
+        return EnvelopeMode::Hann;
+
+    const float v = view.envMode ? (view.envMode->load(std::memory_order_relaxed)) : 0.f;
+    const int choice = static_cast<int>(std::round(v));
+
+    if(choice < 0 || choice >= 7)
+        return EnvelopeMode::Hann;
+
+    return static_cast<EnvelopeMode>(choice);
 }
 
 //const int ParameterView::getNumChannels() const noexcept
@@ -66,7 +80,7 @@ const ParameterSnapshot ParameterView::getSnapshot() const noexcept
     snapshot.mix = getMix();
     snapshot.speed = getSpeed();
     snapshot.emission = getEmission();
-    snapshot.envType = getEnvelopeType();
+    snapshot.envMode = getEnvelopeMode();
     snapshot.sustainRatio = getNormalizedSustainRatio();
     snapshot.linearGain = getLinearGain();
     snapshot.traversalMode = static_cast<int>(getTraversalMode());

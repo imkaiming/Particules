@@ -10,13 +10,14 @@
 
 #include "GrainPool.h"
 #include "../framework/GrainHandle.h"
+#include "Grain.h"
 
 GrainPool::GrainPool() { reset(); }
 
 void GrainPool::reset()
 {
     nextFree = 0;
-    for(uint16_t i = 0; i < mCapacity; ++i)
+    for(int i = 0; i < mCapacity; ++i)
     {
         freeIndices[i] = i;
         grains[i].setActive(false);
@@ -63,10 +64,10 @@ GrainHandle GrainPool::acquire()
     if(nextFree >= mCapacity)
         return GrainHandle::getInvalidState();
 
-    const uint16_t i = freeIndices[nextFree++];
+    const int i = freeIndices[nextFree++];
     Grain& g = grains[i];
     g.setActive(true);
-    return GrainHandle { i, g.getGeneration() };
+    return GrainHandle{(uint16_t)i, g.getGeneration()};
 }
 
 // set a grain inactive and increment generation

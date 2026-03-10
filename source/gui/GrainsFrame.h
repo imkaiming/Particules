@@ -32,7 +32,7 @@ private:
     juce::Label durationLabel;
     juce::Label speedLabel;
     juce::Label sustainRatioLabel;
-    juce::Label envTypeLabel;
+    juce::Label envModeLabel;
     juce::Label traversalModeLabel;
     juce::Label traversalFreqLabel;
 
@@ -46,7 +46,7 @@ private:
 	juce::ComboBox envelopeModeList;
 	juce::ComboBox traversalModeList;
 
-	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> envelopeAttachment;
+	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> envelopeModeAttachment;
 	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> traversalModeAttachment;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainsFrame)

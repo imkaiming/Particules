@@ -10,9 +10,12 @@
 
 #include "VoiceManager.h"
 #include "../framework/ParameterSnapshot.h"
-#include "../framework/SampleSource.h"
 
-VoiceManager::VoiceManager(GrainPool& p, PositionModulator& pm) : pool{p}, activeCount{0}, posMod{pm} { reset(); }
+VoiceManager::VoiceManager(GrainPool& p, PositionModulator& pm, EnvelopeLookUpTable& lut)
+    : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}
+{
+    reset();
+}
 
 void VoiceManager::reset()
 {
@@ -41,12 +44,14 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioB
                 continue; // restart the beginning of the loop at the same index
             }
 
-
-
+            const float phase = g->getPhase();
+            //DBG("getPhaseFromElapsedSamples = "+(str)phase);
             for(int channel = 0; channel < numChannels; ++channel)
             {
-                const float* sample = inputSource->getReadPointer( channel % inputNumChannels);
-                outputBlock.addSample(channel, currentSample, g->getCurrentSample(inputSource, channel, numChannels));
+                //const float* sample = inputSource->getReadPointer(channel % inputNumChannels);
+                const float sampleValue = g->getCurrentSample(inputSource, channel, numChannels);
+                const float envelopeValue = envLut.getEnvelopeValue(phase);
+                outputBlock.addSample(channel, currentSample, sampleValue * envelopeValue);
             }
             g->update();
             if(g->isExhausted())
@@ -77,6 +82,7 @@ void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
     if(grain == nullptr)
         return;
 
+    envLut.setEnvelopeMode(snapshot.envMode);
     grain->config(snapshot, offset, posMod.computePhaseAtOffset(offset)); // init the grain here before process with the snapshot
     activeHandles[activeCount++] = handle;
 }

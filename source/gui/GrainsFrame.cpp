@@ -116,19 +116,12 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts)
     //ComboBoxParameterAttachment(RangedAudioParameter& parameter, ComboBox& combo,
     //	UndoManager* undoManager = nullptr);
 
-    envelopeModeList.addItemList(apvts.getParameter(Param::EnvelopeType::id)->getAllValueStrings(), 1);
+    envelopeModeList.addItemList(apvts.getParameter(Param::EnvelopeMode::id)->getAllValueStrings(), 1);
 
-    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_1, 1);
-    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_2, 2);
-    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_3, 3);
-    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_4, 4);
-    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_5, 5);
-    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_6, 6);
-    //envelopeList.addItem(Param::EnvelopeType::ENVTYPE_7, 7);
     envelopeModeList.setSelectedId(1, juce::dontSendNotification); // default value set to Hann window
 
-    envelopeAttachment =
-        std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(apvts, Param::EnvelopeType::id, envelopeModeList);
+    envelopeModeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
+        apvts, Param::EnvelopeMode::id, envelopeModeList);
     //envelopeAttachment = std::make_unique<juce::ComboBoxParameterAttachment>(
     //	apvts->getParameter(ENVTYPE_ID), envelopeList);
 
@@ -143,9 +136,9 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts)
     traversalModeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         apvts, Param::TraversalMode::id, traversalModeList);
 
-    envTypeLabel.setText((const juce::String)Param::EnvelopeType::name, juce::dontSendNotification);
-    envTypeLabel.attachToComponent(&envelopeModeList, false);
-    envTypeLabel.setJustificationType(juce::Justification::centred);
+    envModeLabel.setText((const juce::String)Param::EnvelopeMode::name, juce::dontSendNotification);
+    envModeLabel.attachToComponent(&envelopeModeList, false);
+    envModeLabel.setJustificationType(juce::Justification::centred);
 
     traversalModeLabel.setText((const juce::String)Param::TraversalMode::name, juce::dontSendNotification);
     traversalModeLabel.attachToComponent(&traversalModeList, false);
@@ -162,7 +155,7 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts)
 	*/
 
     addAndMakeVisible(&envelopeModeList);
-    addAndMakeVisible(&envTypeLabel);
+    addAndMakeVisible(&envModeLabel);
 
     addAndMakeVisible(&traversalModeList);
     addAndMakeVisible(&traversalModeLabel);
@@ -224,7 +217,7 @@ void GrainsFrame::resized()
 
 	flexBox6.items.add(juce::FlexItem(traversalModeLabel).withFlex(0.1f));
 	flexBox6.items.add(juce::FlexItem(traversalModeList).withFlex(0.4f).withMaxHeight(getHeight() / 4.f).withMargin(h));
-	flexBox6.items.add(juce::FlexItem(envTypeLabel).withFlex(0.1f));
+	flexBox6.items.add(juce::FlexItem(envModeLabel).withFlex(0.1f));
 	flexBox6.items.add(juce::FlexItem(envelopeModeList).withFlex(0.4f).withMaxHeight(getHeight() / 4.f).withMargin(h));
 
 

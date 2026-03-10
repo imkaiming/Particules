@@ -18,7 +18,7 @@ namespace audio_plugin_test
             snapshot.linearGain = 1.0f;
             snapshot.speed = 1.0f;
             snapshot.mix = 1.f;
-            snapshot.envType = 1.f;
+            snapshot.envMode = static_cast<EnvelopeMode>(1);
             snapshot.traversalMode = 1;
             snapshot.traversalFreq = 1.f;
 

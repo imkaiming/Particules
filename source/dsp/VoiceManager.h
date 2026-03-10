@@ -12,16 +12,16 @@
 
 #include "GrainPool.h"
 #include "PositionModulator.h"
+#include "EnvelopeLookUpTable.h"
 #include "../framework/GrainHandle.h"
 
 // VoiceManager takes segments from the spawned events and render grains from it
 
 struct ParameterSnapshot;
-struct SampleSource;
 class VoiceManager
 {
 public:
-	explicit VoiceManager(GrainPool& pool, PositionModulator& pm);
+    explicit VoiceManager(GrainPool& pool, PositionModulator& pm, EnvelopeLookUpTable& lut);
 	~VoiceManager() = default;
 
 	void reset();
@@ -32,6 +32,7 @@ private:
 	void removeVoice(const int index);
 	static constexpr int mCapacity = Param::MaxGrains;
 
+	EnvelopeLookUpTable& envLut;
     PositionModulator& posMod;
 	GrainPool& pool;
 	std::array<GrainHandle, mCapacity> activeHandles;

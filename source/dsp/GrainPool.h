@@ -9,6 +9,7 @@
 */
 
 #pragma once
+#include "EnvelopeLookUpTable.h"
 #include "Grain.h"
 
 #include "../frameWork/Core.h"
@@ -19,24 +20,22 @@ struct GrainHandle;
 class GrainPool
 {
 public:
-    GrainPool();
+    explicit GrainPool();
     ~GrainPool() = default;
 
     Grain* get(const GrainHandle handle);
-    //bool acquire(GrainHandle& outHandle, Grain*& outGrain);
     GrainHandle acquire();
     void release(const GrainHandle hadle);
     void reset();
 
-    uint16_t getNumActiveGrains() const noexcept { return nextFree; }
+    int getNumActiveGrains() const noexcept { return nextFree; }
     bool isFull() const noexcept { return nextFree == mCapacity; }
     bool isEmpty() const noexcept { return nextFree == 0; }
 
 private:
-    static constexpr uint16_t mCapacity = Param::MaxGrains; // max grain = 500, 2^16 = 65535 values, 2^8 = 256 not enough
+    static constexpr int mCapacity = Param::MaxGrains; // max grain = 500, 2^16 = 65535 values, 2^8 = 256 not enough
 
     std::array<Grain, mCapacity> grains;
-    std::array<uint16_t, mCapacity>
-        freeIndices; // unordered stack of indexes. The most recently freed grain (also cache friendly)
-    uint16_t nextFree = 0;
+    std::array<int, mCapacity> freeIndices; // unordered stack of indexes. The most recently freed grain (also cache friendly)
+    int nextFree = 0;
 };

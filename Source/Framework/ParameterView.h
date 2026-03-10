@@ -2,12 +2,13 @@
 
 #include "../utils/GrainVisualizer.h"
 #include "Core.h"
+#include "EnvelopeMode.h"
 #include "ParameterSnapshot.h"
 #include "SampleSource.h"
 
 struct GranularView
 {
-    std::atomic<float>* Emission = nullptr;
+    std::atomic<float>* emission = nullptr;
     std::atomic<float>* duration = nullptr;
     std::atomic<float>* speed = nullptr;
     std::atomic<float>* mix = nullptr;
@@ -17,7 +18,7 @@ struct GranularView
     std::atomic<float>* selection = nullptr;
     std::atomic<float>* sustainRatio = nullptr;
 
-    std::atomic<float>* envType = nullptr;
+    std::atomic<float>* envMode = nullptr;
     std::atomic<float>* traversalMode = nullptr;
     std::atomic<float>* traversalFreq = nullptr;
 };
@@ -40,7 +41,7 @@ public:
     }
     float getSpeed() const noexcept { return view.speed ? view.speed->load(std::memory_order_relaxed) : 0.0f; }
     float getNormalizedDuration() const noexcept { return view.duration ? view.duration->load(std::memory_order_relaxed) : 0.0f; }
-    float getEmission() const noexcept { return view.Emission ? view.Emission->load(std::memory_order_relaxed) : 0.0f; }
+    float getEmission() const noexcept { return view.emission ? view.emission->load(std::memory_order_relaxed) : 0.0f; }
     float getNormalizedWindowSelection() const noexcept
     {
         return view.selection ? view.selection->load(std::memory_order_relaxed) : 0.0f;
@@ -58,7 +59,7 @@ public:
         return view.traversalFreq ? view.traversalFreq->load(std::memory_order_relaxed) : 0.0f;
     }
 
-    float getEnvelopeType() const noexcept { return view.envType ? (view.envType->load(std::memory_order_relaxed)) : 0; }
+    EnvelopeMode getEnvelopeMode() const noexcept;
     float getTraversalMode() const noexcept
     {
         return view.traversalMode ? (view.traversalMode->load(std::memory_order_relaxed)) : 0;

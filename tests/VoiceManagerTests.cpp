@@ -1,7 +1,7 @@
 
 #include "../source/dsp/Grain.h"
-#include "../source/dsp/PositionModulator.h"
 #include "../source/dsp/GrainPool.h"
+#include "../source/dsp/PositionModulator.h"
 #include "../source/dsp/VoiceManager.h"
 #include "../source/framework/Core.h"
 #include "../source/framework/GrainHandle.h"
@@ -12,6 +12,7 @@
 
 struct VoiceManagerFixture
 {
+    EnvelopeLookUpTable lut;
     GrainHandle h;
     Grain g;
     PositionModulator posMod{48000};
@@ -21,7 +22,7 @@ struct VoiceManagerFixture
     AudioBlock outputBlock{inputBuffer};
     ParameterSnapshot snapshot;
 
-    VoiceManagerFixture() : vm{pool, posMod}
+    VoiceManagerFixture() : vm{pool, posMod, lut}
     {
         snapshot.durationSamples = 48000;
         snapshot.emission = 1;
@@ -31,7 +32,7 @@ struct VoiceManagerFixture
         snapshot.speed = 1.f;
         snapshot.mix = 1.f;
         snapshot.sustainRatio = 0.5f;
-        snapshot.envType = 1;
+        snapshot.envMode = static_cast<EnvelopeMode>(1);
         snapshot.traversalMode = 1;
         snapshot.traversalFreq = 1.f;
         snapshot.sampleRate = 48000.0;

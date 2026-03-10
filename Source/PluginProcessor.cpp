@@ -220,12 +220,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
     layout.add(std::make_unique<juce::AudioParameterFloat>(Param::Selection::id, Param::Selection::name,
         juce::NormalisableRange<float>(Param::Selection::min, Param::Selection::max, 0.001f), Param::Selection::init));
 
-    const juce::StringArray choicesEnvTypeNames(
-        Param::EnvelopeType::envTypeNames.data(), (int)Param::EnvelopeType::envTypeNames.size());
-    //const juce::StringArray choices{Param::EnvelopeType::envTypeNames, sizeof(Param::EnvelopeType::envTypeNames)};
+    const juce::StringArray choicesEnvModeNames(
+        Param::EnvelopeMode::envModeNames.data(), (int)Param::EnvelopeMode::envModeNames.size());
+    //const juce::StringArray choices{Param::EnvelopeMode::envModeNames, sizeof(Param::EnvelopeMode::envModeNames)};
 
     layout.add(
-        std::make_unique<juce::AudioParameterChoice>(Param::EnvelopeType::id, Param::EnvelopeType::name, choicesEnvTypeNames, 0));
+        std::make_unique<juce::AudioParameterChoice>(Param::EnvelopeMode::id, Param::EnvelopeMode::name, choicesEnvModeNames, 0));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(Param::SustainRatio::id, Param::SustainRatio::name,
         juce::NormalisableRange<float>(Param::SustainRatio::min, Param::SustainRatio::max, 0.01f), Param::SustainRatio::init));
@@ -326,7 +326,7 @@ void ParticulesAudioProcessor::loadDebugPreset()
     apvts.getParameter(Param::Speed::id)->setValueNotifyingHost(normalizedSpeed);
     apvts.getParameter(Param::Position::id)->setValueNotifyingHost(normalizedPosition);
     apvts.getParameter(Param::Selection::id)->setValueNotifyingHost(normalizedSelection);
-    apvts.getParameter(Param::EnvelopeType::id)->setValueNotifyingHost(0.f);
+    apvts.getParameter(Param::EnvelopeMode::id)->setValueNotifyingHost(0.f);
     apvts.getParameter(Param::TraversalFreq::id)->setValueNotifyingHost(normalizedTraversalFreq);
     apvts.getParameter(Param::SustainRatio::id)->setValueNotifyingHost(normalizedSustainRatio);
 

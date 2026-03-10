@@ -9,13 +9,14 @@
 */
 
 #pragma once
-
+enum class EnvelopeMode;
 struct ParameterSnapshot
 {
     int durationSamples;
     int startPositionSamples;
     int selectionSamples;
     int traversalMode;
+    EnvelopeMode envMode;
 
     int inputNumSamples;
     int inputNumChannels;
@@ -25,7 +26,6 @@ struct ParameterSnapshot
     float speed;
     float mix;
     float sustainRatio;
-    float envType;
     float traversalFreq;
 
     double sampleRate;

@@ -51,21 +51,15 @@ namespace Param
         inline constexpr float init = 1.f;
     }
 
-    namespace EnvelopeType
+    namespace EnvelopeMode
     {
-        inline constexpr const char* id = "ENVTYPE";
-        inline constexpr const char* name = "Envelope Type";
+        inline constexpr const char* id = "ENVMODE";
+        inline constexpr const char* name = "Envelope Mode";
         inline constexpr const int init = 1;
-        inline constexpr std::array<const char*, 10> envTypeNames = {"Hann", "Triangular", "Hamming", "Blackman", "BlackmanHarris",
-            "FlatTop", "Gaussian", "Exponential", "SmoothedStep", "Tukey"};
+        inline constexpr std::array<const char*,7> envModeNames = {
+            "Hann", "Triangular", "Blackman", "BlackmanHarris", "Gaussian", "Exponential", "SmoothedStep"};
 
-        //inline constexpr const char* ENVTYPE_1 = "Hann";
-        //inline constexpr const char* ENVTYPE_2 = "Triangular";
-        //inline constexpr const char* ENVTYPE_3 = "Hamming";
-        //inline constexpr const char* ENVTYPE_4 = "Rectangular";
-        //inline constexpr const char* ENVTYPE_5 = "Blackman";
-        //inline constexpr const char* ENVTYPE_6 = "BlackmanHarris";
-        //inline constexpr const char* ENVTYPE_7 = "FlatTop";
+
     }
 
     namespace Position
@@ -118,7 +112,7 @@ namespace Param
         inline constexpr float init = 1.0f;
     }
 
-        namespace TraversalFreq
+    namespace TraversalFreq
     {
         inline constexpr const char* id = "TRAVERSALFREQ";
         inline constexpr const char* name = "Traversal Frequency";

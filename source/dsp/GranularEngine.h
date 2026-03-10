@@ -15,6 +15,7 @@
 #pragma once
 
 #include "VoiceManager.h"
+#include "EnvelopeLookUpTable.h"
 #include "Scheduler.h"
 
 
@@ -27,7 +28,7 @@ public:
 
 	void process(juce::AudioBuffer<float>& output, int bufferSize);
 	void init(int sampleRate, int numChannel, int samplePerBlocks);
-    uint16_t getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); };
+    int getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); };
 
 private:
 	//void mixingProcess(AudioBlock);
@@ -36,6 +37,7 @@ private:
 
 	static constexpr uint8_t mMaxEvent = Param::MaxEvents;
 	
+	EnvelopeLookUpTable envLut;
 	ParameterView& paramsView;
     PositionModulator posMod;
 	Scheduler scheduler;
