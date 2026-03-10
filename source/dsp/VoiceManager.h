@@ -26,6 +26,8 @@ public:
 
 	void reset();
 	void process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
+    void processGrainsSamples(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
+    void processSamplesGrains(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
     void spawn(int offset, const ParameterSnapshot& snapshot);
 
 private:

@@ -27,6 +27,57 @@ void VoiceManager::reset()
 
 void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)
 {
+    //processGrainsSamples(outputBlock, bufferSize, inputSource);
+    processSamplesGrains(outputBlock, bufferSize, inputSource);
+
+    // TODO : proper AGC automatic gain compensation
+    if(activeCount > 0)
+    {
+        const float scale = 1 / std::sqrt(static_cast<float>(activeCount));
+        outputBlock.multiplyBy(scale);
+    }
+
+    posMod.advanceBlock(bufferSize);
+}
+
+void VoiceManager::processGrainsSamples(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)
+{
+    const size_t numChannels = outputBlock.getNumChannels();
+    const int inputNumChannels = inputSource->getNumChannels();
+    const int inputNumSamples = inputSource->getNumSamples();
+
+    for(int i = activeCount - 1; i >= 0; --i) // backward iteration for removing handle securely
+    {
+        GrainHandle h = activeHandles[i];
+        Grain* g = pool.get(h);
+        //if(!g) // grain has been released already MAY NOT NEEDED
+        //{
+        //    removeVoice(i); 
+        //    continue; 
+        //}
+        if(g->isExhausted())
+        {
+            pool.release(h);
+            removeVoice(i);
+        }
+
+        for(int currentSample = 0; currentSample < bufferSize; ++currentSample)
+        {
+            const float phase = g->getPhase();
+            for(int channel = 0; channel < numChannels; ++channel)
+            {
+                //const float* sample = inputSource->getReadPointer(channel % inputNumChannels);
+                const float sampleValue = g->getCurrentSample(inputSource, channel, numChannels);
+                const float envelopeValue = envLut.getEnvelopeValue(phase);
+                outputBlock.addSample(channel, currentSample, sampleValue * envelopeValue);
+            }
+            g->update();
+        }
+    }
+}
+
+void VoiceManager::processSamplesGrains(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)
+{
     const size_t numChannels = outputBlock.getNumChannels();
     //const int numSamples = outputBlock.getNumSamples();
     const int inputNumChannels = inputSource->getNumChannels();
@@ -38,14 +89,13 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioB
         {
             GrainHandle h = activeHandles[i];
             Grain* g = pool.get(h);
-            if(!g) // grain has been released already MAY NOT NEEDED
-            {
-                removeVoice(i); // place the current handle[index] in activeCount index and became
-                continue; // restart the beginning of the loop at the same index
-            }
+            //if(!g) // grain has been released already MAY NOT NEEDED
+            //{
+            //    removeVoice(i); // place the current handle[index] in activeCount index and became
+            //    continue; // restart the beginning of the loop at the same index
+            //}
 
             const float phase = g->getPhase();
-            //DBG("getPhaseFromElapsedSamples = "+(str)phase);
             for(int channel = 0; channel < numChannels; ++channel)
             {
                 //const float* sample = inputSource->getReadPointer(channel % inputNumChannels);
@@ -61,15 +111,6 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioB
             }
         }
     }
-
-    // TODO : proper AGC automatic gain compensation
-    if(activeCount > 0)
-    {
-        const float scale = 1 / std::sqrt(static_cast<float>(activeCount));
-        outputBlock.multiplyBy(scale);
-    }
-
-    posMod.advanceBlock(bufferSize);
 }
 
 void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
