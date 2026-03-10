@@ -79,3 +79,4 @@ DerivedData/
 # Misc
 .DS_Store
 *.bak
+*.old
