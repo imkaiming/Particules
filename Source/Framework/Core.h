@@ -1,13 +1,20 @@
 #pragma once
 
+#include <juce_audio_basics/juce_audio_basics.h>
+#include <juce_audio_utils/juce_audio_utils.h>
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_audio_formats/juce_audio_formats.h>
+#include <juce_dsp/juce_dsp.h>
+#include <juce_events/juce_events.h>
+#include <juce_gui_basics/juce_gui_basics.h>
+
+
 #include <atomic>
 #include <cstdint>
 #include <functional>
 
-#include <juce_audio_processors/juce_audio_processors.h>
-#include <juce_dsp/juce_dsp.h>
 
-#define GRAINPOINT_SIZE 10.f
+//#define GRAINPOINT_SIZE 10.f
 #define FFTSIZE_ORDER 10
 #define FFTSIZE static_cast<int>(std::pow(2, FFTSIZE_ORDER))
 //#define MAX_DURATION (120)   // le nombre de second maximum pour loader un fichier audio

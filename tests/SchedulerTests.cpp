@@ -1,6 +1,6 @@
 #include "../source/dsp/Scheduler.h"
-#include "../source/framework/ParameterSnapshot.h"
-#include "../source/framework/TraversalMode.h"
+#include "../source/utils/ParameterSnapshot.h"
+#include "../source/utils/TraversalMode.h"
 #include <catch2/catch_test_macros.hpp>
 
 namespace audio_plugin_test

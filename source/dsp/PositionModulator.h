@@ -10,7 +10,7 @@
 #include <juce_core/juce_core.h>
 
 #include "../framework/Core.h"
-#include "../framework/TraversalMode.h"
+#include "../utils/TraversalMode.h"
 
 #include <random>
 #pragma once

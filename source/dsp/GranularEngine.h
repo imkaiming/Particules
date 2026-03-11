@@ -15,7 +15,6 @@
 #pragma once
 
 #include "VoiceManager.h"
-#include "EnvelopeLookUpTable.h"
 #include "Scheduler.h"
 
 
@@ -23,7 +22,7 @@ class ParameterView;
 class GranularEngine
 {
 public:
-	explicit GranularEngine(ParameterView& sp);
+    explicit GranularEngine(ParameterView& sp, GrainVisualBuffer& vb);
 	~GranularEngine() = default;
 
 	void process(juce::AudioBuffer<float>& output, int bufferSize);

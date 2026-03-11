@@ -11,8 +11,8 @@
 #include "GranularEngine.h"
 #include "../framework/ParameterView.h"
 
-GranularEngine::GranularEngine(ParameterView& sp)
-    : paramsView{sp}, scheduler{}, voiceManager{pool, posMod, envLut}, pool{}, posMod{sp.getSampleRate()}
+GranularEngine::GranularEngine(ParameterView& sp, GrainVisualBuffer& vb)
+    : paramsView{sp}, scheduler{}, voiceManager{pool, posMod, envLut, vb}, pool{}, posMod{sp.getSampleRate()}
 {
 }
 

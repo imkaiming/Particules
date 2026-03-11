@@ -9,18 +9,15 @@
 */
 #pragma once
 
-#include <juce_audio_utils/juce_audio_utils.h>
-#include <juce_audio_formats/juce_audio_formats.h>
-#include <juce_gui_basics/juce_gui_basics.h>
-#include <juce_events/juce_events.h>
 
+#include "../framework/Core.h"
 
 #include "PositionOverlay.h"
 #include "SelectionOverlay.h"
 
-#include "../utils/GrainVisualizer.h"
+#include "../gui/GrainVisualComponent.h"
 #include "../framework/Core.h"
-#include "../framework/UIContext.h"
+#include "../utils/UIContext.h"
 
 // Thumbnail is where the audio waveform is painted after being loaded by the audio file loader
 
@@ -34,7 +31,6 @@ public:
 
 	void setFile(const juce::File&);
 	void setCallbackOnThumbnailReady(std::function<void()>);
-	GrainVisualizer* getGrainVisualizer() { return &grainVisualizer; };
 
 private:
 
@@ -68,7 +64,7 @@ private:
 	SelectionOverlay selection;
 	SelectionOverlay overflow; // when the selection is higher than the width it wrapped back. it add flexibility
 
-	GrainVisualizer grainVisualizer;
+	GrainVisualComponent grainVisualComponent;
 
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ThumbnailComponent)

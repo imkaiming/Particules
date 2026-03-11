@@ -15,7 +15,7 @@
 #include "../utils/MyColours.h"
 
 ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail, juce::AudioFormatManager& formatManager, UIContext& uic)
-    : uic{uic}, cache(5), audioThumbnail(samplesPerThumbnail, formatManager, cache), grainVisualizer(uic.paramsView.getGrains()),
+    : uic{uic}, cache(5), audioThumbnail(samplesPerThumbnail, formatManager, cache), grainVisualComponent(uic.visualBuffer),
       paramsView(uic.paramsView), apvts{uic.apvts}, audioProcessor{uic.audioProcessor}, positionValue{Param::Position::init},
       selectionValue{Param::Selection::init}
 {
@@ -23,14 +23,14 @@ ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail, juce::AudioForma
     updateSelection(selectionValue);
     updateOverflow(positionValue);
 
-    paramsView.setGrainVisualizer(&grainVisualizer);
+    //paramsView.setGrainVisualizer(&grainVisualizer);
 
     audioThumbnail.addChangeListener(this);
 
     addAndMakeVisible(&selection);
     addAndMakeVisible(&position);
     addAndMakeVisible(&overflow);
-    addAndMakeVisible(&grainVisualizer);
+    addAndMakeVisible(&grainVisualComponent);
 
     // apvts listener to update the UI
     apvts.addParameterListener(Param::Position::id, this);
@@ -42,7 +42,7 @@ ThumbnailComponent::~ThumbnailComponent()
     audioThumbnail.removeChangeListener(this);
     apvts.removeParameterListener(Param::Position::id, this);
     apvts.removeParameterListener(Param::Selection::id, this);
-    paramsView.setGrainVisualizer(nullptr);
+    //paramsView.setGrainVisualizer(nullptr);
 }
 
 void ThumbnailComponent::setFile(const juce::File& file) { audioThumbnail.setSource(new juce::FileInputSource(file)); }
@@ -137,5 +137,5 @@ void ThumbnailComponent::resized()
     position.setBounds(getLocalBounds());
     selection.setBounds(getLocalBounds());
     overflow.setBounds(getLocalBounds());
-    grainVisualizer.setBounds(getLocalBounds());
+    grainVisualComponent.setBounds(getLocalBounds());
 }

@@ -9,12 +9,12 @@
   ==============================================================================
 */
 
-#include "juce_events/juce_events.h"
 
 
-#include "../dsp/Grain.h"
-#include "MyColours.h"
+#include "../utils/MyColours.h"
 #include "../framework/ParamsID.h"
+#include "../framework/GrainVisualBuffer.h"
+#include "../framework/Core.h"
 
 #pragma once
 
@@ -24,27 +24,27 @@
 * Plus un son est fort plus il est opaque.
 * Sur l'axe Y, les valeurs seront disposés aléatoirement.
 *
-* La classe GrainVisualizer est appeler avec update à chaque lecture de sample ou à chaque chunk de buffer
+* La classe GrainVisualComponent est appelé avec update à chaque lecture de sample ou à chaque chunk de buffer
 */
 
 
-class GrainVisualizer : public juce::Component, private juce::Timer
+class GrainVisualComponent : public juce::Component, private juce::Timer
 {
 public:
-	GrainVisualizer(juce::Array<Grain*>* grains);
-	~GrainVisualizer() override;
+    GrainVisualComponent(GrainVisualBuffer& vb);
+    ~GrainVisualComponent() override;
 
 	void paint(juce::Graphics& g) override;
 	void resized() override;
 
 	void setNumSamples(int);
-	void setGrains(juce::Array<Grain*>* grains);
+	//void setGrains();
 
 private:
-
+    static constexpr float SIZE = Param::GrainPoint::Size;
 	void timerCallback() override;
 
 	juce::Colour colour;
-	juce::Array<Grain*>* grains;
+    GrainVisualBuffer& visualBuffer;
 	int numSamples;
 };

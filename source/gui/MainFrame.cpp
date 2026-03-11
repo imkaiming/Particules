@@ -10,7 +10,7 @@
 
 #include "MainFrame.h"
 #include "../framework/ParameterView.h"
-#include "../framework/UIContext.h"
+#include "../utils/UIContext.h"
 #include "../utils/MyColours.h"
 
 

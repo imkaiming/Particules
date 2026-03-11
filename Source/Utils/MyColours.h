@@ -1,6 +1,6 @@
 
 #pragma once
-#include "juce_graphics/juce_graphics.h"
+#include "../framework/Core.h"
 //#include "juce_graphics/colour/juce_Colour.h"
 
 namespace MyColours

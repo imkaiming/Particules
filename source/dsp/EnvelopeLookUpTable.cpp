@@ -1,5 +1,4 @@
 #include "EnvelopeLookUpTable.h"
-#include "../framework/Core.h"
 
 EnvelopeLookUpTable::EnvelopeLookUpTable() : envMode{EnvelopeMode::Hann}
 {

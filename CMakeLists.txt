@@ -111,17 +111,18 @@ include(SharedCodeDefaults)
 # set(SourceFiles Source/PluginEditor.h Source/PluginProcessor.h Source/PluginEditor.cpp Source/PluginProcessor.cpp)
 file(GLOB_RECURSE SourceFiles CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/*.h")
-
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/*.h"
+)
 file(GLOB_RECURSE ResourcesFiles CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/*")
 
-juce_add_binary_data(BinaryDataAssets
-    SOURCES
-        ${ResourcesFiles}
-)
+
+juce_add_binary_data(BinaryDataAssets SOURCES ${ResourcesFiles})
+
+target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
 target_sources(SharedCode INTERFACE ${SourceFiles} ${ResourcesFiles})
+
 
 # Adds a BinaryData target for embedding assets into the binary
 #include(Assets)
@@ -167,13 +168,15 @@ target_link_libraries(SharedCode
     juce_events
     juce_graphics
     juce_gui_basics
-    juce_gui_extra
+    #juce_gui_extra
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags)
 
 # Link the JUCE plugin targets our SharedCode target
 target_link_libraries("${PROJECT_NAME}" PRIVATE SharedCode)
+
+# target_precompile_headers(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/pch.h")
 
 # IPP support, comment out to disable
 include(PamplejuceIPP)

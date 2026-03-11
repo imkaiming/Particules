@@ -1,18 +1,9 @@
-/*
-  ==============================================================================
-
-	GrainPool.h
-	Created: 6 Feb 2026 6:01:42pm
-	Author:  kai
-
-  ==============================================================================
-*/
 
 #pragma once
 #include "EnvelopeLookUpTable.h"
 #include "Grain.h"
-
 #include "../frameWork/Core.h"
+
 // Preallocate Grains so we dont use new / delete in the audio thread
 // use LIFO
 

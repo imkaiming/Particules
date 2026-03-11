@@ -10,24 +10,21 @@
 
 #pragma once
 
-#include <juce_core/juce_core.h>
+#include "../framework/Core.h"
 
 class GrainPoint
 {
 public:
-	GrainPoint();
-	~GrainPoint();
+    GrainPoint() : opacity{0.f}, samplePos{0}, yPos{0}
+    {
+        juce::Random r;
+        yPos = static_cast<int>(r.nextFloat());
+    }
 
-	void setOpacity(float);
-	void setSamplePos(int);
+    ~GrainPoint() = default;
 
-	float getOpacity();
-	int getSamplePos();
-	int getYpos();
+    float opacity; // the volume directed by the envelope of the grains
+    int samplePos; // the moving position of the grais playing
+    int yPos; // a random value attributed when the grainPoint is created
 
-
-private:
-	float opacity;    // the volume directed by the envelope of the grains 
-	int samplePos;  // the moving position of the grais playing
-	int Ypos;       // a random value attributed when the grainPoint is created
 };

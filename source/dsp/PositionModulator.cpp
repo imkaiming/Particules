@@ -36,8 +36,8 @@ void PositionModulator::initTableData()
 void PositionModulator::initTablePtr()
 {
     tables[static_cast<int>(TraversalMode::Sine)] = sineTable.data();
-    tables[static_cast<int>(TraversalMode::Square)] = squareTable.data();
     tables[static_cast<int>(TraversalMode::Triangle)] = triangleTable.data();
+    tables[static_cast<int>(TraversalMode::Square)] = squareTable.data();
     tables[static_cast<int>(TraversalMode::Random)] = randomTable.data();
 }
 

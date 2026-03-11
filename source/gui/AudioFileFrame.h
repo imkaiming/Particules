@@ -9,8 +9,8 @@
 */
 
 #pragma once
-#include <juce_events/juce_events.h>
-#include <juce_gui_basics/juce_gui_basics.h>
+
+#include "../framework/Core.h"
 #include "BinaryData.h"
 
 #include "ThumbnailComponent.h"

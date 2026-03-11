@@ -8,27 +8,29 @@
   ==============================================================================
 */
 #pragma once
-#include <juce_gui_basics/juce_gui_basics.h>
 
 #include "../framework/Core.h"
 
-class GrainsFrame: public juce::Component
+class GrainsFrame : public juce::Component//, public juce::AudioProcessorValueTreeState::Listener
 {
 public:
-	GrainsFrame(ValueTreeState& apvts);
-	~GrainsFrame() = default;
+    GrainsFrame(ValueTreeState& apvts);
+    ~GrainsFrame() = default;
 
-	void paint(juce::Graphics&) override;
-	void resized() override;
+    void paint(juce::Graphics&) override;
+    void resized() override;
 
 private:
-    juce::Slider emissionSlider;
-	juce::Slider durationSlider;
-	juce::Slider speedSlider;
-    juce::Slider sustainRatioSlider;
-	juce::Slider traversalFreqSlider;
+    //void parameterChanged(const juce::String& parameterID, float newValue) override;
+    ValueTreeState& apvts;
 
-	juce::Label emissionLabel;
+    juce::Slider emissionSlider;
+    juce::Slider durationSlider;
+    juce::Slider speedSlider;
+    juce::Slider sustainRatioSlider;
+    juce::Slider traversalFreqSlider;
+
+    juce::Label emissionLabel;
     juce::Label durationLabel;
     juce::Label speedLabel;
     juce::Label sustainRatioLabel;
@@ -37,17 +39,16 @@ private:
     juce::Label traversalFreqLabel;
 
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> emissionSliderAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> durationSliderAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> speedSliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> durationSliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> speedSliderAttachment;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainRatioSliderAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> traversalFreqSliderAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> traversalFreqSliderAttachment;
 
+    juce::ComboBox envelopeModeList;
+    juce::ComboBox traversalModeList;
 
-	juce::ComboBox envelopeModeList;
-	juce::ComboBox traversalModeList;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> envelopeModeAttachment;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> traversalModeAttachment;
 
-	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> envelopeModeAttachment;
-	std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> traversalModeAttachment;
-
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainsFrame)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainsFrame)
 };

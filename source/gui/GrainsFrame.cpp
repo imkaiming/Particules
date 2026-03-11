@@ -9,10 +9,10 @@
 */
 
 #include "GrainsFrame.h"
-#include "../utils/MyColours.h"
 #include "../framework/ParamsID.h"
+#include "../utils/MyColours.h"
 
-GrainsFrame::GrainsFrame(ValueTreeState& apvts)
+GrainsFrame::GrainsFrame(ValueTreeState& apvts) : apvts{apvts}
 {
     emissionSliderAttachment =
         std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Emission::id, emissionSlider);
@@ -39,8 +39,6 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts)
     emissionSlider.setTextBoxIsEditable(true);
     emissionSlider.setRange(Param::Emission::min, Param::Emission::max);
     emissionSlider.setSkewFactorFromMidPoint(Param::Emission::init);
-    //EmissionSlider.setTextValueSuffix(" g");
-    //EmissionSlider.addListener(this);
     emissionSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
     emissionLabel.setText((const juce::String)Param::Emission::name, juce::dontSendNotification);
@@ -53,8 +51,6 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts)
     durationSlider.setTextBoxIsEditable(true);
     durationSlider.setRange(Param::Duration::min, Param::Duration::max);
     durationSlider.setSkewFactorFromMidPoint(Param::Duration::init);
-    //durationSlider.setTextValueSuffix(" s");
-    //durationSlider.addListener(this);
     durationSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
     durationLabel.setText((const juce::String)Param::Duration::name, juce::dontSendNotification);
@@ -66,7 +62,6 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts)
     speedSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
     speedSlider.setTextBoxIsEditable(true);
     speedSlider.setRange(Param::Speed::min, Param::Speed::max);
-    //speedSlider.addListener(this);
     speedSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
     speedLabel.setText((const juce::String)Param::Speed::name, juce::dontSendNotification);
@@ -79,8 +74,6 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts)
     sustainRatioSlider.setTextBoxIsEditable(true);
     sustainRatioSlider.setRange(Param::SustainRatio::min, Param::SustainRatio::max);
     sustainRatioSlider.setSkewFactorFromMidPoint(Param::SustainRatio::init);
-    //envWidthSlider.setTextValueSuffix(" g");
-    //envWidthSlider.addListener(this);
     sustainRatioSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
     sustainRatioLabel.setText((const juce::String)Param::SustainRatio::name, juce::dontSendNotification);
@@ -93,8 +86,6 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts)
     traversalFreqSlider.setTextBoxIsEditable(true);
     traversalFreqSlider.setRange(Param::TraversalFreq::min, Param::TraversalFreq::max);
     traversalFreqSlider.setSkewFactorFromMidPoint(Param::TraversalFreq::init);
-    //traversalFreqSlider.setTextValueSuffix(" s");
-    //traversalFreqSlider.addListener(this);
     traversalFreqSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
     traversalFreqLabel.setText((const juce::String)Param::TraversalFreq::name, juce::dontSendNotification);
@@ -118,20 +109,13 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts)
 
     envelopeModeList.addItemList(apvts.getParameter(Param::EnvelopeMode::id)->getAllValueStrings(), 1);
 
-    envelopeModeList.setSelectedId(1, juce::dontSendNotification); // default value set to Hann window
+    envelopeModeList.setSelectedId(1, juce::dontSendNotification);
 
     envelopeModeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         apvts, Param::EnvelopeMode::id, envelopeModeList);
-    //envelopeAttachment = std::make_unique<juce::ComboBoxParameterAttachment>(
-    //	apvts->getParameter(ENVTYPE_ID), envelopeList);
 
-    //traversalModeList.addItemList(apvts.getParameter(Param::TraversalMode::id)->getAllValueStrings(), 1);
-    traversalModeList.addItem(Param::TraversalMode::TraversalMode_1, 1);
-    traversalModeList.addItem(Param::TraversalMode::TraversalMode_2, 2);
-    traversalModeList.addItem(Param::TraversalMode::TraversalMode_3, 3);
-    traversalModeList.addItem(Param::TraversalMode::TraversalMode_4, 4);
-    traversalModeList.addItem(Param::TraversalMode::TraversalMode_5, 5);
-    traversalModeList.setSelectedId(1, juce::dontSendNotification); // default value set to sinus mode
+    traversalModeList.addItemList(apvts.getParameter(Param::TraversalMode::id)->getAllValueStrings(), 1);
+    traversalModeList.setSelectedId(1, juce::dontSendNotification);
 
     traversalModeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
         apvts, Param::TraversalMode::id, traversalModeList);
@@ -159,6 +143,9 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts)
 
     addAndMakeVisible(&traversalModeList);
     addAndMakeVisible(&traversalModeLabel);
+
+    //apvts.addParameterListener(Param::TraversalMode::id, this);
+    //apvts.addParameterListener(Param::EnvelopeMode::id, this);
 }
 
 void GrainsFrame::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
@@ -178,55 +165,70 @@ void GrainsFrame::resized()
     flexBox1.items.add(juce::FlexItem(emissionLabel).withFlex(0.2f));
     flexBox1.items.add(juce::FlexItem(emissionSlider).withFlex(0.8f).withMargin(h));
 
-	juce::FlexBox flexBox2;
-	flexBox2.flexDirection = juce::FlexBox::Direction::column;
-	flexBox2.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-	flexBox2.alignContent = juce::FlexBox::AlignContent::center;
+    juce::FlexBox flexBox2;
+    flexBox2.flexDirection = juce::FlexBox::Direction::column;
+    flexBox2.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+    flexBox2.alignContent = juce::FlexBox::AlignContent::center;
 
-	flexBox2.items.add(juce::FlexItem(durationLabel).withFlex(0.2f));
-	flexBox2.items.add(juce::FlexItem(durationSlider).withFlex(0.8f).withMargin(h));
+    flexBox2.items.add(juce::FlexItem(durationLabel).withFlex(0.2f));
+    flexBox2.items.add(juce::FlexItem(durationSlider).withFlex(0.8f).withMargin(h));
 
-	juce::FlexBox flexBox3;
-	flexBox3.flexDirection = juce::FlexBox::Direction::column;
-	flexBox3.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-	flexBox3.alignContent = juce::FlexBox::AlignContent::center;
+    juce::FlexBox flexBox3;
+    flexBox3.flexDirection = juce::FlexBox::Direction::column;
+    flexBox3.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+    flexBox3.alignContent = juce::FlexBox::AlignContent::center;
 
-	flexBox3.items.add(juce::FlexItem(speedLabel).withFlex(0.2f));
-	flexBox3.items.add(juce::FlexItem(speedSlider).withFlex(0.8f).withMargin(h));
+    flexBox3.items.add(juce::FlexItem(speedLabel).withFlex(0.2f));
+    flexBox3.items.add(juce::FlexItem(speedSlider).withFlex(0.8f).withMargin(h));
 
-	juce::FlexBox flexBox4;
-	flexBox4.flexDirection = juce::FlexBox::Direction::column;
-	flexBox4.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-	flexBox4.alignContent = juce::FlexBox::AlignContent::center;
+    juce::FlexBox flexBox4;
+    flexBox4.flexDirection = juce::FlexBox::Direction::column;
+    flexBox4.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+    flexBox4.alignContent = juce::FlexBox::AlignContent::center;
 
-	flexBox4.items.add(juce::FlexItem(sustainRatioLabel).withFlex(0.2f));
+    flexBox4.items.add(juce::FlexItem(sustainRatioLabel).withFlex(0.2f));
     flexBox4.items.add(juce::FlexItem(sustainRatioSlider).withFlex(0.8f).withMargin(h));
 
-	juce::FlexBox flexBox5;
-	flexBox5.flexDirection = juce::FlexBox::Direction::column;
-	flexBox5.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-	flexBox5.alignContent = juce::FlexBox::AlignContent::center;
+    juce::FlexBox flexBox5;
+    flexBox5.flexDirection = juce::FlexBox::Direction::column;
+    flexBox5.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+    flexBox5.alignContent = juce::FlexBox::AlignContent::center;
 
-	flexBox5.items.add(juce::FlexItem(traversalFreqLabel).withFlex(0.2f));
-	flexBox5.items.add(juce::FlexItem(traversalFreqSlider).withFlex(0.8f).withMargin(h));
+    flexBox5.items.add(juce::FlexItem(traversalFreqLabel).withFlex(0.2f));
+    flexBox5.items.add(juce::FlexItem(traversalFreqSlider).withFlex(0.8f).withMargin(h));
 
-	juce::FlexBox flexBox6;
-	flexBox6.flexDirection = juce::FlexBox::Direction::column;
-	flexBox6.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-	flexBox6.alignContent = juce::FlexBox::AlignContent::center;
+    juce::FlexBox flexBox6;
+    flexBox6.flexDirection = juce::FlexBox::Direction::column;
+    flexBox6.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+    flexBox6.alignContent = juce::FlexBox::AlignContent::center;
 
-	flexBox6.items.add(juce::FlexItem(traversalModeLabel).withFlex(0.1f));
-	flexBox6.items.add(juce::FlexItem(traversalModeList).withFlex(0.4f).withMaxHeight(getHeight() / 4.f).withMargin(h));
-	flexBox6.items.add(juce::FlexItem(envModeLabel).withFlex(0.1f));
-	flexBox6.items.add(juce::FlexItem(envelopeModeList).withFlex(0.4f).withMaxHeight(getHeight() / 4.f).withMargin(h));
+    flexBox6.items.add(juce::FlexItem(traversalModeLabel).withFlex(0.1f));
+    flexBox6.items.add(juce::FlexItem(traversalModeList).withFlex(0.4f).withMaxHeight(getHeight() / 4.f).withMargin(h));
+    flexBox6.items.add(juce::FlexItem(envModeLabel).withFlex(0.1f));
+    flexBox6.items.add(juce::FlexItem(envelopeModeList).withFlex(0.4f).withMaxHeight(getHeight() / 4.f).withMargin(h));
 
+    mainFlexBox.items.add(juce::FlexItem(flexBox1).withFlex(0.2f));
+    mainFlexBox.items.add(juce::FlexItem(flexBox2).withFlex(0.2f));
+    mainFlexBox.items.add(juce::FlexItem(flexBox3).withFlex(0.2f));
+    mainFlexBox.items.add(juce::FlexItem(flexBox4).withFlex(0.2f));
+    mainFlexBox.items.add(juce::FlexItem(flexBox5).withFlex(0.2f));
+    mainFlexBox.items.add(juce::FlexItem(flexBox6).withFlex(0.2f));
 
-	mainFlexBox.items.add(juce::FlexItem(flexBox1).withFlex(0.2f));
-	mainFlexBox.items.add(juce::FlexItem(flexBox2).withFlex(0.2f));
-	mainFlexBox.items.add(juce::FlexItem(flexBox3).withFlex(0.2f));
-	mainFlexBox.items.add(juce::FlexItem(flexBox4).withFlex(0.2f));
-	mainFlexBox.items.add(juce::FlexItem(flexBox5).withFlex(0.2f));
-	mainFlexBox.items.add(juce::FlexItem(flexBox6).withFlex(0.2f));
-
-	mainFlexBox.performLayout(getLocalBounds().toFloat());
+    mainFlexBox.performLayout(getLocalBounds().toFloat());
 }
+
+//void GrainsFrame::parameterChanged(const juce::String& parameterID, float newValue)
+//{
+//    if(parameterID == Param::TraversalMode::id)
+//    {
+//        DBG("TRAVERSAL MODE parameter as value : " + (str)apvts.getParameterAsValue(Param::TraversalMode::id).toString());
+//        DBG("TRAVERSAL MODE new value : " + (str)newValue);
+//        return;
+//    }
+//    if(parameterID == Param::EnvelopeMode::id)
+//    {
+//        DBG("ENVELOPE MODE parameter as value : " + (str)apvts.getParameterAsValue(Param::EnvelopeMode::id).toString());
+//        DBG("ENVELOPE MODE new value : " + (str)newValue);
+//        return;
+//    }
+//}

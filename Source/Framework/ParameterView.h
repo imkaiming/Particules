@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../utils/GrainVisualizer.h"
 #include "Core.h"
-#include "EnvelopeMode.h"
-#include "TraversalMode.h"
-#include "ParameterSnapshot.h"
-#include "SampleSource.h"
+#include "../gui/GrainVisualComponent.h"
+#include "../utils/EnvelopeMode.h"
+#include "../utils/TraversalMode.h"
+#include "../utils/ParameterSnapshot.h"
+//#include "../utils/SampleSource.h"
 
 struct GranularView
 {
@@ -82,8 +82,8 @@ public:
     void setGrains(juce::Array<Grain*>* grains) noexcept { mGrains = grains; }
     juce::Array<Grain*>* getGrains() const noexcept { return mGrains; }
 
-    void setGrainVisualizer(GrainVisualizer* gv) noexcept { mGrainVisualizer = gv; }
-    GrainVisualizer* getGrainVisualizer() const noexcept { return mGrainVisualizer; }
+    //void setGrainVisualizer(GrainVisualizer* gv) noexcept { mGrainVisualizer = gv; }
+    //GrainVisualizer* getGrainVisualizer() const noexcept { return mGrainVisualizer; }
 
     const GranularView& getView() const noexcept { return view; }
     const ParameterSnapshot getSnapshot() const noexcept;
@@ -112,5 +112,5 @@ private:
 
     // non-atomic pointers: only safe if not mutated concurrently
     std::atomic<juce::Array<Grain*>*> mGrains{nullptr};
-    std::atomic<GrainVisualizer*> mGrainVisualizer{nullptr};
+    //std::atomic<GrainVisualizer*> mGrainVisualizer{nullptr};
 };

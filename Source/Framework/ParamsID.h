@@ -55,10 +55,9 @@ namespace Param
     {
         inline constexpr const char* id = "ENVMODE";
         inline constexpr const char* name = "Envelope Mode";
-        inline constexpr const int init = 1;
-        inline constexpr std::array<const char*,7> envModeNames = {
+        inline constexpr const int init = 0;
+        inline constexpr std::array<const char*, 7> envModeNames = {
             "Hann", "Triangular", "Blackman", "BlackmanHarris", "Gaussian", "Exponential", "SmoothedStep"};
-
 
     }
 
@@ -91,34 +90,25 @@ namespace Param
     {
         inline constexpr const char* id = "TRAVERSALMODE";
         inline constexpr const char* name = "Traversal Mode";
-        inline constexpr int init = 1;
-        //inline constexpr std::array<const char*, 5> traversalModeNames = {"Sinus", "Square", "Triangular", "Random", "None"};
-        inline constexpr const char* TraversalMode_1 = "Sinus";
-        inline constexpr const char* TraversalMode_2 = "Square";
-        inline constexpr const char* TraversalMode_3 = "Triangular";
-        inline constexpr const char* TraversalMode_4 = "Random";
-        inline constexpr const char* TraversalMode_5 = "None";
+        inline constexpr int init = 0;
+        inline constexpr std::array<const char*, 5> traversalModeNames = {"Sine", "Triangle", "Square", "Random", "None"};
+        //inline constexpr const char* TraversalMode_1 = "Sinus";
+        //inline constexpr const char* TraversalMode_2 = "Square";
+        //inline constexpr const char* TraversalMode_3 = "Triangular";
+        //inline constexpr const char* TraversalMode_4 = "Random";
+        //inline constexpr const char* TraversalMode_5 = "None";
 
         //#define TRAVERSALMODE_6 "Saw Tooth"
         //#define TRAVERSALMODE_7 "Reverse Saw Tooth"
     }
-
-    //namespace TraversalTime
-    //{
-    //    inline constexpr const char* id = "TRAVERSALTIME";
-    //    inline constexpr const char* name = "Traversal Time";
-    //    inline constexpr float min = 0.01f;
-    //    inline constexpr float max = 10.f;
-    //    inline constexpr float init = 1.0f;
-    //}
 
     namespace TraversalFreq
     {
         inline constexpr const char* id = "TRAVERSALFREQ";
         inline constexpr const char* name = "Traversal Frequency";
         inline constexpr float min = 0.01f; // low
-        inline constexpr float max = 100.f; // high
-        inline constexpr float init = 10.0f;
+        inline constexpr float max = 50.f; // high
+        inline constexpr float init = 1.0f;
     }
     namespace Util
     {
@@ -126,5 +116,10 @@ namespace Param
         inline constexpr float grainPointSize = 10.f;
         inline constexpr float fftSizeOrder = 10.f;
         //inline constexpr float init = 1.0f;
+    }
+
+    namespace GrainPoint
+    {
+        inline constexpr float Size = 10.f;
     }
 }

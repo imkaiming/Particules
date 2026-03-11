@@ -4,14 +4,15 @@
 #include "../source/dsp/PositionModulator.h"
 #include "../source/dsp/VoiceManager.h"
 #include "../source/framework/Core.h"
-#include "../source/framework/GrainHandle.h"
-#include "../source/framework/ParameterSnapshot.h"
+#include "../source/utils/GrainHandle.h"
+#include "../source/utils/ParameterSnapshot.h"
 #include "../source/framework/ParameterView.h"
 #include "../source/framework/ParamsId.h"
 #include <catch2/catch_test_macros.hpp>
 
 struct VoiceManagerFixture
 {
+    GrainVisualBuffer vb;
     EnvelopeLookUpTable lut;
     GrainHandle h;
     Grain g;
@@ -22,7 +23,7 @@ struct VoiceManagerFixture
     AudioBlock outputBlock{inputBuffer};
     ParameterSnapshot snapshot;
 
-    VoiceManagerFixture() : vm{pool, posMod, lut}
+    VoiceManagerFixture() : vm{pool, posMod, lut, vb}
     {
         snapshot.durationSamples = 48000;
         snapshot.emission = 1;

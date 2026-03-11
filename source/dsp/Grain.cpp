@@ -9,7 +9,7 @@
 */
 
 #include "Grain.h"
-#include "../framework/ParameterSnapshot.h"
+#include "../utils/ParameterSnapshot.h"
 
 Grain::Grain()
     : durationSamples{0}, startPositionSamples{0}, speed{1.f}, sustainWidthSamples{0}, selectionWindow{0},
@@ -59,7 +59,6 @@ void Grain::config(const ParameterSnapshot& snapshot, int delay, float normalize
     fadeInSamples = std::max<int>(fadeInSamples, 1);
     fadeOutSamples = std::max<int>(fadeOutSamples, 1);
     invFadeInSamples = 1.f / static_cast<float>(fadeInSamples);
-    //envelopeSizeSamples = durationSamples - sustainWidthSamples;
 
     //DBG("########### config ###########");
     //DBG("input num samples = " + (str)inputNumSamples);
@@ -99,7 +98,7 @@ const float Grain::getCurrentSample(const AudioBuffer* inputbuffer, const int ou
     const float sampleValue = lerp(s0, s1, frac);
 
     float x = std::clamp((sampleValue * 0.5f + 0.5f), 0.f, 1.f);
-    grainPoint.setOpacity(curve(x, 5.f));
+    //grainPoint.setOpacity(curve(x, 5.f));
 
     return sampleValue;
 }
@@ -145,7 +144,7 @@ const float Grain::getPhase() const noexcept
 
 GrainPoint* Grain::getGrainPoint() { return &grainPoint; }
 
-float Grain::curve(float x, float coefficient) { return 1.0f - std::pow(1.0f - x, coefficient); }
+// float Grain::curve(float x, float coefficient) { return 1.0f - std::pow(1.0f - x, coefficient); }
 
 // https://www.mathworks.com/help/signal/ug/windows.html
 // https://en.wikipedia.org/wiki/Window_function

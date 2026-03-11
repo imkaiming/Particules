@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../framework/Core.h"
-#include "../framework/EnvelopeMode.h"
+#include "../utils/EnvelopeMode.h"
 
 // LUT TABLE
 // fadeIn : 0 -> 0.5

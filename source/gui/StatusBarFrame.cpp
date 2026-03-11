@@ -10,7 +10,7 @@
 
 #include "StatusBarFrame.h"
 #include "../PluginProcessor.h"
-#include "../framework/UIContext.h"
+#include "../utils/UIContext.h"
 #include "../utils/MyColours.h"
 
 StatusBarFrame::StatusBarFrame(UIContext& uic) : uic{uic}, audioProcessor{uic.audioProcessor}

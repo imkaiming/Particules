@@ -1,17 +1,8 @@
-/*
-  ==============================================================================
-
-	This file contains the basic framework code for a JUCE plugin processor.
-
-  ==============================================================================
-*/
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
 #include "framework/ParamsID.h"
 
-//==============================================================================
 ParticulesAudioProcessor::ParticulesAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
     : AudioProcessor(BusesProperties()
@@ -23,8 +14,8 @@ ParticulesAudioProcessor::ParticulesAudioProcessor()
     #endif
               ),
       apvts(*this, nullptr, "Parameters", createParameterLayout()), //apvts stands for audio processor value tree state
-      paramsView(), grainEngine(paramsView), uiContext{apvts, paramsView, customLookAndFeel, *this}, loader{paramsView},
-      debugPresetLoaded{false}
+      paramsView(), grainEngine(paramsView, visualBuffer), uiContext{apvts, paramsView, customLookAndFeel, *this, visualBuffer},
+      loader{paramsView}, debugPresetLoaded{false}
 #endif
 {
     initOnAudioLoadedCallback();
@@ -191,7 +182,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
         juce::String(" g/s"), juce::AudioProcessorParameter::genericParameter,
         [](float v, int) { return juce::String(v, 2) + " g/s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(
+    layout.add(std::make_unique<juce::AudioParameterFloat>(
         Param::Duration::id, Param::Duration::name,
         juce::NormalisableRange<float>(Param::Duration::min, Param::Duration::max, 0.001f), Param::Duration::init,
         juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
@@ -200,43 +191,31 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
     layout.add(std::make_unique<juce::AudioParameterFloat>(Param::Speed::id, Param::Speed::name,
         juce::NormalisableRange<float>(Param::Speed::min, Param::Speed::max, 0.001f), Param::Speed::init));
 
-    //layout.add(
-    //	std::make_unique<juce::AudioParameterFloat>(
-    //		PITCH_ID,
-    //		PITCH_NAME,
-    //		PITCH_MIN, PITCH_MAX, PITCH_DEFAULT)
-    //);
-
-    //layout.add(
-    //	std::make_unique<juce::String>(
-    //		FILEPATH_ID,
-    //		FILEPATH_NAME,
-    //		FILEPATH_DEFAULT)
-    //);
-
     layout.add(std::make_unique<juce::AudioParameterFloat>(Param::Position::id, Param::Position::name,
         juce::NormalisableRange<float>(Param::Position::min, Param::Position::max, 0.001f), Param::Position::init));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(Param::Selection::id, Param::Selection::name,
         juce::NormalisableRange<float>(Param::Selection::min, Param::Selection::max, 0.001f), Param::Selection::init));
 
-    const juce::StringArray choicesEnvModeNames(
-        Param::EnvelopeMode::envModeNames.data(), (int)Param::EnvelopeMode::envModeNames.size());
-    //const juce::StringArray choices{Param::EnvelopeMode::envModeNames, sizeof(Param::EnvelopeMode::envModeNames)};
-
-    layout.add(
-        std::make_unique<juce::AudioParameterChoice>(Param::EnvelopeMode::id, Param::EnvelopeMode::name, choicesEnvModeNames, 0));
-
     layout.add(std::make_unique<juce::AudioParameterFloat>(Param::SustainRatio::id, Param::SustainRatio::name,
         juce::NormalisableRange<float>(Param::SustainRatio::min, Param::SustainRatio::max, 0.01f), Param::SustainRatio::init));
 
-    //const juce::StringArray choicesTraversalModeNames(Param::TraversalMode::traversalModeNames.data(), Param::TraversalMode::traversalModeNames.size());
+    // ENVELOPE MODE //
+    const juce::StringArray choicesEnvModeNames(
+        Param::EnvelopeMode::envModeNames.data(), (int)Param::EnvelopeMode::envModeNames.size());
 
-    layout.add(std::make_unique<juce::AudioParameterInt>(
-        Param::TraversalMode::id, Param::TraversalMode::name, 1, 5, Param::TraversalMode::init));
+    layout.add(
+        std::make_unique<juce::AudioParameterChoice>(Param::EnvelopeMode::id, Param::EnvelopeMode::name, choicesEnvModeNames, 1));
 
-    //layout.add(std::make_unique<juce::AudioParameterFloat>(Param::TraversalFreq::id, Param::TraversalFreq::name,
-    //    juce::NormalisableRange<float>(Param::TraversalFreq::min, Param::TraversalFreq::max, 0.01f), Param::TraversalFreq::init));
+    // TRAVERSAL MODE //
+
+    const juce::StringArray choicesTraversalModeNames(
+        Param::TraversalMode::traversalModeNames.data(), (int)Param::TraversalMode::traversalModeNames.size());
+
+    layout.add(std::make_unique<juce::AudioParameterChoice>(
+        Param::TraversalMode::id, Param::TraversalMode::name, choicesTraversalModeNames, 1));
+
+    // TRAVERSAL FREQ //
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
         Param::TraversalFreq::id, Param::TraversalFreq::name,
@@ -299,22 +278,22 @@ void ParticulesAudioProcessor::loadDebugPreset()
     float normalizedGain = gainRange.convertTo0to1(Param::Gain::init);
 
     juce::NormalisableRange<float> EmissionRange(Param::Emission::min, Param::Emission::max);
-    float normalizedEmission = EmissionRange.convertTo0to1(1);
+    float normalizedEmission = EmissionRange.convertTo0to1(10);
 
     juce::NormalisableRange<float> durationRange(Param::Duration::min, Param::Duration::max);
-    float normalizedDuration = durationRange.convertTo0to1(1);
+    float normalizedDuration = durationRange.convertTo0to1(0.05);
 
     juce::NormalisableRange<float> speedRange(Param::Speed::min, Param::Speed::max);
     float normalizedSpeed = speedRange.convertTo0to1(1);
 
     juce::NormalisableRange<float> positionRange(Param::Position::min, Param::Position::max);
-    float normalizedPosition = positionRange.convertTo0to1(0.5);
+    float normalizedPosition = positionRange.convertTo0to1(0);
 
     juce::NormalisableRange<float> selectionRange(Param::Selection::min, Param::Selection::max);
     float normalizedSelection = selectionRange.convertTo0to1(0.25f);
 
     juce::NormalisableRange<float> TraversalFreqRange(Param::TraversalFreq::min, Param::TraversalFreq::max);
-    float normalizedTraversalFreq = TraversalFreqRange.convertTo0to1(10.f);
+    float normalizedTraversalFreq = TraversalFreqRange.convertTo0to1(1.f);
 
     juce::NormalisableRange<float> SustainRatioRange(Param::SustainRatio::min, Param::SustainRatio::max);
     float normalizedSustainRatio = SustainRatioRange.convertTo0to1(0.5f);
@@ -326,9 +305,10 @@ void ParticulesAudioProcessor::loadDebugPreset()
     apvts.getParameter(Param::Speed::id)->setValueNotifyingHost(normalizedSpeed);
     apvts.getParameter(Param::Position::id)->setValueNotifyingHost(normalizedPosition);
     apvts.getParameter(Param::Selection::id)->setValueNotifyingHost(normalizedSelection);
-    apvts.getParameter(Param::EnvelopeMode::id)->setValueNotifyingHost(0.f);
     apvts.getParameter(Param::TraversalFreq::id)->setValueNotifyingHost(normalizedTraversalFreq);
     apvts.getParameter(Param::SustainRatio::id)->setValueNotifyingHost(normalizedSustainRatio);
+    apvts.getParameter(Param::EnvelopeMode::id)->setValueNotifyingHost(0.f);
+    apvts.getParameter(Param::TraversalMode::id)->setValueNotifyingHost(0.f);
 
     if(debugAudio.existsAsFile())
     {

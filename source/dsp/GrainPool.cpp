@@ -9,8 +9,8 @@
 */
 
 #include "GrainPool.h"
-#include "../framework/GrainHandle.h"
 #include "Grain.h"
+#include "../utils/GrainHandle.h"
 
 GrainPool::GrainPool() { reset(); }
 

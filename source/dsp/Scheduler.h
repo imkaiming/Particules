@@ -18,8 +18,7 @@
 
 
 #include "../framework/Core.h"
-#include "../frameWork/ParameterSnapshot.h"
-#include "../utils/GrainVisualizer.h"
+#include "../utils/ParameterSnapshot.h"
 
 // Scheduler compute onsets 
 

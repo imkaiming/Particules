@@ -1,11 +1,13 @@
 #pragma once
 
-#include <juce_events/juce_events.h>
-#include <juce_audio_processors/juce_audio_processors.h>
+//#include <juce_events/juce_events.h>
+//#include <juce_audio_processors/juce_audio_processors.h>
 
 #include "framework/ParameterView.h"
+#include "framework/Core.h"
+#include "framework/GrainVisualBuffer.h"
 #include "dsp/GranularEngine.h"
-#include "framework/UIContext.h"
+#include "utils/UIContext.h"
 #include "framework/AudioFileLoader.h"
 #include "utils/CustomLookAndFeel.h"
 
@@ -83,7 +85,7 @@ private:
 	juce::File currentFile;
 	std::function<void(const juce::File, bool)> onAudioLoadedCallback;
 	//AudioBuffer inputBuffer;
-
+    GrainVisualBuffer visualBuffer;
 	//juce::ADSR::Parameters adsrParameters;
 	//juce::ADSR adsr;
 

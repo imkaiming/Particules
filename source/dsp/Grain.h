@@ -11,7 +11,6 @@
 #pragma once
 
 #include "../framework/Core.h"
-#include "../framework/EnvelopeMode.h"
 #include "../utils/GrainPoint.h"
 
 //enum WindowingMethod { triangular, hann, hamming, rectangular, blackman, blackmanHarris, flatTop };

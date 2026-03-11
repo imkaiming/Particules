@@ -9,10 +9,10 @@
 */
 
 #include "VoiceManager.h"
-#include "../framework/ParameterSnapshot.h"
+#include "../utils/ParameterSnapshot.h"
 
-VoiceManager::VoiceManager(GrainPool& p, PositionModulator& pm, EnvelopeLookUpTable& lut)
-    : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}
+VoiceManager::VoiceManager(GrainPool& p, PositionModulator& pm, EnvelopeLookUpTable& lut, GrainVisualBuffer& vb)
+    : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}, visualBuffer{vb}
 {
     reset();
 }
@@ -36,6 +36,8 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioB
         const float scale = 1 / std::sqrt(static_cast<float>(activeCount));
         outputBlock.multiplyBy(scale);
     }
+
+
 
 }
 

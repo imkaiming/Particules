@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "Core.h"
+#include "../framework/Core.h"
 
 class ParameterView;
 class CustomLookAndFeel;
@@ -21,4 +21,5 @@ struct UIContext
     ParameterView& paramsView;
     CustomLookAndFeel& customLookAndFeel;
     ParticulesAudioProcessor& audioProcessor;
+    GrainVisualBuffer& visualBuffer;
 };
