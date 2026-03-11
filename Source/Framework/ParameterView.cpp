@@ -45,6 +45,19 @@ EnvelopeMode ParameterView::getEnvelopeMode() const noexcept
     return static_cast<EnvelopeMode>(choice);
 }
 
+TraversalMode ParameterView::getTraversalMode() const noexcept
+{
+    if(!view.traversalMode)
+        return TraversalMode::Sine;
+
+    const float v = view.traversalMode ? (view.traversalMode->load(std::memory_order_relaxed)) : 0;
+    const int choice = static_cast<int>(std::round(v));
+    if(choice <= 0 || choice > 5)
+        return TraversalMode::Sine;
+
+    return static_cast<TraversalMode>(choice);
+}
+
 //const int ParameterView::getNumChannels() const noexcept
 //{
 //    std::shared_ptr<const AudioBuffer> source = std::atomic_load(&inputBuffer);
@@ -83,7 +96,7 @@ const ParameterSnapshot ParameterView::getSnapshot() const noexcept
     snapshot.envMode = getEnvelopeMode();
     snapshot.sustainRatio = getNormalizedSustainRatio();
     snapshot.linearGain = getLinearGain();
-    snapshot.traversalMode = static_cast<int>(getTraversalMode());
+    snapshot.traversalMode = getTraversalMode();
     snapshot.traversalFreq = getTraversalFreq();
 
     return snapshot;

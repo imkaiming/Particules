@@ -1,5 +1,6 @@
 #include "../source/dsp/Scheduler.h"
 #include "../source/framework/ParameterSnapshot.h"
+#include "../source/framework/TraversalMode.h"
 #include <catch2/catch_test_macros.hpp>
 
 namespace audio_plugin_test
@@ -19,7 +20,7 @@ namespace audio_plugin_test
             snapshot.speed = 1.0f;
             snapshot.mix = 1.f;
             snapshot.envMode = static_cast<EnvelopeMode>(1);
-            snapshot.traversalMode = 1;
+            snapshot.traversalMode = TraversalMode::Sine;
             snapshot.traversalFreq = 1.f;
 
             numSamples = 512;

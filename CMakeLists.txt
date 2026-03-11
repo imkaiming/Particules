@@ -13,7 +13,6 @@ include(PamplejuceMacOS)
 # Couple tweaks that IMO should be JUCE defaults
 include(JUCEDefaults)
 
-# Change me!
 # This is the internal name of the project and the name of JUCE's shared code target
 # Note: This cannot have spaces (it may be 2024, but you can't have it all!)
 # Worry not, JUCE's PRODUCT_NAME can have spaces (and is what DAWs display)
@@ -82,7 +81,7 @@ juce_add_plugin("${PROJECT_NAME}"
     # Note: this must have at least one upper-case character
     PLUGIN_CODE P001
     FORMATS "${FORMATS}"
-
+    PLUGIN_MANUFACTURER_CODE KAI
     # The name of your final executable
     # This is how it's listed in the DAW
     # This can be different from PROJECT_NAME and can have spaces!
@@ -94,6 +93,8 @@ juce_add_plugin("${PROJECT_NAME}"
 # This lets us use our code in both the JUCE targets and our Test target
 # Without running into ODR violations
 add_library(SharedCode INTERFACE)
+
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 clap_juce_extensions_plugin(TARGET "${PROJECT_NAME}"
     CLAP_ID "${BUNDLE_ID}"
@@ -179,9 +180,11 @@ include(PamplejuceIPP)
 
 # Everything related to the tests target
 include(Tests)
+#target_compile_features(Tests PRIVATE cxx_std_20)
 
 # A separate target for Benchmarks (keeps the Tests target fast)
 include(Benchmarks)
- 
+#target_compile_features(Benchmarks PRIVATE cxx_std_20)
+
 # Output some config for CI (like our PRODUCT_NAME)
 include(GitHubENV)

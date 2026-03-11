@@ -10,12 +10,13 @@
 
 #pragma once
 enum class EnvelopeMode;
+enum class TraversalMode;
 struct ParameterSnapshot
 {
     int durationSamples;
     int startPositionSamples;
     int selectionSamples;
-    int traversalMode;
+    TraversalMode traversalMode;
     EnvelopeMode envMode;
 
     int inputNumSamples;

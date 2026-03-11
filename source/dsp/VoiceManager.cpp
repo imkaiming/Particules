@@ -37,7 +37,6 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioB
         outputBlock.multiplyBy(scale);
     }
 
-    posMod.advanceBlock(bufferSize);
 }
 
 void VoiceManager::processGrainsSamples(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)

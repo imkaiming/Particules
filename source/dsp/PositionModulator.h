@@ -10,13 +10,12 @@
 #include <juce_core/juce_core.h>
 
 #include "../framework/Core.h"
+#include "../framework/TraversalMode.h"
 
 #include <random>
 #pragma once
 
-enum Mod { Sinus, Triangular, Square, Random, None };
-
-// unipolar LFO modulator [0, 1[
+// unipolar LFO modulator return normalized position [0.f, 1.f]
 
 class PositionModulator
 {
@@ -25,29 +24,41 @@ public:
     ~PositionModulator() = default;
 
     void setSampleRate(double);
-    void setParameters(int, float);
+    void setParameters(TraversalMode, float);
 
     void reset();
     void advanceBlock(int);
-    float getPhaseAtOffset(int);
-    float computePhaseAtOffset(int);
+    const float computePhaseAtOffset(int);
+
+    //float getPhaseAtOffset(int);
     //float getCurrentValue() const noexcept { return mCurrentValue; };
 
-private:
-    //static constexpr const double twoPi = static_cast<double>(std::_Pi_val / 2.0);
+    static constexpr int SIZE = 2048;
+    static constexpr int MODCOUNT = 4;
 
+private:
+
+    // init tables
+    void initTableData();
+    void initTablePtr();
 
     float getUnipolarSine(float);
     float getUnipolarCos(float); // may not be used
     float getUnipolarTriangular(float);
     float getUnipolarSquare(float);
-    float getRandom() { return r.nextFloat(); };
+    //float getRandom() { return r.nextFloat(); };
 
-    double mSampleRate;
-    int mTraversalMod;              // the mod type to compute
-    float mTraversalFreq = 1.f;     // frequency of the traversal
-    float mPhaseIncrement = 0.f;    // time step per samples
-    float mPhaseAccumulator = 0.f;  // position of a bufferSize block samples
+    std::array<const float*, MODCOUNT> tables;
+    std::array<float, SIZE> sineTable;
+    std::array<float, SIZE> squareTable;
+    std::array<float, SIZE> triangleTable;
+    std::array<float, SIZE> randomTable;
+
+    float mSampleRate;
+    TraversalMode mTraversalMod; // the mod type to compute
+    float mTraversalFreq;        // frequency of the traversal
+    float mPhaseIncrement;       // time step per samples
+    float mPhaseAccumulator;     // position of a bufferSize block samples
 
     juce::Random r;
 };

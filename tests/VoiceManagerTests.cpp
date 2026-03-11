@@ -33,7 +33,7 @@ struct VoiceManagerFixture
         snapshot.mix = 1.f;
         snapshot.sustainRatio = 0.5f;
         snapshot.envMode = static_cast<EnvelopeMode>(1);
-        snapshot.traversalMode = 1;
+        snapshot.traversalMode = TraversalMode::Sine;
         snapshot.traversalFreq = 1.f;
         snapshot.sampleRate = 48000.0;
     };

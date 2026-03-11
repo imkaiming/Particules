@@ -3,6 +3,7 @@
 #include "../utils/GrainVisualizer.h"
 #include "Core.h"
 #include "EnvelopeMode.h"
+#include "TraversalMode.h"
 #include "ParameterSnapshot.h"
 #include "SampleSource.h"
 
@@ -60,10 +61,7 @@ public:
     }
 
     EnvelopeMode getEnvelopeMode() const noexcept;
-    float getTraversalMode() const noexcept
-    {
-        return view.traversalMode ? (view.traversalMode->load(std::memory_order_relaxed)) : 0;
-    }
+    TraversalMode getTraversalMode() const noexcept;
 
     // runFreq flags
     void setIsPlaying(bool b) noexcept { mIsPlaying.store(b, std::memory_order_relaxed); }

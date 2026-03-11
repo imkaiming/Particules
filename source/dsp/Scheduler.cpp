@@ -13,50 +13,6 @@
 
 Scheduler::Scheduler() : nextOnSet{0} {}
 
-/*
-
-void Scheduler::freeActiveGrains()
-{
-	for(int i = 0; i < this->grains.size(); ++i)
-	{
-		Grain* grain = this->grains.removeAndReturn(i);
-		delete grain;
-	}
-}
-
-
-Grain* Scheduler::generateGrain(int numSamples)
-{
-	// on récupère la valeur en samples par rapport au pourcentage de la position dans le fichier audio
-
-	int durationSamples = static_cast<int>(paramsView.getDuration() * paramsView.getSampleRate());
-	int widthSamples = static_cast<int>(durationSamples * paramsView.getEnvWidth());
-	int positionSamples = static_cast<int>(paramsView.getNumSamples() * paramsView.getFilePosition());
-	int selectionSamples = static_cast<int>(paramsView.getNumSamples() * paramsView.getWindowSelection());
-
-
-	phaseMod.setFrequency(1 / paramsView.getTraversalTime());
-	phaseMod.setMod(paramsView.getTraversalMode());
-	positionSamples += phaseMod.getValue() * selectionSamples;
-
-	//DBG("value : " << phaseMod.getValue());
-	//DBG("selectionSamples : " << selectionSamples);
-	//DBG("positionSamples : " << positionSamples);
-
-	return new Grain(
-		durationSamples, // le nombre total de sample dans le grain
-		numChannels,
-		paramsView.getEnvelopeType(),
-		paramsView.getSpeed(),
-		widthSamples, // le nombre de sample qu'il y a entre la fin du fade in et le debut du fade out
-		positionSamples // le nombre de sample qui determine la position dans le fichier pour le depart
-		//paramsView.getAudioBuffer()
-	);
-
-}
-
-*/
-
 const double Scheduler::getInterOnSet(float Emission, double sampleRate) const noexcept
 {
     Emission = std::min(Emission, 500.f);
@@ -72,7 +28,7 @@ void Scheduler::process(int bufferSize, double sampleRate, float Emission,
     if(interOnSet <= 1) // only occur with uncommon sample rates configs
     {
         setOffset(0.0);
-        return; // simply dont spawn
+        return; 
     } 
 
     int count = 0;

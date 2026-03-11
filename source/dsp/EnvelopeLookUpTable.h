@@ -13,15 +13,6 @@ public:
     ~EnvelopeLookUpTable() = default;
 
     const float getEnvelopeValue(float phase);
-
-    //float readHann(float phase) const;
-    //float readGaussian(float phase) const;
-    //float readTriangle(float phase) const;
-    //float readExp(float phase) const;
-    //float readSmoothed(float phase) const;
-    //float readBlackman(float phase) const;
-    //float readBlackmanHarris(float phase) const;
-
     void setEnvelopeMode(EnvelopeMode m) noexcept { envMode = m; }
 
 private:

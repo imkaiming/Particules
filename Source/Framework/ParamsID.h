@@ -92,7 +92,7 @@ namespace Param
         inline constexpr const char* id = "TRAVERSALMODE";
         inline constexpr const char* name = "Traversal Mode";
         inline constexpr int init = 1;
-        inline constexpr std::array<const char*, 5> traversalModeNames = {"Sinus", "Square", "Triangular", "Random", "None"};
+        //inline constexpr std::array<const char*, 5> traversalModeNames = {"Sinus", "Square", "Triangular", "Random", "None"};
         inline constexpr const char* TraversalMode_1 = "Sinus";
         inline constexpr const char* TraversalMode_2 = "Square";
         inline constexpr const char* TraversalMode_3 = "Triangular";
@@ -103,14 +103,14 @@ namespace Param
         //#define TRAVERSALMODE_7 "Reverse Saw Tooth"
     }
 
-    namespace TraversalTime
-    {
-        inline constexpr const char* id = "TRAVERSALTIME";
-        inline constexpr const char* name = "Traversal Time";
-        inline constexpr float min = 0.01f;
-        inline constexpr float max = 10.f;
-        inline constexpr float init = 1.0f;
-    }
+    //namespace TraversalTime
+    //{
+    //    inline constexpr const char* id = "TRAVERSALTIME";
+    //    inline constexpr const char* name = "Traversal Time";
+    //    inline constexpr float min = 0.01f;
+    //    inline constexpr float max = 10.f;
+    //    inline constexpr float init = 1.0f;
+    //}
 
     namespace TraversalFreq
     {
