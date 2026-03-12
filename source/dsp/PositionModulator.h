@@ -20,7 +20,7 @@
 class PositionModulator
 {
 public:
-    PositionModulator(double);
+    PositionModulator();
     ~PositionModulator() = default;
 
     void setSampleRate(double);

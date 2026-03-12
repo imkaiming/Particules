@@ -9,15 +9,14 @@
 */
 
 #include "ParameterView.h"
+#include "PluginParams.h"
 
-ParameterView::ParameterView() : mIsGrainsEmpty{true}, mIsPlaying{false}, mSampleRate{0.0}
-{
-    //DBG("DBG -> is sample source lock free : " << (sampleSource.is_lock_free() ? "true" : "false"));
-}
+ParameterView::ParameterView() : mIsGrainsEmpty{true}, mIsPlaying{false}, mSampleRate{0.0} {}
 
 void ParameterView::init(ValueTreeState& apvts, double sampleRate)
 {
-    mSampleRate.store(sampleRate, std::memory_order_relaxed);
+    setSampleRate(sampleRate);
+    //mSampleRate.store(sampleRate, std::memory_order_relaxed);
     view.mix = apvts.getRawParameterValue(Param::Mix::id);
     view.gain = apvts.getRawParameterValue(Param::Gain::id);
     view.emission = apvts.getRawParameterValue(Param::Emission::id);
@@ -87,9 +86,8 @@ const ParameterSnapshot ParameterView::getSnapshot() const noexcept
 
     // time data
     snapshot.durationSamples = static_cast<int>(getNormalizedDuration() * snapshot.sampleRate);
-    //DBG("snap getWindowSelection = " + (str)getWindowSelection());
-    //DBG("snap durationSamples = " + (str)snapshot.durationSamples);
 
+    // grain data
     snapshot.mix = getMix();
     snapshot.speed = getSpeed();
     snapshot.emission = getEmission();
@@ -102,19 +100,14 @@ const ParameterSnapshot ParameterView::getSnapshot() const noexcept
     return snapshot;
 };
 
-void ParameterView::setAudioSource(std::shared_ptr<const AudioBuffer> ib) noexcept
-{
-    setNumChannels(ib.get()->getNumChannels());
-    setNumSamples(ib.get()->getNumSamples());
-    inputBuffer.store(std::move(ib), std::memory_order_relaxed);
-}
-
-std::shared_ptr<const AudioBuffer> ParameterView::getAudioSource() const noexcept
-{
-    return inputBuffer.load(std::memory_order_acquire);
-}
-
-//void ParameterView::updateGrainVisualizer()
+//void ParameterView::setAudioSource(std::shared_ptr<const AudioBuffer> ib) noexcept
 //{
-//	grainVisualizer->update();
+//    setNumChannels(ib.get()->getNumChannels());
+//    setNumSamples(ib.get()->getNumSamples());
+//    inputBuffer.store(std::move(ib), std::memory_order_relaxed);
+//}
+//
+//std::shared_ptr<const AudioBuffer> ParameterView::getAudioSource() const noexcept
+//{
+//    return inputBuffer.load(std::memory_order_acquire);
 //}

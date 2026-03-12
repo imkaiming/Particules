@@ -11,26 +11,22 @@
 #include "GranularEngine.h"
 #include "../framework/ParameterView.h"
 
-GranularEngine::GranularEngine(ParameterView& sp, GrainVisualBuffer& vb)
-    : paramsView{sp}, scheduler{}, voiceManager{pool, posMod, envLut, vb}, pool{}, posMod{sp.getSampleRate()}, refreshRate{60.f},
-      accumulator{0}, threshold{0}
+GranularEngine::GranularEngine(GrainVisualBuffer& vb)
+    : scheduler{}, voiceManager{pool, posMod, envLut, vb}, pool{}, posMod{}, refreshRate{60.f}, accumulator{0}, threshold{0}
 {
 }
 
-void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize)
+void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize, const ParameterSnapshot snapshot)
 {
     // pour 1024 buffer size en 48kHz on a une fenetre de 21ms par appelle de compute.
     // si Emission = 500g/s (1g chaque 0.002s) alors on a interOnSet = 48000/500 = 96 sample.
     // 1024/96 = 10.66 grains par appel
 
-    const ParameterSnapshot snapshot = paramsView.getSnapshot();
-    const AudioBuffer* inputSource = paramsView.getAudioSource().get();
-
-    if(!snapshot.isValid())
-    {
-        bufferOut.clear();
+    std::shared_ptr<const AudioBuffer> inputPtr = getInputBuffer();
+    if(!inputPtr)
         return;
-    }
+
+    const AudioBuffer* inputBuffer = inputPtr.get();
 
     AudioBlock outputBlock(bufferOut);
 
@@ -40,11 +36,11 @@ void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize
         bufferSize, snapshot.sampleRate, snapshot.emission,
         [this](int offset, const ParameterSnapshot& snapshot) { voiceManager.spawn(offset, snapshot); }, snapshot);
 
-    voiceManager.process(outputBlock, bufferSize, inputSource);
+    voiceManager.process(outputBlock, bufferSize, inputBuffer);
 
     posMod.advanceBlock(bufferSize);
 
-    gainProcess(outputBlock);
+    gainProcess(outputBlock, snapshot.linearGain);
 
     accumulator += bufferSize;
     while(accumulator >= threshold)
@@ -54,13 +50,11 @@ void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize
     }
 }
 
-// called by prepare to play method
+// called by pluginprocessor.prepareToPlay()
 void GranularEngine::init(double sampleRate, int numChannel, int samplePerBlocks)
 {
-    //scheduler.reset();
-    //juce::Logger::outputDebugString("Granuler Engine init numChannel is : " + juce::String(numChannel));
     threshold = static_cast<int>(sampleRate / refreshRate);
-    posMod.setSampleRate(paramsView.getSampleRate());
+    posMod.setSampleRate(sampleRate);
 
     juce::dsp::ProcessSpec spec;
 
@@ -68,33 +62,12 @@ void GranularEngine::init(double sampleRate, int numChannel, int samplePerBlocks
     spec.numChannels = numChannel;
     spec.sampleRate = sampleRate;
 
-    //mixerProcessor.prepare(spec);
-    //mixerProcessor.setMixingRule(juce::dsp::DryWetMixingRule::balanced);
-
     gainProcessor.prepare(spec);
     gainProcessor.setRampDurationSeconds(0.02f);
-
-    // to debug
-    //reverbProcessor.prepare(spec);
-    //params.roomSize = 1.0f;
-    //params.damping = 0.5f;
-    //params.wetLevel = 0.5f;
-    //params.dryLevel = 0.0f;
-    //params.width = 1.0f;
-    //params.freezeMode = false;
-    //reverbProcessor.setParameters(params);
 }
 
-//void GranularEngine::mixingProcess(AudioBlock wetBlock)
-//{
-//    mixerProcessor.setWetMixProportion(paramsView.getMix());
-//    mixerProcessor.mixWetSamples(wetBlock);
-//}
-
-void GranularEngine::gainProcess(juce::dsp::ProcessContextReplacing<float> context)
+void GranularEngine::gainProcess(juce::dsp::ProcessContextReplacing<float> context, const float gainLin)
 {
-    gainProcessor.setGainLinear(paramsView.getLinearGain());
+    gainProcessor.setGainLinear(gainLin);
     gainProcessor.process(context);
 }
-
-//void GranularEngine::reverbProcess(juce::dsp::ProcessContextReplacing<float> context) { reverbProcessor.process(context); }

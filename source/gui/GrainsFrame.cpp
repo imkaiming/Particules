@@ -9,7 +9,7 @@
 */
 
 #include "GrainsFrame.h"
-#include "../framework/ParamsID.h"
+#include "../framework/PluginParams.h"
 #include "../utils/MyColours.h"
 
 GrainsFrame::GrainsFrame(ValueTreeState& apvts) : apvts{apvts}

@@ -13,18 +13,18 @@
 
 Scheduler::Scheduler() : nextOnSet{0} {}
 
-const double Scheduler::getInterOnSet(float Emission, double sampleRate) const noexcept
+const double Scheduler::getInterOnSet(float emission, double sampleRate) const noexcept
 {
-    Emission = std::min(Emission, 500.f);
-    if(Emission <= 0.0)
-        Emission = std::max(Emission, 0.1f);
-    return sampleRate / (double)Emission;
+    emission = std::min(emission, 500.f);
+    if(emission <= 0.0)
+        emission = std::max(emission, 0.1f);
+    return sampleRate / (double)emission;
 }
 
-void Scheduler::process(int bufferSize, double sampleRate, float Emission,
-    std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& parameters)
+void Scheduler::process(int bufferSize, double sampleRate, float emission,
+    std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& snapshot)
 {
-    const double interOnSet = getInterOnSet(Emission, sampleRate);
+    const double interOnSet = getInterOnSet(emission, sampleRate);
     if(interOnSet <= 1) // only occur with uncommon sample rates configs
     {
         setOffset(0.0);
@@ -35,7 +35,7 @@ void Scheduler::process(int bufferSize, double sampleRate, float Emission,
     double offset = getOffset(); // offset of the next outBuffer call
     while(offset < static_cast<double>(bufferSize) && count < mCapacity)
     {
-        spawn(static_cast<int>(std::floor(offset)), parameters); // call the voice manager
+        spawn(static_cast<int>(std::floor(offset)), snapshot); // call the voice manager
         offset += interOnSet;
         count++;
     }

@@ -12,7 +12,7 @@
 
 
 #include "../utils/MyColours.h"
-#include "../framework/ParamsID.h"
+#include "../framework/PluginParams.h"
 #include "../framework/GrainVisualBuffer.h"
 #include "../framework/Core.h"
 

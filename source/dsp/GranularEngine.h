@@ -14,47 +14,49 @@
 
 #pragma once
 
-#include "VoiceManager.h"
+#include "../utils/AtomicSharedPtr.h"
+#include "../utils/ParameterSnapshot.h"
 #include "Scheduler.h"
+#include "VoiceManager.h"
 
-
-class ParameterView;
 class GranularEngine
 {
 public:
-    explicit GranularEngine(ParameterView& sp, GrainVisualBuffer& vb);
-	~GranularEngine() = default;
+    explicit GranularEngine(GrainVisualBuffer& vb);
+    ~GranularEngine() = default;
 
-	void process(juce::AudioBuffer<float>& output, int bufferSize);
-	void init(double sampleRate, int numChannel, int samplePerBlocks);
+    void process(juce::AudioBuffer<float>& output, int bufferSize, ParameterSnapshot snapshot);
+    void init(double sampleRate, int numChannel, int samplePerBlocks);
     int getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); };
 
-private:
-	//void mixingProcess(AudioBlock);
-	void gainProcess(juce::dsp::ProcessContextReplacing<float>);
-	//void reverbProcess(juce::dsp::ProcessContextReplacing<float>);
+    void setInputBuffer(std::shared_ptr<const AudioBuffer> ptr) noexcept { inputBuffer.store(std::move(ptr)); };
+    std::shared_ptr<const AudioBuffer> getInputBuffer() const noexcept { return inputBuffer.load(); };
+    const bool isInputBufferLoaded() const noexcept { return inputBuffer.load() != nullptr; };
 
-	static constexpr uint8_t mMaxEvent = Param::MaxEvents;
+private:
+    void gainProcess(juce::dsp::ProcessContextReplacing<float>, const float);
+    static constexpr uint8_t mMaxEvent = Param::MaxEvents;
+
+    AtomicSharedPtr<const AudioBuffer> inputBuffer;
+    //std::shared_ptr<const AudioBuffer> inputBuffer;
 
     const float refreshRate;
     int accumulator;
     int threshold;
-	
-	EnvelopeLookUpTable envLut;
-	ParameterView& paramsView;
+
+    EnvelopeLookUpTable envLut;
     PositionModulator posMod;
-	Scheduler scheduler;
+    Scheduler scheduler;
     GrainPool pool;
-	VoiceManager voiceManager;
+    VoiceManager voiceManager;
 
-	//juce::dsp::DryWetMixer<float> mixerProcessor;
-	juce::dsp::Gain<float> gainProcessor;
-	//juce::dsp::Reverb reverbProcessor;
-	//juce::dsp::Reverb::Parameters params;
-
-	//juce::AudioBuffer<float> phaseVocoderBuffer;
-	//juce::dsp::WindowingFunction<float> window;
-	//juce::dsp::FFT fft;
-	//audiofft::AudioFFT fft;
-
+    juce::dsp::Gain<float> gainProcessor;
 };
+//juce::dsp::DryWetMixer<float> mixerProcessor;
+//juce::dsp::Reverb reverbProcessor;
+//juce::dsp::Reverb::Parameters params;
+
+//juce::AudioBuffer<float> phaseVocoderBuffer;
+//juce::dsp::WindowingFunction<float> window;
+//juce::dsp::FFT fft;
+//audiofft::AudioFFT fft;

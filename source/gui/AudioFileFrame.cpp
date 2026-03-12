@@ -10,9 +10,9 @@
 
 #include "AudioFileFrame.h"
 #include "../framework/ParameterView.h"
-#include "../utils/UIContext.h"
 #include "../pluginProcessor.h"
 #include "../utils/MyColours.h"
+#include "../utils/UIContext.h"
 
 AudioFileFrame::AudioFileFrame(UIContext& uic)
     : paramsView(uic.paramsView), audioProcessor(uic.audioProcessor),
@@ -83,7 +83,7 @@ void AudioFileFrame::openFileButtonClicked()
 void AudioFileFrame::filesDropped(const juce::StringArray& files, int x, int y)
 {
     play_pause_btn.setEnabled(false);
-    paramsView.setIsPlaying(false);
+    //paramsView.setIsPlaying(false);
     for(juce::String file : files)
     {
         if(isInterestedInFileDrag(file))
@@ -210,7 +210,7 @@ void AudioFileFrame::changeListenerCallback(juce::ChangeBroadcaster* source)
     {
         const juce::File& f = audioProcessor.getCurrentFile();
         bool valid = f.existsAsFile();
-        if(valid && paramsView.getAudioSource())
+        if(valid && audioProcessor.isInputBufferLoaded())
         {
             thumbnailComponent.setFile(f);
             thumbnailComponent.setNumSamples(paramsView.getNumSamples());

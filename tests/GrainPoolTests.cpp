@@ -1,7 +1,7 @@
 #include "../source/dsp/Grain.h"
 #include "../source/dsp/GrainPool.h"
 #include "../source/utils/GrainHandle.h"
-#include "../source/framework/ParamsId.h"
+#include "../source/framework/PluginParams.h"
 #include <catch2/catch_test_macros.hpp>
 
 /*

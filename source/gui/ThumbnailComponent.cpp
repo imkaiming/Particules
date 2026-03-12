@@ -11,7 +11,7 @@
 #include "ThumbnailComponent.h"
 
 #include "../framework/ParameterView.h"
-#include "../framework/ParamsID.h"
+#include "../framework/PluginParams.h"
 #include "../utils/MyColours.h"
 
 ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail, juce::AudioFormatManager& formatManager, UIContext& uic)

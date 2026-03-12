@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../utils/GrainVisual.h"
-#include "ParamsID.h"
+#include "PluginParams.h"
 
 // snapshot of every actives grains published every buffers end
 // it suppose to mirror the GrainPools logic and should follow the exact grains

@@ -1,11 +1,9 @@
 #pragma once
 
 #include "Core.h"
-#include "../gui/GrainVisualComponent.h"
 #include "../utils/EnvelopeMode.h"
 #include "../utils/TraversalMode.h"
 #include "../utils/ParameterSnapshot.h"
-//#include "../utils/SampleSource.h"
 
 struct GranularView
 {
@@ -24,7 +22,6 @@ struct GranularView
     std::atomic<float>* traversalFreq = nullptr;
 };
 
-class Grain; // TODO to delete
 class ParameterView
 {
 public:
@@ -63,7 +60,7 @@ public:
     EnvelopeMode getEnvelopeMode() const noexcept;
     TraversalMode getTraversalMode() const noexcept;
 
-    // runFreq flags
+    // runtime flags
     void setIsPlaying(bool b) noexcept { mIsPlaying.store(b, std::memory_order_relaxed); }
     void setIsGrainsEmpty(bool b) noexcept { mIsGrainsEmpty.store(b, std::memory_order_relaxed); }
 
@@ -79,27 +76,16 @@ public:
     const double getSampleRate() const noexcept { return mSampleRate.load(std::memory_order_relaxed); }
     void setSampleRate(double sr) noexcept { mSampleRate.store(sr, std::memory_order_relaxed); }
 
-    void setGrains(juce::Array<Grain*>* grains) noexcept { mGrains = grains; }
-    juce::Array<Grain*>* getGrains() const noexcept { return mGrains; }
-
-    //void setGrainVisualizer(GrainVisualizer* gv) noexcept { mGrainVisualizer = gv; }
-    //GrainVisualizer* getGrainVisualizer() const noexcept { return mGrainVisualizer; }
 
     const GranularView& getView() const noexcept { return view; }
     const ParameterSnapshot getSnapshot() const noexcept;
 
-    //void setSampleSource(std::shared_ptr<const SampleSource> source) noexcept
-    //{
-    //sampleSource.store(std::move(source), std::memory_order_release);
-    //}
-    //std::shared_ptr<const SampleSource> getSampleSource() const noexcept { return sampleSource.load(std::memory_order_acquire); }
-
-    void setAudioSource(std::shared_ptr<const AudioBuffer> ib) noexcept;
-    std::shared_ptr<const AudioBuffer> getAudioSource() const noexcept;
+    //void setAudioSource(std::shared_ptr<const AudioBuffer> ib) noexcept;
+    //std::shared_ptr<const AudioBuffer> getAudioSource() const noexcept;
 
 private:
-    //std::atomic<std::shared_ptr<const SampleSource>> sampleSource;
-    std::atomic<std::shared_ptr<const AudioBuffer>> inputBuffer;
+    //std::atomic<std::shared_ptr<const AudioBuffer>> inputBuffer;
+    //AtomicSharedPtr<const AudioBuffer> inputBuffer;
 
     // runtime flags
     std::atomic<bool> mIsPlaying;
@@ -110,7 +96,4 @@ private:
 
     GranularView view;
 
-    // non-atomic pointers: only safe if not mutated concurrently
-    std::atomic<juce::Array<Grain*>*> mGrains{nullptr};
-    //std::atomic<GrainVisualizer*> mGrainVisualizer{nullptr};
 };

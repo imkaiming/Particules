@@ -9,10 +9,8 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 
 
-#include <atomic>
 #include <cstdint>
 #include <functional>
-
 
 //#define GRAINPOINT_SIZE 10.f
 #define FFTSIZE_ORDER 10

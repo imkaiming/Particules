@@ -1,7 +1,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-#include "framework/ParamsID.h"
+#include "framework/PluginParams.h"
+#include "utils/ParameterSnapshot.h"
 
 ParticulesAudioProcessor::ParticulesAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -14,11 +15,12 @@ ParticulesAudioProcessor::ParticulesAudioProcessor()
     #endif
               ),
       apvts(*this, nullptr, "Parameters", createParameterLayout()), //apvts stands for audio processor value tree state
-      paramsView(), grainEngine(paramsView, visualBuffer), uiContext{apvts, paramsView, customLookAndFeel, *this, visualBuffer},
-      loader{paramsView}, debugPresetLoaded{false}
+      paramsView(), granularEngine(visualBuffer), uiContext{apvts, paramsView, customLookAndFeel, *this, visualBuffer}, loader{},
+      debugPresetLoaded{false}
 #endif
 {
     initOnAudioLoadedCallback();
+    initSetInputBufferCallback();
 }
 
 ParticulesAudioProcessor::~ParticulesAudioProcessor() {}
@@ -70,9 +72,10 @@ void ParticulesAudioProcessor::changeProgramName(int index, const juce::String& 
 
 void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
-    int numChannels = getTotalNumOutputChannels();
+    const int numChannels = getTotalNumOutputChannels();
     paramsView.init(apvts, sampleRate);
-    grainEngine.init(sampleRate, numChannels, samplesPerBlock);
+    granularEngine.init(sampleRate, numChannels, samplesPerBlock);
+    loader.init(sampleRate, setInputBufferCallback);
 
     //juce::Logger::outputDebugString("EMISSION : " + (const juce::String)this->paramsView.getEMISSION() + " duration : " + (const juce::String)this->paramsView.getDuration());
 #if ENABLE_DEBUG_PRESET // exist also in the audio file loader
@@ -110,6 +113,10 @@ bool ParticulesAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts
 
 void ParticulesAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
+    const ParameterSnapshot snapshot = paramsView.getSnapshot();
+    if(!snapshot.isValid())
+        return;
+
     const int totalNumInputChannels = getTotalNumInputChannels();
     const int totalNumOutputChannels = getTotalNumOutputChannels();
     const int numSamples = buffer.getNumSamples();
@@ -117,10 +124,8 @@ void ParticulesAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
     for(int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, numSamples);
 
-    if(paramsView.getAudioSource() && paramsView.getIsPlaying() || !paramsView.getIsGrainsEmpty())
-    {
-        grainEngine.process(buffer, numSamples);
-    }
+    if(paramsView.getIsPlaying() || !paramsView.getIsGrainsEmpty())
+        granularEngine.process(buffer, numSamples, snapshot);
 }
 
 bool ParticulesAudioProcessor::hasEditor() const
@@ -229,12 +234,19 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
     return layout;
 }
 
+void ParticulesAudioProcessor::setInputBuffer(std::shared_ptr<const AudioBuffer> buffer) noexcept
+{
+    paramsView.setNumChannels(buffer.get()->getNumChannels());
+    paramsView.setNumSamples(buffer.get()->getNumSamples());
+    granularEngine.setInputBuffer(std::move(buffer));
+}
+
 void ParticulesAudioProcessor::initOnAudioLoadedCallback()
 {
     onAudioLoadedCallback = [this](juce::File f, bool ok) {
         if(ok)
         {
-            currentFile = f;
+            loader.setCurrentFile(f);
         }
         else
         {
@@ -242,6 +254,11 @@ void ParticulesAudioProcessor::initOnAudioLoadedCallback()
         }
         sendChangeMessage();
     };
+}
+
+void ParticulesAudioProcessor::initSetInputBufferCallback()
+{
+    setInputBufferCallback = [this](std::shared_ptr<const AudioBuffer> buffer) { setInputBuffer(std::move(buffer)); };
 }
 
 void ParticulesAudioProcessor::loadFile(const juce::String& path) { loader.loadFile(path, onAudioLoadedCallback); }

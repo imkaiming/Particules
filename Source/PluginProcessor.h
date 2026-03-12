@@ -3,94 +3,93 @@
 //#include <juce_events/juce_events.h>
 //#include <juce_audio_processors/juce_audio_processors.h>
 
-#include "framework/ParameterView.h"
-#include "framework/Core.h"
-#include "framework/GrainVisualBuffer.h"
 #include "dsp/GranularEngine.h"
-#include "utils/UIContext.h"
 #include "framework/AudioFileLoader.h"
+#include "framework/GrainVisualBuffer.h"
+#include "framework/ParameterView.h"
 #include "utils/CustomLookAndFeel.h"
-
-/*
-TODO : create a grain loop mode or a one shot mode
-*/
+#include "utils/UIContext.h"
 
 class ParameterView;
 class GranularEngine;
-class ParticulesAudioProcessor: public juce::AudioProcessor, public juce::ChangeBroadcaster
+class ParticulesAudioProcessor : public juce::AudioProcessor,
+                                 public juce::ChangeBroadcaster
 #if JucePlugin_Enable_ARA
-	, public juce::AudioProcessorARAExtension
+    ,
+                                 public juce::AudioProcessorARAExtension
 #endif
 {
 public:
-	ParticulesAudioProcessor();
-	~ParticulesAudioProcessor() override;
+    ParticulesAudioProcessor();
+    ~ParticulesAudioProcessor() override;
 
-	void prepareToPlay(double sampleRate, int samplesPerBlock) override;
-	void releaseResources() override;
+    void prepareToPlay(double sampleRate, int samplesPerBlock) override;
+    void releaseResources() override;
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-	bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
+    bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 #endif
 
-	void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+    void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
-	juce::AudioProcessorEditor* createEditor() override;
-	bool hasEditor() const override;
+    juce::AudioProcessorEditor* createEditor() override;
+    bool hasEditor() const override;
 
-	const juce::String getName() const override;
+    const juce::String getName() const override;
 
-	bool acceptsMidi() const override;
-	bool producesMidi() const override;
-	bool isMidiEffect() const override;
-	double getTailLengthSeconds() const override;
+    bool acceptsMidi() const override;
+    bool producesMidi() const override;
+    bool isMidiEffect() const override;
+    double getTailLengthSeconds() const override;
 
-	int getNumPrograms() override;
-	int getCurrentProgram() override;
-	void setCurrentProgram(int index) override;
-	const juce::String getProgramName(int index) override;
-	void changeProgramName(int index, const juce::String& newName) override;
+    int getNumPrograms() override;
+    int getCurrentProgram() override;
+    void setCurrentProgram(int index) override;
+    const juce::String getProgramName(int index) override;
+    void changeProgramName(int index, const juce::String& newName) override;
 
-	void getStateInformation(juce::MemoryBlock& destData) override;
-	void setStateInformation(const void* data, int sizeInBytes) override;
+    void getStateInformation(juce::MemoryBlock& destData) override;
+    void setStateInformation(const void* data, int sizeInBytes) override;
 
-	ValueTreeState& getValueTreeState() noexcept { return apvts; };
-	ParameterView& getParametersView() noexcept { return paramsView; };
-	UIContext& getUIContext() noexcept { return uiContext; };
+    ValueTreeState& getValueTreeState() noexcept { return apvts; };
+    ParameterView& getParametersView() noexcept { return paramsView; };
+    UIContext& getUIContext() noexcept { return uiContext; };
 
-	static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+    static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
 
-	void loadFile(const juce::String& path);
-	void loadFile();
-	const juce::File& getCurrentFile() const noexcept { return currentFile; };
-	AudioFileLoader& getAudioFileLoader() noexcept { return loader; };
+    void loadFile(const juce::String& path);
+    void loadFile();
+    const juce::File& getCurrentFile() const noexcept { return loader.getCurrentFile(); };
+    AudioFileLoader& getAudioFileLoader() noexcept { return loader; };
 
-	int getNumActiveGrains() const noexcept { return grainEngine.getNumActiveGrains(); };
+    const int getNumActiveGrains() const noexcept { return granularEngine.getNumActiveGrains(); };
+
+    void setInputBuffer(std::shared_ptr<const AudioBuffer> source) noexcept;
+    const bool isInputBufferLoaded() const noexcept { return granularEngine.isInputBufferLoaded(); };
 
 private:
+    void initOnAudioLoadedCallback();
+    void initSetInputBufferCallback();
+    void loadDebugPreset();
+    bool debugPresetLoaded = false;
 
-	void initOnAudioLoadedCallback();
-	void loadDebugPreset();
-	bool debugPresetLoaded = false;
+    ValueTreeState apvts; // connecte les slider du GUI et les paramètres (fourni des valeurs atomiques)
+    ParameterView paramsView; // fait le pont entre apvts et le synth
+    GranularEngine granularEngine; // le moteur de la synthèse granulaire
 
-	ValueTreeState apvts;			// connecte les slider du GUI et les paramètres (fourni des valeurs atomiques)
-	ParameterView paramsView;	// fait le pont entre apvts et le synth
-	GranularEngine grainEngine;		// le moteur de la synthèse granulaire
+    CustomLookAndFeel customLookAndFeel;
+    UIContext uiContext;
 
+    AudioFileLoader loader;
+    std::function<void(const juce::File, bool)> onAudioLoadedCallback;
+    std::function<void(std::shared_ptr<const AudioBuffer>)> setInputBufferCallback;
 
-	CustomLookAndFeel customLookAndFeel;
-	UIContext uiContext;
-
-	AudioFileLoader loader;
-	juce::File currentFile;
-	std::function<void(const juce::File, bool)> onAudioLoadedCallback;
     GrainVisualBuffer visualBuffer;
 
-	//juce::ADSR::Parameters adsrParameters;
-	//juce::ADSR adsr;
+    //juce::ADSR::Parameters adsrParameters;
+    //juce::ADSR adsr;
 
+    //juce::UndoManager undoManager;
 
-	//juce::UndoManager undoManager;
-	// juce::AudioSampleBuffer grainBuffer;
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessor)
 };

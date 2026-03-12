@@ -9,13 +9,8 @@
 */
 
 #include "AudioFileLoader.h"
-#include "ParameterView.h"
 
-AudioFileLoader::AudioFileLoader(ParameterView& paramsView) : paramsView{paramsView}
-{
-    // permet au manager de format de gérer les formats WAV, AIFF, MP3, etc.
-    formatManager.registerBasicFormats();
-}
+AudioFileLoader::AudioFileLoader() : sampleRate{0.0} { formatManager.registerBasicFormats(); }
 
 void AudioFileLoader::loadFile(std::function<void(const juce::File, bool)> onAudioLoaded)
 {
@@ -27,6 +22,9 @@ void AudioFileLoader::loadFile(std::function<void(const juce::File, bool)> onAud
     //juce::Logger::outputDebugString("chooser.launchAsync(flags, [this](const juce::FileChooser& resultChooser) ");
     chooser->launchAsync(flags, [this, onAudioLoaded](const juce::FileChooser& resultChooser) {
         juce::File file = resultChooser.getResult();
+        if(currentFile == file)
+            return;
+
         bool ok = false;
         if(file.existsAsFile())
         {
@@ -40,10 +38,13 @@ void AudioFileLoader::loadFile(const juce::String& path, std::function<void(cons
 {
     //juce::Logger::outputDebugString("File dragged ! ");
     juce::File file(path);
+    if(currentFile == file)
+        return;
+
     bool ok = false;
     if(file.existsAsFile())
     {
-        ok = this->loadAudio(file);
+        ok = loadAudio(file);
     }
     onAudioLoaded(file, ok);
 }
@@ -64,7 +65,8 @@ bool AudioFileLoader::loadAudio(juce::File& file)
         return false;
     }
 
-    const double targetSampleRate = paramsView.getSampleRate();
+    //const double targetSampleRate = paramsView.getSampleRate();
+    const double targetSampleRate = sampleRate;
     if(targetSampleRate <= 0.0)
     {
         showErrorWindow("invalid sample rate : targetSampleRate <= 0");
@@ -109,7 +111,7 @@ bool AudioFileLoader::loadAudio(juce::File& file)
 
     std::shared_ptr<const AudioBuffer> source = std::make_shared<const AudioBuffer>(std::move(resampledBuffer));
 
-    paramsView.setAudioSource(source);
+    setInputBufferCalback(source);
 
     return true;
 }
@@ -118,6 +120,13 @@ bool AudioFileLoader::loadAudio(juce::File& file)
 //{
 //	onFileLoaded = std::move(callbackOnFileLoaded);
 //}
+
+void AudioFileLoader::init(double sr, std::function<void(std::shared_ptr<const AudioBuffer>)> callback) noexcept
+{
+    if(sr >= 0.0)
+        sampleRate = sr;
+    setInputBufferCalback = callback;
+}
 
 juce::AudioFormatManager& AudioFileLoader::getFormatManager() { return formatManager; }
 

@@ -13,8 +13,8 @@
 // on calcule chaque avancer en fonction du bufferSize
 #include "PositionModulator.h"
 
-PositionModulator::PositionModulator(double sr)
-    : mPhaseAccumulator{0.f}, mTraversalMod{TraversalMode::Sine}, mTraversalFreq{1.f}, mSampleRate{static_cast<float>(sr)}
+PositionModulator::PositionModulator()
+    : mPhaseAccumulator{0.f}, mTraversalMod{TraversalMode::Sine}, mTraversalFreq{1.f}, mSampleRate{0.0}
 {
     initTableData();
     initTablePtr();
@@ -67,7 +67,7 @@ void PositionModulator::advanceBlock(int numSamples)
     //mPhaseAccumulator = std::fmod(mPhaseAccumulator, 1.0f);
     if(mPhaseAccumulator >= 1.f)
         mPhaseAccumulator -= static_cast<int>(mPhaseAccumulator);
-        //mPhaseAccumulator -= std::floor(mPhaseAccumulator);
+    //mPhaseAccumulator -= std::floor(mPhaseAccumulator);
 }
 
 const float PositionModulator::computePhaseAtOffset(int offset)

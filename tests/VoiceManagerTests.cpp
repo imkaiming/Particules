@@ -7,7 +7,7 @@
 #include "../source/utils/GrainHandle.h"
 #include "../source/utils/ParameterSnapshot.h"
 #include "../source/framework/ParameterView.h"
-#include "../source/framework/ParamsId.h"
+#include "../source/framework/PluginParams.h"
 #include <catch2/catch_test_macros.hpp>
 
 struct VoiceManagerFixture
@@ -16,7 +16,7 @@ struct VoiceManagerFixture
     EnvelopeLookUpTable lut;
     GrainHandle h;
     Grain g;
-    PositionModulator posMod{48000};
+    PositionModulator posMod{};
     GrainPool pool;
     VoiceManager vm;
     AudioBuffer inputBuffer{2, 48000};
@@ -37,6 +37,7 @@ struct VoiceManagerFixture
         snapshot.traversalMode = TraversalMode::Sine;
         snapshot.traversalFreq = 1.f;
         snapshot.sampleRate = 48000.0;
+        posMod.setSampleRate(snapshot.sampleRate);
     };
 };
 
