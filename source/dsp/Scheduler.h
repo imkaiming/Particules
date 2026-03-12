@@ -30,10 +30,10 @@ public:
     void process(int, double, float, std::function<void(int, const ParameterSnapshot&)>, const ParameterSnapshot&);
 
 private:
-    static constexpr int mCapacity = Param::MaxEvents;
+    static constexpr int SIZE = Param::MaxEvents;
 
     void reset() { nextOnSet = 0; }
-    const double getInterOnSet(float, double) const noexcept;
+    //const double getInterOnSet(float, double) const noexcept;
     double getOffset() const noexcept { return nextOnSet; };
     void setOffset(double n) noexcept { nextOnSet = n; };
 

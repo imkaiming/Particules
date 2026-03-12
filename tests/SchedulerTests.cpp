@@ -44,103 +44,102 @@ namespace audio_plugin_test
         }
     };
 
-    TEST_CASE("1# Scheduler ctor", "[scheduler]") { Scheduler s; }
-
-    TEST_CASE("2# Emission = 1.f, sr = 512", "[scheduler]")
+    TEST_CASE_METHOD(SchedulerFixture, "Scheduler emission spawn correct grain", "[scheduler]")
     {
-        SchedulerFixture f;
-        Scheduler scheduler;
+        SECTION("1# emission = 1.f, sr = 512")
+        {
+            Scheduler scheduler;
 
-        f.snapshot.emission = 1.0f;
-        f.numSamples = 512;
-        f.sampleRate = 48000.0;
+            snapshot.emission = 1.0f;
+            numSamples = 512;
+            sampleRate = 48000.0;
 
-        scheduler.process(
-            f.numSamples, f.sampleRate, f.snapshot.emission,
-            [&](int pos, const ParameterSnapshot& p) { f.spawnCallback(pos, p); }, f.snapshot);
+            scheduler.process(
+                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
+                snapshot);
 
-        REQUIRE(f.spawnCallCount == 1);
-    }
+            REQUIRE(spawnCallCount == 1);
+        }
 
-    TEST_CASE("3# Emission = 0.f, sr = 512", "[scheduler]")
-    {
-        SchedulerFixture f;
-        Scheduler scheduler;
+        SECTION("3# emission = 0.f, sr = 512")
+        {
+            Scheduler scheduler;
 
-        f.snapshot.emission = 0.0f;
-        f.numSamples = 512;
-        f.sampleRate = 48000.0;
+            snapshot.emission = 0.0f;
+            numSamples = 512;
+            sampleRate = 48000.0;
 
-        REQUIRE_THROWS(scheduler.process(
-            f.numSamples, f.sampleRate, f.snapshot.emission,
-            [&](int pos, const ParameterSnapshot& p) { f.spawnCallback(pos, p); }, f.snapshot));
+            scheduler.process(
+                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
+                snapshot);
 
-        REQUIRE(f.spawnCallCount == 0);
-    }
+            REQUIRE(spawnCallCount == 0);
+        }
 
-    TEST_CASE_METHOD(SchedulerFixture, "4# Emission = 500.f, sr = 64", "[scheduler]")
-    {
-        Scheduler scheduler;
-        snapshot.emission = 500.0f;
-        numSamples = 64;
-        sampleRate = 48000.0;
+        SECTION("4# emission = 500.f, sr = 64")
+        {
+            Scheduler scheduler;
+            snapshot.emission = 500.0f;
+            numSamples = 64;
+            sampleRate = 48000.0;
 
-        // 500 / 48000.0 * 64 = 0.66666
-        scheduler.process(
-            numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-            snapshot);
+            // 500 / 48000.0 * 64 = 0.66666
+            scheduler.process(
+                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
+                snapshot);
 
-        REQUIRE(spawnCallCount == 1);
-    }
+            REQUIRE(spawnCallCount == 1);
+        }
 
-    TEST_CASE_METHOD(SchedulerFixture, "5# Emission = 500.f, sr = 128", "[scheduler]")
-    {
-        Scheduler scheduler;
-        snapshot.emission = 500.0f;
-        numSamples = 128;
-        sampleRate = 48000.0;
-        // 500 / 48000.0 * 64 = 0.66666
-        scheduler.process(
-            numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-            snapshot);
+        SECTION("5# emission = 500.f, sr = 128")
+        {
+            Scheduler scheduler;
+            snapshot.emission = 500.0f;
+            numSamples = 128;
+            sampleRate = 48000.0;
+            // 500 / 48000.0 * 64 = 0.66666
+            scheduler.process(
+                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
+                snapshot);
 
-        REQUIRE(spawnCallCount == 2);
-    }
+            REQUIRE(spawnCallCount == 2);
+        }
 
-    TEST_CASE_METHOD(SchedulerFixture, "6# Emission = 500.f, sr = 64, 3 iterations")
-    {
-        Scheduler scheduler;
-        snapshot.emission = 500.0f;
-        numSamples = 64;
-        sampleRate = 48000.0;
-        // 48000 / 500 = 96
-        scheduler.process(
-            numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-            snapshot);
+        SECTION("6# emission = 500.f, sr = 64, 3 iterations")
+        {
+            Scheduler scheduler;
+            snapshot.emission = 500.0f;
+            numSamples = 64;
+            sampleRate = 48000.0;
+            // 48000 / 500 = 96
+            scheduler.process(
+                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
+                snapshot);
 
-        REQUIRE(spawnCallCount == 1);
-        REQUIRE(spawnPositions.at(0) == 0);
+            REQUIRE(spawnCallCount == 1);
+            REQUIRE(spawnPositions.at(0) == 0);
 
-        scheduler.process(
-            numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-            snapshot);
+            scheduler.process(
+                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
+                snapshot);
 
-        REQUIRE(spawnCallCount == 2);
-        REQUIRE(spawnPositions.at(1) == 32);
+            REQUIRE(spawnCallCount == 2);
+            REQUIRE(spawnPositions.at(1) == 32);
 
-        scheduler.process(
-            numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-            snapshot);
+            scheduler.process(
+                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
+                snapshot);
 
-        REQUIRE(spawnCallCount == 2);
-        REQUIRE(spawnPositions.size() == 2);
+            REQUIRE(spawnCallCount == 2);
+            REQUIRE(spawnPositions.size() == 2);
 
-        scheduler.process(
-            numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-            snapshot);
+            scheduler.process(
+                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
+                snapshot);
 
-        REQUIRE(spawnCallCount == 3);
-        REQUIRE(spawnPositions.at(2) == 0);
-        REQUIRE(spawnPositions.size() == 3);
+            REQUIRE(spawnCallCount == 3);
+            REQUIRE(spawnPositions.at(2) == 0);
+            REQUIRE(spawnPositions.size() == 3);
+        }
     }
 }

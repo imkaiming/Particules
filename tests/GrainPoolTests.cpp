@@ -1,15 +1,9 @@
 #include "../source/dsp/Grain.h"
 #include "../source/dsp/GrainPool.h"
-#include "../source/utils/GrainHandle.h"
 #include "../source/framework/PluginParams.h"
+#include "../source/utils/GrainHandle.h"
 #include <catch2/catch_test_macros.hpp>
 
-/*
-	Grain* get(const GrainHandle handle) ;
-	GrainHandle acquire();
-	void release(const GrainHandle hadle);
-	void reset();
-*/
 /*
 struct GrainHandle
 {
@@ -21,15 +15,15 @@ struct GrainHandle
 
 */
 
-struct GrainPoolFixture
-{
-    GrainPool pool;
-    Grain* grain = nullptr;
-    GrainHandle handle;
-};
-
 namespace audio_plugin_test
 {
+    struct GrainPoolFixture
+    {
+        GrainPool pool;
+        Grain* grain = nullptr;
+        GrainHandle handle;
+    };
+
     TEST_CASE("1# GrainPool ctor", "[GrainPool]") { GrainPool g; }
 
     TEST_CASE_METHOD(GrainPoolFixture, "2# Acquire Grain", "[GrainPool]")
@@ -39,7 +33,7 @@ namespace audio_plugin_test
             handle = pool.acquire();
             grain = pool.get(handle);
             REQUIRE(grain != nullptr);
-            REQUIRE(grain->getGeneration()==0);
+            REQUIRE(grain->getGeneration() == 0);
             REQUIRE(grain->getActive());
         }
 
@@ -94,14 +88,14 @@ namespace audio_plugin_test
 
         SECTION("Released handles are reused in LIFO order")
         {
-            GrainHandle h1 = pool.acquire(); 
-            GrainHandle h2 = pool.acquire(); 
+            GrainHandle h1 = pool.acquire();
+            GrainHandle h2 = pool.acquire();
 
-            pool.release(h2); 
+            pool.release(h2);
             auto h3 = pool.acquire();
 
-            REQUIRE(h3.index == h2.index); 
-            REQUIRE(h3.gen != h2.gen); 
+            REQUIRE(h3.index == h2.index);
+            REQUIRE(h3.gen != h2.gen);
         }
     }
 
