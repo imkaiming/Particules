@@ -26,7 +26,7 @@ public:
 	~GranularEngine() = default;
 
 	void process(juce::AudioBuffer<float>& output, int bufferSize);
-	void init(int sampleRate, int numChannel, int samplePerBlocks);
+	void init(double sampleRate, int numChannel, int samplePerBlocks);
     int getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); };
 
 private:
@@ -35,6 +35,10 @@ private:
 	//void reverbProcess(juce::dsp::ProcessContextReplacing<float>);
 
 	static constexpr uint8_t mMaxEvent = Param::MaxEvents;
+
+    const float refreshRate;
+    int accumulator;
+    int threshold;
 	
 	EnvelopeLookUpTable envLut;
 	ParameterView& paramsView;

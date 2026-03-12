@@ -36,9 +36,6 @@ void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioB
         const float scale = 1 / std::sqrt(static_cast<float>(activeCount));
         outputBlock.multiplyBy(scale);
     }
-
-
-
 }
 
 void VoiceManager::processGrainsSamples(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)
@@ -51,11 +48,7 @@ void VoiceManager::processGrainsSamples(AudioBlock& outputBlock, int bufferSize,
     {
         GrainHandle h = activeHandles[i];
         Grain* g = pool.get(h);
-        //if(!g) // grain has been released already MAY NOT NEEDED
-        //{
-        //    removeVoice(i); 
-        //    continue; 
-        //}
+
         if(g->isExhausted())
         {
             pool.release(h);
@@ -67,7 +60,6 @@ void VoiceManager::processGrainsSamples(AudioBlock& outputBlock, int bufferSize,
             const float phase = g->getPhase();
             for(int channel = 0; channel < numChannels; ++channel)
             {
-                //const float* sample = inputSource->getReadPointer(channel % inputNumChannels);
                 const float sampleValue = g->getCurrentSample(inputSource, channel, numChannels);
                 const float envelopeValue = envLut.getEnvelopeValue(phase);
                 outputBlock.addSample(channel, currentSample, sampleValue * envelopeValue);
@@ -80,7 +72,6 @@ void VoiceManager::processGrainsSamples(AudioBlock& outputBlock, int bufferSize,
 void VoiceManager::processSamplesGrains(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)
 {
     const size_t numChannels = outputBlock.getNumChannels();
-    //const int numSamples = outputBlock.getNumSamples();
     const int inputNumChannels = inputSource->getNumChannels();
     const int inputNumSamples = inputSource->getNumSamples();
 
@@ -90,16 +81,10 @@ void VoiceManager::processSamplesGrains(AudioBlock& outputBlock, int bufferSize,
         {
             GrainHandle h = activeHandles[i];
             Grain* g = pool.get(h);
-            //if(!g) // grain has been released already MAY NOT NEEDED
-            //{
-            //    removeVoice(i); // place the current handle[index] in activeCount index and became
-            //    continue; // restart the beginning of the loop at the same index
-            //}
 
             const float phase = g->getPhase();
             for(int channel = 0; channel < numChannels; ++channel)
             {
-                //const float* sample = inputSource->getReadPointer(channel % inputNumChannels);
                 const float sampleValue = g->getCurrentSample(inputSource, channel, numChannels);
                 const float envelopeValue = envLut.getEnvelopeValue(phase);
                 outputBlock.addSample(channel, currentSample, sampleValue * envelopeValue);
@@ -116,7 +101,7 @@ void VoiceManager::processSamplesGrains(AudioBlock& outputBlock, int bufferSize,
 
 void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
 {
-    if(activeCount >= mCapacity)
+    if(activeCount >= SIZE)
         return; // cannot spawn any more grains
 
     GrainHandle handle = pool.acquire();
@@ -124,7 +109,10 @@ void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
     if(grain == nullptr)
         return;
 
+    visualY[handle.index] = juce::Random::getSystemRandom().nextFloat();
+
     envLut.setEnvelopeMode(snapshot.envMode);
+
     grain->config(snapshot, offset, posMod.computePhaseAtOffset(offset)); // init the grain here before process with the snapshot
     activeHandles[activeCount++] = handle;
 }
@@ -133,3 +121,37 @@ void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
 // removing index 2 then swapping the index 4 with the 2 and
 // after decrementing activeCount is = 4.
 void VoiceManager::removeVoice(const int i) { activeHandles[i] = activeHandles[--activeCount]; }
+
+//void VoiceManager::getAllActiveGrains(std::vector<GrainPoint>& out) const
+//{
+//    out.clear();
+//    out.reserve(activeCount);
+//    for(int i = 0; i < activeCount; ++i)
+//    {
+//        GrainHandle h = activeHandles[i];
+//        const Grain* g = pool.get(h);
+//        GrainPoint gp{g->getReadPosition(), visualY[h.index], envLut.getEnvelopeValue(g->getPhase())};
+//        out.push_back(gp);
+//    }
+//}
+
+void VoiceManager::writeVisualSnapshot()
+{
+    std::atomic<int>& index = visualBuffer.getReadIndex();
+    const int write = 1 - index.load(std::memory_order_relaxed);
+    auto& snap = visualBuffer.getSnapshot(write); // snapshot is not taken by GUI thread
+
+    snap.count = 0;
+    for(int i = 0; i < activeCount; ++i)
+    {
+        const GrainHandle h = activeHandles[i];
+        const Grain* g = pool.get(h);
+        if(g != nullptr) // ← sécurité obligatoire
+        {
+            snap.grainVisuals[snap.count++] = {g->getReadPosition(), visualY[h.index], envLut.getEnvelopeValue(g->getPhase())};
+        }
+    }
+
+    //snap.count = activeCount;
+    index.store(write, std::memory_order_release);
+}

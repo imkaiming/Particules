@@ -84,8 +84,8 @@ private:
 	AudioFileLoader loader;
 	juce::File currentFile;
 	std::function<void(const juce::File, bool)> onAudioLoadedCallback;
-	//AudioBuffer inputBuffer;
     GrainVisualBuffer visualBuffer;
+
 	//juce::ADSR::Parameters adsrParameters;
 	//juce::ADSR adsr;
 

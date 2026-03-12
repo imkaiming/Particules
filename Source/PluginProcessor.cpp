@@ -72,7 +72,7 @@ void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
 {
     int numChannels = getTotalNumOutputChannels();
     paramsView.init(apvts, sampleRate);
-    grainEngine.init(static_cast<int>(sampleRate), numChannels, samplesPerBlock);
+    grainEngine.init(sampleRate, numChannels, samplesPerBlock);
 
     //juce::Logger::outputDebugString("EMISSION : " + (const juce::String)this->paramsView.getEMISSION() + " duration : " + (const juce::String)this->paramsView.getDuration());
 #if ENABLE_DEBUG_PRESET // exist also in the audio file loader

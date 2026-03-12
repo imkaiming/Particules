@@ -23,8 +23,6 @@ ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail, juce::AudioForma
     updateSelection(selectionValue);
     updateOverflow(positionValue);
 
-    //paramsView.setGrainVisualizer(&grainVisualizer);
-
     audioThumbnail.addChangeListener(this);
 
     addAndMakeVisible(&selection);
@@ -33,16 +31,15 @@ ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail, juce::AudioForma
     addAndMakeVisible(&grainVisualComponent);
 
     // apvts listener to update the UI
-    apvts.addParameterListener(Param::Position::id, this);
-    apvts.addParameterListener(Param::Selection::id, this);
+    //apvts.addParameterListener(Param::Position::id, this);
+    //apvts.addParameterListener(Param::Selection::id, this);
 }
 
 ThumbnailComponent::~ThumbnailComponent()
 {
     audioThumbnail.removeChangeListener(this);
-    apvts.removeParameterListener(Param::Position::id, this);
-    apvts.removeParameterListener(Param::Selection::id, this);
-    //paramsView.setGrainVisualizer(nullptr);
+    //apvts.removeParameterListener(Param::Position::id, this);
+    //apvts.removeParameterListener(Param::Selection::id, this);
 }
 
 void ThumbnailComponent::setFile(const juce::File& file) { audioThumbnail.setSource(new juce::FileInputSource(file)); }
@@ -87,21 +84,21 @@ void ThumbnailComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
     }
 }
 
-void ThumbnailComponent::parameterChanged(const juce::String& parameterID, float newValue)
-{
-    if(parameterID == Param::Position::id)
-    {
-        //DBG("parameter view position new value : " + juce::String(paramsView.getFilePosition()));
-        updatePosition(newValue);
-        return;
-    }
-    if(parameterID == Param::Selection::id)
-    {
-        //DBG("parameter view selection new value : " + juce::String(paramsView.getWindowSelection()));
-        updateSelection(newValue);
-        return;
-    }
-}
+//void ThumbnailComponent::parameterChanged(const juce::String& parameterID, float newValue)
+//{
+//    if(parameterID == Param::Position::id)
+//    {
+//        //DBG("parameter view position new value : " + juce::String(paramsView.getFilePosition()));
+//        updatePosition(newValue);
+//        return;
+//    }
+//    if(parameterID == Param::Selection::id)
+//    {
+//        //DBG("parameter view selection new value : " + juce::String(paramsView.getWindowSelection()));
+//        updateSelection(newValue);
+//        return;
+//    }
+//}
 
 void ThumbnailComponent::updatePosition(float value)
 {
@@ -131,6 +128,8 @@ void ThumbnailComponent::updateSelection(float value)
 void ThumbnailComponent::updateOverflow(float value) { overflow.setSelection(value); }
 
 void ThumbnailComponent::setCallbackOnThumbnailReady(std::function<void()> foo) { onThumbnailReady = std::move(foo); }
+
+void ThumbnailComponent::setNumSamples(const float val) { grainVisualComponent.setNumSamples(val); }
 
 void ThumbnailComponent::resized()
 {

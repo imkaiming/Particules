@@ -30,8 +30,8 @@ namespace Param
 {
     constexpr int MaxGrains = 500;
     constexpr int MaxEvents = 16;
-    constexpr int MaxDuration = 120;
-    constexpr int MaxFileSize = 512ULL * 1024 * 1024; // 512MB limits ULL -> Unsigned Long Long
+    constexpr double MaxDuration = 600; // 10 min 
+    constexpr int MaxFileSize = 2 * 512ULL * 1024 * 1024; // 512MB limits ULL -> Unsigned Long Long
 }
 
 static constexpr const float pi = juce::MathConstants<float>().pi;

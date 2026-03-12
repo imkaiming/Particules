@@ -118,8 +118,8 @@ namespace Param
         //inline constexpr float init = 1.0f;
     }
 
-    namespace GrainPoint
+    namespace GrainVisual
     {
-        inline constexpr float Size = 10.f;
+        inline constexpr float Size = 8.f;
     }
 }

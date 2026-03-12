@@ -12,19 +12,13 @@
 
 #include "../framework/Core.h"
 
-class GrainPoint
+struct GrainVisual
 {
-public:
-    GrainPoint() : opacity{0.f}, samplePos{0}, yPos{0}
-    {
-        juce::Random r;
-        yPos = static_cast<int>(r.nextFloat());
-    }
+    GrainVisual(float xPos, float yPos, float opacity) : opacity{opacity}, xPos{xPos}, yPos{yPos} {}
+    GrainVisual() = default;
+    ~GrainVisual() = default;
 
-    ~GrainPoint() = default;
-
+    float xPos; // the moving position of the grains playing
+    float yPos; // a random value attributed when the grainPoint is created
     float opacity; // the volume directed by the envelope of the grains
-    int samplePos; // the moving position of the grais playing
-    int yPos; // a random value attributed when the grainPoint is created
-
 };

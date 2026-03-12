@@ -142,7 +142,7 @@ const float Grain::getPhase() const noexcept
     }
 }
 
-GrainPoint* Grain::getGrainPoint() { return &grainPoint; }
+//GrainPoint* Grain::getGrainPoint() { return &grainPoint; }
 
 // float Grain::curve(float x, float coefficient) { return 1.0f - std::pow(1.0f - x, coefficient); }
 

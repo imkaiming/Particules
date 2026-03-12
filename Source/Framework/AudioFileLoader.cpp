@@ -57,7 +57,7 @@ bool AudioFileLoader::loadAudio(juce::File& file)
 
     // si le reader de fichier lit un fichier de plus de MaxDuration alors on annule tout
     const double fileDuration = static_cast<double>(reader->lengthInSamples) / reader->sampleRate;
-    if(fileDuration >= static_cast<double>(maxDuration))
+    if(fileDuration >= maxDuration)
     {
         showErrorWindow("The file duration must not exceed " + (juce::String)maxDuration + " seconds."
                         + "/nYour file is currently " + juce::String(fileDuration, 2) + " seconds.");
@@ -76,7 +76,7 @@ bool AudioFileLoader::loadAudio(juce::File& file)
 
     if(file.getSize() > maxFileSize)
     {
-        showErrorWindow("File too large to process (" + juce::String(file.getSize() / (1024 * 1024)) + " MB estimated)");
+        showErrorWindow("File too large to process (" + juce::String(file.getSize() / 2 * (1024 * 1024)) + " MB estimated)");
         return false;
     }
 

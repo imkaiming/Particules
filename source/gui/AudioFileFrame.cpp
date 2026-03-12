@@ -19,7 +19,7 @@ AudioFileFrame::AudioFileFrame(UIContext& uic)
       open_btn((const juce::String) "openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
       play_pause_btn((const juce::String) "playAudioButton", juce::DrawableButton::ButtonStyle::ImageFitted),
       stop_btn((const juce::String) "stopAudioButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-      thumbnailComponent(5, audioProcessor.getAudioFileLoader().getFormatManager(), uic)
+      thumbnailComponent(64, audioProcessor.getAudioFileLoader().getFormatManager(), uic)
 {
     setOpenButtonImage();
     setStopButtonImage();
@@ -35,7 +35,6 @@ AudioFileFrame::AudioFileFrame(UIContext& uic)
     addAndMakeVisible(&stop_btn);
     addAndMakeVisible(&thumbnailComponent);
 
-    //play_btn.setToggleState(false, juce::NotificationType::dontSendNotification);
     play_pause_btn.setEnabled(false);
 
     std::function<void()> callbackOnThumbnailReady = [this]() {
@@ -144,7 +143,6 @@ void AudioFileFrame::setOpenButtonImage()
         nullptr, nullptr, nullptr, nullptr, nullptr);
 }
 
-
 bool AudioFileFrame::isInterestedInFileDrag(const juce::StringArray& files)
 {
     // is it an audio file ?
@@ -213,7 +211,10 @@ void AudioFileFrame::changeListenerCallback(juce::ChangeBroadcaster* source)
         const juce::File& f = audioProcessor.getCurrentFile();
         bool valid = f.existsAsFile();
         if(valid && paramsView.getAudioSource())
+        {
             thumbnailComponent.setFile(f);
+            thumbnailComponent.setNumSamples(paramsView.getNumSamples());
+        }
         play_pause_btn.setEnabled(valid);
     }
 }

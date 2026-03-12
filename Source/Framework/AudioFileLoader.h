@@ -28,8 +28,8 @@ public:
 	juce::AudioFormatManager& getFormatManager();
 
 private:
-	static constexpr uint64_t maxFileSize = Param::MaxFileSize;
-	static constexpr uint8_t maxDuration = Param::MaxDuration;
+	static constexpr int maxFileSize = Param::MaxFileSize;
+	static constexpr double maxDuration = Param::MaxDuration;
 
 
 	void showErrorWindow(juce::String message);

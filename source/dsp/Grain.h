@@ -11,7 +11,6 @@
 #pragma once
 
 #include "../framework/Core.h"
-#include "../utils/GrainPoint.h"
 
 //enum WindowingMethod { triangular, hann, hamming, rectangular, blackman, blackmanHarris, flatTop };
 
@@ -33,8 +32,6 @@ public:
     bool isExhausted() const noexcept { return elapsedSamples >= durationSamples; };
     void update();
 
-    GrainPoint* getGrainPoint();
-
     bool getActive() const noexcept { return active; };
     void setActive(bool b) noexcept { active = b; };
 
@@ -42,7 +39,7 @@ public:
     void incrementGen() noexcept { generation++; };
 
     const float getPhase() const noexcept;
-    //const EnvelopeMode getEnvelopeMode() const noexcept { return envMode; };
+    const float getReadPosition() const noexcept { return readPosition; };
 
 private:
     float curve(float, float);
@@ -91,7 +88,7 @@ private:
     // Amplitude related data
     //std::vector<float> envelopeTable; // precompute the entire grain envelope once
 
-    GrainPoint grainPoint;
+    //GrainPoint grainPoint;
 
     // lifecycle
     uint16_t generation = 0;

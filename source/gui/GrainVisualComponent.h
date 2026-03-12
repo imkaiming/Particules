@@ -37,14 +37,17 @@ public:
 	void paint(juce::Graphics& g) override;
 	void resized() override;
 
-	void setNumSamples(int);
-	//void setGrains();
+	void setNumSamples(const float);
 
 private:
-    static constexpr float SIZE = Param::GrainPoint::Size;
+    static constexpr int MAXGRAINS = static_cast<int>(Param::MaxGrains);
+    static constexpr float GSIZE = Param::GrainVisual::Size;
+    static constexpr float GCENTER = GSIZE / 2.f;
 	void timerCallback() override;
 
 	juce::Colour colour;
     GrainVisualBuffer& visualBuffer;
-	int numSamples;
+	float numSamples;
+
+	float invWidthSamples;
 };

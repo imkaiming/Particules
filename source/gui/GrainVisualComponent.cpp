@@ -10,37 +10,48 @@
 
 #include "GrainVisualComponent.h"
 
-GrainVisualComponent::GrainVisualComponent(GrainVisualBuffer& vb) : visualBuffer{vb}
+GrainVisualComponent::GrainVisualComponent(GrainVisualBuffer& vb)
+    : visualBuffer{vb}, numSamples{0}, invWidthSamples{0.f}, colour{MyColours::lavender}
 {
-    startTimerHz(30);
-    colour = MyColours::lavender;
-    numSamples = 0;
+    startTimerHz(60);
 }
 
-GrainVisualComponent::~GrainVisualComponent()
-{
-    stopTimer();
-}
+GrainVisualComponent::~GrainVisualComponent() { stopTimer(); }
 
 void GrainVisualComponent::paint(juce::Graphics& g)
 {
+    if(invWidthSamples == 0.f)
+        return;
+    const auto& snap = visualBuffer.getSnapshot();
 
-    //for(Grain* grain : *grains)
-    //{
-    //    const float samplePos =
-    //        static_cast<float>(grain->getGrainPoint()->samplePos) / static_cast<float>(numSamples * getWidth());
-    //    const float yPos = static_cast<float>(grain->getGrainPoint()->yPos) * static_cast<float>(getHeight());
-    //    const float opacity = grain->getGrainPoint()->opacity;
-
-    //    g.setColour(colour.withAlpha(opacity));
-    //    g.fillEllipse(samplePos, (float)yPos, SIZE, SIZE);
-    //}
+    for(int i = 0; i < snap.count; ++i)
+    {
+        const GrainVisual& gv = snap.grainVisuals[i];
+        const float samplePos = gv.xPos * invWidthSamples;
+        const float yPos = gv.yPos * static_cast<float>(getHeight());
+        const float opacity = gv.opacity;
+        g.setColour(colour.withAlpha(opacity));
+        g.fillEllipse(samplePos - GCENTER, yPos, GSIZE, GSIZE);
+    }
 }
 
-void GrainVisualComponent::setNumSamples(int numSamples) { this->numSamples = numSamples; }
+void GrainVisualComponent::setNumSamples(const float val)
+{
+    if(val > 0)
+    {
+        numSamples = val;
+        resized();
+    }
+    else
+        invWidthSamples = 0.f;
+}
 
 void GrainVisualComponent::timerCallback() { repaint(); }
 
-void GrainVisualComponent::resized() {}
+void GrainVisualComponent::resized()
+{
+    if(numSamples > 0)
+        invWidthSamples = static_cast<float>(getWidth()) / numSamples;
+}
 
 //void GrainVisualComponent::setGrains(juce::Array<Grain*>* grains) { this->grains = grains; }

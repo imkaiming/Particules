@@ -12,7 +12,8 @@
 #include "../framework/ParameterView.h"
 
 GranularEngine::GranularEngine(ParameterView& sp, GrainVisualBuffer& vb)
-    : paramsView{sp}, scheduler{}, voiceManager{pool, posMod, envLut, vb}, pool{}, posMod{sp.getSampleRate()}
+    : paramsView{sp}, scheduler{}, voiceManager{pool, posMod, envLut, vb}, pool{}, posMod{sp.getSampleRate()}, refreshRate{60.f},
+      accumulator{0}, threshold{0}
 {
 }
 
@@ -44,13 +45,21 @@ void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize
     posMod.advanceBlock(bufferSize);
 
     gainProcess(outputBlock);
+
+    accumulator += bufferSize;
+    while(accumulator >= threshold)
+    {
+        accumulator -= threshold;
+        voiceManager.writeVisualSnapshot();
+    }
 }
 
 // called by prepare to play method
-void GranularEngine::init(int sampleRate, int numChannel, int samplePerBlocks)
+void GranularEngine::init(double sampleRate, int numChannel, int samplePerBlocks)
 {
     //scheduler.reset();
     //juce::Logger::outputDebugString("Granuler Engine init numChannel is : " + juce::String(numChannel));
+    threshold = static_cast<int>(sampleRate / refreshRate);
     posMod.setSampleRate(paramsView.getSampleRate());
 
     juce::dsp::ProcessSpec spec;
