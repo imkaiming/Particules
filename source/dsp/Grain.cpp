@@ -110,8 +110,8 @@ void Grain::update()
 
     elapsedSamples++;
     readPosition += speed;
-    while(readPosition >= inputNumSamples)
-        readPosition -= inputNumSamples;
+    while(readPosition >= static_cast<float>(inputNumSamples))
+        readPosition -= static_cast<float>(inputNumSamples);
 }
 
 // EnvelopeLookUpTable

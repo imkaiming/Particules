@@ -42,7 +42,7 @@ inline float convertToPercentage(float toConvert) noexcept
     return juce::jlimit(0.0f, 1.0f, toConvert * 0.01f); // 0 .. 100
 }
 
-inline float lerp(float a, float b, float f) { return a * (1.0f - f) + (b * f); };
+inline float lerp(float a, float b, float f) { return a * (1.0f - f) + (b * f); }
 
 #if JUCE_DEBUG
     #define ENABLE_DEBUG_PRESET 1

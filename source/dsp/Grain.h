@@ -29,17 +29,17 @@ public:
 
     // Runtime functions
     const float getCurrentSample(const AudioBuffer*, const int, const int) noexcept;
-    bool isExhausted() const noexcept { return elapsedSamples >= durationSamples; };
+    bool isExhausted() const noexcept { return elapsedSamples >= durationSamples; }
     void update();
 
-    bool getActive() const noexcept { return active; };
-    void setActive(bool b) noexcept { active = b; };
+    bool getActive() const noexcept { return active; }
+    void setActive(bool b) noexcept { active = b; }
 
-    uint16_t getGeneration() const noexcept { return generation; };
-    void incrementGen() noexcept { generation++; };
+    uint16_t getGeneration() const noexcept { return generation; }
+    void incrementGen() noexcept { generation++; }
 
     const float getPhase() const noexcept;
-    const float getReadPosition() const noexcept { return readPosition; };
+    const float getReadPosition() const noexcept { return readPosition; }
 
 private:
     float curve(float, float);
