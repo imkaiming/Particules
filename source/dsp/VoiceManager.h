@@ -10,11 +10,11 @@
 
 #pragma once
 
+#include "../framework/GrainVisualBuffer.h"
+#include "../utils/GrainHandle.h"
+#include "EnvelopeLookUpTable.h"
 #include "GrainPool.h"
 #include "PositionModulator.h"
-#include "EnvelopeLookUpTable.h"
-#include "../utils/GrainHandle.h"
-#include "../framework/GrainVisualBuffer.h"
 
 // VoiceManager takes segments from the spawned events and render grains from it
 
@@ -23,29 +23,28 @@ class VoiceManager
 {
 public:
     explicit VoiceManager(GrainPool& pool, PositionModulator& pm, EnvelopeLookUpTable& lut, GrainVisualBuffer& vb);
-	~VoiceManager() = default;
+    ~VoiceManager() = default;
 
-	void reset();
-	void process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
+    void reset();
+    void process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
     void processGrainsSamples(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
     void processSamplesGrains(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
     void spawn(int offset, const ParameterSnapshot& snapshot);
 
-	void writeVisualSnapshot();
+    void writeVisualSnapshot();
 
 private:
-	void removeVoice(const int index);
+    void removeVoice(const int index);
 
-	static constexpr int SIZE = Param::MaxGrains;
+    static constexpr int SIZE = Param::MaxGrains;
 
-	EnvelopeLookUpTable& envLut;
+    EnvelopeLookUpTable& envLut;
     PositionModulator& posMod;
-	GrainPool& pool;
+    GrainPool& pool;
 
-	std::array<GrainHandle, SIZE> activeHandles;
-	uint16_t activeCount;
+    std::array<GrainHandle, SIZE> activeHandles;
+    uint16_t activeCount;
 
     GrainVisualBuffer& visualBuffer;
     std::array<float, SIZE> visualY;
-
 };

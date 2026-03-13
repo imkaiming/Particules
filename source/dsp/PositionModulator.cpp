@@ -91,6 +91,7 @@ const float PositionModulator::computePhaseAtOffset(int offset)
     const int i = (int)(phase * SIZE) & (SIZE - 1);
     return table[i];
     //return a + frac * (b - a);
+    // return lerp(a, b, frac);
 }
 /*
 float PositionModulator::getPhaseAtOffset(int offset)

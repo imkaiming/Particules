@@ -22,11 +22,11 @@ void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize
     // si Emission = 500g/s (1g chaque 0.002s) alors on a interOnSet = 48000/500 = 96 sample.
     // 1024/96 = 10.66 grains par appel
 
-    std::shared_ptr<const AudioBuffer> inputPtr = getInputBuffer();
-    if(!inputPtr)
+    std::shared_ptr<const AudioBuffer> bufferGuard = inputBuffer.load();
+    if(!bufferGuard)
         return;
 
-    const AudioBuffer* inputBuffer = inputPtr.get();
+    const AudioBuffer* inputBuffer = bufferGuard.get();
 
     AudioBlock outputBlock(bufferOut);
 

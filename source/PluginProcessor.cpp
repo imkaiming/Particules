@@ -236,8 +236,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 
 void ParticulesAudioProcessor::setInputBuffer(std::shared_ptr<const AudioBuffer> buffer) noexcept
 {
-    paramsView.setNumChannels(buffer.get()->getNumChannels());
-    paramsView.setNumSamples(buffer.get()->getNumSamples());
+    paramsView.setNumChannels(buffer->getNumChannels());
+    paramsView.setNumSamples(buffer->getNumSamples());
     granularEngine.setInputBuffer(std::move(buffer));
 }
 
