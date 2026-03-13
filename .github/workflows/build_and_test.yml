@@ -64,9 +64,17 @@ jobs:
           # IPP stuff
           wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
           echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
-          
-          sudo apt-get update && sudo apt install libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.1-dev libglu1-mesa-dev xvfb ninja-build intel-oneapi-ipp-devel
-          sudo /usr/bin/Xvfb $DISPLAY & 
+          #sudo /usr/bin/Xvfb $DISPLAY & 
+
+          sudo apt-get update && sudo apt-get install -y libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.1-dev libglu1-mesa-dev xvfb ninja-build
+
+      - name: Start virtual display
+        if: (runner.os == 'Linux')
+        run: |
+          export DISPLAY=:99
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+          Xvfb :99 -screen 0 1920x1080x24 +extension GLX &
+          sleep 2
 
       - name: Install IPP (Windows)
         if: (runner.os == 'Windows')
