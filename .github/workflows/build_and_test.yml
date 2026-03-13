@@ -133,7 +133,7 @@ jobs:
           dev-id-installer-password: ${{ secrets.DEV_ID_INSTALLER_PASSWORD }}
 
       - name: Codesign (macOS)
-        if: ${{ runner.os == 'macOS' }}
+        if: false #${{ runner.os == 'macOS' }}
         timeout-minutes: 5
         run: |
           # Each plugin must be code signed
