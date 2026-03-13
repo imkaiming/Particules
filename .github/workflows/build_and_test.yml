@@ -193,7 +193,7 @@ jobs:
           mv "packaging/Output/${{ env.ARTIFACT_NAME }}.exe" "${{ env.ARTIFACTS_PATH }}/"
 
       - name: Codesign with Azure Trusted Signing
-        if: ${{ runner.os == 'Windows' }}
+        if: ${{ runner.os == 'Windows' && secrets.AZURE_ENDPOINT != '' }} # if azure endpoint exist
         uses: azure/trusted-signing-action@v0.5.11
         with:
           # The Azure Active Directory tenant (directory) ID.
