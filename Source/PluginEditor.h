@@ -9,24 +9,26 @@
 #include "gui/MainFrame.h"
 #include "utils/CustomLookAndFeel.h"
 
+#include "melatonin_inspector/melatonin_inspector.h"
 
-class ParticulesAudioProcessorEditor: public juce::AudioProcessorEditor
+class ParticulesAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
-	ParticulesAudioProcessorEditor(ParticulesAudioProcessor&);
-	~ParticulesAudioProcessorEditor() override;
-	void paint(juce::Graphics&) override;
-	void resized() override;
+    ParticulesAudioProcessorEditor(ParticulesAudioProcessor&);
+    ~ParticulesAudioProcessorEditor() override;
+    void paint(juce::Graphics&) override;
+    void resized() override;
 
-	CustomLookAndFeel& getCustomLook() { return customLookAndFeel; };
-	const MainFrame& getMainFrame() const noexcept { return mainFrame; };
+    CustomLookAndFeel& getCustomLook() { return customLookAndFeel; };
+    const MainFrame& getMainFrame() const noexcept { return mainFrame; };
+
 private:
+    melatonin::Inspector inspector{*this};
 
-	ParticulesAudioProcessor& audioProcessor;
-	MainFrame mainFrame;
-	CustomLookAndFeel& customLookAndFeel;
-	int width, heigth;
+    ParticulesAudioProcessor& audioProcessor;
+    MainFrame mainFrame;
+    CustomLookAndFeel& customLookAndFeel;
+    int width, heigth;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessorEditor)
-
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessorEditor)
 };
