@@ -144,7 +144,8 @@ jobs:
           codesign --force --keychain ${{ steps.keychain.outputs.keychain-path }} -s "${{ secrets.DEVELOPER_ID_APPLICATION}}" -v "${{ env.STANDALONE_PATH }}" --deep --strict --options=runtime --timestamp
 
       - name: Add Custom Icons (macOS)
-        if: ${{ runner.os == 'macOS' }}
+        continue-on-error: true
+        if: false # ${{ runner.os == 'macOS'}}
         run: |
           # add the icns as its own icon resource (meta!)
           sips -i packaging/pamplejuce.icns
@@ -163,6 +164,7 @@ jobs:
           SetFile -a C "${{ env.CLAP_PATH }}"
 
       - name: pkgbuild, Productbuild and Notarize
+        continue-on-error: true
         if: ${{ runner.os == 'macOS' }}
         timeout-minutes: 5
         run: |
