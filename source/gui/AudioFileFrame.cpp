@@ -10,7 +10,7 @@
 
 #include "AudioFileFrame.h"
 #include "../framework/ParameterView.h"
-#include "../pluginProcessor.h"
+#include "../PluginProcessor.h"
 #include "../utils/MyColours.h"
 #include "../utils/UIContext.h"
 

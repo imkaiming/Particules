@@ -34,8 +34,8 @@ private:
 
     void reset() { nextOnSet = 0; }
     //const double getInterOnSet(float, double) const noexcept;
-    double getOffset() const noexcept { return nextOnSet; };
-    void setOffset(double n) noexcept { nextOnSet = n; };
+    double getOffset() const noexcept { return nextOnSet; }
+    void setOffset(double n) noexcept { nextOnSet = n; }
 
     juce::Random random; // parameters to set the interOnset
 

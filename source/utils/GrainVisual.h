@@ -14,7 +14,7 @@
 
 struct GrainVisual
 {
-    GrainVisual(float xPos, float yPos, float opacity) : opacity{opacity}, xPos{xPos}, yPos{yPos} {}
+    GrainVisual(float x, float y, float o) : opacity{o}, xPos{x}, yPos{y} {}
     GrainVisual() = default;
     ~GrainVisual() = default;
 
