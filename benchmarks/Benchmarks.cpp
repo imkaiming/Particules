@@ -16,18 +16,32 @@ TEST_CASE("Boot performance")
         meter.measure([&](int i) { storage[(size_t)i].destruct(); });
     };
 
-    BENCHMARK_ADVANCED("Editor open and close")
-    (Catch::Benchmark::Chronometer meter)
+    //BENCHMARK_ADVANCED("Editor open and close")
+    //(Catch::Benchmark::Chronometer meter)
+    //{
+    //    // due to complex construction logic of the editor, let's measure open/close together
+    //    meter.measure([&](int /* i */) {
+    //        ParticulesAudioProcessor plugin;
+    //        {
+    //            auto editor = plugin.createEditorIfNeeded();
+    //            //plugin.editorBeingDeleted (editor);
+    //            delete editor;
+    //        }
+    //        return 0;
+    //    });
+    //};
+
+    #ifdef JUCE_LINUX
+    BENCHMARK_ADVANCED("Editor open and close")(Catch::Benchmark::Chronometer meter)
     {
-        // due to complex construction logic of the editor, let's measure open/close together
-        meter.measure([&](int /* i */) {
-            ParticulesAudioProcessor plugin;
-            {
-                auto editor = plugin.createEditorIfNeeded();
-                //plugin.editorBeingDeleted (editor);
-                delete editor;
-            }
-            return 0;
-        });
-    };
+        meter.measure([](int) { return 0; }); // no-op
+    }
+#else
+    BENCHMARK_ADVANCED("Editor open and close")(Catch::Benchmark::Chronometer meter)
+    {
+        ParticulesAudioProcessor plugin;
+        auto* editor = plugin.createEditorIfNeeded();
+        delete editor;
+    });
+#endif
 }

@@ -16,6 +16,6 @@ struct GrainHandle
     uint16_t gen = 0;
     GrainHandle(uint16_t i, uint16_t g) : index { i }, gen { g } {}
     GrainHandle() = default;
-    bool isValid() const noexcept { return index != 0xFFFF; };
+    bool isValid() const noexcept { return index != 0xFFFF; }
     static GrainHandle getInvalidState() noexcept { return { 0xFFFF, 0 }; }
 };
