@@ -12,18 +12,23 @@
 
 #include "Core.h"
 
+using AudioLoadedCallback = std::function<void(std::shared_ptr<const AudioBuffer>)>;
+
 class AudioFileLoader
 {
 public:
     AudioFileLoader();
     ~AudioFileLoader() = default;
 
-    void loadFile(std::function<void(juce::File, bool)> completion);
-    void loadFile(const juce::String&, std::function<void(juce::File, bool)> completion);
+    void loadFile(AudioLoadedCallback);
 
-    bool loadAudio(juce::File&);
+    void loadFile(const juce::String&, AudioLoadedCallback);
 
-    void init(double, std::function<void(std::shared_ptr<const AudioBuffer>)>) noexcept;
+    void processLoadingFile(juce::File&, AudioLoadedCallback);
+
+    bool loadAudioFromFile(juce::File&, std::shared_ptr<const AudioBuffer>&);
+
+    void init(double) noexcept;
     juce::AudioFormatManager& getFormatManager();
     const juce::File& getCurrentFile() const noexcept { return currentFile; };
     void setCurrentFile(juce::File& f) noexcept { currentFile = f; };
@@ -38,8 +43,6 @@ private:
     juce::File currentFile;
     std::unique_ptr<juce::FileChooser> chooser;
     juce::AudioFormatManager formatManager; // classe qui traite les formats de fichier tq wav, aiff, ogg, vorbis ou mp3
-
-    std::function<void(std::shared_ptr<const AudioBuffer>)> setInputBufferCalback;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFileLoader)
 };

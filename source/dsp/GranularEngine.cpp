@@ -32,6 +32,26 @@ void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize
 
     posMod.setParameters(snapshot.traversalMode, snapshot.traversalFreq);
 
+    // initiating blocks before looping if needed : scheduler.setBufferSize(bufferSize) ???
+    
+    // TODO : up the for loop sample here and make the scheduler processing sample per sample and not block per block
+    // its going to be easier for the cache and for parameter smoothing also.
+    speedSmooth.setCurrentAndTargetValue(snapshot.speed);
+    sustainRatioSmooth.setCurrentAndTargetValue(snapshot.sustainRatio);
+
+    //const size_t numChannels = outputBlock.getNumChannels();
+    //const int inputNumChannels = inputSource->getNumChannels();
+    //const int inputNumSamples = inputSource->getNumSamples();
+
+    //for(int currentSample = 0; currentSample < bufferSize; currentSample++)
+    //{
+    /* smoothing parameters here* /
+    /* scheduler should process sample per sample and not block per blocks */
+    /* voice manager too */
+    // scheduler.tick()
+    // voiceManager.process(outputBlock, currentSample, inputBuffer);
+    //}
+
     scheduler.process(
         bufferSize, snapshot.sampleRate, snapshot.emission,
         [this](int offset, const ParameterSnapshot& snapshot) { voiceManager.spawn(offset, snapshot); }, snapshot);
@@ -64,6 +84,9 @@ void GranularEngine::init(double sampleRate, int numChannel, int samplePerBlocks
 
     gainProcessor.prepare(spec);
     gainProcessor.setRampDurationSeconds(0.02f);
+
+    speedSmooth.reset(sampleRate, 0.02);
+    sustainRatioSmooth.reset(sampleRate, 0.01);
 }
 
 void GranularEngine::gainProcess(juce::dsp::ProcessContextReplacing<float> context, const float gainLin)

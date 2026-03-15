@@ -20,7 +20,6 @@ ParticulesAudioProcessor::ParticulesAudioProcessor()
 #endif
 {
     initOnAudioLoadedCallback();
-    initSetInputBufferCallback();
 }
 
 ParticulesAudioProcessor::~ParticulesAudioProcessor() {}
@@ -75,7 +74,7 @@ void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
     const int numChannels = getTotalNumOutputChannels();
     paramsView.init(apvts, sampleRate);
     granularEngine.init(sampleRate, numChannels, samplesPerBlock);
-    loader.init(sampleRate, setInputBufferCallback);
+    loader.init(sampleRate);
 
     //juce::Logger::outputDebugString("EMISSION : " + (const juce::String)this->paramsView.getEMISSION() + " duration : " + (const juce::String)this->paramsView.getDuration());
 #if ENABLE_DEBUG_PRESET // exist also in the audio file loader
@@ -243,22 +242,11 @@ void ParticulesAudioProcessor::setInputBuffer(std::shared_ptr<const AudioBuffer>
 
 void ParticulesAudioProcessor::initOnAudioLoadedCallback()
 {
-    onAudioLoadedCallback = [this](juce::File f, bool ok) {
-        if(ok)
-        {
-            loader.setCurrentFile(f);
-        }
-        else
-        {
-            // TODO send UI Notification but do not change current file
-        }
+    onAudioLoadedCallback = [this](std::shared_ptr<const AudioBuffer> buffer) {
+        setInputBuffer(std::move(buffer));
+        // TODO send UI Notification but do not change current file
         sendChangeMessage();
     };
-}
-
-void ParticulesAudioProcessor::initSetInputBufferCallback()
-{
-    setInputBufferCallback = [this](std::shared_ptr<const AudioBuffer> buffer) { setInputBuffer(std::move(buffer)); };
 }
 
 void ParticulesAudioProcessor::loadFile(const juce::String& path) { loader.loadFile(path, onAudioLoadedCallback); }
@@ -269,17 +257,17 @@ void ParticulesAudioProcessor::loadDebugPreset()
 {
     //DBG("SAMPLE RATE = " + (juce::String) paramsView.getSampleRate());
 
-    juce::File debugAudio = juce::File::getSpecialLocation(juce::File::currentExecutableFile)
-                                .getParentDirectory()
-                                .getParentDirectory()
-                                .getParentDirectory()
-                                .getParentDirectory()
-                                .getParentDirectory()
-                                .getParentDirectory()
-                                .getParentDirectory()
-                                .getChildFile("resources")
-                                .getChildFile("audio")
-                                .getChildFile("01_Piano_E.wav");
+    const juce::File debugAudio = juce::File::getSpecialLocation(juce::File::currentExecutableFile)
+                                      .getParentDirectory()
+                                      .getParentDirectory()
+                                      .getParentDirectory()
+                                      .getParentDirectory()
+                                      .getParentDirectory()
+                                      .getParentDirectory()
+                                      .getParentDirectory()
+                                      .getChildFile("resources")
+                                      .getChildFile("audio")
+                                      .getChildFile("01_Piano_E.wav");
 
     //DBG("juce::File::currentApplicationFile " + debugAudioPlaceHolder.getFullPathName());
 
@@ -292,28 +280,28 @@ void ParticulesAudioProcessor::loadDebugPreset()
     //).getChildFile("test.wav");
 
     juce::NormalisableRange<float> gainRange(Param::Gain::min, Param::Gain::max);
-    float normalizedGain = gainRange.convertTo0to1(Param::Gain::init);
+    const float normalizedGain = gainRange.convertTo0to1(Param::Gain::init);
 
     juce::NormalisableRange<float> EmissionRange(Param::Emission::min, Param::Emission::max);
-    float normalizedEmission = EmissionRange.convertTo0to1(10);
+    const float normalizedEmission = EmissionRange.convertTo0to1(10);
 
     juce::NormalisableRange<float> durationRange(Param::Duration::min, Param::Duration::max);
-    float normalizedDuration = durationRange.convertTo0to1(0.05);
+    const float normalizedDuration = durationRange.convertTo0to1(0.05f);
 
     juce::NormalisableRange<float> speedRange(Param::Speed::min, Param::Speed::max);
-    float normalizedSpeed = speedRange.convertTo0to1(1);
+    const float normalizedSpeed = speedRange.convertTo0to1(1);
 
     juce::NormalisableRange<float> positionRange(Param::Position::min, Param::Position::max);
-    float normalizedPosition = positionRange.convertTo0to1(0);
+    const float normalizedPosition = positionRange.convertTo0to1(0);
 
     juce::NormalisableRange<float> selectionRange(Param::Selection::min, Param::Selection::max);
-    float normalizedSelection = selectionRange.convertTo0to1(0.25f);
+    const float normalizedSelection = selectionRange.convertTo0to1(0.25f);
 
     juce::NormalisableRange<float> TraversalFreqRange(Param::TraversalFreq::min, Param::TraversalFreq::max);
-    float normalizedTraversalFreq = TraversalFreqRange.convertTo0to1(1.f);
+    const float normalizedTraversalFreq = TraversalFreqRange.convertTo0to1(1.f);
 
     juce::NormalisableRange<float> SustainRatioRange(Param::SustainRatio::min, Param::SustainRatio::max);
-    float normalizedSustainRatio = SustainRatioRange.convertTo0to1(0.5f);
+    const float normalizedSustainRatio = SustainRatioRange.convertTo0to1(0.5f);
 
     apvts.getParameter(Param::Mix::id)->setValueNotifyingHost(1.f); // MIX100%
     apvts.getParameter(Param::Gain::id)->setValueNotifyingHost(normalizedGain);
@@ -328,9 +316,7 @@ void ParticulesAudioProcessor::loadDebugPreset()
     apvts.getParameter(Param::TraversalMode::id)->setValueNotifyingHost(0.f);
 
     if(debugAudio.existsAsFile())
-    {
-        this->loadFile(debugAudio.getFullPathName());
-    }
+        loadFile(debugAudio.getFullPathName());
 
     //if(paramsView.getSampleSource())
     //	DBG("SAMPLESOURCE OK");

@@ -17,25 +17,26 @@ void ParameterView::init(ValueTreeState& apvts, double sampleRate)
 {
     setSampleRate(sampleRate);
     //mSampleRate.store(sampleRate, std::memory_order_relaxed);
-    view.mix = apvts.getRawParameterValue(Param::Mix::id);
-    view.gain = apvts.getRawParameterValue(Param::Gain::id);
-    view.emission = apvts.getRawParameterValue(Param::Emission::id);
-    view.duration = apvts.getRawParameterValue(Param::Duration::id);
-    view.speed = apvts.getRawParameterValue(Param::Speed::id);
-    view.position = apvts.getRawParameterValue(Param::Position::id);
-    view.selection = apvts.getRawParameterValue(Param::Selection::id);
-    view.envMode = apvts.getRawParameterValue(Param::EnvelopeMode::id);
-    view.sustainRatio = apvts.getRawParameterValue(Param::SustainRatio::id);
-    view.traversalMode = apvts.getRawParameterValue(Param::TraversalMode::id);
-    view.traversalFreq = apvts.getRawParameterValue(Param::TraversalFreq::id);
+    mix = apvts.getRawParameterValue(Param::Mix::id);
+    gain = apvts.getRawParameterValue(Param::Gain::id);
+    emission = apvts.getRawParameterValue(Param::Emission::id);
+    duration = apvts.getRawParameterValue(Param::Duration::id);
+    speed = apvts.getRawParameterValue(Param::Speed::id);
+    position = apvts.getRawParameterValue(Param::Position::id);
+    selection = apvts.getRawParameterValue(Param::Selection::id);
+    envMode = apvts.getRawParameterValue(Param::EnvelopeMode::id);
+    sustainRatio = apvts.getRawParameterValue(Param::SustainRatio::id);
+    traversalMode = apvts.getRawParameterValue(Param::TraversalMode::id);
+    traversalFreq = apvts.getRawParameterValue(Param::TraversalFreq::id);
+
 }
 
 EnvelopeMode ParameterView::getEnvelopeMode() const noexcept
 {
-    if(!view.envMode)
+    if(!envMode)
         return EnvelopeMode::Hann;
 
-    const float v = view.envMode ? (view.envMode->load(std::memory_order_relaxed)) : 0.f;
+    const float v = envMode ? (envMode->load(std::memory_order_relaxed)) : 0.f;
     const int choice = static_cast<int>(std::round(v));
 
     if(choice < 0 || choice >= 7)
@@ -46,10 +47,10 @@ EnvelopeMode ParameterView::getEnvelopeMode() const noexcept
 
 TraversalMode ParameterView::getTraversalMode() const noexcept
 {
-    if(!view.traversalMode)
+    if(!traversalMode)
         return TraversalMode::Sine;
 
-    const float v = view.traversalMode ? (view.traversalMode->load(std::memory_order_relaxed)) : 0;
+    const float v = traversalMode ? (traversalMode->load(std::memory_order_relaxed)) : 0;
     const int choice = static_cast<int>(std::round(v));
     if(choice <= 0 || choice > 5)
         return TraversalMode::Sine;

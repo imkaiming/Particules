@@ -51,6 +51,10 @@ private:
     VoiceManager voiceManager;
 
     juce::dsp::Gain<float> gainProcessor;
+
+    // smoothed value : we only smooth paramaters that change the life cycle of the grains.
+    juce::SmoothedValue<float> speedSmooth;
+    juce::SmoothedValue<float> sustainRatioSmooth;
 };
 //juce::dsp::DryWetMixer<float> mixerProcessor;
 //juce::dsp::Reverb reverbProcessor;

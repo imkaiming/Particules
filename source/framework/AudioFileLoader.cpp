@@ -12,44 +12,48 @@
 
 AudioFileLoader::AudioFileLoader() : sampleRate{0.0} { formatManager.registerBasicFormats(); }
 
-void AudioFileLoader::loadFile(std::function<void(const juce::File, bool)> onAudioLoaded)
+void AudioFileLoader::loadFile(AudioLoadedCallback onAudioLoaded)
 {
     if(!chooser)
         chooser =
             std::make_unique<juce::FileChooser>("Select an audio file.", juce::File{}, formatManager.getWildcardForAllFormats());
     int flags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
 
-    //juce::Logger::outputDebugString("chooser.launchAsync(flags, [this](const juce::FileChooser& resultChooser) ");
     chooser->launchAsync(flags, [this, onAudioLoaded](const juce::FileChooser& resultChooser) {
         juce::File file = resultChooser.getResult();
         if(currentFile == file)
             return;
 
-        bool ok = false;
-        if(file.existsAsFile())
-        {
-            ok = this->loadAudio(file);
-        }
-        onAudioLoaded(file, ok);
+        processLoadingFile(file, onAudioLoaded);
     });
 }
 
-void AudioFileLoader::loadFile(const juce::String& path, std::function<void(const juce::File, bool)> onAudioLoaded)
+void AudioFileLoader::loadFile(const juce::String& path, AudioLoadedCallback onAudioLoaded)
 {
     //juce::Logger::outputDebugString("File dragged ! ");
     juce::File file(path);
     if(currentFile == file)
         return;
 
+    processLoadingFile(file, onAudioLoaded);
+}
+
+void AudioFileLoader::processLoadingFile(juce::File& file, AudioLoadedCallback onAudioLoaded)
+{
     bool ok = false;
     if(file.existsAsFile())
     {
-        ok = loadAudio(file);
+        std::shared_ptr<const AudioBuffer> out;
+        ok = loadAudioFromFile(file, out);
+        if(ok)
+        {
+            setCurrentFile(file);
+            onAudioLoaded(std::move(out));
+        }
     }
-    onAudioLoaded(file, ok);
 }
 
-bool AudioFileLoader::loadAudio(juce::File& file)
+bool AudioFileLoader::loadAudioFromFile(juce::File& file, std::shared_ptr<const AudioBuffer>& out)
 {
     std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(file));
 
@@ -109,9 +113,7 @@ bool AudioFileLoader::loadAudio(juce::File& file)
         return false;
     }
 
-    std::shared_ptr<const AudioBuffer> source = std::make_shared<const AudioBuffer>(std::move(resampledBuffer));
-
-    setInputBufferCalback(source);
+    out = std::make_shared<const AudioBuffer>(std::move(resampledBuffer));
 
     return true;
 }
@@ -121,11 +123,10 @@ bool AudioFileLoader::loadAudio(juce::File& file)
 //	onFileLoaded = std::move(callbackOnFileLoaded);
 //}
 
-void AudioFileLoader::init(double sr, std::function<void(std::shared_ptr<const AudioBuffer>)> callback) noexcept
+void AudioFileLoader::init(double sr) noexcept
 {
     if(sr >= 0.0)
         sampleRate = sr;
-    setInputBufferCalback = callback;
 }
 
 juce::AudioFormatManager& AudioFileLoader::getFormatManager() { return formatManager; }

@@ -69,7 +69,6 @@ public:
 
 private:
     void initOnAudioLoadedCallback();
-    void initSetInputBufferCallback();
     void loadDebugPreset();
     bool debugPresetLoaded = false;
 
@@ -81,8 +80,8 @@ private:
     UIContext uiContext;
 
     AudioFileLoader loader;
-    std::function<void(const juce::File, bool)> onAudioLoadedCallback;
-    std::function<void(std::shared_ptr<const AudioBuffer>)> setInputBufferCallback;
+    std::function<void(std::shared_ptr<const AudioBuffer> )> onAudioLoadedCallback;
+    //std::function<void(std::shared_ptr<const AudioBuffer>)> setInputBufferCallback;
 
     GrainVisualBuffer visualBuffer;
 

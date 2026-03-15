@@ -1,26 +1,9 @@
 #pragma once
 
-#include "Core.h"
 #include "../utils/EnvelopeMode.h"
-#include "../utils/TraversalMode.h"
 #include "../utils/ParameterSnapshot.h"
-
-struct GranularView
-{
-    std::atomic<float>* emission = nullptr;
-    std::atomic<float>* duration = nullptr;
-    std::atomic<float>* speed = nullptr;
-    std::atomic<float>* mix = nullptr;
-    std::atomic<float>* gain = nullptr;
-
-    std::atomic<float>* position = nullptr;
-    std::atomic<float>* selection = nullptr;
-    std::atomic<float>* sustainRatio = nullptr;
-
-    std::atomic<float>* envMode = nullptr;
-    std::atomic<float>* traversalMode = nullptr;
-    std::atomic<float>* traversalFreq = nullptr;
-};
+#include "../utils/TraversalMode.h"
+#include "Core.h"
 
 class ParameterView
 {
@@ -31,31 +14,22 @@ public:
     void init(ValueTreeState& apvts, double sampleRate);
 
     // APVTS param reads
-    float getMix() const noexcept { return view.mix ? convertToPercentage(view.mix->load(std::memory_order_relaxed)) : 0.0f; }
-    float getDecibelGain() const noexcept { return view.gain ? view.gain->load(std::memory_order_relaxed) : 0.0f; }
+    float getMix() const noexcept { return mix ? convertToPercentage(mix->load(std::memory_order_relaxed)) : 0.0f; }
+    float getDecibelGain() const noexcept { return gain ? gain->load(std::memory_order_relaxed) : 0.0f; }
     float getLinearGain() const noexcept
     {
-        return view.gain ? juce::Decibels::decibelsToGain(view.gain->load(std::memory_order_relaxed)) : 0.0f;
+        return gain ? juce::Decibels::decibelsToGain(gain->load(std::memory_order_relaxed)) : 0.0f;
     }
-    float getSpeed() const noexcept { return view.speed ? view.speed->load(std::memory_order_relaxed) : 0.0f; }
-    float getNormalizedDuration() const noexcept { return view.duration ? view.duration->load(std::memory_order_relaxed) : 0.0f; }
-    float getEmission() const noexcept { return view.emission ? view.emission->load(std::memory_order_relaxed) : 0.0f; }
-    float getNormalizedWindowSelection() const noexcept
-    {
-        return view.selection ? view.selection->load(std::memory_order_relaxed) : 0.0f;
-    }
-    float getNormalizedStartPosition() const noexcept
-    {
-        return view.position ? view.position->load(std::memory_order_relaxed) : 0.0f;
-    }
+    float getSpeed() const noexcept { return speed ? speed->load(std::memory_order_relaxed) : 0.0f; }
+    float getNormalizedDuration() const noexcept { return duration ? duration->load(std::memory_order_relaxed) : 0.0f; }
+    float getEmission() const noexcept { return emission ? emission->load(std::memory_order_relaxed) : 0.0f; }
+    float getNormalizedWindowSelection() const noexcept { return selection ? selection->load(std::memory_order_relaxed) : 0.0f; }
+    float getNormalizedStartPosition() const noexcept { return position ? position->load(std::memory_order_relaxed) : 0.0f; }
     float getNormalizedSustainRatio() const noexcept
     {
-        return view.sustainRatio ? view.sustainRatio->load(std::memory_order_relaxed) : 0.0f;
+        return sustainRatio ? sustainRatio->load(std::memory_order_relaxed) : 0.0f;
     }
-    float getTraversalFreq() const noexcept
-    {
-        return view.traversalFreq ? view.traversalFreq->load(std::memory_order_relaxed) : 0.0f;
-    }
+    float getTraversalFreq() const noexcept { return traversalFreq ? traversalFreq->load(std::memory_order_relaxed) : 0.0f; }
 
     EnvelopeMode getEnvelopeMode() const noexcept;
     TraversalMode getTraversalMode() const noexcept;
@@ -67,7 +41,6 @@ public:
     bool getIsPlaying() const noexcept { return mIsPlaying.load(std::memory_order_relaxed); }
     bool getIsGrainsEmpty() const noexcept { return mIsGrainsEmpty.load(std::memory_order_relaxed); }
 
-    //const int getNumChannels() const noexcept;
     const int getNumSamples() const noexcept { return numSamples.load(std::memory_order_relaxed); }
     void setNumSamples(const int samples) noexcept { numSamples.store(samples, std::memory_order_relaxed); }
     const int getNumChannels() const noexcept { return numChannels.load(std::memory_order_relaxed); }
@@ -76,8 +49,6 @@ public:
     const double getSampleRate() const noexcept { return mSampleRate.load(std::memory_order_relaxed); }
     void setSampleRate(double sr) noexcept { mSampleRate.store(sr, std::memory_order_relaxed); }
 
-
-    const GranularView& getView() const noexcept { return view; }
     const ParameterSnapshot getSnapshot() const noexcept;
 
     //void setAudioSource(std::shared_ptr<const AudioBuffer> ib) noexcept;
@@ -94,6 +65,16 @@ private:
     std::atomic<int> numChannels;
     std::atomic<int> numSamples;
 
-    GranularView view;
-
+    // apvts value
+    std::atomic<float>* emission = nullptr;
+    std::atomic<float>* duration = nullptr;
+    std::atomic<float>* speed = nullptr;
+    std::atomic<float>* mix = nullptr;
+    std::atomic<float>* gain = nullptr;
+    std::atomic<float>* position = nullptr;
+    std::atomic<float>* selection = nullptr;
+    std::atomic<float>* sustainRatio = nullptr;
+    std::atomic<float>* envMode = nullptr;
+    std::atomic<float>* traversalMode = nullptr;
+    std::atomic<float>* traversalFreq = nullptr;
 };
