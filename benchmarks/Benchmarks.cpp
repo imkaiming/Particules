@@ -24,9 +24,11 @@ TEST_CASE ("Boot performance")
         // due to complex construction logic of the editor, let's measure open/close together
         meter.measure ([&] (int /* i */) {
             auto editor = plugin.createEditorIfNeeded();
-            plugin.editorBeingDeleted (editor);
+            //plugin.editorBeingDeleted (editor);
             delete editor;
-            return plugin.getActiveEditor();
+            //return plugin.getActiveEditor();
         });
     };
+    //BENCHMARK("Processor constructor") { return std::make_unique<ParticulesAudioProcessor>(); };
+    //BENCHMARK("Processor destructor") { auto p = std::make_unique<ParticulesAudioProcessor>(); };
 }
