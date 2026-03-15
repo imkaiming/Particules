@@ -64,7 +64,7 @@ public:
 
     const int getNumActiveGrains() const noexcept { return granularEngine.getNumActiveGrains(); };
 
-    void setInputBuffer(std::shared_ptr<const AudioBuffer> source) noexcept;
+    void setInputBuffer(std::shared_ptr<const AudioBuffer>&) noexcept;
     const bool isInputBufferLoaded() const noexcept { return granularEngine.isInputBufferLoaded(); };
 
 private:
@@ -80,7 +80,7 @@ private:
     UIContext uiContext;
 
     AudioFileLoader loader;
-    std::function<void(std::shared_ptr<const AudioBuffer> )> onAudioLoadedCallback;
+    AudioLoadedCallback onAudioLoadedCallback;
     //std::function<void(std::shared_ptr<const AudioBuffer>)> setInputBufferCallback;
 
     GrainVisualBuffer visualBuffer;

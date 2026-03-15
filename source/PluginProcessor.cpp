@@ -233,7 +233,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
     return layout;
 }
 
-void ParticulesAudioProcessor::setInputBuffer(std::shared_ptr<const AudioBuffer> buffer) noexcept
+void ParticulesAudioProcessor::setInputBuffer(std::shared_ptr<const AudioBuffer>& buffer) noexcept
 {
     paramsView.setNumChannels(buffer->getNumChannels());
     paramsView.setNumSamples(buffer->getNumSamples());
@@ -242,8 +242,8 @@ void ParticulesAudioProcessor::setInputBuffer(std::shared_ptr<const AudioBuffer>
 
 void ParticulesAudioProcessor::initOnAudioLoadedCallback()
 {
-    onAudioLoadedCallback = [this](std::shared_ptr<const AudioBuffer> buffer) {
-        setInputBuffer(std::move(buffer));
+    onAudioLoadedCallback = [this](std::shared_ptr<const AudioBuffer>& buffer) {
+        setInputBuffer(buffer);
         // TODO send UI Notification but do not change current file
         sendChangeMessage();
     };

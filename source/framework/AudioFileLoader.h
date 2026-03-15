@@ -12,7 +12,6 @@
 
 #include "Core.h"
 
-using AudioLoadedCallback = std::function<void(std::shared_ptr<const AudioBuffer>)>;
 
 class AudioFileLoader
 {

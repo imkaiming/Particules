@@ -23,6 +23,7 @@ using ValueTreeState = juce::AudioProcessorValueTreeState;
 using AudioBlock = juce::dsp::AudioBlock<float>;
 using AudioBuffer = juce::AudioBuffer<float>;
 using str = juce::String;
+using AudioLoadedCallback = std::function<void(std::shared_ptr<const AudioBuffer>&)>;
 
 namespace Param
 {

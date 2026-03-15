@@ -48,7 +48,7 @@ void AudioFileLoader::processLoadingFile(juce::File& file, AudioLoadedCallback o
         if(ok)
         {
             setCurrentFile(file);
-            onAudioLoaded(std::move(out));
+            onAudioLoaded(out);
         }
     }
 }
