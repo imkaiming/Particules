@@ -34,14 +34,14 @@ TEST_CASE("Boot performance")
     #ifdef JUCE_LINUX
     BENCHMARK_ADVANCED("Editor open and close")(Catch::Benchmark::Chronometer meter)
     {
-        meter.measure([](int) { return 0; }); // no-op
-    }
+        meter.measure([](int) { return 0; }); 
+    };
 #else
     BENCHMARK_ADVANCED("Editor open and close")(Catch::Benchmark::Chronometer meter)
     {
         ParticulesAudioProcessor plugin;
         auto* editor = plugin.createEditorIfNeeded();
         delete editor;
-    });
+    };
 #endif
 }

@@ -25,6 +25,31 @@ void VoiceManager::reset()
     pool.reset();
 }
 
+void VoiceManager::render(const int currentSample, const int numChannels, AudioBlock& outputBlock, const AudioBuffer* inputSource)
+{
+    for(int i = activeCount - 1; i >= 0; --i) // backward iteration for removing handle securely
+    {
+        GrainHandle h = activeHandles[i];
+        Grain* g = pool.get(h);
+
+        const float phase = g->getPhase();
+        for(int channel = 0; channel < numChannels; ++channel)
+        {
+            const float sampleValue = g->getCurrentSample(inputSource, channel, numChannels);
+            const float envelopeValue = envLut.getEnvelopeValue(phase);
+            outputBlock.addSample(channel, currentSample, sampleValue * envelopeValue);
+        }
+        g->update();
+        if(g->isExhausted())
+        {
+            pool.release(h);
+            removeVoice(i);
+        }
+    }
+}
+
+
+/*
 void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)
 {
     //processGrainsSamples(outputBlock, bufferSize, inputSource);
@@ -98,7 +123,7 @@ void VoiceManager::processSamplesGrains(AudioBlock& outputBlock, int bufferSize,
         }
     }
 }
-
+*/
 void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
 {
     if(activeCount >= SIZE)

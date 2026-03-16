@@ -11,7 +11,14 @@
 #include "Scheduler.h"
 //#include "PositionModulator.h"
 
-Scheduler::Scheduler() : nextOnSet{0} {}
+Scheduler::Scheduler() : emission{0.f}, sampleRate{0.0}, phase{0.0}, interOnSet{0.0} {}
+
+void Scheduler::reset()
+{
+    emission = 0.f;
+    interOnSet = 0.0;
+    phase = 0.0;
+}
 
 //const double Scheduler::getInterOnSet(float emission, double sampleRate) const noexcept
 //{
@@ -21,7 +28,30 @@ Scheduler::Scheduler() : nextOnSet{0} {}
 //    return sampleRate / (double)emission;
 //}
 
-void Scheduler::process(int bufferSize, double sampleRate, float emission,
+// prepare to play
+void Scheduler::init(double sr) noexcept { sampleRate = sr; }
+
+// start of the process function
+void Scheduler::setEmission(float e) noexcept
+{
+    emission = std::clamp(e, 0.01f, 500.f);
+    interOnSet = sampleRate / (double)emission;
+}
+
+
+// for loop
+void Scheduler::tick(int index, std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& snapshot)
+{
+    if(phase >= interOnSet)
+    {
+        spawn(index, snapshot);
+        phase -= interOnSet;
+    }
+    phase++;
+}
+
+/*
+void Scheduler::processBlock(int bufferSize, double sampleRate, float emission,
     std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& snapshot)
 {
     if(emission <= 0.f)
@@ -31,12 +61,12 @@ void Scheduler::process(int bufferSize, double sampleRate, float emission,
     const double interOnSet = sampleRate / (double)emission;
     if(interOnSet <= 1) // only occur with uncommon sample rates configs
     {
-        setOffset(0.0);
+        setNextOnSet(0.0);
         return;
     }
 
     int count = 0;
-    double offset = getOffset(); // offset of the next outBuffer call
+    double offset = getNextOnSet(); // offset of the next outBuffer call
     while(offset < static_cast<double>(bufferSize) && count < SIZE)
     {
         spawn(static_cast<int>(std::floor(offset)), snapshot); // call the voice manager
@@ -44,5 +74,6 @@ void Scheduler::process(int bufferSize, double sampleRate, float emission,
         count++;
     }
 
-    setOffset(offset - static_cast<double>(bufferSize));
+    setNextOnSet(offset - static_cast<double>(bufferSize));
 };
+*/

@@ -26,9 +26,10 @@ public:
     ~VoiceManager() = default;
 
     void reset();
-    void process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
-    void processGrainsSamples(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
-    void processSamplesGrains(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
+    void render(const int, const int, AudioBlock&, const AudioBuffer*);
+    //void process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
+    //void processGrainsSamples(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
+    //void processSamplesGrains(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
     void spawn(int offset, const ParameterSnapshot& snapshot);
 
     void writeVisualSnapshot();

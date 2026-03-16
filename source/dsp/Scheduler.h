@@ -27,17 +27,26 @@ public:
     explicit Scheduler();
     ~Scheduler() = default;
 
-    void process(int, double, float, std::function<void(int, const ParameterSnapshot&)>, const ParameterSnapshot&);
+    //void processBlock(int, double, float, std::function<void(int, const ParameterSnapshot&)>, const ParameterSnapshot&);
+
+    void init(double) noexcept;
+    void setEmission(float) noexcept;
+    void tick(int, std::function<void(int, const ParameterSnapshot&)>, const ParameterSnapshot&);
 
 private:
     static constexpr int SIZE = Param::MaxEvents;
 
-    void reset() { nextOnSet = 0; }
+    void reset();
     //const double getInterOnSet(float, double) const noexcept;
-    double getOffset() const noexcept { return nextOnSet; }
-    void setOffset(double n) noexcept { nextOnSet = n; }
-
-    juce::Random random; // parameters to set the interOnset
+    //double getNextOnSet() const noexcept { return nextOnSet; }
+    //void setNextOnSet(double n) noexcept { nextOnSet = n; }
 
     double nextOnSet; // Tells us when the next grain should play
+    double interOnSet; // time period between every spawn
+    double phase;
+
+    double sampleRate;
+    float emission;
+
+    juce::Random random; // parameters to set the interOnset
 };
