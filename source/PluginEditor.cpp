@@ -19,13 +19,13 @@ ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(ParticulesAudioPr
 
     addAndMakeVisible(&mainFrame);
 
-#if ENABLE_DEBUG_PRESET
+#if ENABLE_MELATONINE_INSPECTOR
     inspector.setVisible(true);
     inspector.toggle(true);
 #endif
 }
 
-ParticulesAudioProcessorEditor::~ParticulesAudioProcessorEditor() { this->setLookAndFeel(nullptr); }
+ParticulesAudioProcessorEditor::~ParticulesAudioProcessorEditor() { setLookAndFeel(nullptr); }
 
 void ParticulesAudioProcessorEditor::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
 

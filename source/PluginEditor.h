@@ -23,12 +23,17 @@ public:
     const MainFrame& getMainFrame() const noexcept { return mainFrame; };
 
 private:
-    melatonin::Inspector inspector{*this};
-
     ParticulesAudioProcessor& audioProcessor;
     MainFrame mainFrame;
     CustomLookAndFeel& customLookAndFeel;
     int width, heigth;
+
+
+
+#if ENABLE_MELATONINE_INSPECTOR
+    melatonin::Inspector inspector{*this};
+#endif
+
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessorEditor)
 };

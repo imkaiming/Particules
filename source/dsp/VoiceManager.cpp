@@ -10,6 +10,7 @@
 
 #include "VoiceManager.h"
 #include "../utils/ParameterSnapshot.h"
+#include "../utils/SmoothedParameters.h"
 
 VoiceManager::VoiceManager(GrainPool& p, PositionModulator& pm, EnvelopeLookUpTable& lut, GrainVisualBuffer& vb)
     : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}, visualBuffer{vb}
@@ -25,7 +26,8 @@ void VoiceManager::reset()
     pool.reset();
 }
 
-void VoiceManager::render(const int currentSample, const int numChannels, AudioBlock& outputBlock, const AudioBuffer* inputSource)
+void VoiceManager::render(const int currentSample, const int numChannels, AudioBlock& outputBlock, const AudioBuffer* inputSource,
+    const SmoothedParameters& smoothedParams)
 {
     for(int i = activeCount - 1; i >= 0; --i) // backward iteration for removing handle securely
     {
@@ -33,13 +35,14 @@ void VoiceManager::render(const int currentSample, const int numChannels, AudioB
         Grain* g = pool.get(h);
 
         const float phase = g->getPhase();
+        const float envelopeValue = envLut.getEnvelopeValue(phase);
         for(int channel = 0; channel < numChannels; ++channel)
         {
             const float sampleValue = g->getCurrentSample(inputSource, channel, numChannels);
-            const float envelopeValue = envLut.getEnvelopeValue(phase);
             outputBlock.addSample(channel, currentSample, sampleValue * envelopeValue);
         }
-        g->update();
+        g->nextReadPosition();
+        g->updateParams(smoothedParams);
         if(g->isExhausted())
         {
             pool.release(h);
@@ -47,7 +50,6 @@ void VoiceManager::render(const int currentSample, const int numChannels, AudioB
         }
     }
 }
-
 
 /*
 void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)

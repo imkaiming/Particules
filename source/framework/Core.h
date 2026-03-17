@@ -1,13 +1,12 @@
 #pragma once
 
 #include <juce_audio_basics/juce_audio_basics.h>
-#include <juce_audio_utils/juce_audio_utils.h>
-#include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_audio_formats/juce_audio_formats.h>
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_audio_utils/juce_audio_utils.h>
 #include <juce_dsp/juce_dsp.h>
 #include <juce_events/juce_events.h>
 #include <juce_gui_basics/juce_gui_basics.h>
-
 
 #include <cstdint>
 #include <functional>
@@ -29,7 +28,7 @@ namespace Param
 {
     constexpr int MaxGrains = 500;
     constexpr int MaxEvents = 16;
-    constexpr double MaxDuration = 600; // 10 min 
+    constexpr double MaxDuration = 600; // 10 min
     constexpr int MaxFileSize = 2 * 512ULL * 1024 * 1024; // 512MB limits ULL -> Unsigned Long Long
 }
 
@@ -47,4 +46,5 @@ inline float lerp(float a, float b, float f) { return a * (1.0f - f) + (b * f); 
 
 #if JUCE_DEBUG
     #define ENABLE_DEBUG_PRESET 1
+    #define ENABLE_MELATONINE_INSPECTOR 0
 #endif

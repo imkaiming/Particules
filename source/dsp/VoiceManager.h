@@ -19,6 +19,7 @@
 // VoiceManager takes segments from the spawned events and render grains from it
 
 struct ParameterSnapshot;
+struct SmoothedParameters;
 class VoiceManager
 {
 public:
@@ -26,7 +27,7 @@ public:
     ~VoiceManager() = default;
 
     void reset();
-    void render(const int, const int, AudioBlock&, const AudioBuffer*);
+    void render(const int, const int, AudioBlock&, const AudioBuffer*, const SmoothedParameters&);
     //void process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
     //void processGrainsSamples(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
     //void processSamplesGrains(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);

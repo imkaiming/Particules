@@ -16,6 +16,7 @@
 
 #include "../utils/AtomicSharedPtr.h"
 #include "../utils/ParameterSnapshot.h"
+#include "../utils/SmoothedParameters.h"
 #include "Scheduler.h"
 #include "VoiceManager.h"
 
@@ -26,7 +27,7 @@ public:
     ~GranularEngine() = default;
 
     void process(juce::AudioBuffer<float>& output, int bufferSize, ParameterSnapshot snapshot);
-    void init(double sampleRate, int numChannel, int samplePerBlocks);
+    void init(const double, const int, const int);
     int getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); };
 
     void setInputBuffer(std::shared_ptr<const AudioBuffer> ptr) noexcept { inputBuffer.store(std::move(ptr)); };
@@ -35,10 +36,14 @@ public:
 
 private:
     void gainProcess(juce::dsp::ProcessContextReplacing<float>, const float);
+    void updateSmoothedParameters() noexcept;
+    void setTargetSmoothedValue(const ParameterSnapshot&) noexcept;
+
     static constexpr uint8_t mMaxEvent = Param::MaxEvents;
 
     AtomicSharedPtr<const AudioBuffer> inputBuffer;
     //std::shared_ptr<const AudioBuffer> inputBuffer;
+    std::function<void(int i, const ParameterSnapshot& s)> spawnCallback;
 
     const float refreshRate;
     int accumulator;
@@ -52,10 +57,12 @@ private:
 
     juce::dsp::Gain<float> gainProcessor;
 
-    // smoothed value : we only smooth paramaters that change the life cycle of the grains.
+    // smoothed value : we only smooth parameters that change the life cycle of the grains.
     juce::SmoothedValue<float> speedSmooth;
-    juce::SmoothedValue<float> sustainRatioSmooth;
+    //juce::SmoothedValue<float> sustainRatioSmooth;
+    SmoothedParameters smoothedParams;
 };
+
 //juce::dsp::DryWetMixer<float> mixerProcessor;
 //juce::dsp::Reverb reverbProcessor;
 //juce::dsp::Reverb::Parameters params;
