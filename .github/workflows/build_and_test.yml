@@ -180,22 +180,38 @@ jobs:
         if: ${{ runner.os == 'macOS' }}
         timeout-minutes: 5
         run: |
-          pkgbuild --identifier "${{ env.BUNDLE_ID }}.au.pkg" --version $VERSION --component "${{ env.AU_PATH }}" --install-location "/Library/Audio/Plug-Ins/Components"  "packaging/${{ env.PRODUCT_NAME }}.au.pkg"
+          # Paquets individuels
+          pkgbuild --identifier "${{ env.BUNDLE_ID }}.au.pkg" --version $VERSION --component "${{ env.AU_PATH }}" --install-location "/Library/Audio/Plug-Ins/Components" "packaging/${{ env.PRODUCT_NAME }}.au.pkg"
           pkgbuild --identifier "${{ env.BUNDLE_ID }}.vst3.pkg" --version $VERSION --component "${{ env.VST3_PATH }}" --install-location "/Library/Audio/Plug-Ins/VST3" "packaging/${{ env.PRODUCT_NAME }}.vst3.pkg"
           pkgbuild --identifier "${{ env.BUNDLE_ID }}.clap.pkg" --version $VERSION --component "${{ env.CLAP_PATH }}" --install-location "/Library/Audio/Plug-Ins/CLAP" "packaging/${{ env.PRODUCT_NAME }}.clap.pkg"
-
-          # Standalone is special, needs a boolean to always install in /Applications
+          
+          # Standalone
           pkgbuild --analyze --root "$(dirname "${{ env.STANDALONE_PATH }}")" standalone.plist
           plutil -replace BundleIsRelocatable -bool NO standalone.plist
           pkgbuild --identifier "${{ env.BUNDLE_ID }}.app.pkg" --version $VERSION --root "$(dirname "${{ env.STANDALONE_PATH }}")" --component-plist standalone.plist --install-location "/Applications" "packaging/${{ env.PRODUCT_NAME }}.app.pkg"
-
+          
           cd packaging
+          
+          # Substitution des variables (envsubst devrait fonctionner si les vars sont bien dans $GITHUB_ENV)
           envsubst < distribution.xml.template > distribution.xml
-          #productbuild --resources ./resources --distribution distribution.xml --sign "${{ secrets.DEVELOPER_ID_INSTALLER }}" --timestamp "${{ env.ARTIFACT_NAME }}.pkg"
-          productbuild --resources ./resources --distribution distribution.xml "${{ secrets.DEVELOPER_ID_INSTALLER }}" "${{ env.ARTIFACT_NAME }}.pkg"
-
-          #xcrun notarytool submit "${{ env.ARTIFACT_NAME }}.pkg" --apple-id ${{ secrets.NOTARIZATION_USERNAME }} --password ${{ secrets.NOTARIZATION_PASSWORD }} --team-id ${{ secrets.TEAM_ID }} --wait
-          #xcrun stapler staple "${{ env.ARTIFACT_NAME }}.pkg"
+          
+          # Debug rapide pour vérifier
+          echo "Variables disponibles :"
+          echo "PRODUCT_NAME = ${{ env.PRODUCT_NAME }}"
+          echo "VERSION      = $VERSION"
+          echo "ARTIFACT_NAME = ${{ env.ARTIFACT_NAME }}"
+          ls -la
+          head -n 10 distribution.xml   # montre les 10 premières lignes du xml généré
+          
+          # productbuild SANS signature (version minimale qui marche)
+          productbuild \
+            --resources ./resources \
+            --distribution distribution.xml \
+            "${{ env.ARTIFACT_NAME }}.pkg"
+          
+          # Les étapes de notarisation sont commentées car tu n'as pas les secrets
+          # xcrun notarytool submit "${{ env.ARTIFACT_NAME }}.pkg" --apple-id ${{ secrets.NOTARIZATION_USERNAME }} --password ${{ secrets.NOTARIZATION_PASSWORD }} --team-id ${{ secrets.TEAM_ID }} --wait
+          # xcrun stapler staple "${{ env.ARTIFACT_NAME }}.pkg"
           #
       - name: Zip
         if: ${{ runner.os == 'Linux' }}
