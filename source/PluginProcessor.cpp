@@ -74,12 +74,7 @@ void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBl
     const int numChannels = getTotalNumOutputChannels();
     paramsView.init(apvts, sampleRate);
     granularEngine.init(sampleRate, numChannels, samplesPerBlock);
-    loader.init(sampleRate);
-
-    //juce::Logger::outputDebugString("EMISSION : " + (const juce::String)this->paramsView.getEMISSION() + " duration : " + (const juce::String)this->paramsView.getDuration());
-#if ENABLE_DEBUG_PRESET // exist also in the audio file loader
-    loadDebugPreset();
-#endif
+    loader.init(sampleRate, numChannels);
 }
 
 void ParticulesAudioProcessor::releaseResources() {}
@@ -116,15 +111,16 @@ void ParticulesAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, ju
     if(!snapshot.isValid())
         return;
 
-    const int totalNumInputChannels = getTotalNumInputChannels();
-    const int totalNumOutputChannels = getTotalNumOutputChannels();
-    const int numSamples = buffer.getNumSamples();
+    const int inputuNumChannels = getTotalNumInputChannels();
+    const int outputNumChannels = getTotalNumOutputChannels();
+    const int bufferSize = buffer.getNumSamples();
+    float* const* outputPtrs = buffer.getArrayOfWritePointers();
 
-    for(int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear(i, 0, numSamples);
+    for(int i = inputuNumChannels; i < outputNumChannels; ++i)
+        juce::FloatVectorOperations::clear(outputPtrs[i], bufferSize);
 
     if(paramsView.getIsPlaying() || !paramsView.getIsGrainsEmpty())
-        granularEngine.process(buffer, numSamples, snapshot);
+        granularEngine.process(buffer, bufferSize, outputPtrs, outputNumChannels, snapshot);
 }
 
 bool ParticulesAudioProcessor::hasEditor() const
@@ -235,7 +231,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
 
 void ParticulesAudioProcessor::setInputBuffer(std::shared_ptr<const AudioBuffer>& buffer) noexcept
 {
-    paramsView.setNumChannels(buffer->getNumChannels());
+    const int inputChannels = buffer->getNumChannels();
+    paramsView.setNumChannels(inputChannels);
     paramsView.setNumSamples(buffer->getNumSamples());
     granularEngine.setInputBuffer(std::move(buffer));
 }

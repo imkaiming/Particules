@@ -30,7 +30,6 @@ void AudioFileLoader::loadFile(AudioLoadedCallback onAudioLoaded)
 
 void AudioFileLoader::loadFile(const juce::String& path, AudioLoadedCallback onAudioLoaded)
 {
-    //juce::Logger::outputDebugString("File dragged ! ");
     juce::File file(path);
     if(currentFile == file)
         return;
@@ -78,7 +77,7 @@ bool AudioFileLoader::loadAudioFromFile(juce::File& file, std::shared_ptr<const 
     }
 
     const int numSamples = (int)reader->lengthInSamples;
-    const unsigned int numChannels = reader->numChannels;
+    const int inputNumChannels = reader->numChannels;
 
     if(file.getSize() > maxFileSize)
     {
@@ -88,7 +87,7 @@ bool AudioFileLoader::loadAudioFromFile(juce::File& file, std::shared_ptr<const 
 
     double ratio = reader->sampleRate / targetSampleRate;
 
-    juce::AudioBuffer<float> tempBuffer(numChannels, numSamples);
+    juce::AudioBuffer<float> tempBuffer(inputNumChannels, numSamples);
     if(!reader->read(&tempBuffer, 0, numSamples, 0, true, true))
     {
         showErrorWindow("Failed to read audio data from the temporary buffer");
@@ -97,7 +96,7 @@ bool AudioFileLoader::loadAudioFromFile(juce::File& file, std::shared_ptr<const 
 
     const int resampledSamples = static_cast<int>(numSamples / ratio);
 
-    juce::AudioBuffer<float> resampledBuffer(numChannels, resampledSamples);
+    juce::AudioBuffer<float> resampledBuffer(inputNumChannels, resampledSamples);
 
     juce::LagrangeInterpolator resampler;
 
@@ -113,20 +112,17 @@ bool AudioFileLoader::loadAudioFromFile(juce::File& file, std::shared_ptr<const 
         return false;
     }
 
-    out = std::make_shared<const AudioBuffer>(std::move(resampledBuffer));
+    const AudioBuffer downMixedBuffer = channelMixer.downmix(resampledBuffer);
+    out = std::make_shared<const AudioBuffer>(std::move(downMixedBuffer));
 
     return true;
 }
 
-//void AudioFileLoader::setOnFileLoadedCallBack(std::function<void(bool)> callbackOnFileLoaded)
-//{
-//	onFileLoaded = std::move(callbackOnFileLoaded);
-//}
-
-void AudioFileLoader::init(double sr) noexcept
+void AudioFileLoader::init(double sr, int numCh) noexcept
 {
     if(sr >= 0.0)
         sampleRate = sr;
+    channelMixer.setTargetChannel(numCh);
 }
 
 juce::AudioFormatManager& AudioFileLoader::getFormatManager() { return formatManager; }

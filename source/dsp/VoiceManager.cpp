@@ -26,23 +26,34 @@ void VoiceManager::reset()
     pool.reset();
 }
 
-void VoiceManager::render(const int currentSample, const int numChannels, AudioBlock& outputBlock, const AudioBuffer* inputSource,
-    const SmoothedParameters& smoothedParams)
+//void VoiceManager::render(const int currentSample, const int numChannels, AudioBlock& outputBlock, const AudioBuffer* inputBuffer,
+//   const SmoothedParameters& params)
+void VoiceManager::render(int currentSample, int outputNumChannels, float* const* outputPtrs, const float* const* inputPtrs,
+    int inputNumSamples, const SmoothedParameters& params)
 {
-    for(int i = activeCount - 1; i >= 0; --i) // backward iteration for removing handle securely
+    for(int i = activeCount - 1; i >= 0; --i) // backward iteration
     {
         GrainHandle h = activeHandles[i];
         Grain* g = pool.get(h);
 
         const float phase = g->getPhase();
         const float envelopeValue = envLut.getEnvelopeValue(phase);
-        for(int channel = 0; channel < numChannels; ++channel)
+
+        for(int channel = 0; channel < outputNumChannels; ++channel)
         {
-            const float sampleValue = g->getCurrentSample(inputSource, channel, numChannels);
-            outputBlock.addSample(channel, currentSample, sampleValue * envelopeValue);
+            const float* sample = inputPtrs[channel];
+            int index = static_cast<int>(g->getReadPosition());
+            const float readPos = g->getReadPosition();
+            float frac = readPos - (float)index;
+            const float s0 = sample[index];
+            const float s1 = sample[(index + 1) % inputNumSamples];
+
+            outputPtrs[channel][currentSample] += lerp(s0, s1, frac) * envelopeValue;
+            //outputBlock.addSample(channel, currentSample, lerp(s0, s1, frac) * envelopeValue);
         }
+
         g->nextReadPosition();
-        g->updateParams(smoothedParams);
+        g->updateParams(params);
         if(g->isExhausted())
         {
             pool.release(h);
@@ -126,7 +137,8 @@ void VoiceManager::processSamplesGrains(AudioBlock& outputBlock, int bufferSize,
     }
 }
 */
-void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
+
+void VoiceManager::spawn(const ParameterSnapshot& snapshot)
 {
     if(activeCount >= SIZE)
         return; // cannot spawn any more grains
@@ -140,7 +152,7 @@ void VoiceManager::spawn(int offset, const ParameterSnapshot& snapshot)
 
     envLut.setEnvelopeMode(snapshot.envMode);
 
-    grain->config(snapshot, offset, posMod.computePhaseAtOffset(offset)); // init the grain here before process with the snapshot
+    grain->config(snapshot, posMod.computePhase()); // init the grain here before process with the snapshot
     activeHandles[activeCount++] = handle;
 }
 

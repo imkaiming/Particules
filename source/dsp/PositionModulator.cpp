@@ -70,28 +70,18 @@ void PositionModulator::advanceBlock(int numSamples)
     //mPhaseAccumulator -= std::floor(mPhaseAccumulator);
 }
 
-const float PositionModulator::computePhaseAtOffset(int offset)
+const float PositionModulator::computePhase()
 {
     if(mTraversalMod == TraversalMode::None)
         return 0.f;
 
     const float* table = tables[static_cast<int>(mTraversalMod)];
 
-    float phase = mPhaseAccumulator + offset * mPhaseIncrement;
+    float phase = mPhaseAccumulator;
     phase -= static_cast<int>(phase);
-
-    // TODO precompute table[i] and table[i+1] per buffer size if you want more perf
-    //const float x = std::clamp(phase, 0.f, 1.f) * (static_cast<float>(SIZE) - 1.f);
-    //const int i = std::min(static_cast<int>(x), SIZE - 2);
-    //const float frac = x - i;
-
-    //const float a = table[i];
-    //const float b = table[i + 1];
 
     const int i = (int)(phase * SIZE) & (SIZE - 1);
     return table[i];
-    //return a + frac * (b - a);
-    // return lerp(a, b, frac);
 }
 /*
 float PositionModulator::getPhaseAtOffset(int offset)

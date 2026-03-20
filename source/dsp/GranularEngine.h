@@ -23,11 +23,11 @@
 class GranularEngine
 {
 public:
-    explicit GranularEngine(GrainVisualBuffer& vb);
+    GranularEngine(GrainVisualBuffer& vb);
     ~GranularEngine() = default;
 
-    void process(juce::AudioBuffer<float>& output, int bufferSize, ParameterSnapshot snapshot);
-    void init(const double, const int, const int);
+    void process(AudioBuffer& output, int bufferSize, float* const* outputPtrs, int outputNumChannels, ParameterSnapshot snapshot);
+    void init(double, int, int);
     int getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); };
 
     void setInputBuffer(std::shared_ptr<const AudioBuffer> ptr) noexcept { inputBuffer.store(std::move(ptr)); };
@@ -41,9 +41,9 @@ private:
 
     static constexpr uint8_t mMaxEvent = Param::MaxEvents;
 
-    AtomicSharedPtr<const AudioBuffer> inputBuffer;
+    AtomicSharedPtr<const AudioBuffer> inputBuffer; // should be downmixed
     //std::shared_ptr<const AudioBuffer> inputBuffer;
-    std::function<void(int i, const ParameterSnapshot& s)> spawnCallback;
+    std::function<void(const ParameterSnapshot& s)> spawnCallback;
 
     const float refreshRate;
     int accumulator;

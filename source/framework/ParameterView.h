@@ -41,12 +41,12 @@ public:
     bool getIsPlaying() const noexcept { return mIsPlaying.load(std::memory_order_relaxed); }
     bool getIsGrainsEmpty() const noexcept { return mIsGrainsEmpty.load(std::memory_order_relaxed); }
 
-    const int getNumSamples() const noexcept { return numSamples.load(std::memory_order_relaxed); }
-    void setNumSamples(const int samples) noexcept { numSamples.store(samples, std::memory_order_relaxed); }
-    const int getNumChannels() const noexcept { return numChannels.load(std::memory_order_relaxed); }
-    void setNumChannels(const int samples) noexcept { numChannels.store(samples, std::memory_order_relaxed); }
+    int getNumSamples() const noexcept { return numSamples.load(std::memory_order_relaxed); }
+    void setNumSamples(int samples) noexcept { numSamples.store(samples, std::memory_order_relaxed); }
+    int getNumChannels() const noexcept { return numChannels.load(std::memory_order_relaxed); }
+    void setNumChannels(int samples) noexcept { numChannels.store(samples, std::memory_order_relaxed); }
 
-    const double getSampleRate() const noexcept { return mSampleRate.load(std::memory_order_relaxed); }
+    double getSampleRate() const noexcept { return mSampleRate.load(std::memory_order_relaxed); }
     void setSampleRate(double sr) noexcept { mSampleRate.store(sr, std::memory_order_relaxed); }
 
     const ParameterSnapshot getSnapshot() const noexcept;

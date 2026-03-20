@@ -1,13 +1,14 @@
-
-#include "../source/dsp/Grain.h"
-#include "../source/dsp/GrainPool.h"
-#include "../source/dsp/PositionModulator.h"
-#include "../source/dsp/VoiceManager.h"
-#include "../source/framework/Core.h"
-#include "../source/utils/GrainHandle.h"
-#include "../source/utils/ParameterSnapshot.h"
-#include "../source/framework/ParameterView.h"
-#include "../source/framework/PluginParams.h"
+//
+//#include "../source/dsp/Grain.h"
+//#include "../source/dsp/GrainPool.h"
+//#include "../source/dsp/PositionModulator.h"
+//#include "../source/dsp/VoiceManager.h"
+//#include "../source/framework/Core.h"
+//#include "../source/utils/GrainHandle.h"
+//#include "../source/utils/ParameterSnapshot.h"
+//#include "../source/framework/ParameterView.h"
+//#include "../source/framework/PluginParams.h"
+#include "../source/PluginProcessor.h"
 #include <catch2/catch_test_macros.hpp>
 
 struct VoiceManagerFixture

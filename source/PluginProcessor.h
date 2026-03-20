@@ -67,9 +67,10 @@ public:
     void setInputBuffer(std::shared_ptr<const AudioBuffer>&) noexcept;
     const bool isInputBufferLoaded() const noexcept { return granularEngine.isInputBufferLoaded(); };
 
+    void loadDebugPreset();
+
 private:
     void initOnAudioLoadedCallback();
-    void loadDebugPreset();
     bool debugPresetLoaded = false;
 
     ValueTreeState apvts; // connecte les slider du GUI et les paramètres (fourni des valeurs atomiques)

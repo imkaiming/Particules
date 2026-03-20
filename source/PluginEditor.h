@@ -23,7 +23,7 @@ public:
     const MainFrame& getMainFrame() const noexcept { return mainFrame; };
 
 private:
-    ParticulesAudioProcessor& audioProcessor;
+    ParticulesAudioProcessor& pluginProcessor;
     MainFrame mainFrame;
     CustomLookAndFeel& customLookAndFeel;
     int width, heigth;

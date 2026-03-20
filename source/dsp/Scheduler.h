@@ -24,14 +24,13 @@
 class Scheduler
 {
 public:
-    explicit Scheduler();
+    Scheduler();
     ~Scheduler() = default;
-
-    //void processBlock(int, double, float, std::function<void(int, const ParameterSnapshot&)>, const ParameterSnapshot&);
 
     void init(double) noexcept;
     void setEmission(float) noexcept;
-    void tick(int, std::function<void(int, const ParameterSnapshot&)>, const ParameterSnapshot&);
+    void tick(std::function<void(const ParameterSnapshot&)>, const ParameterSnapshot&);
+    //void tick(int, std::function<void(int, const ParameterSnapshot&)>, const ParameterSnapshot&);
 
 private:
     static constexpr int SIZE = Param::MaxEvents;

@@ -20,26 +20,27 @@ struct SmoothedParameters;
 class Grain
 {
 public:
-    explicit Grain();
+    Grain();
     ~Grain() = default;
 
     void reset();
-    void config(const ParameterSnapshot&, int, float);
+    void config(const ParameterSnapshot& snapshot, float normalizedPosMod);
 
-    // Runtime functions
-    const float getCurrentSample(const AudioBuffer*, const int, const int) noexcept;
-    bool isExhausted() const noexcept { return elapsedSamples >= durationSamples; }
+    //const float getCurrentSample(const AudioBuffer*, const int) noexcept;
+
+    //const int getReadPosition() const noexcept { return static_cast<int>(readPosition); } 
+    const float getReadPosition() const noexcept; 
     void nextReadPosition() noexcept;
     void updateParams(const SmoothedParameters&) noexcept;
 
     bool getActive() const noexcept { return active; }
     void setActive(bool b) noexcept { active = b; }
+    bool isExhausted() const noexcept { return elapsedSamples >= durationSamples; }
 
     uint16_t getGeneration() const noexcept { return generation; }
     void incrementGen() noexcept { generation++; }
 
     const float getPhase() const noexcept;
-    const float getReadPosition() const noexcept { return readPosition; }
 
 private:
     //void setEnvelopeData(const float sustainRatio) noexcept;
@@ -49,7 +50,7 @@ private:
     int durationSamples; // définie la durée en nombre de sample
     int startPositionSamples; // définie la position en sample dans le buffer
     int selectionWindow; // définie la position maximale qu'un grain peut atteindre dans le buffer
-    int delaySamples; // act like a little delay to sync scheduler.process() and voiceManager.process()
+    //int delaySamples; // act like a little delay to sync scheduler.process() and voiceManager.process()
     int sustainWidthSamples; // définie la taille des rampes d'amplitude en entré et en sortie du grain
     int fadeInSamples; // 0 to fadeIn
     int fadeOutSamples; // fadeOut to durationSamples

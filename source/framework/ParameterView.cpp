@@ -58,20 +58,6 @@ TraversalMode ParameterView::getTraversalMode() const noexcept
     return static_cast<TraversalMode>(choice);
 }
 
-//const int ParameterView::getNumChannels() const noexcept
-//{
-//    std::shared_ptr<const AudioBuffer> source = std::atomic_load(&inputBuffer);
-//    return source ? source->getNumChannels() : -1;
-//    //return sampleSource.load()->numChannels;
-//}
-//
-//const int ParameterView::getNumSamples() const noexcept
-//{
-//    std::shared_ptr<const AudioBuffer> source = std::atomic_load(&inputBuffer);
-//    return source ? source->getNumSamples() : -1;
-//    //return sampleSource.load()->numSamples;
-//}
-
 const ParameterSnapshot ParameterView::getSnapshot() const noexcept
 {
     ParameterSnapshot snapshot;
@@ -100,15 +86,3 @@ const ParameterSnapshot ParameterView::getSnapshot() const noexcept
 
     return snapshot;
 };
-
-//void ParameterView::setAudioSource(std::shared_ptr<const AudioBuffer> ib) noexcept
-//{
-//    setNumChannels(ib.get()->getNumChannels());
-//    setNumSamples(ib.get()->getNumSamples());
-//    inputBuffer.store(std::move(ib), std::memory_order_relaxed);
-//}
-//
-//std::shared_ptr<const AudioBuffer> ParameterView::getAudioSource() const noexcept
-//{
-//    return inputBuffer.load(std::memory_order_acquire);
-//}

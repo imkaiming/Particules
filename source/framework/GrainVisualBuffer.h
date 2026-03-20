@@ -21,7 +21,7 @@ public:
     };
 
     // audio thread
-    VisualSnapshot& getSnapshot(const int i) noexcept { return visualSnapshot[i]; };
+    VisualSnapshot& getSnapshot(int i) noexcept { return visualSnapshot[i]; };
 
     // gui thread
     const VisualSnapshot& getSnapshot() const noexcept { return visualSnapshot[readIndex.load(std::memory_order_acquire)]; }

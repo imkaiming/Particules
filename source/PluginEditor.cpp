@@ -2,10 +2,10 @@
 #include "PluginProcessor.h"
 
 ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(ParticulesAudioProcessor& p)
-    : AudioProcessorEditor(&p), audioProcessor(p), mainFrame(p.getUIContext()),
+    : AudioProcessorEditor(&p), pluginProcessor(p), mainFrame(p.getUIContext()),
       customLookAndFeel(p.getUIContext().customLookAndFeel)
 {
-    this->setLookAndFeel(&customLookAndFeel);
+    setLookAndFeel(&customLookAndFeel);
 
     setResizable(true, true);
     setResizeLimits(450, 225, 1200, 600);
@@ -18,6 +18,10 @@ ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(ParticulesAudioPr
     setSize(width, heigth);
 
     addAndMakeVisible(&mainFrame);
+
+#if ENABLE_DEBUG_PRESET 
+    pluginProcessor.loadDebugPreset();
+#endif
 
 #if ENABLE_MELATONINE_INSPECTOR
     inspector.setVisible(true);

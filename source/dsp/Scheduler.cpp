@@ -39,12 +39,13 @@ void Scheduler::setEmission(float e) noexcept
 }
 
 
-// for loop
-void Scheduler::tick(int index, std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& snapshot)
+//void Scheduler::tick(int index, std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& snapshot)
+void Scheduler::tick(std::function<void(const ParameterSnapshot&)> spawn, const ParameterSnapshot& snapshot)
 {
     if(phase >= interOnSet)
     {
-        spawn(index, snapshot);
+        //spawn(index, snapshot);
+        spawn(snapshot);
         phase -= interOnSet;
     }
     phase++;

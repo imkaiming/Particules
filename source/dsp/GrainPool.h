@@ -11,7 +11,7 @@ struct GrainHandle;
 class GrainPool
 {
 public:
-    explicit GrainPool();
+    GrainPool();
     ~GrainPool() = default;
 
     Grain* get(const GrainHandle handle);

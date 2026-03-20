@@ -28,7 +28,7 @@ public:
 
     void reset();
     void advanceBlock(int);
-    const float computePhaseAtOffset(int);
+    const float computePhase();
 
     //float getPhaseAtOffset(int);
     //float getCurrentValue() const noexcept { return mCurrentValue; };

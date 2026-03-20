@@ -9,7 +9,7 @@
 class EnvelopeLookUpTable
 {
 public:
-    explicit EnvelopeLookUpTable();
+    EnvelopeLookUpTable();
     ~EnvelopeLookUpTable() = default;
 
     const float getEnvelopeValue(float phase);

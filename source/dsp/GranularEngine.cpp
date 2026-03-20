@@ -15,13 +15,14 @@ GranularEngine::GranularEngine(GrainVisualBuffer& vb)
     : scheduler{}, voiceManager{pool, posMod, envLut, vb}, pool{}, posMod{}, refreshRate{60.f}, accumulator{0}, threshold{0},
       smoothedParams{}
 {
-    spawnCallback = [this](int i, const ParameterSnapshot& s) { voiceManager.spawn(i, s); };
+    spawnCallback = [this](const ParameterSnapshot& s) { voiceManager.spawn(s); };
 }
 
 // pour 1024 buffer size en 48kHz on a une fenetre de 21ms par appelle de compute.
 // si Emission = 500g/s (1g chaque 0.002s) alors on a interOnSet = 48000/500 = 96 sample.
 // 1024/96 = 10.66 grains par appel
-void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize, const ParameterSnapshot snapshot)
+void GranularEngine::process(
+    AudioBuffer& bufferOut, int bufferSize, float* const* outputPtrs, int outputNumChannels, const ParameterSnapshot snapshot)
 {
     auto bufferGuard = inputBuffer.load();
     //std::shared_ptr<const AudioBuffer> bufferGuard = inputBuffer.load();
@@ -32,21 +33,21 @@ void GranularEngine::process(juce::AudioBuffer<float>& bufferOut, int bufferSize
 
     AudioBlock outputBlock(bufferOut);
 
-    // configuration
+    const float* const* inputPtrs = inputBuffer->getArrayOfReadPointers();
+    const int inputNumsChannels = inputBuffer->getNumChannels();
+    const int inputNumSamples = inputBuffer->getNumSamples();
+
+    jassert(inputNumsChannels == outputNumChannels);
+
     setTargetSmoothedValue(snapshot);
     posMod.setParameters(snapshot.traversalMode, snapshot.traversalFreq);
     scheduler.setEmission(snapshot.emission);
 
-    const int numChannels = static_cast<int>(outputBlock.getNumChannels());
-    //const int inputNumChannels = inputSource->getNumChannels();
-    //const int inputNumSamples = inputSource->getNumSamples();
-
-    // processing
     for(int currentSample = 0; currentSample < bufferSize; currentSample++)
     {
         updateSmoothedParameters();
-        scheduler.tick(currentSample, spawnCallback, snapshot);
-        voiceManager.render(currentSample, numChannels, outputBlock, inputBuffer, smoothedParams);
+        scheduler.tick(spawnCallback, snapshot);
+        voiceManager.render(currentSample, outputNumChannels, outputPtrs, inputPtrs, inputNumSamples, smoothedParams);
     }
 
     posMod.advanceBlock(bufferSize);

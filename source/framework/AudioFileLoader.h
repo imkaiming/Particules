@@ -10,8 +10,8 @@
 
 #pragma once
 
+#include "ChannelMixer.h"
 #include "Core.h"
-
 
 class AudioFileLoader
 {
@@ -27,7 +27,7 @@ public:
 
     bool loadAudioFromFile(juce::File&, std::shared_ptr<const AudioBuffer>&);
 
-    void init(double) noexcept;
+    void init(double, int) noexcept;
     juce::AudioFormatManager& getFormatManager();
     const juce::File& getCurrentFile() const noexcept { return currentFile; };
     void setCurrentFile(juce::File& f) noexcept { currentFile = f; };
@@ -39,6 +39,7 @@ private:
 
     double sampleRate;
 
+    ChannelMixer channelMixer;
     juce::File currentFile;
     std::unique_ptr<juce::FileChooser> chooser;
     juce::AudioFormatManager formatManager; // classe qui traite les formats de fichier tq wav, aiff, ogg, vorbis ou mp3
