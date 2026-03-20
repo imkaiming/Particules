@@ -191,28 +191,33 @@ jobs:
           pkgbuild --identifier "${{ env.BUNDLE_ID }}.app.pkg" --version $VERSION --root "$(dirname "${{ env.STANDALONE_PATH }}")" --component-plist standalone.plist --install-location "/Applications" "packaging/${{ env.PRODUCT_NAME }}.app.pkg"
           
           cd packaging
-          
-          # Substitution des variables (envsubst devrait fonctionner si les vars sont bien dans $GITHUB_ENV)
+    
+          # Substitution
           envsubst < distribution.xml.template > distribution.xml
-          
-          # Debug rapide pour vérifier
-          echo "Variables disponibles :"
-          echo "PRODUCT_NAME = ${{ env.PRODUCT_NAME }}"
-          echo "VERSION      = $VERSION"
-          echo "ARTIFACT_NAME = ${{ env.ARTIFACT_NAME }}"
-          ls -la
-          head -n 10 distribution.xml   # montre les 10 premières lignes du xml généré
-          
-          # productbuild SANS signature (version minimale qui marche)
+    
+          # Affiche le contenu pour debug
+          echo "=== distribution.xml ==="
+          cat distribution.xml
+          echo "========================"
+    
+          # Liste les fichiers .pkg disponibles
+          echo "=== Paquets disponibles ==="
+          ls -la *.pkg
+          echo "==========================="
+    
+          # Productbuild avec le chemin correct
           productbuild \
             --resources ./resources \
             --distribution distribution.xml \
-            "${{ env.ARTIFACT_NAME }}.pkg"
-          
-          # Les étapes de notarisation sont commentées car tu n'as pas les secrets
+            --package-path . \
+            "./${{ env.ARTIFACT_NAME }}.pkg"
+    
+          # Vérifie que le package a été créé
+          ls -la "${{ env.ARTIFACT_NAME }}.pkg"
+    
+          # Les étapes de notarisation sont commentées
           # xcrun notarytool submit "${{ env.ARTIFACT_NAME }}.pkg" --apple-id ${{ secrets.NOTARIZATION_USERNAME }} --password ${{ secrets.NOTARIZATION_PASSWORD }} --team-id ${{ secrets.TEAM_ID }} --wait
           # xcrun stapler staple "${{ env.ARTIFACT_NAME }}.pkg"
-          #
       - name: Zip
         if: ${{ runner.os == 'Linux' }}
         working-directory: ${{ env.ARTIFACTS_PATH }}
