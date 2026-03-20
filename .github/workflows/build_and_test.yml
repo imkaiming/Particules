@@ -23,6 +23,10 @@ defaults:
   run:
     shell: bash
 
+
+permissions:
+  contents: write
+
 # jobs are run in parallel on different machines
 # all steps run in series
 jobs:
@@ -269,3 +273,4 @@ jobs:
             */*.exe
             */*.zip
             */*.dmg
+            */*.pkg
