@@ -229,17 +229,41 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
     return layout;
 }
 
-void ParticulesAudioProcessor::setInputBuffer(std::shared_ptr<const AudioBuffer>& buffer) noexcept
+void ParticulesAudioProcessor::setInputBuffer(AudioBuffer& buffer) noexcept
 {
-    const int inputChannels = buffer->getNumChannels();
+    const int inputChannels = buffer.getNumChannels();
+    const int numSamples = buffer.getNumSamples();
+
     paramsView.setNumChannels(inputChannels);
-    paramsView.setNumSamples(buffer->getNumSamples());
-    granularEngine.setInputBuffer(std::move(buffer));
+    paramsView.setNumSamples(numSamples);
+
+    //DBG("buffer last sample -1 is = " + (str)buffer.getReadPointer(0)[numSamples - 1]);
+    //DBG("buffer last sample is = " + (str)buffer.getReadPointer(0)[numSamples]);
+
+    // add one more value to the buffer to make it safe to interpolate without modulo in the VoiceManager
+    AudioBuffer tempBuffer(inputChannels, numSamples + 1);
+
+    for(int ch = 0; ch < inputChannels; ch++)
+    {
+        juce::FloatVectorOperations::copy(tempBuffer.getWritePointer(ch), buffer.getReadPointer(ch), numSamples);
+        tempBuffer.getWritePointer(ch)[numSamples] = tempBuffer.getReadPointer(ch)[0];
+    }
+
+    //DBG("temp last sample -1 is = " + (str)tempBuffer.getReadPointer(0)[numSamples - 1]);
+    //DBG("temp last sample is = " + (str)tempBuffer.getReadPointer(0)[numSamples]);
+    //DBG("temp nnum sample is = " + (str)tempBuffer.getNumSamples());
+    //DBG("buffer nnum sample is = " + (str)buffer->getNumSamples());
+
+    const AudioBuffer safeBuffer(tempBuffer);
+
+    std::shared_ptr<const AudioBuffer> safeBufferPtr = std::make_shared<const AudioBuffer>(safeBuffer);
+
+    granularEngine.setInputBuffer(std::move(safeBufferPtr));
 }
 
 void ParticulesAudioProcessor::initOnAudioLoadedCallback()
 {
-    onAudioLoadedCallback = [this](std::shared_ptr<const AudioBuffer>& buffer) {
+    onAudioLoadedCallback = [this](AudioBuffer& buffer) {
         setInputBuffer(buffer);
         // TODO send UI Notification but do not change current file
         sendChangeMessage();

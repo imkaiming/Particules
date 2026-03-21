@@ -28,11 +28,11 @@ public:
 
     void process(AudioBuffer& output, int bufferSize, float* const* outputPtrs, int outputNumChannels, ParameterSnapshot snapshot);
     void init(double, int, int);
-    int getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); };
+    int getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); }
 
-    void setInputBuffer(std::shared_ptr<const AudioBuffer> ptr) noexcept { inputBuffer.store(std::move(ptr)); };
-    std::shared_ptr<const AudioBuffer> getInputBuffer() const noexcept { return inputBuffer.load(); };
-    const bool isInputBufferLoaded() const noexcept { return inputBuffer.load() != nullptr; };
+    void setInputBuffer(std::shared_ptr<const AudioBuffer> ptr) noexcept { inputBuffer.store(std::move(ptr)); }
+    std::shared_ptr<const AudioBuffer> getInputBuffer() const noexcept { return inputBuffer.load(); }
+    const bool isInputBufferLoaded() const noexcept { return inputBuffer.load() != nullptr; }
 
 private:
     void gainProcess(juce::dsp::ProcessContextReplacing<float>, const float);

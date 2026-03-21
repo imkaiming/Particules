@@ -46,7 +46,8 @@ void VoiceManager::render(int currentSample, int outputNumChannels, float* const
             const float readPos = g->getReadPosition();
             float frac = readPos - (float)index;
             const float s0 = sample[index];
-            const float s1 = sample[(index + 1) % inputNumSamples];
+            const float s1 = sample[index + 1];
+            //const float s1 = sample[(index + 1) % inputNumSamples];
 
             outputPtrs[channel][currentSample] += lerp(s0, s1, frac) * envelopeValue;
             //outputBlock.addSample(channel, currentSample, lerp(s0, s1, frac) * envelopeValue);

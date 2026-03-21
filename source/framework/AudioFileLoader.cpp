@@ -42,17 +42,17 @@ void AudioFileLoader::processLoadingFile(juce::File& file, AudioLoadedCallback o
     bool ok = false;
     if(file.existsAsFile())
     {
-        std::shared_ptr<const AudioBuffer> out;
-        ok = loadAudioFromFile(file, out);
+        AudioBuffer bufferOut;
+        ok = loadAudioFromFile(file, bufferOut);
         if(ok)
         {
             setCurrentFile(file);
-            onAudioLoaded(out);
+            onAudioLoaded(bufferOut);
         }
     }
 }
 
-bool AudioFileLoader::loadAudioFromFile(juce::File& file, std::shared_ptr<const AudioBuffer>& out)
+bool AudioFileLoader::loadAudioFromFile(juce::File& file, AudioBuffer& bufferOut)
 {
     std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(file));
 
@@ -112,8 +112,7 @@ bool AudioFileLoader::loadAudioFromFile(juce::File& file, std::shared_ptr<const 
         return false;
     }
 
-    const AudioBuffer downMixedBuffer = channelMixer.downmix(resampledBuffer);
-    out = std::make_shared<const AudioBuffer>(std::move(downMixedBuffer));
+    bufferOut = channelMixer.downmix(resampledBuffer);
 
     return true;
 }
@@ -127,7 +126,7 @@ void AudioFileLoader::init(double sr, int numCh) noexcept
 
 juce::AudioFormatManager& AudioFileLoader::getFormatManager() { return formatManager; }
 
-void AudioFileLoader::showErrorWindow(juce::String message)
+void AudioFileLoader::showErrorWindow(const juce::String& message)
 {
     juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::AlertIconType::WarningIcon, "Error", message, "OK");
 }

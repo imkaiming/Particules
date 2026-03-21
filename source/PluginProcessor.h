@@ -64,7 +64,7 @@ public:
 
     const int getNumActiveGrains() const noexcept { return granularEngine.getNumActiveGrains(); };
 
-    void setInputBuffer(std::shared_ptr<const AudioBuffer>&) noexcept;
+    void setInputBuffer(AudioBuffer&) noexcept;
     const bool isInputBufferLoaded() const noexcept { return granularEngine.isInputBufferLoaded(); };
 
     void loadDebugPreset();

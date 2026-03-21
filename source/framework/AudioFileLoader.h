@@ -25,7 +25,7 @@ public:
 
     void processLoadingFile(juce::File&, AudioLoadedCallback);
 
-    bool loadAudioFromFile(juce::File&, std::shared_ptr<const AudioBuffer>&);
+    bool loadAudioFromFile(juce::File&, AudioBuffer&);
 
     void init(double, int) noexcept;
     juce::AudioFormatManager& getFormatManager();
@@ -35,7 +35,7 @@ public:
 private:
     static constexpr int maxFileSize = Param::MaxFileSize;
     static constexpr double maxDuration = Param::MaxDuration;
-    void showErrorWindow(juce::String message);
+    void showErrorWindow(const juce::String&);
 
     double sampleRate;
 
