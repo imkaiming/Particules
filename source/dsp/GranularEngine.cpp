@@ -48,6 +48,10 @@ void GranularEngine::process(
         updateSmoothedParameters();
         scheduler.tick(spawnCallback, snapshot);
         voiceManager.render(currentSample, outputNumChannels, outputPtrs, inputPtrs, inputNumSamples, smoothedParams);
+
+        const float env = adsr.getNextSample();
+        for(int ch = 0; ch < outputNumChannels; ++ch)
+            outputPtrs[ch][currentSample] *= env;
     }
 
     posMod.advanceBlock(bufferSize);
@@ -76,6 +80,15 @@ void GranularEngine::init(const double sampleRate, const int numChannel, const i
 
     gainProcessor.prepare(spec);
     gainProcessor.setRampDurationSeconds(0.02f);
+
+    adsr.setSampleRate(sampleRate);
+
+    // temporary : later will be apvts
+    adsrParams.attack = 0.5f;
+    adsrParams.decay = 0.f;
+    adsrParams.sustain = 1.f;
+    adsrParams.release = 1.f;
+    adsr.setParameters(adsrParams);
 
     // init smooth parameters
     speedSmooth.reset(sampleRate, 0.02);

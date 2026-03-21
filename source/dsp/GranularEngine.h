@@ -57,6 +57,8 @@ private:
 
     juce::dsp::Gain<float> gainProcessor;
 
+    juce::ADSR adsr;
+    juce::ADSR::Parameters adsrParams;
     // smoothed value : we only smooth parameters that change the life cycle of the grains.
     juce::SmoothedValue<float> speedSmooth;
     //juce::SmoothedValue<float> sustainRatioSmooth;

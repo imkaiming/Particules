@@ -176,48 +176,52 @@ jobs:
           SetFile -a C "${{ env.CLAP_PATH }}"
 
       - name: pkgbuild, Productbuild and Notarize
-        continue-on-error: true
         if: ${{ runner.os == 'macOS' }}
-        timeout-minutes: 5
+        timeout-minutes: 10
         run: |
-          # Paquets individuels
-          pkgbuild --identifier "${{ env.BUNDLE_ID }}.au.pkg" --version $VERSION --component "${{ env.AU_PATH }}" --install-location "/Library/Audio/Plug-Ins/Components" "packaging/${{ env.PRODUCT_NAME }}.au.pkg"
-          pkgbuild --identifier "${{ env.BUNDLE_ID }}.vst3.pkg" --version $VERSION --component "${{ env.VST3_PATH }}" --install-location "/Library/Audio/Plug-Ins/VST3" "packaging/${{ env.PRODUCT_NAME }}.vst3.pkg"
-          pkgbuild --identifier "${{ env.BUNDLE_ID }}.clap.pkg" --version $VERSION --component "${{ env.CLAP_PATH }}" --install-location "/Library/Audio/Plug-Ins/CLAP" "packaging/${{ env.PRODUCT_NAME }}.clap.pkg"
+          # Build individual component packages
+          pkgbuild --identifier "${{ env.BUNDLE_ID }}.au.pkg"   --version ${{ env.VERSION }} --component "${{ env.AU_PATH }}"   --install-location "/Library/Audio/Plug-Ins/Components" "packaging/${{ env.PRODUCT_NAME }}.au.pkg"
+          pkgbuild --identifier "${{ env.BUNDLE_ID }}.vst3.pkg" --version ${{ env.VERSION }} --component "${{ env.VST3_PATH }}" --install-location "/Library/Audio/Plug-Ins/VST3"     "packaging/${{ env.PRODUCT_NAME }}.vst3.pkg"
+          pkgbuild --identifier "${{ env.BUNDLE_ID }}.clap.pkg" --version ${{ env.VERSION }} --component "${{ env.CLAP_PATH }}" --install-location "/Library/Audio/Plug-Ins/CLAP"     "packaging/${{ env.PRODUCT_NAME }}.clap.pkg"
           
-          # Standalone
+          # Standalone app (special root + plist tweak)
           pkgbuild --analyze --root "$(dirname "${{ env.STANDALONE_PATH }}")" standalone.plist
           plutil -replace BundleIsRelocatable -bool NO standalone.plist
-          pkgbuild --identifier "${{ env.BUNDLE_ID }}.app.pkg" --version $VERSION --root "$(dirname "${{ env.STANDALONE_PATH }}")" --component-plist standalone.plist --install-location "/Applications" "packaging/${{ env.PRODUCT_NAME }}.app.pkg"
+          pkgbuild --identifier "${{ env.BUNDLE_ID }}.app.pkg" --version ${{ env.VERSION }} --root "$(dirname "${{ env.STANDALONE_PATH }}")" --component-plist standalone.plist --install-location "/Applications" "packaging/${{ env.PRODUCT_NAME }}.app.pkg"
           
           cd packaging
-    
-          # Substitution
+          
+          # Substitute variables → create final distribution.xml
           envsubst < distribution.xml.template > distribution.xml
-    
-          # Affiche le contenu pour debug
-          echo "=== distribution.xml ==="
+          
+          # === Debug output ===
+          echo "=== Environment variables used ==="
+          echo "PRODUCT_NAME=${{ env.PRODUCT_NAME }}"
+          echo "VERSION=${{ env.VERSION }}"
+          echo "BUNDLE_ID=${{ env.BUNDLE_ID }}"
+          echo ""
+          
+          echo "=== Generated distribution.xml ==="
           cat distribution.xml
-          echo "========================"
-    
-          # Liste les fichiers .pkg disponibles
-          echo "=== Paquets disponibles ==="
-          ls -la *.pkg
-          echo "==========================="
-    
-          # Productbuild avec le chemin correct
+          echo "=================================="
+          
+          echo "=== Available .pkg files ==="
+          ls -la *.pkg || echo "No .pkg files found!"
+          echo "============================"
+          
+          # Build the combined installer (unsigned for now)
           productbuild \
-            --resources ./resources \
             --distribution distribution.xml \
+            --resources ./resources \
             --package-path . \
-            "./${{ env.ARTIFACT_NAME }}.pkg"
-    
-          # Vérifie que le package a été créé
-          ls -la "${{ env.ARTIFACT_NAME }}.pkg"
-    
-          # Les étapes de notarisation sont commentées
-          # xcrun notarytool submit "${{ env.ARTIFACT_NAME }}.pkg" --apple-id ${{ secrets.NOTARIZATION_USERNAME }} --password ${{ secrets.NOTARIZATION_PASSWORD }} --team-id ${{ secrets.TEAM_ID }} --wait
-          # xcrun stapler staple "${{ env.ARTIFACT_NAME }}.pkg"
+            --sign "" \
+            "${{ env.ARTIFACT_NAME }}.pkg" || {
+              echo "productbuild failed — check distribution.xml and pkg filenames match!"
+              exit 1
+            }
+          
+          # Final check
+          ls -la "${{ env.ARTIFACT_NAME }}.pkg" && echo "Installer created successfully" || exit 1
 
       - name: Zip
         if: ${{ runner.os == 'Linux' }}
