@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../utils/GrainVisual.h"
-#include "PluginParams.h"
+#include "../utils/struct/GrainVisual.h"
+#include "../framework/Constants.h"
 
 // snapshot of every actives grains published every buffers end
 // it suppose to mirror the GrainPools logic and should follow the exact grains
@@ -12,7 +12,7 @@ public:
     GrainVisualBuffer() = default;
     ~GrainVisualBuffer() = default;
 
-    static constexpr int SIZE = Param::MaxGrains;
+    static constexpr int SIZE = MAX_GRAINS;
 
     struct VisualSnapshot
     {
@@ -32,4 +32,6 @@ public:
 private:
     VisualSnapshot visualSnapshot[2];
     std::atomic<int> readIndex{0}; // act like a latch
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainVisualBuffer)
 };

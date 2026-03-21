@@ -1,8 +1,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-#include "framework/PluginParams.h"
-#include "utils/ParameterSnapshot.h"
+#include "utils/PluginParams.h"
+#include "utils/struct/ParameterSnapshot.h"
 
 ParticulesAudioProcessor::ParticulesAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -167,59 +167,68 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::cr
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
-        Param::Mix::id, Param::Mix::name, juce::NormalisableRange<float>(Param::Mix::min, Param::Mix::max, 0.01f),
-        Param::Mix::init, juce::String(" %"), juce::AudioProcessorParameter::genericParameter,
+        PluginParams::Mix::id, PluginParams::Mix::name,
+        juce::NormalisableRange<float>(PluginParams::Mix::min, PluginParams::Mix::max, 0.01f), PluginParams::Mix::init,
+        juce::String(" %"), juce::AudioProcessorParameter::genericParameter,
         [](float v, int) { return juce::String(v, 1) + "%"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
-        Param::Gain::id, Param::Gain::name, juce::NormalisableRange<float>(Param::Gain::min, Param::Gain::max, 0.01f),
-        Param::Gain::init, juce::String(" dB"), juce::AudioProcessorParameter::genericParameter,
+        PluginParams::Gain::id, PluginParams::Gain::name,
+        juce::NormalisableRange<float>(PluginParams::Gain::min, PluginParams::Gain::max, 0.01f), PluginParams::Gain::init,
+        juce::String(" dB"), juce::AudioProcessorParameter::genericParameter,
         [](float v, int) { return juce::String(v, 2) + " dB"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
-        Param::Emission::id, Param::Emission::name,
-        juce::NormalisableRange<float>(Param::Emission::min, Param::Emission::max, 0.001f), Param::Emission::init,
+        PluginParams::Emission::id, PluginParams::Emission::name,
+        juce::NormalisableRange<float>(PluginParams::Emission::min, PluginParams::Emission::max, 0.001f),
+        PluginParams::Emission::init,
         juce::String(" g/s"), juce::AudioProcessorParameter::genericParameter,
         [](float v, int) { return juce::String(v, 2) + " g/s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
-        Param::Duration::id, Param::Duration::name,
-        juce::NormalisableRange<float>(Param::Duration::min, Param::Duration::max, 0.001f), Param::Duration::init,
+        PluginParams::Duration::id, PluginParams::Duration::name,
+        juce::NormalisableRange<float>(PluginParams::Duration::min, PluginParams::Duration::max, 0.001f),
+        PluginParams::Duration::init,
         juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
         [](float v, int) { return juce::String(v, 2) + " s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>(Param::Speed::id, Param::Speed::name,
-        juce::NormalisableRange<float>(Param::Speed::min, Param::Speed::max, 0.001f), Param::Speed::init));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(PluginParams::Speed::id, PluginParams::Speed::name,
+        juce::NormalisableRange<float>(PluginParams::Speed::min, PluginParams::Speed::max, 0.001f), PluginParams::Speed::init));
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>(Param::Position::id, Param::Position::name,
-        juce::NormalisableRange<float>(Param::Position::min, Param::Position::max, 0.001f), Param::Position::init));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(PluginParams::Position::id, PluginParams::Position::name,
+        juce::NormalisableRange<float>(PluginParams::Position::min, PluginParams::Position::max, 0.001f),
+        PluginParams::Position::init));
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>(Param::Selection::id, Param::Selection::name,
-        juce::NormalisableRange<float>(Param::Selection::min, Param::Selection::max, 0.001f), Param::Selection::init));
+    layout.add(std::make_unique<juce::AudioParameterFloat>(PluginParams::Selection::id, PluginParams::Selection::name,
+        juce::NormalisableRange<float>(PluginParams::Selection::min, PluginParams::Selection::max, 0.001f),
+        PluginParams::Selection::init));
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>(Param::SustainRatio::id, Param::SustainRatio::name,
-        juce::NormalisableRange<float>(Param::SustainRatio::min, Param::SustainRatio::max, 0.01f), Param::SustainRatio::init));
+    layout.add(
+        std::make_unique<juce::AudioParameterFloat>(PluginParams::SustainRatio::id, PluginParams::SustainRatio::name,
+            juce::NormalisableRange<float>(PluginParams::SustainRatio::min, PluginParams::SustainRatio::max, 0.01f),
+            PluginParams::SustainRatio::init));
 
     // ENVELOPE MODE //
     const juce::StringArray choicesEnvModeNames(
-        Param::EnvelopeMode::envModeNames.data(), (int)Param::EnvelopeMode::envModeNames.size());
+        PluginParams::EnvelopeMode::envModeNames.data(), (int)PluginParams::EnvelopeMode::envModeNames.size());
 
-    layout.add(
-        std::make_unique<juce::AudioParameterChoice>(Param::EnvelopeMode::id, Param::EnvelopeMode::name, choicesEnvModeNames, 1));
+    layout.add(std::make_unique<juce::AudioParameterChoice>(
+        PluginParams::EnvelopeMode::id, PluginParams::EnvelopeMode::name, choicesEnvModeNames, 1));
 
     // TRAVERSAL MODE //
 
     const juce::StringArray choicesTraversalModeNames(
-        Param::TraversalMode::traversalModeNames.data(), (int)Param::TraversalMode::traversalModeNames.size());
+        PluginParams::TraversalMode::traversalModeNames.data(), (int)PluginParams::TraversalMode::traversalModeNames.size());
 
     layout.add(std::make_unique<juce::AudioParameterChoice>(
-        Param::TraversalMode::id, Param::TraversalMode::name, choicesTraversalModeNames, 1));
+        PluginParams::TraversalMode::id, PluginParams::TraversalMode::name, choicesTraversalModeNames, 1));
 
     // TRAVERSAL FREQ //
 
     layout.add(std::make_unique<juce::AudioParameterFloat>(
-        Param::TraversalFreq::id, Param::TraversalFreq::name,
-        juce::NormalisableRange<float>(Param::TraversalFreq::min, Param::TraversalFreq::max, 0.01f), Param::TraversalFreq::init,
+        PluginParams::TraversalFreq::id, PluginParams::TraversalFreq::name,
+        juce::NormalisableRange<float>(PluginParams::TraversalFreq::min, PluginParams::TraversalFreq::max, 0.01f),
+        PluginParams::TraversalFreq::init,
         juce::String(" Hz"), juce::AudioProcessorParameter::genericParameter,
         [](float v, int) { return juce::String(v, 2) + " Hz"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
@@ -300,41 +309,41 @@ void ParticulesAudioProcessor::loadDebugPreset()
     //	juce::File::userDesktopDirectory
     //).getChildFile("test.wav");
 
-    juce::NormalisableRange<float> gainRange(Param::Gain::min, Param::Gain::max);
-    const float normalizedGain = gainRange.convertTo0to1(Param::Gain::init);
+    juce::NormalisableRange<float> gainRange(PluginParams::Gain::min, PluginParams::Gain::max);
+    const float normalizedGain = gainRange.convertTo0to1(PluginParams::Gain::init);
 
-    juce::NormalisableRange<float> EmissionRange(Param::Emission::min, Param::Emission::max);
+    juce::NormalisableRange<float> EmissionRange(PluginParams::Emission::min, PluginParams::Emission::max);
     const float normalizedEmission = EmissionRange.convertTo0to1(10);
 
-    juce::NormalisableRange<float> durationRange(Param::Duration::min, Param::Duration::max);
+    juce::NormalisableRange<float> durationRange(PluginParams::Duration::min, PluginParams::Duration::max);
     const float normalizedDuration = durationRange.convertTo0to1(0.05f);
 
-    juce::NormalisableRange<float> speedRange(Param::Speed::min, Param::Speed::max);
+    juce::NormalisableRange<float> speedRange(PluginParams::Speed::min, PluginParams::Speed::max);
     const float normalizedSpeed = speedRange.convertTo0to1(1);
 
-    juce::NormalisableRange<float> positionRange(Param::Position::min, Param::Position::max);
+    juce::NormalisableRange<float> positionRange(PluginParams::Position::min, PluginParams::Position::max);
     const float normalizedPosition = positionRange.convertTo0to1(0);
 
-    juce::NormalisableRange<float> selectionRange(Param::Selection::min, Param::Selection::max);
+    juce::NormalisableRange<float> selectionRange(PluginParams::Selection::min, PluginParams::Selection::max);
     const float normalizedSelection = selectionRange.convertTo0to1(0.25f);
 
-    juce::NormalisableRange<float> TraversalFreqRange(Param::TraversalFreq::min, Param::TraversalFreq::max);
+    juce::NormalisableRange<float> TraversalFreqRange(PluginParams::TraversalFreq::min, PluginParams::TraversalFreq::max);
     const float normalizedTraversalFreq = TraversalFreqRange.convertTo0to1(1.f);
 
-    juce::NormalisableRange<float> SustainRatioRange(Param::SustainRatio::min, Param::SustainRatio::max);
+    juce::NormalisableRange<float> SustainRatioRange(PluginParams::SustainRatio::min, PluginParams::SustainRatio::max);
     const float normalizedSustainRatio = SustainRatioRange.convertTo0to1(0.5f);
 
-    apvts.getParameter(Param::Mix::id)->setValueNotifyingHost(1.f); // MIX100%
-    apvts.getParameter(Param::Gain::id)->setValueNotifyingHost(normalizedGain);
-    apvts.getParameter(Param::Emission::id)->setValueNotifyingHost(normalizedEmission);
-    apvts.getParameter(Param::Duration::id)->setValueNotifyingHost(normalizedDuration);
-    apvts.getParameter(Param::Speed::id)->setValueNotifyingHost(normalizedSpeed);
-    apvts.getParameter(Param::Position::id)->setValueNotifyingHost(normalizedPosition);
-    apvts.getParameter(Param::Selection::id)->setValueNotifyingHost(normalizedSelection);
-    apvts.getParameter(Param::TraversalFreq::id)->setValueNotifyingHost(normalizedTraversalFreq);
-    apvts.getParameter(Param::SustainRatio::id)->setValueNotifyingHost(normalizedSustainRatio);
-    apvts.getParameter(Param::EnvelopeMode::id)->setValueNotifyingHost(0.f);
-    apvts.getParameter(Param::TraversalMode::id)->setValueNotifyingHost(0.f);
+    apvts.getParameter(PluginParams::Mix::id)->setValueNotifyingHost(1.f); // MIX100%
+    apvts.getParameter(PluginParams::Gain::id)->setValueNotifyingHost(normalizedGain);
+    apvts.getParameter(PluginParams::Emission::id)->setValueNotifyingHost(normalizedEmission);
+    apvts.getParameter(PluginParams::Duration::id)->setValueNotifyingHost(normalizedDuration);
+    apvts.getParameter(PluginParams::Speed::id)->setValueNotifyingHost(normalizedSpeed);
+    apvts.getParameter(PluginParams::Position::id)->setValueNotifyingHost(normalizedPosition);
+    apvts.getParameter(PluginParams::Selection::id)->setValueNotifyingHost(normalizedSelection);
+    apvts.getParameter(PluginParams::TraversalFreq::id)->setValueNotifyingHost(normalizedTraversalFreq);
+    apvts.getParameter(PluginParams::SustainRatio::id)->setValueNotifyingHost(normalizedSustainRatio);
+    apvts.getParameter(PluginParams::EnvelopeMode::id)->setValueNotifyingHost(0.f);
+    apvts.getParameter(PluginParams::TraversalMode::id)->setValueNotifyingHost(0.f);
 
     if(debugAudio.existsAsFile())
         loadFile(debugAudio.getFullPathName());

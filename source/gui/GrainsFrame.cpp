@@ -1,33 +1,23 @@
-/*
-  ==============================================================================
-
-	GrainsFrame.cpp
-	Created: 3 Feb 2023 11:44:06pm
-	Author:  user
-
-  ==============================================================================
-*/
-
 #include "GrainsFrame.h"
-#include "../framework/PluginParams.h"
+#include "../utils/PluginParams.h"
 #include "../utils/MyColours.h"
 
 GrainsFrame::GrainsFrame(ValueTreeState& apvts) : apvts{apvts}
 {
     emissionSliderAttachment =
-        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Emission::id, emissionSlider);
+        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, PluginParams::Emission::id, emissionSlider);
 
     durationSliderAttachment =
-        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Duration::id, durationSlider);
+        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, PluginParams::Duration::id, durationSlider);
 
     speedSliderAttachment =
-        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Speed::id, speedSlider);
+        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, PluginParams::Speed::id, speedSlider);
 
     sustainRatioSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        apvts, Param::SustainRatio::id, sustainRatioSlider);
+        apvts, PluginParams::SustainRatio::id, sustainRatioSlider);
 
     traversalFreqSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        apvts, Param::TraversalFreq::id, traversalFreqSlider);
+        apvts, PluginParams::TraversalFreq::id, traversalFreqSlider);
 
     //pitchSliderAttachment =
     //	std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
@@ -37,11 +27,11 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) : apvts{apvts}
     emissionSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     emissionSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
     emissionSlider.setTextBoxIsEditable(true);
-    emissionSlider.setRange(Param::Emission::min, Param::Emission::max);
-    emissionSlider.setSkewFactorFromMidPoint(Param::Emission::init);
+    emissionSlider.setRange(PluginParams::Emission::min, PluginParams::Emission::max);
+    emissionSlider.setSkewFactorFromMidPoint(PluginParams::Emission::init);
     emissionSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-    emissionLabel.setText((const juce::String)Param::Emission::name, juce::dontSendNotification);
+    emissionLabel.setText((const juce::String)PluginParams::Emission::name, juce::dontSendNotification);
     emissionLabel.attachToComponent(&emissionSlider, false);
     emissionLabel.setJustificationType(juce::Justification::centred);
 
@@ -49,11 +39,11 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) : apvts{apvts}
     durationSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     durationSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
     durationSlider.setTextBoxIsEditable(true);
-    durationSlider.setRange(Param::Duration::min, Param::Duration::max);
-    durationSlider.setSkewFactorFromMidPoint(Param::Duration::init);
+    durationSlider.setRange(PluginParams::Duration::min, PluginParams::Duration::max);
+    durationSlider.setSkewFactorFromMidPoint(PluginParams::Duration::init);
     durationSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-    durationLabel.setText((const juce::String)Param::Duration::name, juce::dontSendNotification);
+    durationLabel.setText((const juce::String)PluginParams::Duration::name, juce::dontSendNotification);
     durationLabel.attachToComponent(&durationSlider, false);
     durationLabel.setJustificationType(juce::Justification::centred);
 
@@ -61,10 +51,10 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) : apvts{apvts}
     speedSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     speedSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
     speedSlider.setTextBoxIsEditable(true);
-    speedSlider.setRange(Param::Speed::min, Param::Speed::max);
+    speedSlider.setRange(PluginParams::Speed::min, PluginParams::Speed::max);
     speedSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-    speedLabel.setText((const juce::String)Param::Speed::name, juce::dontSendNotification);
+    speedLabel.setText((const juce::String)PluginParams::Speed::name, juce::dontSendNotification);
     speedLabel.attachToComponent(&speedSlider, false);
     speedLabel.setJustificationType(juce::Justification::centred);
 
@@ -72,11 +62,11 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) : apvts{apvts}
     sustainRatioSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     sustainRatioSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
     sustainRatioSlider.setTextBoxIsEditable(true);
-    sustainRatioSlider.setRange(Param::SustainRatio::min, Param::SustainRatio::max);
-    sustainRatioSlider.setSkewFactorFromMidPoint(Param::SustainRatio::init);
+    sustainRatioSlider.setRange(PluginParams::SustainRatio::min, PluginParams::SustainRatio::max);
+    sustainRatioSlider.setSkewFactorFromMidPoint(PluginParams::SustainRatio::init);
     sustainRatioSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-    sustainRatioLabel.setText((const juce::String)Param::SustainRatio::name, juce::dontSendNotification);
+    sustainRatioLabel.setText((const juce::String)PluginParams::SustainRatio::name, juce::dontSendNotification);
     sustainRatioLabel.attachToComponent(&sustainRatioSlider, false);
     sustainRatioLabel.setJustificationType(juce::Justification::centred);
 
@@ -84,11 +74,11 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) : apvts{apvts}
     traversalFreqSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     traversalFreqSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
     traversalFreqSlider.setTextBoxIsEditable(true);
-    traversalFreqSlider.setRange(Param::TraversalFreq::min, Param::TraversalFreq::max);
-    traversalFreqSlider.setSkewFactorFromMidPoint(Param::TraversalFreq::init);
+    traversalFreqSlider.setRange(PluginParams::TraversalFreq::min, PluginParams::TraversalFreq::max);
+    traversalFreqSlider.setSkewFactorFromMidPoint(PluginParams::TraversalFreq::init);
     traversalFreqSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-    traversalFreqLabel.setText((const juce::String)Param::TraversalFreq::name, juce::dontSendNotification);
+    traversalFreqLabel.setText((const juce::String)PluginParams::TraversalFreq::name, juce::dontSendNotification);
     traversalFreqLabel.attachToComponent(&traversalFreqSlider, false);
     traversalFreqLabel.setJustificationType(juce::Justification::centred);
 
@@ -104,27 +94,27 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) : apvts{apvts}
     addAndMakeVisible(&sustainRatioLabel);
     addAndMakeVisible(&traversalFreqLabel);
 
-    //ComboBoxParameterAttachment(RangedAudioParameter& parameter, ComboBox& combo,
+    //ComboBoxPluginParamseterAttachment(RangedAudioPluginParamseter& parameter, ComboBox& combo,
     //	UndoManager* undoManager = nullptr);
 
-    envelopeModeList.addItemList(apvts.getParameter(Param::EnvelopeMode::id)->getAllValueStrings(), 1);
+    envelopeModeList.addItemList(apvts.getParameter(PluginParams::EnvelopeMode::id)->getAllValueStrings(), 1);
 
     envelopeModeList.setSelectedId(1, juce::dontSendNotification);
 
     envelopeModeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
-        apvts, Param::EnvelopeMode::id, envelopeModeList);
+        apvts, PluginParams::EnvelopeMode::id, envelopeModeList);
 
-    traversalModeList.addItemList(apvts.getParameter(Param::TraversalMode::id)->getAllValueStrings(), 1);
+    traversalModeList.addItemList(apvts.getParameter(PluginParams::TraversalMode::id)->getAllValueStrings(), 1);
     traversalModeList.setSelectedId(1, juce::dontSendNotification);
 
     traversalModeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
-        apvts, Param::TraversalMode::id, traversalModeList);
+        apvts, PluginParams::TraversalMode::id, traversalModeList);
 
-    envModeLabel.setText((const juce::String)Param::EnvelopeMode::name, juce::dontSendNotification);
+    envModeLabel.setText((const juce::String)PluginParams::EnvelopeMode::name, juce::dontSendNotification);
     envModeLabel.attachToComponent(&envelopeModeList, false);
     envModeLabel.setJustificationType(juce::Justification::centred);
 
-    traversalModeLabel.setText((const juce::String)Param::TraversalMode::name, juce::dontSendNotification);
+    traversalModeLabel.setText((const juce::String)PluginParams::TraversalMode::name, juce::dontSendNotification);
     traversalModeLabel.attachToComponent(&traversalModeList, false);
     traversalModeLabel.setJustificationType(juce::Justification::centred);
 
@@ -144,8 +134,8 @@ GrainsFrame::GrainsFrame(ValueTreeState& apvts) : apvts{apvts}
     addAndMakeVisible(&traversalModeList);
     addAndMakeVisible(&traversalModeLabel);
 
-    //apvts.addParameterListener(Param::TraversalMode::id, this);
-    //apvts.addParameterListener(Param::EnvelopeMode::id, this);
+    //apvts.addPluginParamseterListener(PluginParams::TraversalMode::id, this);
+    //apvts.addPluginParamseterListener(PluginParams::EnvelopeMode::id, this);
 }
 
 void GrainsFrame::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
@@ -219,15 +209,15 @@ void GrainsFrame::resized()
 
 //void GrainsFrame::parameterChanged(const juce::String& parameterID, float newValue)
 //{
-//    if(parameterID == Param::TraversalMode::id)
+//    if(parameterID == PluginParams::TraversalMode::id)
 //    {
-//        DBG("TRAVERSAL MODE parameter as value : " + (str)apvts.getParameterAsValue(Param::TraversalMode::id).toString());
+//        DBG("TRAVERSAL MODE parameter as value : " + (str)apvts.getPluginParamseterAsValue(PluginParams::TraversalMode::id).toString());
 //        DBG("TRAVERSAL MODE new value : " + (str)newValue);
 //        return;
 //    }
-//    if(parameterID == Param::EnvelopeMode::id)
+//    if(parameterID == PluginParams::EnvelopeMode::id)
 //    {
-//        DBG("ENVELOPE MODE parameter as value : " + (str)apvts.getParameterAsValue(Param::EnvelopeMode::id).toString());
+//        DBG("ENVELOPE MODE parameter as value : " + (str)apvts.getPluginParamseterAsValue(PluginParams::EnvelopeMode::id).toString());
 //        DBG("ENVELOPE MODE new value : " + (str)newValue);
 //        return;
 //    }

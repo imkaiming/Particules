@@ -2,7 +2,7 @@
 #pragma once
 #include "EnvelopeLookUpTable.h"
 #include "Grain.h"
-#include "../framework/Core.h"
+#include <array>
 
 // Preallocate Grains so we dont use new / delete in the audio thread
 // use LIFO
@@ -24,9 +24,11 @@ public:
     bool isEmpty() const noexcept { return nextFree == 0; }
 
 private:
-    static constexpr int SIZE = Param::MaxGrains; 
+    static constexpr int SIZE = MAX_GRAINS; 
 
     std::array<Grain, SIZE> grains;
     std::array<int, SIZE> freeIndices; // unordered stack of indexes. The most recently freed grain (also cache friendly)
     int nextFree = 0;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainPool)
 };

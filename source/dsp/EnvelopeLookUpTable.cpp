@@ -1,4 +1,6 @@
 #include "EnvelopeLookUpTable.h"
+#include "../utils/math/MathConstants.h"
+#include "../utils/math/Lerp.h"
 
 EnvelopeLookUpTable::EnvelopeLookUpTable() : envMode{EnvelopeMode::Hann}
 {

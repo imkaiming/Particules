@@ -1,17 +1,8 @@
-/*
-  ==============================================================================
-
-	AudioFileLoader.h
-	Created: 3 Feb 2023 12:43:37pm
-	Author:  user
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "ChannelMixer.h"
-#include "Core.h"
+#include "Types.h"
+#include "Constants.h"
 
 class AudioFileLoader
 {
@@ -33,8 +24,8 @@ public:
     void setCurrentFile(juce::File& f) noexcept { currentFile = f; };
 
 private:
-    static constexpr int maxFileSize = Param::MaxFileSize;
-    static constexpr double maxDuration = Param::MaxDuration;
+    static constexpr int maxFileSize = MAX_FILE_SIZE;
+    static constexpr double maxDuration = MAX_DURATION;
     void showErrorWindow(const juce::String&);
 
     double sampleRate;

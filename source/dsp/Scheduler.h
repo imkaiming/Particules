@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include "../framework/Core.h"
-#include "../utils/ParameterSnapshot.h"
+#include "../framework/Constants.h"
+#include "../utils/struct/ParameterSnapshot.h"
 
 // Scheduler compute onsets
 
@@ -33,7 +33,7 @@ public:
     //void tick(int, std::function<void(int, const ParameterSnapshot&)>, const ParameterSnapshot&);
 
 private:
-    static constexpr int SIZE = Param::MaxEvents;
+    static constexpr int SIZE = MAX_EVENTS;
 
     void reset();
     //const double getInterOnSet(float, double) const noexcept;
@@ -48,4 +48,6 @@ private:
     float emission;
 
     juce::Random random; // parameters to set the interOnset
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Scheduler)
 };

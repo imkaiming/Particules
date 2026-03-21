@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core.h"
+#include "Types.h"
 
 // just convert a buffer into a downmixed buffer
 // apply predefined mix matrix
@@ -22,4 +22,5 @@ private:
     //static void computeMixMatrix(int inputChannels, int outputChannels, float* matrix, int maxChannels) noexcept;
     //static void applyMix(
     //    const AudioBuffer& input, AudioBuffer& output, const float* matrix, int inputChannels, int outputChannels) noexcept;
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ChannelMixer)
 };

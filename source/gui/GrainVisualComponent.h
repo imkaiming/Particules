@@ -12,9 +12,10 @@
 
 
 #include "../utils/MyColours.h"
-#include "../framework/PluginParams.h"
 #include "../framework/GrainVisualBuffer.h"
-#include "../framework/Core.h"
+//#include "../framework/Core.h"
+#include "../framework/Constants.h"
+#include "../utils/PluginParams.h"
 
 #pragma once
 
@@ -40,8 +41,8 @@ public:
 	void setNumSamples(const float);
 
 private:
-    static constexpr int MAXGRAINS = static_cast<int>(Param::MaxGrains);
-    static constexpr float GSIZE = Param::GrainVisual::Size;
+    static constexpr int MAXGRAINS = static_cast<int>(MAX_GRAINS);
+    static constexpr float GSIZE = GRAIN_VISUAL_SIZE;
     static constexpr float GCENTER = GSIZE / 2.f;
 	void timerCallback() override;
 

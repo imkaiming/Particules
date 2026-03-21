@@ -10,20 +10,21 @@
 
 #include "SynthFrame.h"
 #include "../utils/MyColours.h"
+#include "../utils/PluginParams.h"
 
 SynthFrame::SynthFrame(ValueTreeState& apvts)
 {
     mixSliderAttachment =
-        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Mix::id, mixSlider);
+        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, PluginParams::Mix::id, mixSlider);
 
     gainSliderAttachment =
-        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Gain::id, gainSlider);
+        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, PluginParams::Gain::id, gainSlider);
 
-    positionSliderAttachment =
-        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Param::Position::id, positionSlider);
+    positionSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        apvts, PluginParams::Position::id, positionSlider);
 
     selectionSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        apvts, Param::Selection::id, selectionSlider);
+        apvts, PluginParams::Selection::id, selectionSlider);
 
     mixSlider.setName("mixSlider");
     mixSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
@@ -35,7 +36,7 @@ SynthFrame::SynthFrame(ValueTreeState& apvts)
     mixSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
     // mixSlider.onValueChane = [this]() { foo(); }
 
-    mixLabel.setText((const juce::String)Param::Mix::name, juce::dontSendNotification);
+    mixLabel.setText((const juce::String)PluginParams::Mix::name, juce::dontSendNotification);
     mixLabel.attachToComponent(&mixSlider, false);
     mixLabel.setJustificationType(juce::Justification::centred);
 
@@ -43,13 +44,13 @@ SynthFrame::SynthFrame(ValueTreeState& apvts)
     gainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
     gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
     gainSlider.setTextBoxIsEditable(true);
-    gainSlider.setRange(Param::Gain::min, Param::Gain::max);
+    gainSlider.setRange(PluginParams::Gain::min, PluginParams::Gain::max);
     gainSlider.setSkewFactorFromMidPoint(-12.0);
     //gainSlider.setTextValueSuffix(" dB");
     //gainSlider.addListener(this);
     gainSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-    gainLabel.setText((const juce::String)Param::Gain::name, juce::dontSendNotification);
+    gainLabel.setText((const juce::String)PluginParams::Gain::name, juce::dontSendNotification);
     gainLabel.attachToComponent(&gainSlider, false);
     gainLabel.setJustificationType(juce::Justification::centred);
 
@@ -62,10 +63,10 @@ SynthFrame::SynthFrame(ValueTreeState& apvts)
     positionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
     positionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
     positionSlider.setTextBoxIsEditable(true);
-    positionSlider.setRange(Param::Position::min, Param::Position::max);
+    positionSlider.setRange(PluginParams::Position::min, PluginParams::Position::max);
     //filePosSlider.addListener(this);
 
-    positionLabel.setText((const juce::String)Param::Position::name, juce::dontSendNotification);
+    positionLabel.setText((const juce::String)PluginParams::Position::name, juce::dontSendNotification);
     positionLabel.attachToComponent(&positionSlider, false);
     positionLabel.setJustificationType(juce::Justification::centred);
 
@@ -73,10 +74,10 @@ SynthFrame::SynthFrame(ValueTreeState& apvts)
     selectionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
     selectionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
     selectionSlider.setTextBoxIsEditable(true);
-    selectionSlider.setRange(Param::Selection::min, Param::Selection::max);
+    selectionSlider.setRange(PluginParams::Selection::min, PluginParams::Selection::max);
     //windowSelectionSlider.addListener(this);
 
-    selectionLabel.setText((const juce::String)Param::Selection::name, juce::dontSendNotification);
+    selectionLabel.setText((const juce::String)PluginParams::Selection::name, juce::dontSendNotification);
     selectionLabel.attachToComponent(&selectionSlider, false);
     selectionLabel.setJustificationType(juce::Justification::centred);
 

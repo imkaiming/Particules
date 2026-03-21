@@ -11,13 +11,15 @@
 #include "ThumbnailComponent.h"
 
 #include "../framework/ParameterView.h"
-#include "../framework/PluginParams.h"
+#include "../utils/PluginParams.h"
 #include "../utils/MyColours.h"
+#include "../utils/struct/UIContext.h"
 
 ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail, juce::AudioFormatManager& formatManager, UIContext& uic)
     : uic{uic}, cache(5), audioThumbnail(samplesPerThumbnail, formatManager, cache), grainVisualComponent(uic.visualBuffer),
-      paramsView(uic.paramsView), apvts{uic.apvts}, audioProcessor{uic.audioProcessor}, positionValue{Param::Position::init},
-      selectionValue{Param::Selection::init}
+      paramsView(uic.paramsView), apvts{uic.apvts}, audioProcessor{uic.audioProcessor},
+      positionValue{PluginParams::Position::init},
+      selectionValue{PluginParams::Selection::init}
 {
     updatePosition(positionValue);
     updateSelection(selectionValue);

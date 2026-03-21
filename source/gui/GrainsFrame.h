@@ -1,15 +1,6 @@
-/*
-  ==============================================================================
-
-	GrainsFrame.h
-	Created: 3 Feb 2023 11:44:06pm
-	Author:  user
-
-  ==============================================================================
-*/
 #pragma once
 
-#include "../framework/Core.h"
+#include "../framework/Types.h"
 
 class GrainsFrame : public juce::Component//, public juce::AudioProcessorValueTreeState::Listener
 {

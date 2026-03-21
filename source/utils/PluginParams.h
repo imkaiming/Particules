@@ -1,6 +1,9 @@
 #pragma once
+#include <array>
 
-namespace Param
+// init parameters for the plugin
+
+namespace PluginParams
 {
     namespace Mix
     {
@@ -110,16 +113,5 @@ namespace Param
         inline constexpr float max = 50.f; // high
         inline constexpr float init = 1.0f;
     }
-    namespace Util
-    {
 
-        inline constexpr float grainPointSize = 10.f;
-        inline constexpr float fftSizeOrder = 10.f;
-        //inline constexpr float init = 1.0f;
-    }
-
-    namespace GrainVisual
-    {
-        inline constexpr float Size = 8.f;
-    }
 }

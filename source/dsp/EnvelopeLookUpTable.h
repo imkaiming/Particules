@@ -1,11 +1,16 @@
 #pragma once
 
 #include "../framework/Core.h"
-#include "../utils/EnvelopeMode.h"
+#include "../framework/Constants.h"
+#include "../utils/enum/EnvelopeMode.h"
 
 // LUT TABLE
 // fadeIn : 0 -> 0.5
 // fadeOut : 0.5 -> 1
+
+// This class just builds and holds tables datas. 
+// It is not responsible of computing the phase.
+
 class EnvelopeLookUpTable
 {
 public:
@@ -16,7 +21,7 @@ public:
     void setEnvelopeMode(EnvelopeMode m) noexcept { envMode = m; }
 
 private:
-    static constexpr int SIZE = 2048;
+    static constexpr int SIZE = LUT_SIZE;
 
     void initTableData();
     void initTablePtr();
@@ -31,7 +36,7 @@ private:
     void initBlackmanHarris() noexcept;
 
     EnvelopeMode envMode;
-
+    juce::dsp::LookupTable<float> lut;
     std::array<const float*, 7> tables;
 
     std::array<float, SIZE> hannTable;
@@ -41,4 +46,6 @@ private:
     std::array<float, SIZE> triangleTable;
     std::array<float, SIZE> expTable;
     std::array<float, SIZE> smoothedTable;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EnvelopeLookUpTable)
 };

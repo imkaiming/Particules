@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "../framework/Core.h"
+#include "../framework/Types.h"
 
 #include "../gui/ThumbnailComponent.h"
 

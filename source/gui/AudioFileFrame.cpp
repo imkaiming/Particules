@@ -12,7 +12,7 @@
 #include "../framework/ParameterView.h"
 #include "../PluginProcessor.h"
 #include "../utils/MyColours.h"
-#include "../utils/UIContext.h"
+#include "../utils/struct/UIContext.h"
 
 AudioFileFrame::AudioFileFrame(UIContext& uic)
     : paramsView(uic.paramsView), audioProcessor(uic.audioProcessor),

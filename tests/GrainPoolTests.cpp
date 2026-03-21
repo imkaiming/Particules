@@ -1,7 +1,8 @@
 #include "../source/dsp/Grain.h"
 #include "../source/dsp/GrainPool.h"
-#include "../source/framework/PluginParams.h"
-#include "../source/utils/GrainHandle.h"
+#include "../source/utils/PluginParams.h"
+#include "../source/framework/Constants.h"
+#include "../source/utils/struct/GrainHandle.h"
 #include <catch2/catch_test_macros.hpp>
 
 /*
@@ -103,7 +104,7 @@ namespace audio_plugin_test
     {
         SECTION("Can acquire up to capacity")
         {
-            for(size_t i = 0; i < Param::MaxGrains; ++i)
+            for(size_t i = 0; i < MAX_GRAINS; ++i)
             {
                 GrainHandle h = pool.acquire();
                 REQUIRE(h.isValid());
@@ -119,7 +120,7 @@ namespace audio_plugin_test
         {
             pool.reset();
 
-            for(size_t i = 0; i < Param::MaxGrains; ++i)
+            for(size_t i = 0; i < MAX_GRAINS; ++i)
             {
                 GrainHandle h = pool.acquire();
                 REQUIRE(h.isValid());

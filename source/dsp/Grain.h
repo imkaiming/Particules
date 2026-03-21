@@ -66,4 +66,6 @@ private:
     uint16_t generation = 0;
     bool active = false;
     //bool isInitialized = false;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Grain)
 };

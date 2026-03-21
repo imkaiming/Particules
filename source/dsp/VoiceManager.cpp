@@ -1,16 +1,7 @@
-/*
-  ==============================================================================
-
-	VoiceManager.cpp
-	Created: 6 Feb 2026 6:03:01pm
-	Author:  kai
-
-  ==============================================================================
-*/
-
 #include "VoiceManager.h"
-#include "../utils/ParameterSnapshot.h"
-#include "../utils/SmoothedParameters.h"
+#include "../utils/struct/ParameterSnapshot.h"
+#include "../utils/struct/SmoothedParameters.h"
+#include "../utils/math/Lerp.h"
 
 VoiceManager::VoiceManager(GrainPool& p, PositionModulator& pm, EnvelopeLookUpTable& lut, GrainVisualBuffer& vb)
     : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}, visualBuffer{vb}

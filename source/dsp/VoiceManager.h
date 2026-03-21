@@ -1,17 +1,9 @@
-/*
-  ==============================================================================
-
-	VoiceManager.h
-	Created: 6 Feb 2026 6:03:01pm
-	Author:  kai
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "../framework/GrainVisualBuffer.h"
-#include "../utils/GrainHandle.h"
+#include "../framework/Constants.h"
+#include "../framework/Core.h"
+#include "../utils/struct/GrainHandle.h"
 #include "EnvelopeLookUpTable.h"
 #include "GrainPool.h"
 #include "PositionModulator.h"
@@ -41,7 +33,7 @@ public:
 private:
     void removeVoice(const int index);
 
-    static constexpr int SIZE = Param::MaxGrains;
+    static constexpr int SIZE = MAX_GRAINS;
 
     EnvelopeLookUpTable& envLut;
     PositionModulator& posMod;
@@ -52,4 +44,6 @@ private:
 
     GrainVisualBuffer& visualBuffer;
     std::array<float, SIZE> visualY;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VoiceManager)
 };

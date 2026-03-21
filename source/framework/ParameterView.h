@@ -1,8 +1,10 @@
 #pragma once
 
-#include "../utils/EnvelopeMode.h"
-#include "../utils/ParameterSnapshot.h"
-#include "../utils/TraversalMode.h"
+#include "../utils/enum/EnvelopeMode.h"
+#include "../utils/enum/TraversalMode.h"
+#include "../utils/math/ConvertToPercentage.h"
+#include "../utils/struct/ParameterSnapshot.h"
+#include "Types.h"
 #include "Core.h"
 
 class ParameterView
@@ -77,4 +79,6 @@ private:
     std::atomic<float>* envMode = nullptr;
     std::atomic<float>* traversalMode = nullptr;
     std::atomic<float>* traversalFreq = nullptr;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterView)
 };

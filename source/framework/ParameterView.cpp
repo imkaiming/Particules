@@ -1,15 +1,5 @@
-/*
-  ==============================================================================
-
-	Parameters.cpp
-	Created: 26 Feb 2023 12:38:46am
-	Author:  user
-
-  ==============================================================================
-*/
-
 #include "ParameterView.h"
-#include "PluginParams.h"
+#include "../utils/PluginParams.h"
 
 ParameterView::ParameterView() : mIsGrainsEmpty{true}, mIsPlaying{false}, mSampleRate{0.0} {}
 
@@ -17,17 +7,17 @@ void ParameterView::init(ValueTreeState& apvts, double sampleRate)
 {
     setSampleRate(sampleRate);
     //mSampleRate.store(sampleRate, std::memory_order_relaxed);
-    mix = apvts.getRawParameterValue(Param::Mix::id);
-    gain = apvts.getRawParameterValue(Param::Gain::id);
-    emission = apvts.getRawParameterValue(Param::Emission::id);
-    duration = apvts.getRawParameterValue(Param::Duration::id);
-    speed = apvts.getRawParameterValue(Param::Speed::id);
-    position = apvts.getRawParameterValue(Param::Position::id);
-    selection = apvts.getRawParameterValue(Param::Selection::id);
-    envMode = apvts.getRawParameterValue(Param::EnvelopeMode::id);
-    sustainRatio = apvts.getRawParameterValue(Param::SustainRatio::id);
-    traversalMode = apvts.getRawParameterValue(Param::TraversalMode::id);
-    traversalFreq = apvts.getRawParameterValue(Param::TraversalFreq::id);
+    mix = apvts.getRawParameterValue(PluginParams::Mix::id);
+    gain = apvts.getRawParameterValue(PluginParams::Gain::id);
+    emission = apvts.getRawParameterValue(PluginParams::Emission::id);
+    duration = apvts.getRawParameterValue(PluginParams::Duration::id);
+    speed = apvts.getRawParameterValue(PluginParams::Speed::id);
+    position = apvts.getRawParameterValue(PluginParams::Position::id);
+    selection = apvts.getRawParameterValue(PluginParams::Selection::id);
+    envMode = apvts.getRawParameterValue(PluginParams::EnvelopeMode::id);
+    sustainRatio = apvts.getRawParameterValue(PluginParams::SustainRatio::id);
+    traversalMode = apvts.getRawParameterValue(PluginParams::TraversalMode::id);
+    traversalFreq = apvts.getRawParameterValue(PluginParams::TraversalFreq::id);
 
 }
 

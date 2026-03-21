@@ -12,6 +12,7 @@
 // quand on met pause on reset egalement le modulator
 // on calcule chaque avancer en fonction du bufferSize
 #include "PositionModulator.h"
+#include "../utils/math/MathConstants.h"
 
 PositionModulator::PositionModulator()
     : mPhaseAccumulator{0.f}, mTraversalMod{TraversalMode::Sine}, mTraversalFreq{1.f}, mSampleRate{0.0}

@@ -5,12 +5,12 @@
 
 #include "dsp/GranularEngine.h"
 #include "framework/AudioFileLoader.h"
-#include "framework/GrainVisualBuffer.h"
 #include "framework/ParameterView.h"
+#include "framework/GrainVisualBuffer.h"
 #include "utils/CustomLookAndFeel.h"
-#include "utils/UIContext.h"
+#include "utils/struct/UIContext.h"
 
-class ParameterView;
+//class ParameterView;
 class GranularEngine;
 class ParticulesAudioProcessor : public juce::AudioProcessor,
                                  public juce::ChangeBroadcaster

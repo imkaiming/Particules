@@ -10,7 +10,7 @@
 
 #include "CustomLookAndFeel.h"
 #include "../../resources/font/FuturaMedium.h"
-#include "../framework/PluginParams.h"
+#include "../utils/PluginParams.h"
 #include "../utils/MyColours.h"
 
 CustomLookAndFeel::CustomLookAndFeel()

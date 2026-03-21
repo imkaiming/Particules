@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-	GranularEngine.cpp
-	Created: 15 Feb 2023 1:44:09pm
-	Author:  user
-
-  ==============================================================================
-*/
-
 #include "GranularEngine.h"
 #include "../framework/ParameterView.h"
 

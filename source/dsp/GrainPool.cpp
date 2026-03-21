@@ -10,7 +10,7 @@
 
 #include "GrainPool.h"
 #include "Grain.h"
-#include "../utils/GrainHandle.h"
+#include "../utils/struct/GrainHandle.h"
 
 GrainPool::GrainPool() { reset(); }
 

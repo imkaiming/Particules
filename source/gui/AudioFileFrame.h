@@ -1,16 +1,7 @@
-/*
-  ==============================================================================
-
-	AudioFileFrame.h
-	Created: 3 Feb 2023 10:38:36pm
-	Author:  user
-
-  ==============================================================================
-*/
 
 #pragma once
 
-#include "../framework/Core.h"
+//#include "../framework/Core.h"
 #include "BinaryData.h"
 
 #include "ThumbnailComponent.h"

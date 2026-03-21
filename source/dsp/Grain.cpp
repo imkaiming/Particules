@@ -9,8 +9,8 @@
 */
 
 #include "Grain.h"
-#include "../utils/ParameterSnapshot.h"
-#include "../utils/SmoothedParameters.h"
+#include "../utils/struct/ParameterSnapshot.h"
+#include "../utils/struct/SmoothedParameters.h"
 
 Grain::Grain()
     : durationSamples{0}, startPositionSamples{0}, speed{1.f}, sustainWidthSamples{0}, selectionWindow{0}, fadeInSamples{0},

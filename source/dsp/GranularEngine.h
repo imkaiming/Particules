@@ -15,8 +15,10 @@
 #pragma once
 
 #include "../utils/AtomicSharedPtr.h"
-#include "../utils/ParameterSnapshot.h"
-#include "../utils/SmoothedParameters.h"
+#include "../utils/struct/ParameterSnapshot.h"
+#include "../utils/struct/SmoothedParameters.h"
+#include "../framework/Types.h"
+#include "../framework/Constants.h"
 #include "Scheduler.h"
 #include "VoiceManager.h"
 
@@ -39,7 +41,7 @@ private:
     void updateSmoothedParameters() noexcept;
     void setTargetSmoothedValue(const ParameterSnapshot&) noexcept;
 
-    static constexpr uint8_t mMaxEvent = Param::MaxEvents;
+    static constexpr uint8_t mMaxEvent = MAX_EVENTS;
 
     AtomicSharedPtr<const AudioBuffer> inputBuffer; // should be downmixed
     //std::shared_ptr<const AudioBuffer> inputBuffer;
@@ -63,6 +65,8 @@ private:
     juce::SmoothedValue<float> speedSmooth;
     //juce::SmoothedValue<float> sustainRatioSmooth;
     SmoothedParameters smoothedParams;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularEngine)
 };
 
 //juce::dsp::DryWetMixer<float> mixerProcessor;
