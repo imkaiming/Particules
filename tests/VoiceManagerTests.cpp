@@ -20,7 +20,7 @@ namespace particulesTest
     struct VoiceManagerFixture
     {
         GrainVisualBuffer vb;
-        EnvelopeLookUpTable lut;
+        GrainEnvelope lut;
         GrainHandle h;
         Grain g;
         PositionModulator posMod{};

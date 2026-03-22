@@ -6,7 +6,7 @@
 #include "../utils/struct/GrainHandle.h"
 #include "../utils/struct/ParameterSnapshot.h"
 #include "../utils/struct/SmoothedParameters.h"
-#include "EnvelopeLookUpTable.h"
+#include "GrainEnvelope.h"
 #include "GrainPool.h"
 #include "PositionModulator.h"
 // VoiceManager takes segments from the spawned events and render grains from it
@@ -17,7 +17,7 @@ namespace particules
     class VoiceManager
     {
     public:
-        VoiceManager(GrainPool& pool, PositionModulator& pm, EnvelopeLookUpTable& lut, GrainVisualBuffer& vb);
+        VoiceManager(GrainPool& pool, PositionModulator& pm, GrainEnvelope& lut, GrainVisualBuffer& vb);
         ~VoiceManager() = default;
 
         void reset();
@@ -37,7 +37,7 @@ namespace particules
 
         static constexpr int SIZE = Grains ::maxGrains;
 
-        EnvelopeLookUpTable& envLut;
+        GrainEnvelope& envLut;
         PositionModulator& posMod;
         GrainPool& pool;
 

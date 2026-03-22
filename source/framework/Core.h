@@ -6,6 +6,7 @@
 #include <array>
 #include <functional>
 #include <random>
+#include <span>
 // only for compiler macros
 
 #if JUCE_DEBUG

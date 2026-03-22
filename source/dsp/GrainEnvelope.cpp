@@ -1,40 +1,50 @@
-#include "EnvelopeLookUpTable.h"
+#include "GrainEnvelope.h"
+
 #include "../utils/math/Lerp.h"
 #include "../utils/math/MathConstants.h"
 
 namespace particules
 {
-    EnvelopeLookUpTable::EnvelopeLookUpTable() : envMode{EnvelopeMode::Hann}
+    GrainEnvelope::GrainEnvelope() : envMode{EnvelopeMode::Hann}
     {
         initTableData();
         initTablePtr();
     }
 
-    void EnvelopeLookUpTable::initTableData()
+    void GrainEnvelope::initTableData()
     {
-        initHann();
-        initGaussian();
-        initBlackman();
-        initBlackmanHarris();
-        initTriangle();
-        initExp();
-        initSmoothed();
+        hannLUT.populate(GrainEnvelope::initHann);
+        gaussianLUT.populate(GrainEnvelope::initGaussian);
+        blackmanLUT.populate(GrainEnvelope::initBlackman);
+        blackmanHarrisLUT.populate(GrainEnvelope::initBlackmanHarris);
+        triangleLUT.populate(GrainEnvelope::initTriangle);
+        expLUT.populate(GrainEnvelope::initExp);
+        smoothedLUT.populate(GrainEnvelope::initSmoothed);
     }
-    void EnvelopeLookUpTable::initTablePtr()
+    void GrainEnvelope::initTablePtr()
     {
-        tables[static_cast<int>(EnvelopeMode::Hann)] = hannTable.data();
-        tables[static_cast<int>(EnvelopeMode::Gaussian)] = gaussianTable.data();
-        tables[static_cast<int>(EnvelopeMode::Triangle)] = triangleTable.data();
-        tables[static_cast<int>(EnvelopeMode::Exp)] = expTable.data();
-        tables[static_cast<int>(EnvelopeMode::Blackman)] = blackmanTable.data();
-        tables[static_cast<int>(EnvelopeMode::BlackmanHarris)] = blackmanHarrisTable.data();
-        tables[static_cast<int>(EnvelopeMode::Smoothed)] = smoothedTable.data();
+        tables[static_cast<int>(EnvelopeMode::Hann)] = &hannLUT;
+        tables[static_cast<int>(EnvelopeMode::Gaussian)] = &gaussianLUT;
+        tables[static_cast<int>(EnvelopeMode::Triangle)] = &triangleLUT;
+        tables[static_cast<int>(EnvelopeMode::Exp)] = &expLUT;
+        tables[static_cast<int>(EnvelopeMode::Blackman)] = &blackmanLUT;
+        tables[static_cast<int>(EnvelopeMode::BlackmanHarris)] = &blackmanHarrisLUT;
+        tables[static_cast<int>(EnvelopeMode::Smoothed)] = &smoothedLUT;
+
+        //tables[static_cast<int>(EnvelopeMode::Hann)] = hannTable.data();
+        //tables[static_cast<int>(EnvelopeMode::Gaussian)] = gaussianTable.data();
+        //tables[static_cast<int>(EnvelopeMode::Triangle)] = triangleTable.data();
+        //tables[static_cast<int>(EnvelopeMode::Exp)] = expTable.data();
+        //tables[static_cast<int>(EnvelopeMode::Blackman)] = blackmanTable.data();
+        //tables[static_cast<int>(EnvelopeMode::BlackmanHarris)] = blackmanHarrisTable.data();
+        //tables[static_cast<int>(EnvelopeMode::Smoothed)] = smoothedTable.data();
     }
 
-    const float EnvelopeLookUpTable::getEnvelopeValue(float phase)
+    const float GrainEnvelope::getEnvelopeValue(float phase)
     {
-        const float* table = tables[(int)envMode];
-
+        const LookUpTable* table = tables[(int)envMode];
+        return table->getValue(phase);
+        /*
         // interpolation
         const float x = std::clamp(phase, 0.f, 1.f) * (static_cast<float>(SIZE) - 1.f);
         const int i = std::min(static_cast<int>(x), SIZE - 2);
@@ -45,13 +55,14 @@ namespace particules
 
         //return a + frac * (b - a);
         return lerp(a, b, frac);
+        */
     }
 
-    void EnvelopeLookUpTable::initHann() noexcept
+    void GrainEnvelope::initHann(std::span<float> table) noexcept
     {
         const float phase = twoPi / static_cast<float>(SIZE - 1.f);
         for(size_t i = 0; i < SIZE; i++)
-            hannTable[i] = 0.5f - 0.5f * std::cos(phase * static_cast<float>(i));
+            table[i] = 0.5f - 0.5f * std::cos(phase * static_cast<float>(i));
 
         //static bool firstTime = true;
         //if(firstTime)
@@ -65,7 +76,7 @@ namespace particules
         //}
     }
 
-    void EnvelopeLookUpTable::initGaussian() noexcept
+    void GrainEnvelope::initGaussian(std::span<float> table) noexcept
     {
         const float inv = 1.f / (SIZE - 1);
         const float sigma = 0.18f;
@@ -74,11 +85,11 @@ namespace particules
         for(size_t i = 0; i < SIZE; ++i)
         {
             const float x = (2.f * (i * inv) - 1.f) * invSigma;
-            gaussianTable[i] = std::clamp(std::exp(-0.5f * x * x), 0.f, 1.f);
+            table[i] = std::clamp(std::exp(-0.5f * x * x), 0.f, 1.f);
         }
 
-        gaussianTable[0] = 0.f;
-        gaussianTable[SIZE - 1] = 0.f;
+        table[0] = 0.f;
+        table[SIZE - 1] = 0.f;
 
         //static bool firstTime = true;
         //if(firstTime)
@@ -92,7 +103,7 @@ namespace particules
         //}
     }
 
-    void EnvelopeLookUpTable::initTriangle() noexcept
+    void GrainEnvelope::initTriangle(std::span<float> table) noexcept
     {
         const float center = 0.5f * static_cast<float>(SIZE - 1.f);
         const float invCenter = 1.f / center;
@@ -100,11 +111,11 @@ namespace particules
         for(size_t i = 0; i < SIZE; ++i)
         {
             const float x = std::abs(i - center) * invCenter;
-            triangleTable[i] = 1.f - x;
+            table[i] = 1.f - x;
         }
 
-        triangleTable[0] = 0.f;
-        triangleTable[SIZE - 1] = 0.f;
+        table[0] = 0.f;
+        table[SIZE - 1] = 0.f;
 
         //static bool firstTime = true;
         //if(firstTime)
@@ -117,7 +128,7 @@ namespace particules
         //                            << ", " << triangleTable[SIZE - 2] << ", " << triangleTable[SIZE - 1]);
         //}
     }
-    void EnvelopeLookUpTable::initExp() noexcept
+    void GrainEnvelope::initExp(std::span<float> table) noexcept
     {
         const float inv = 1.f / (SIZE - 1);
         const float k = 6.f;
@@ -125,11 +136,11 @@ namespace particules
         for(size_t i = 0; i < SIZE; ++i)
         {
             const float x = std::abs(2.f * (i * inv) - 1.f);
-            expTable[i] = std::exp(-k * x);
+            table[i] = std::exp(-k * x);
         }
 
-        expTable[0] = 0.f;
-        expTable[SIZE - 1] = 0.f;
+        table[0] = 0.f;
+        table[SIZE - 1] = 0.f;
 
         //static bool firstTime = true;
         //if(firstTime)
@@ -143,7 +154,7 @@ namespace particules
         //}
     }
 
-    void EnvelopeLookUpTable::initSmoothed() noexcept
+    void GrainEnvelope::initSmoothed(std::span<float> table) noexcept
     {
         const float inv = 1.f / static_cast<float>(SIZE - 1);
 
@@ -151,9 +162,9 @@ namespace particules
         {
             const float x = static_cast<float>(i) * inv;
             if(x <= 0.5f)
-                smoothedTable[i] = smoothedStep(2.f * x);
+                table[i] = smoothedStep(2.f * x);
             else
-                smoothedTable[i] = smoothedStep(2.f - 2.f * x);
+                table[i] = smoothedStep(2.f - 2.f * x);
         }
 
         //static bool firstTime = true;
@@ -161,14 +172,14 @@ namespace particules
         //{
         //    firstTime = false;
         //    DBG("SMOOTHED");
-        //    DBG("Envelope first 5: " << smoothedTable[0] << ", " << smoothedTable[1] << ", " << smoothedTable[2] << ", "
+        //    DBG("Envelope first 5: " << table[0] << ", " << smoothedTable[1] << ", " << smoothedTable[2] << ", "
         //                             << smoothedTable[3] << ", " << smoothedTable[4]);
         //    DBG("Envelope last 5: " << smoothedTable[SIZE - 5] << ", " << smoothedTable[SIZE - 4] << ", " << smoothedTable[SIZE - 3]
         //                            << ", " << smoothedTable[SIZE - 2] << ", " << smoothedTable[SIZE - 1]);
         //}
     }
 
-    void EnvelopeLookUpTable::initBlackman() noexcept
+    void GrainEnvelope::initBlackman(std::span<float> table) noexcept
     {
         constexpr float a0 = 0.42f;
         constexpr float a1 = 0.50f;
@@ -180,11 +191,11 @@ namespace particules
         {
             const float phase = twoPi * static_cast<float>(i) * inv;
             const float val = a0 - a1 * std::cos(phase) + a2 * std::cos(2.f * phase);
-            blackmanTable[i] = std::clamp(val, 0.f, 1.f);
+            table[i] = std::clamp(val, 0.f, 1.f);
         }
 
-        blackmanTable[0] = 0.f;
-        blackmanTable[SIZE - 1] = 0.f;
+        table[0] = 0.f;
+        table[SIZE - 1] = 0.f;
 
         //static bool firstTime = true;
         //if(firstTime)
@@ -198,7 +209,7 @@ namespace particules
         //}
     }
 
-    void EnvelopeLookUpTable::initBlackmanHarris() noexcept
+    void GrainEnvelope::initBlackmanHarris(std::span<float> table) noexcept
     {
         constexpr float a0 = 0.35875f;
         constexpr float a1 = 0.48829f;
@@ -211,11 +222,11 @@ namespace particules
         {
             const float phase = twoPi * static_cast<float>(i) * inv;
             const float val = a0 - a1 * std::cos(phase) + a2 * std::cos(2.f * phase) - a3 * std::cos(3.f * phase);
-            blackmanHarrisTable[i] = std::clamp(val, 0.f, 1.f);
+            table[i] = std::clamp(val, 0.f, 1.f);
         }
 
-        blackmanHarrisTable[0] = 0.f;
-        blackmanHarrisTable[SIZE - 1] = 0.f;
+        table[0] = 0.f;
+        table[SIZE - 1] = 0.f;
 
         //    static bool firstTime = true;
         //    if(firstTime)

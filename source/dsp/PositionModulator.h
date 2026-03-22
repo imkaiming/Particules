@@ -24,9 +24,6 @@ namespace particules
         void advanceBlock(int);
         const float computePhase();
 
-        //float getPhaseAtOffset(int);
-        //float getCurrentValue() const noexcept { return mCurrentValue; };
-
     private:
         static constexpr int SIZE = maxLutSize;
         static constexpr int MODCOUNT = 4;

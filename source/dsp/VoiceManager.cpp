@@ -5,7 +5,7 @@
 
 namespace particules
 {
-    VoiceManager::VoiceManager(GrainPool& p, PositionModulator& pm, EnvelopeLookUpTable& lut, GrainVisualBuffer& vb)
+    VoiceManager::VoiceManager(GrainPool& p, PositionModulator& pm, GrainEnvelope& lut, GrainVisualBuffer& vb)
         : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}, visualBuffer{vb}
     {
         reset();

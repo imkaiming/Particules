@@ -48,10 +48,7 @@ namespace particules
 
     void PositionModulator::setSampleRate(double sr)
     {
-        if(sr == 0)
-        {
-            jassert(sr != 0);
-        }
+        jassert(sr > 0);
         mSampleRate = static_cast<float>(sr);
     }
 

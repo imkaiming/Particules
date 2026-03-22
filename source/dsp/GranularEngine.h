@@ -54,7 +54,7 @@ namespace particules
         int accumulator;
         int threshold;
 
-        EnvelopeLookUpTable envLut;
+        GrainEnvelope envLut;
         PositionModulator posMod;
         Scheduler scheduler;
         GrainPool pool;
