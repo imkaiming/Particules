@@ -10,3 +10,4 @@
 #include <juce_dsp/juce_dsp.h>
 #include <juce_events/juce_events.h>
 #include <juce_gui_basics/juce_gui_basics.h>
+#include <juce_core/juce_core.h>

@@ -3,14 +3,14 @@ TEST_CASE("Boot performance")
     BENCHMARK_ADVANCED("Processor constructor")
     (Catch::Benchmark::Chronometer meter)
     {
-        std::vector<Catch::Benchmark::storage_for<ParticulesAudioProcessor>> storage(size_t(meter.runs()));
+        std::vector<Catch::Benchmark::storage_for<particules::ParticulesAudioProcessor>> storage(size_t(meter.runs()));
         meter.measure([&](int i) { storage[(size_t)i].construct(); });
     };
 
     BENCHMARK_ADVANCED("Processor destructor")
     (Catch::Benchmark::Chronometer meter)
     {
-        std::vector<Catch::Benchmark::destructable_object<ParticulesAudioProcessor>> storage(size_t(meter.runs()));
+        std::vector<Catch::Benchmark::destructable_object<particules::ParticulesAudioProcessor>> storage(size_t(meter.runs()));
         for(auto& s : storage)
             s.construct();
         meter.measure([&](int i) { storage[(size_t)i].destruct(); });
@@ -40,7 +40,7 @@ TEST_CASE("Boot performance")
     BENCHMARK_ADVANCED("Editor open and close")(Catch::Benchmark::Chronometer meter)
     {
         meter.measure([](int) {
-            ParticulesAudioProcessor plugin;
+            particules::ParticulesAudioProcessor plugin;
 
             auto* editor = plugin.createEditorIfNeeded();
             delete editor;

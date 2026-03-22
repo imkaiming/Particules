@@ -5,19 +5,12 @@
 #include "../source/utils/struct/GrainHandle.h"
 #include <catch2/catch_test_macros.hpp>
 
-/*
-struct GrainHandle
-{
-    uint16_t index = 0xffff;
-    uint16_t gen = 0;
-    bool isValid() const { return index != 0xFFFF; };
-    static GrainHandle getInvalidState() { return {}; }
-};
 
-*/
-
-namespace audio_plugin_test
+namespace particulesTest
 {
+    using namespace particules;
+    static constexpr int MAX_GRAINS = Grains::maxGrains;
+
     struct GrainPoolFixture
     {
         GrainPool pool;

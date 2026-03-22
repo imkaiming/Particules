@@ -20,34 +20,36 @@
 #include "../utils/struct/ParameterSnapshot.h"
 
 // Scheduler compute onsets
-
-class Scheduler
+namespace particules
 {
-public:
-    Scheduler();
-    ~Scheduler() = default;
+    class Scheduler
+    {
+    public:
+        Scheduler();
+        ~Scheduler() = default;
 
-    void init(double) noexcept;
-    void setEmission(float) noexcept;
-    void tick(std::function<void(const ParameterSnapshot&)>, const ParameterSnapshot&);
-    //void tick(int, std::function<void(int, const ParameterSnapshot&)>, const ParameterSnapshot&);
+        void init(double) noexcept;
+        void setEmission(float) noexcept;
+        void tick(std::function<void(const ParameterSnapshot&)>, const ParameterSnapshot&);
+        //void tick(int, std::function<void(int, const ParameterSnapshot&)>, const ParameterSnapshot&);
 
-private:
-    static constexpr int SIZE = MAX_EVENTS;
+    private:
+        static constexpr int SIZE = maxSpawnsPerBlock;
 
-    void reset();
-    //const double getInterOnSet(float, double) const noexcept;
-    //double getNextOnSet() const noexcept { return nextOnSet; }
-    //void setNextOnSet(double n) noexcept { nextOnSet = n; }
+        void reset();
+        //const double getInterOnSet(float, double) const noexcept;
+        //double getNextOnSet() const noexcept { return nextOnSet; }
+        //void setNextOnSet(double n) noexcept { nextOnSet = n; }
 
-    double nextOnSet; // Tells us when the next grain should play
-    double interOnSet; // time period between every spawn
-    double phase;
+        double nextOnSet; // Tells us when the next grain should play
+        double interOnSet; // time period between every spawn
+        double phase;
 
-    double sampleRate;
-    float emission;
+        double sampleRate;
+        float emission;
 
-    juce::Random random; // parameters to set the interOnset
+        juce::Random random; // parameters to set the interOnset
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Scheduler)
-};
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Scheduler)
+    };
+}

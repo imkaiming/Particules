@@ -1,58 +1,119 @@
 #include "VoiceManager.h"
+#include "../utils/math/Lerp.h"
 #include "../utils/struct/ParameterSnapshot.h"
 #include "../utils/struct/SmoothedParameters.h"
-#include "../utils/math/Lerp.h"
 
-VoiceManager::VoiceManager(GrainPool& p, PositionModulator& pm, EnvelopeLookUpTable& lut, GrainVisualBuffer& vb)
-    : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}, visualBuffer{vb}
+namespace particules
 {
-    reset();
-}
-
-void VoiceManager::reset()
-{
-    activeCount = 0;
-    for(GrainHandle& handle : activeHandles)
-        handle = GrainHandle::getInvalidState();
-    pool.reset();
-}
-
-//void VoiceManager::render(const int currentSample, const int numChannels, AudioBlock& outputBlock, const AudioBuffer* inputBuffer,
-//   const SmoothedParameters& params)
-void VoiceManager::render(int currentSample, int outputNumChannels, float* const* outputPtrs, const float* const* inputPtrs,
-    int inputNumSamples, const SmoothedParameters& params)
-{
-    for(int i = activeCount - 1; i >= 0; --i) // backward iteration
+    VoiceManager::VoiceManager(GrainPool& p, PositionModulator& pm, EnvelopeLookUpTable& lut, GrainVisualBuffer& vb)
+        : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}, visualBuffer{vb}
     {
-        GrainHandle h = activeHandles[i];
-        Grain* g = pool.get(h);
+        reset();
+    }
 
-        const float phase = g->getPhase();
-        const float envelopeValue = envLut.getEnvelopeValue(phase);
+    void VoiceManager::reset()
+    {
+        activeCount = 0;
+        for(GrainHandle& handle : activeHandles)
+            handle = GrainHandle::getInvalidState();
+        pool.reset();
+    }
 
-        for(int channel = 0; channel < outputNumChannels; ++channel)
+    //void VoiceManager::render(const int currentSample, const int numChannels, AudioBlock& outputBlock, const AudioBuffer* inputBuffer,
+    //   const SmoothedParameters& params)
+    void VoiceManager::render(int currentSample, int outputNumChannels, float* const* outputPtrs, const float* const* inputPtrs,
+        int inputNumSamples, const SmoothedParameters& params)
+    {
+        for(int i = activeCount - 1; i >= 0; --i) // backward iteration
         {
-            const float* sample = inputPtrs[channel];
-            int index = static_cast<int>(g->getReadPosition());
-            const float readPos = g->getReadPosition();
-            float frac = readPos - (float)index;
-            const float s0 = sample[index];
-            const float s1 = sample[index + 1];
-            //const float s1 = sample[(index + 1) % inputNumSamples];
+            GrainHandle h = activeHandles[i];
+            Grain* g = pool.get(h);
 
-            outputPtrs[channel][currentSample] += lerp(s0, s1, frac) * envelopeValue;
-            //outputBlock.addSample(channel, currentSample, lerp(s0, s1, frac) * envelopeValue);
-        }
+            const float phase = g->getPhase();
+            const float envelopeValue = envLut.getEnvelopeValue(phase);
 
-        g->nextReadPosition();
-        g->updateParams(params);
-        if(g->isExhausted())
-        {
-            pool.release(h);
-            removeVoice(i);
+            for(int channel = 0; channel < outputNumChannels; ++channel)
+            {
+                const float* sample = inputPtrs[channel];
+                int index = static_cast<int>(g->getReadPosition());
+                const float readPos = g->getReadPosition();
+                float frac = readPos - (float)index;
+                const float s0 = sample[index];
+                const float s1 = sample[index + 1];
+                //const float s1 = sample[(index + 1) % inputNumSamples];
+
+                outputPtrs[channel][currentSample] += lerp(s0, s1, frac) * envelopeValue;
+                //outputBlock.addSample(channel, currentSample, lerp(s0, s1, frac) * envelopeValue);
+            }
+
+            g->nextReadPosition();
+            g->updateParams(params);
+            if(g->isExhausted())
+            {
+                pool.release(h);
+                removeVoice(i);
+            }
         }
     }
+
+    void VoiceManager::spawn(const ParameterSnapshot& snapshot)
+    {
+        if(activeCount >= SIZE)
+            return; // cannot spawn any more grains
+
+        GrainHandle handle = pool.acquire();
+        Grain* grain = pool.get(handle);
+        if(grain == nullptr)
+            return;
+
+        visualY[handle.index] = juce::Random::getSystemRandom().nextFloat();
+
+        envLut.setEnvelopeMode(snapshot.envMode);
+
+        grain->config(snapshot, posMod.computePhase()); // init the grain here before process with the snapshot
+        activeHandles[activeCount++] = handle;
+    }
+
+    // example : after spawning 5 times activeCount = 5
+    // removing index 2 then swapping the index 4 with the 2 and
+    // after decrementing activeCount is = 4.
+    void VoiceManager::removeVoice(const int i) { activeHandles[i] = activeHandles[--activeCount]; }
+
+    void VoiceManager::writeVisualSnapshot()
+    {
+        std::atomic<int>& index = visualBuffer.getReadIndex();
+        const int write = 1 - index.load(std::memory_order_relaxed);
+        auto& snap = visualBuffer.getSnapshot(write); // snapshot is not taken by GUI thread
+
+        snap.count = 0;
+        for(int i = 0; i < activeCount; ++i)
+        {
+            const GrainHandle h = activeHandles[i];
+            const Grain* g = pool.get(h);
+            if(g != nullptr) // ← sécurité obligatoire
+            {
+                snap.grainVisuals[snap.count++] = {
+                    g->getReadPosition(), visualY[h.index], envLut.getEnvelopeValue(g->getPhase())};
+            }
+        }
+
+        //snap.count = activeCount;
+        index.store(write, std::memory_order_release);
+    }
 }
+
+//void VoiceManager::getAllActiveGrains(std::vector<GrainPoint>& out) const
+//{
+//    out.clear();
+//    out.reserve(activeCount);
+//    for(int i = 0; i < activeCount; ++i)
+//    {
+//        GrainHandle h = activeHandles[i];
+//        const Grain* g = pool.get(h);
+//        GrainPoint gp{g->getReadPosition(), visualY[h.index], envLut.getEnvelopeValue(g->getPhase())};
+//        out.push_back(gp);
+//    }
+//}
 
 /*
 void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)
@@ -129,60 +190,3 @@ void VoiceManager::processSamplesGrains(AudioBlock& outputBlock, int bufferSize,
     }
 }
 */
-
-void VoiceManager::spawn(const ParameterSnapshot& snapshot)
-{
-    if(activeCount >= SIZE)
-        return; // cannot spawn any more grains
-
-    GrainHandle handle = pool.acquire();
-    Grain* grain = pool.get(handle);
-    if(grain == nullptr)
-        return;
-
-    visualY[handle.index] = juce::Random::getSystemRandom().nextFloat();
-
-    envLut.setEnvelopeMode(snapshot.envMode);
-
-    grain->config(snapshot, posMod.computePhase()); // init the grain here before process with the snapshot
-    activeHandles[activeCount++] = handle;
-}
-
-// example : after spawning 5 times activeCount = 5
-// removing index 2 then swapping the index 4 with the 2 and
-// after decrementing activeCount is = 4.
-void VoiceManager::removeVoice(const int i) { activeHandles[i] = activeHandles[--activeCount]; }
-
-//void VoiceManager::getAllActiveGrains(std::vector<GrainPoint>& out) const
-//{
-//    out.clear();
-//    out.reserve(activeCount);
-//    for(int i = 0; i < activeCount; ++i)
-//    {
-//        GrainHandle h = activeHandles[i];
-//        const Grain* g = pool.get(h);
-//        GrainPoint gp{g->getReadPosition(), visualY[h.index], envLut.getEnvelopeValue(g->getPhase())};
-//        out.push_back(gp);
-//    }
-//}
-
-void VoiceManager::writeVisualSnapshot()
-{
-    std::atomic<int>& index = visualBuffer.getReadIndex();
-    const int write = 1 - index.load(std::memory_order_relaxed);
-    auto& snap = visualBuffer.getSnapshot(write); // snapshot is not taken by GUI thread
-
-    snap.count = 0;
-    for(int i = 0; i < activeCount; ++i)
-    {
-        const GrainHandle h = activeHandles[i];
-        const Grain* g = pool.get(h);
-        if(g != nullptr) // ← sécurité obligatoire
-        {
-            snap.grainVisuals[snap.count++] = {g->getReadPosition(), visualY[h.index], envLut.getEnvelopeValue(g->getPhase())};
-        }
-    }
-
-    //snap.count = activeCount;
-    index.store(write, std::memory_order_release);
-}

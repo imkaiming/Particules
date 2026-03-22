@@ -19,9 +19,9 @@
    });
 
  */
-[[maybe_unused]] static void runWithinPluginEditor (const std::function<void (ParticulesAudioProcessor& plugin)>& testCode)
+[[maybe_unused]] static void runWithinPluginEditor (const std::function<void (particules::ParticulesAudioProcessor& plugin)>& testCode)
 {
-    ParticulesAudioProcessor plugin;
+    particules::ParticulesAudioProcessor plugin;
     const auto editor = plugin.createEditorIfNeeded();
 
     testCode (plugin);

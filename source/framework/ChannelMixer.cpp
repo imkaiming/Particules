@@ -7,176 +7,178 @@
 //{
 //}
 
-// DOWNMIX Standard ITU-R BS.775
-AudioBuffer ChannelMixer::downmix(const AudioBuffer& inputBuffer) const
+namespace particules
 {
-    const int inputChannels = inputBuffer.getNumChannels();
-    const int numSamples = inputBuffer.getNumSamples();
-
-    jassert(inputChannels != 0 && targetChannels != 0);
-
-    if(inputChannels == targetChannels)
-        return inputBuffer;
-
-    juce::AudioBuffer<float> result(targetChannels, numSamples);
-
-    // Mono to Stereo
-    if(inputChannels == 1 && targetChannels == 2)
+    // DOWNMIX Standard ITU-R BS.775
+    AudioBuffer ChannelMixer::downmix(const AudioBuffer& inputBuffer) const
     {
-        result.copyFrom(0, 0, inputBuffer, 0, 0, numSamples);
-        result.copyFrom(1, 0, inputBuffer, 0, 0, numSamples);
-        return result;
-    }
+        const int inputChannels = inputBuffer.getNumChannels();
+        const int numSamples = inputBuffer.getNumSamples();
 
-    // Stereo to Mono
-    if(inputChannels == 2 && targetChannels == 1)
-    {
-        const float* l = inputBuffer.getReadPointer(0);
-        const float* r = inputBuffer.getReadPointer(1);
-        float* dest = result.getWritePointer(0);
-        juce::FloatVectorOperations::clear(dest, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(dest, l, 0.5f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(dest, r, 0.5f, numSamples);
-        return result;
-    }
+        jassert(inputChannels != 0 && targetChannels != 0);
 
-    // 3.0 to Stereo
-    if(inputChannels == 3 && targetChannels == 2)
-    {
-        const float* l = inputBuffer.getReadPointer(0);
-        const float* r = inputBuffer.getReadPointer(1);
-        const float* c = inputBuffer.getReadPointer(2);
+        if(inputChannels == targetChannels)
+            return inputBuffer;
 
-        float* destL = result.getWritePointer(0);
-        float* destR = result.getWritePointer(1);
+        juce::AudioBuffer<float> result(targetChannels, numSamples);
 
-        juce::FloatVectorOperations::copy(destL, l, numSamples);
-        juce::FloatVectorOperations::copy(destR, r, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destL, c, 0.707f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destR, c, 0.707f, numSamples);
-
-        return result;
-    }
-
-    // Quad to Stereo
-    if(inputChannels == 4 && targetChannels == 2)
-    {
-        const float* l = inputBuffer.getReadPointer(0);
-        const float* r = inputBuffer.getReadPointer(1);
-        const float* ls = inputBuffer.getReadPointer(2);
-        const float* rs = inputBuffer.getReadPointer(3);
-
-        float* destL = result.getWritePointer(0);
-        float* destR = result.getWritePointer(1);
-
-        juce::FloatVectorOperations::copy(destL, l, numSamples);
-        juce::FloatVectorOperations::copy(destR, r, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destL, ls, 0.707f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destR, rs, 0.707f, numSamples);
-
-        return result;
-    }
-
-    // 5.0 to Stereo
-    if(inputChannels == 5 && targetChannels == 2)
-    {
-        const float* l = inputBuffer.getReadPointer(0);
-        const float* r = inputBuffer.getReadPointer(1);
-        const float* c = inputBuffer.getReadPointer(2);
-        const float* ls = inputBuffer.getReadPointer(3);
-        const float* rs = inputBuffer.getReadPointer(4);
-
-        float* destL = result.getWritePointer(0);
-        float* destR = result.getWritePointer(1);
-
-        juce::FloatVectorOperations::copy(destL, l, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destL, c, 0.707f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destL, ls, 0.707f, numSamples);
-
-        juce::FloatVectorOperations::copy(destR, r, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destR, c, 0.707f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destR, rs, 0.707f, numSamples);
-
-        return result;
-    }
-
-    // 5.1 to Stereo
-    if(inputChannels == 6 && targetChannels == 2)
-    {
-        const float* l = inputBuffer.getReadPointer(0);
-        const float* r = inputBuffer.getReadPointer(1);
-        const float* c = inputBuffer.getReadPointer(2);
-        const float* lfe = inputBuffer.getReadPointer(3);
-        const float* ls = inputBuffer.getReadPointer(4);
-        const float* rs = inputBuffer.getReadPointer(5);
-
-        float* destL = result.getWritePointer(0);
-        float* destR = result.getWritePointer(1);
-
-        juce::FloatVectorOperations::copy(destL, l, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destL, c, 0.707f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destL, ls, 0.707f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destL, lfe, 0.3f, numSamples);
-
-        juce::FloatVectorOperations::copy(destR, r, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destR, c, 0.707f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destR, rs, 0.707f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destR, lfe, 0.3f, numSamples);
-
-        return result;
-    }
-
-    // 7.1 to Stereo (Dolby Pro Logic II)
-    if(inputChannels == 8 && targetChannels == 2)
-    {
-        const float* l = inputBuffer.getReadPointer(0);
-        const float* r = inputBuffer.getReadPointer(1);
-        const float* c = inputBuffer.getReadPointer(2);
-        const float* lfe = inputBuffer.getReadPointer(3);
-        const float* ls = inputBuffer.getReadPointer(4);
-        const float* rs = inputBuffer.getReadPointer(5);
-        const float* lb = inputBuffer.getReadPointer(6);
-        const float* rb = inputBuffer.getReadPointer(7);
-
-        float* destL = result.getWritePointer(0);
-        float* destR = result.getWritePointer(1);
-
-        juce::FloatVectorOperations::copy(destL, l, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destL, c, 0.707f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destL, ls, 0.707f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destL, lb, 0.5f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destL, lfe, 0.3f, numSamples);
-
-        juce::FloatVectorOperations::copy(destR, r, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destR, c, 0.707f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destR, rs, 0.707f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destR, rb, 0.5f, numSamples);
-        juce::FloatVectorOperations::addWithMultiply(destR, lfe, 0.3f, numSamples);
-
-        return result;
-    }
-
-    // Fallback
-    float gain = 1.0f / std::sqrt(static_cast<float>(inputChannels));
-    for(int out = 0; out < targetChannels; ++out)
-    {
-        float* dest = result.getWritePointer(out);
-
-        for(int in = 0; in < inputChannels; ++in)
+        // Mono to Stereo
+        if(inputChannels == 1 && targetChannels == 2)
         {
-            const float* src = inputBuffer.getReadPointer(in);
-            juce::FloatVectorOperations::addWithMultiply(dest, src, gain, numSamples);
+            result.copyFrom(0, 0, inputBuffer, 0, 0, numSamples);
+            result.copyFrom(1, 0, inputBuffer, 0, 0, numSamples);
+            return result;
         }
+
+        // Stereo to Mono
+        if(inputChannels == 2 && targetChannels == 1)
+        {
+            const float* l = inputBuffer.getReadPointer(0);
+            const float* r = inputBuffer.getReadPointer(1);
+            float* dest = result.getWritePointer(0);
+            juce::FloatVectorOperations::clear(dest, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(dest, l, 0.5f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(dest, r, 0.5f, numSamples);
+            return result;
+        }
+
+        // 3.0 to Stereo
+        if(inputChannels == 3 && targetChannels == 2)
+        {
+            const float* l = inputBuffer.getReadPointer(0);
+            const float* r = inputBuffer.getReadPointer(1);
+            const float* c = inputBuffer.getReadPointer(2);
+
+            float* destL = result.getWritePointer(0);
+            float* destR = result.getWritePointer(1);
+
+            juce::FloatVectorOperations::copy(destL, l, numSamples);
+            juce::FloatVectorOperations::copy(destR, r, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destL, c, 0.707f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destR, c, 0.707f, numSamples);
+
+            return result;
+        }
+
+        // Quad to Stereo
+        if(inputChannels == 4 && targetChannels == 2)
+        {
+            const float* l = inputBuffer.getReadPointer(0);
+            const float* r = inputBuffer.getReadPointer(1);
+            const float* ls = inputBuffer.getReadPointer(2);
+            const float* rs = inputBuffer.getReadPointer(3);
+
+            float* destL = result.getWritePointer(0);
+            float* destR = result.getWritePointer(1);
+
+            juce::FloatVectorOperations::copy(destL, l, numSamples);
+            juce::FloatVectorOperations::copy(destR, r, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destL, ls, 0.707f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destR, rs, 0.707f, numSamples);
+
+            return result;
+        }
+
+        // 5.0 to Stereo
+        if(inputChannels == 5 && targetChannels == 2)
+        {
+            const float* l = inputBuffer.getReadPointer(0);
+            const float* r = inputBuffer.getReadPointer(1);
+            const float* c = inputBuffer.getReadPointer(2);
+            const float* ls = inputBuffer.getReadPointer(3);
+            const float* rs = inputBuffer.getReadPointer(4);
+
+            float* destL = result.getWritePointer(0);
+            float* destR = result.getWritePointer(1);
+
+            juce::FloatVectorOperations::copy(destL, l, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destL, c, 0.707f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destL, ls, 0.707f, numSamples);
+
+            juce::FloatVectorOperations::copy(destR, r, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destR, c, 0.707f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destR, rs, 0.707f, numSamples);
+
+            return result;
+        }
+
+        // 5.1 to Stereo
+        if(inputChannels == 6 && targetChannels == 2)
+        {
+            const float* l = inputBuffer.getReadPointer(0);
+            const float* r = inputBuffer.getReadPointer(1);
+            const float* c = inputBuffer.getReadPointer(2);
+            const float* lfe = inputBuffer.getReadPointer(3);
+            const float* ls = inputBuffer.getReadPointer(4);
+            const float* rs = inputBuffer.getReadPointer(5);
+
+            float* destL = result.getWritePointer(0);
+            float* destR = result.getWritePointer(1);
+
+            juce::FloatVectorOperations::copy(destL, l, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destL, c, 0.707f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destL, ls, 0.707f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destL, lfe, 0.3f, numSamples);
+
+            juce::FloatVectorOperations::copy(destR, r, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destR, c, 0.707f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destR, rs, 0.707f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destR, lfe, 0.3f, numSamples);
+
+            return result;
+        }
+
+        // 7.1 to Stereo (Dolby Pro Logic II)
+        if(inputChannels == 8 && targetChannels == 2)
+        {
+            const float* l = inputBuffer.getReadPointer(0);
+            const float* r = inputBuffer.getReadPointer(1);
+            const float* c = inputBuffer.getReadPointer(2);
+            const float* lfe = inputBuffer.getReadPointer(3);
+            const float* ls = inputBuffer.getReadPointer(4);
+            const float* rs = inputBuffer.getReadPointer(5);
+            const float* lb = inputBuffer.getReadPointer(6);
+            const float* rb = inputBuffer.getReadPointer(7);
+
+            float* destL = result.getWritePointer(0);
+            float* destR = result.getWritePointer(1);
+
+            juce::FloatVectorOperations::copy(destL, l, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destL, c, 0.707f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destL, ls, 0.707f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destL, lb, 0.5f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destL, lfe, 0.3f, numSamples);
+
+            juce::FloatVectorOperations::copy(destR, r, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destR, c, 0.707f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destR, rs, 0.707f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destR, rb, 0.5f, numSamples);
+            juce::FloatVectorOperations::addWithMultiply(destR, lfe, 0.3f, numSamples);
+
+            return result;
+        }
+
+        // Fallback
+        float gain = 1.0f / std::sqrt(static_cast<float>(inputChannels));
+        for(int out = 0; out < targetChannels; ++out)
+        {
+            float* dest = result.getWritePointer(out);
+
+            for(int in = 0; in < inputChannels; ++in)
+            {
+                const float* src = inputBuffer.getReadPointer(in);
+                juce::FloatVectorOperations::addWithMultiply(dest, src, gain, numSamples);
+            }
+        }
+
+        return result;
     }
-
-    return result;
+    void ChannelMixer::setTargetChannel(int channels) noexcept
+    {
+        jassert(channels > 0 && channels < MAX_CHANNELS);
+        targetChannels = channels;
+    }
 }
-void ChannelMixer::setTargetChannel(int channels) noexcept
-{
-    jassert(channels > 0 && channels < MAX_CHANNELS);
-    targetChannels = channels;
-}
-
 /*
 AudioBuffer ChannelMixer::downmix(const AudioBuffer& inputBuffer, const int outputNumChannels)
 {

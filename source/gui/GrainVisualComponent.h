@@ -1,18 +1,5 @@
-
-/*
-  ==============================================================================
-
-	GrainVisualizer.h
-	Created: 12 Apr 2023 1:47:43pm
-	Author:  user
-
-  ==============================================================================
-*/
-
-
-
-#include "../utils/MyColours.h"
 #include "../framework/GrainVisualBuffer.h"
+#include "../utils/MyColours.h"
 //#include "../framework/Core.h"
 #include "../framework/Constants.h"
 #include "../utils/PluginParams.h"
@@ -28,27 +15,30 @@
 * La classe GrainVisualComponent est appelé avec update à chaque lecture de sample ou à chaque chunk de buffer
 */
 
-
-class GrainVisualComponent : public juce::Component, private juce::Timer
+namespace particules
 {
-public:
-    GrainVisualComponent(GrainVisualBuffer& vb);
-    ~GrainVisualComponent() override;
 
-	void paint(juce::Graphics& g) override;
-	void resized() override;
+    class GrainVisualComponent : public juce::Component, private juce::Timer
+    {
+    public:
+        GrainVisualComponent(GrainVisualBuffer& vb);
+        ~GrainVisualComponent() override;
 
-	void setNumSamples(const float);
+        void paint(juce::Graphics& g) override;
+        void resized() override;
 
-private:
-    static constexpr int MAXGRAINS = static_cast<int>(MAX_GRAINS);
-    static constexpr float GSIZE = GRAIN_VISUAL_SIZE;
-    static constexpr float GCENTER = GSIZE / 2.f;
-	void timerCallback() override;
+        void setNumSamples(const float);
 
-	juce::Colour colour;
-    GrainVisualBuffer& visualBuffer;
-	float numSamples;
+    private:
+        static constexpr int MAXGRAINS = static_cast<int>(Grains::maxGrains);
+        static constexpr float GSIZE = UI::grainVisualSize;
+        static constexpr float GCENTER = GSIZE / 2.f;
+        void timerCallback() override;
 
-	float invWidthSamples;
-};
+        juce::Colour colour;
+        GrainVisualBuffer& visualBuffer;
+        float numSamples;
+
+        float invWidthSamples;
+    };
+}

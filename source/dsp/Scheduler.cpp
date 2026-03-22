@@ -1,25 +1,38 @@
-/*
-  ==============================================================================
-
-	Scheduler.cpp
-	Created: 15 Feb 2023 1:44:18pm
-	Author:  user
-
-  ==============================================================================
-*/
-
 #include "Scheduler.h"
-//#include "PositionModulator.h"
 
-Scheduler::Scheduler() : emission{0.f}, sampleRate{0.0}, phase{0.0}, interOnSet{0.0} {}
-
-void Scheduler::reset()
+namespace particules
 {
-    emission = 0.f;
-    interOnSet = 0.0;
-    phase = 0.0;
-}
+    Scheduler::Scheduler() : emission{0.f}, sampleRate{0.0}, phase{0.0}, interOnSet{0.0} {}
 
+    void Scheduler::reset()
+    {
+        emission = 0.f;
+        interOnSet = 0.0;
+        phase = 0.0;
+    }
+
+    // prepare to play
+    void Scheduler::init(double sr) noexcept { sampleRate = sr; }
+
+    // start of the process function
+    void Scheduler::setEmission(float e) noexcept
+    {
+        emission = std::clamp(e, 0.01f, 500.f);
+        interOnSet = sampleRate / (double)emission;
+    }
+
+    //void Scheduler::tick(int index, std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& snapshot)
+    void Scheduler::tick(std::function<void(const ParameterSnapshot&)> spawn, const ParameterSnapshot& snapshot)
+    {
+        if(phase >= interOnSet)
+        {
+            //spawn(index, snapshot);
+            spawn(snapshot);
+            phase -= interOnSet;
+        }
+        phase++;
+    }
+}
 //const double Scheduler::getInterOnSet(float emission, double sampleRate) const noexcept
 //{
 //emission = std::min(emission, 500.f);
@@ -27,30 +40,6 @@ void Scheduler::reset()
 //    emission = std::max(emission, 0.1f);
 //    return sampleRate / (double)emission;
 //}
-
-// prepare to play
-void Scheduler::init(double sr) noexcept { sampleRate = sr; }
-
-// start of the process function
-void Scheduler::setEmission(float e) noexcept
-{
-    emission = std::clamp(e, 0.01f, 500.f);
-    interOnSet = sampleRate / (double)emission;
-}
-
-
-//void Scheduler::tick(int index, std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& snapshot)
-void Scheduler::tick(std::function<void(const ParameterSnapshot&)> spawn, const ParameterSnapshot& snapshot)
-{
-    if(phase >= interOnSet)
-    {
-        //spawn(index, snapshot);
-        spawn(snapshot);
-        phase -= interOnSet;
-    }
-    phase++;
-}
-
 /*
 void Scheduler::processBlock(int bufferSize, double sampleRate, float emission,
     std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& snapshot)

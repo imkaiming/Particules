@@ -7,55 +7,58 @@
 #include "../framework/Types.h"
 #include "../framework/Core.h"
 #include "../gui/GrainVisualComponent.h"
-
+#include "../utils/struct/UIContext.h"
 // Thumbnail is where the audio waveform is painted after being loaded by the audio file loader
-
-class ParameterView;
-class ParticulesAudioProcessor;
-struct UIContext;
-class ThumbnailComponent : public juce::Component,
-                           private juce::ChangeListener //, public juce::AudioProcessorValueTreeState::Listener
+namespace particules
 {
-public:
-    ThumbnailComponent(int, juce::AudioFormatManager&, UIContext&);
-    ~ThumbnailComponent() override;
 
-    void setFile(const juce::File&);
-    void setCallbackOnThumbnailReady(std::function<void()>);
-    void setNumSamples(const float);
+    class ParameterView;
+    class ParticulesAudioProcessor;
+    //struct UIContext;
+    class ThumbnailComponent : public juce::Component,
+                               private juce::ChangeListener //, public juce::AudioProcessorValueTreeState::Listener
+    {
+    public:
+        ThumbnailComponent(int, juce::AudioFormatManager&, UIContext&);
+        ~ThumbnailComponent() override;
 
-private:
-    void paint(juce::Graphics&) override;
-    void resized() override;
+        void setFile(const juce::File&);
+        void setCallbackOnThumbnailReady(std::function<void()>);
+        void setNumSamples(const float);
 
-    void paintIfNoFileLoaded(juce::Graphics&);
-    void paintIfFileLoaded(juce::Graphics&);
+    private:
+        void paint(juce::Graphics&) override;
+        void resized() override;
 
-    void changeListenerCallback(juce::ChangeBroadcaster*) override; // to change the waveform when changing the audio
-    //void parameterChanged(const juce::String& parameterID, float newValue) override;
+        void paintIfNoFileLoaded(juce::Graphics&);
+        void paintIfFileLoaded(juce::Graphics&);
 
-    void updateOverflow(float value);
-    void updatePosition(float value); // update the position marker when changing the file position slider value
-    void updateSelection(float value);
+        void changeListenerCallback(juce::ChangeBroadcaster*) override; // to change the waveform when changing the audio
+        //void parameterChanged(const juce::String& parameterID, float newValue) override;
 
-    UIContext& uic;
-    ParameterView& paramsView;
-    ValueTreeState& apvts;
-    ParticulesAudioProcessor& audioProcessor;
+        void updateOverflow(float value);
+        void updatePosition(float value); // update the position marker when changing the file position slider value
+        void updateSelection(float value);
 
-    float positionValue;
-    float selectionValue;
+        UIContext& uic;
+        ParameterView& paramsView;
+        ValueTreeState& apvts;
+        ParticulesAudioProcessor& audioProcessor;
 
-    juce::AudioThumbnailCache cache;
-    juce::AudioThumbnail audioThumbnail;
+        float positionValue;
+        float selectionValue;
 
-    std::function<void()> onThumbnailReady;
+        juce::AudioThumbnailCache cache;
+        juce::AudioThumbnail audioThumbnail;
 
-    PositionOverlay position;
-    SelectionOverlay selection;
-    SelectionOverlay overflow; // when the selection is higher than the width it wrapped back. it add flexibility
+        std::function<void()> onThumbnailReady;
 
-    GrainVisualComponent grainVisualComponent;
+        PositionOverlay position;
+        SelectionOverlay selection;
+        SelectionOverlay overflow; // when the selection is higher than the width it wrapped back. it add flexibility
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ThumbnailComponent)
-};
+        GrainVisualComponent grainVisualComponent;
+
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ThumbnailComponent)
+    };
+}

@@ -1,144 +1,138 @@
-/*
-  ==============================================================================
-
-	SynthFrame.cpp
-	Created: 3 Feb 2023 11:44:16pm
-	Author:  user
-
-  ==============================================================================
-*/
-
 #include "SynthFrame.h"
 #include "../utils/MyColours.h"
 #include "../utils/PluginParams.h"
 
-SynthFrame::SynthFrame(ValueTreeState& apvts)
+namespace particules
 {
-    mixSliderAttachment =
-        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, PluginParams::Mix::id, mixSlider);
 
-    gainSliderAttachment =
-        std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, PluginParams::Gain::id, gainSlider);
+    SynthFrame::SynthFrame(ValueTreeState& apvts)
+    {
+        mixSliderAttachment =
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Params::Mix::id, mixSlider);
 
-    positionSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        apvts, PluginParams::Position::id, positionSlider);
+        gainSliderAttachment =
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Params::Gain::id, gainSlider);
 
-    selectionSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        apvts, PluginParams::Selection::id, selectionSlider);
+        positionSliderAttachment =
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Params::Position::id, positionSlider);
 
-    mixSlider.setName("mixSlider");
-    mixSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-    mixSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
-    mixSlider.setTextBoxIsEditable(true);
-    mixSlider.setRange(0.0, 100.0);
-    //mixSlider.setTextValueSuffix(" %");
-    //mixSlider.addListener(this);
-    mixSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
-    // mixSlider.onValueChane = [this]() { foo(); }
+        selectionSliderAttachment =
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Params::Selection::id, selectionSlider);
 
-    mixLabel.setText((const juce::String)PluginParams::Mix::name, juce::dontSendNotification);
-    mixLabel.attachToComponent(&mixSlider, false);
-    mixLabel.setJustificationType(juce::Justification::centred);
+        mixSlider.setName("mixSlider");
+        mixSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+        mixSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
+        mixSlider.setTextBoxIsEditable(true);
+        mixSlider.setRange(0.0, 100.0);
+        //mixSlider.setTextValueSuffix(" %");
+        //mixSlider.addListener(this);
+        mixSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+        // mixSlider.onValueChane = [this]() { foo(); }
 
-    gainSlider.setName("gainSlider");
-    gainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
-    gainSlider.setTextBoxIsEditable(true);
-    gainSlider.setRange(PluginParams::Gain::min, PluginParams::Gain::max);
-    gainSlider.setSkewFactorFromMidPoint(-12.0);
-    //gainSlider.setTextValueSuffix(" dB");
-    //gainSlider.addListener(this);
-    gainSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+        mixLabel.setText((const juce::String)Params::Mix::name, juce::dontSendNotification);
+        mixLabel.attachToComponent(&mixSlider, false);
+        mixLabel.setJustificationType(juce::Justification::centred);
 
-    gainLabel.setText((const juce::String)PluginParams::Gain::name, juce::dontSendNotification);
-    gainLabel.attachToComponent(&gainSlider, false);
-    gainLabel.setJustificationType(juce::Justification::centred);
+        gainSlider.setName("gainSlider");
+        gainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
+        gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
+        gainSlider.setTextBoxIsEditable(true);
+        gainSlider.setRange(Params::Gain::min, Params::Gain::max);
+        gainSlider.setSkewFactorFromMidPoint(-12.0);
+        //gainSlider.setTextValueSuffix(" dB");
+        //gainSlider.addListener(this);
+        gainSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-    addAndMakeVisible(&mixSlider);
-    addAndMakeVisible(&gainSlider);
-    addAndMakeVisible(&mixLabel);
-    addAndMakeVisible(&gainLabel);
+        gainLabel.setText((const juce::String)Params::Gain::name, juce::dontSendNotification);
+        gainLabel.attachToComponent(&gainSlider, false);
+        gainLabel.setJustificationType(juce::Justification::centred);
 
-    positionSlider.setName("positionSlider");
-    positionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
-    positionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
-    positionSlider.setTextBoxIsEditable(true);
-    positionSlider.setRange(PluginParams::Position::min, PluginParams::Position::max);
-    //filePosSlider.addListener(this);
+        addAndMakeVisible(&mixSlider);
+        addAndMakeVisible(&gainSlider);
+        addAndMakeVisible(&mixLabel);
+        addAndMakeVisible(&gainLabel);
 
-    positionLabel.setText((const juce::String)PluginParams::Position::name, juce::dontSendNotification);
-    positionLabel.attachToComponent(&positionSlider, false);
-    positionLabel.setJustificationType(juce::Justification::centred);
+        positionSlider.setName("positionSlider");
+        positionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+        positionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
+        positionSlider.setTextBoxIsEditable(true);
+        positionSlider.setRange(Params::Position::min, Params::Position::max);
+        //filePosSlider.addListener(this);
 
-    selectionSlider.setName("selectionSlider");
-    selectionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
-    selectionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
-    selectionSlider.setTextBoxIsEditable(true);
-    selectionSlider.setRange(PluginParams::Selection::min, PluginParams::Selection::max);
-    //windowSelectionSlider.addListener(this);
+        positionLabel.setText((const juce::String)Params::Position::name, juce::dontSendNotification);
+        positionLabel.attachToComponent(&positionSlider, false);
+        positionLabel.setJustificationType(juce::Justification::centred);
 
-    selectionLabel.setText((const juce::String)PluginParams::Selection::name, juce::dontSendNotification);
-    selectionLabel.attachToComponent(&selectionSlider, false);
-    selectionLabel.setJustificationType(juce::Justification::centred);
+        selectionSlider.setName("selectionSlider");
+        selectionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+        selectionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
+        selectionSlider.setTextBoxIsEditable(true);
+        selectionSlider.setRange(Params::Selection::min, Params::Selection::max);
+        //windowSelectionSlider.addListener(this);
 
-    addAndMakeVisible(&positionSlider);
-    addAndMakeVisible(&selectionSlider);
-    addAndMakeVisible(&positionLabel);
-    addAndMakeVisible(&selectionLabel);
-}
+        selectionLabel.setText((const juce::String)Params::Selection::name, juce::dontSendNotification);
+        selectionLabel.attachToComponent(&selectionSlider, false);
+        selectionLabel.setJustificationType(juce::Justification::centred);
 
-void SynthFrame::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
+        addAndMakeVisible(&positionSlider);
+        addAndMakeVisible(&selectionSlider);
+        addAndMakeVisible(&positionLabel);
+        addAndMakeVisible(&selectionLabel);
+    }
 
-void SynthFrame::resized()
-{
-    float h = getHeight() / 30.f;
+    void SynthFrame::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
 
-    juce::FlexBox mainFlexBox;
-    mainFlexBox.flexDirection = juce::FlexBox::Direction::row;
+    void SynthFrame::resized()
+    {
+        float h = getHeight() / 30.f;
 
-    juce::FlexBox flexBox1;
-    flexBox1.flexDirection = juce::FlexBox::Direction::column;
-    flexBox1.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-    flexBox1.alignContent = juce::FlexBox::AlignContent::center;
+        juce::FlexBox mainFlexBox;
+        mainFlexBox.flexDirection = juce::FlexBox::Direction::row;
 
-    flexBox1.items.add(juce::FlexItem(mixSlider).withFlex(0.8f).withMargin(h));
-    flexBox1.items.add(juce::FlexItem(mixLabel).withFlex(0.2f));
+        juce::FlexBox flexBox1;
+        flexBox1.flexDirection = juce::FlexBox::Direction::column;
+        flexBox1.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+        flexBox1.alignContent = juce::FlexBox::AlignContent::center;
 
-    juce::FlexBox flexBox2;
-    flexBox2.flexDirection = juce::FlexBox::Direction::column;
-    flexBox2.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-    flexBox2.alignContent = juce::FlexBox::AlignContent::center;
+        flexBox1.items.add(juce::FlexItem(mixSlider).withFlex(0.8f).withMargin(h));
+        flexBox1.items.add(juce::FlexItem(mixLabel).withFlex(0.2f));
 
-    flexBox2.items.add(juce::FlexItem(gainSlider).withFlex(0.8f).withMargin(h));
-    flexBox2.items.add(juce::FlexItem(gainLabel).withFlex(0.2f));
+        juce::FlexBox flexBox2;
+        flexBox2.flexDirection = juce::FlexBox::Direction::column;
+        flexBox2.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+        flexBox2.alignContent = juce::FlexBox::AlignContent::center;
 
-    juce::FlexBox flexBox3;
-    flexBox3.flexDirection = juce::FlexBox::Direction::column;
-    flexBox3.flexWrap = juce::FlexBox::Wrap::noWrap;
-    flexBox3.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-    flexBox3.alignContent = juce::FlexBox::AlignContent::center;
+        flexBox2.items.add(juce::FlexItem(gainSlider).withFlex(0.8f).withMargin(h));
+        flexBox2.items.add(juce::FlexItem(gainLabel).withFlex(0.2f));
 
-    flexBox3.items.add(juce::FlexItem(positionLabel).withFlex(0.2f).withMargin(h));
-    flexBox3.items.add(juce::FlexItem(positionSlider).withFlex(0.5f));
+        juce::FlexBox flexBox3;
+        flexBox3.flexDirection = juce::FlexBox::Direction::column;
+        flexBox3.flexWrap = juce::FlexBox::Wrap::noWrap;
+        flexBox3.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+        flexBox3.alignContent = juce::FlexBox::AlignContent::center;
 
-    juce::FlexBox flexBox4;
-    flexBox4.flexDirection = juce::FlexBox::Direction::column;
-    flexBox4.flexWrap = juce::FlexBox::Wrap::noWrap;
-    flexBox4.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
-    flexBox4.alignContent = juce::FlexBox::AlignContent::center;
+        flexBox3.items.add(juce::FlexItem(positionLabel).withFlex(0.2f).withMargin(h));
+        flexBox3.items.add(juce::FlexItem(positionSlider).withFlex(0.5f));
 
-    flexBox4.items.add(juce::FlexItem(selectionLabel).withFlex(0.2f).withMargin(h));
-    flexBox4.items.add(juce::FlexItem(selectionSlider).withFlex(0.5f));
+        juce::FlexBox flexBox4;
+        flexBox4.flexDirection = juce::FlexBox::Direction::column;
+        flexBox4.flexWrap = juce::FlexBox::Wrap::noWrap;
+        flexBox4.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
+        flexBox4.alignContent = juce::FlexBox::AlignContent::center;
 
-    juce::FlexBox flexBox5;
-    flexBox5.flexDirection = juce::FlexBox::Direction::column;
+        flexBox4.items.add(juce::FlexItem(selectionLabel).withFlex(0.2f).withMargin(h));
+        flexBox4.items.add(juce::FlexItem(selectionSlider).withFlex(0.5f));
 
-    flexBox5.items.add(juce::FlexItem(flexBox3).withFlex(0.5f).withMargin(h));
-    flexBox5.items.add(juce::FlexItem(flexBox4).withFlex(0.5f).withMargin(h));
+        juce::FlexBox flexBox5;
+        flexBox5.flexDirection = juce::FlexBox::Direction::column;
 
-    mainFlexBox.items.add(juce::FlexItem(flexBox5).withFlex(0.66f));
-    mainFlexBox.items.add(juce::FlexItem(flexBox1).withFlex(0.25f));
-    mainFlexBox.items.add(juce::FlexItem(flexBox2).withFlex(0.25f)); // .withMargin(h));
+        flexBox5.items.add(juce::FlexItem(flexBox3).withFlex(0.5f).withMargin(h));
+        flexBox5.items.add(juce::FlexItem(flexBox4).withFlex(0.5f).withMargin(h));
 
-    mainFlexBox.performLayout(getLocalBounds().toFloat());
+        mainFlexBox.items.add(juce::FlexItem(flexBox5).withFlex(0.66f));
+        mainFlexBox.items.add(juce::FlexItem(flexBox1).withFlex(0.25f));
+        mainFlexBox.items.add(juce::FlexItem(flexBox2).withFlex(0.25f)); // .withMargin(h));
+
+        mainFlexBox.performLayout(getLocalBounds().toFloat());
+    }
 }

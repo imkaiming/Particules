@@ -1,7 +1,10 @@
 #pragma once
 
-struct SmoothedParameters
+namespace particules
 {
-    float speed;
-    float sustainRatio;
-};
+    struct SmoothedParameters
+    {
+        float speed;
+        float sustainRatio;
+    };
+}

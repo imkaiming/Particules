@@ -10,7 +10,7 @@
 
 TEST_CASE ("Plugin instance", "[instance]")
 {
-    ParticulesAudioProcessor testPlugin;
+    particules::ParticulesAudioProcessor testPlugin;
 
     SECTION ("name")
     {

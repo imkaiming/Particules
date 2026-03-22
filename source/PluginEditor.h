@@ -11,29 +11,29 @@
 
 #include "melatonin_inspector/melatonin_inspector.h"
 
-class ParticulesAudioProcessorEditor : public juce::AudioProcessorEditor
+namespace particules
 {
-public:
-    ParticulesAudioProcessorEditor(ParticulesAudioProcessor&);
-    ~ParticulesAudioProcessorEditor() override;
-    void paint(juce::Graphics&) override;
-    void resized() override;
+    class ParticulesAudioProcessorEditor : public juce::AudioProcessorEditor
+    {
+    public:
+        ParticulesAudioProcessorEditor(ParticulesAudioProcessor&);
+        ~ParticulesAudioProcessorEditor() override;
+        void paint(juce::Graphics&) override;
+        void resized() override;
 
-    CustomLookAndFeel& getCustomLook() { return customLookAndFeel; };
-    const MainFrame& getMainFrame() const noexcept { return mainFrame; };
+        CustomLookAndFeel& getCustomLook() { return customLookAndFeel; };
+        const MainFrame& getMainFrame() const noexcept { return mainFrame; };
 
-private:
-    ParticulesAudioProcessor& pluginProcessor;
-    MainFrame mainFrame;
-    CustomLookAndFeel& customLookAndFeel;
-    int width, heigth;
-
-
+    private:
+        ParticulesAudioProcessor& pluginProcessor;
+        MainFrame mainFrame;
+        CustomLookAndFeel& customLookAndFeel;
+        int width, heigth;
 
 #if ENABLE_MELATONINE_INSPECTOR
-    melatonin::Inspector inspector{*this};
+        melatonin::Inspector inspector{*this};
 #endif
 
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessorEditor)
-};
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessorEditor)
+    };
+}

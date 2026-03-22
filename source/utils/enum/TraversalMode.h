@@ -1,3 +1,6 @@
 #pragma once
 
-enum class TraversalMode { Sine, Triangle, Square, Random, None };
+namespace particules
+{
+    enum class TraversalMode { Sine, Triangle, Square, Random, None };
+}

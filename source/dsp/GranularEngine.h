@@ -14,61 +14,64 @@
 
 #pragma once
 
+#include "../framework/Constants.h"
+#include "../framework/Types.h"
 #include "../utils/AtomicSharedPtr.h"
 #include "../utils/struct/ParameterSnapshot.h"
 #include "../utils/struct/SmoothedParameters.h"
-#include "../framework/Types.h"
-#include "../framework/Constants.h"
 #include "Scheduler.h"
 #include "VoiceManager.h"
 
-class GranularEngine
+namespace particules
 {
-public:
-    GranularEngine(GrainVisualBuffer& vb);
-    ~GranularEngine() = default;
+    class GranularEngine
+    {
+    public:
+        GranularEngine(GrainVisualBuffer& vb);
+        ~GranularEngine() = default;
 
-    void process(AudioBuffer& output, int bufferSize, float* const* outputPtrs, int outputNumChannels, ParameterSnapshot snapshot);
-    void init(double, int, int);
-    int getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); }
+        void process(
+            AudioBuffer& output, int bufferSize, float* const* outputPtrs, int outputNumChannels, ParameterSnapshot snapshot);
+        void init(double, int, int);
+        int getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); }
 
-    void setInputBuffer(std::shared_ptr<const AudioBuffer> ptr) noexcept { inputBuffer.store(std::move(ptr)); }
-    std::shared_ptr<const AudioBuffer> getInputBuffer() const noexcept { return inputBuffer.load(); }
-    const bool isInputBufferLoaded() const noexcept { return inputBuffer.load() != nullptr; }
+        void setInputBuffer(std::shared_ptr<const AudioBuffer> ptr) noexcept { inputBuffer.store(std::move(ptr)); }
+        std::shared_ptr<const AudioBuffer> getInputBuffer() const noexcept { return inputBuffer.load(); }
+        const bool isInputBufferLoaded() const noexcept { return inputBuffer.load() != nullptr; }
 
-private:
-    void gainProcess(juce::dsp::ProcessContextReplacing<float>, const float);
-    void updateSmoothedParameters() noexcept;
-    void setTargetSmoothedValue(const ParameterSnapshot&) noexcept;
+    private:
+        void gainProcess(juce::dsp::ProcessContextReplacing<float>, const float);
+        void updateSmoothedParameters() noexcept;
+        void setTargetSmoothedValue(const ParameterSnapshot&) noexcept;
 
-    static constexpr uint8_t mMaxEvent = MAX_EVENTS;
+        static constexpr uint8_t mMaxEvent = maxSpawnsPerBlock;
 
-    AtomicSharedPtr<const AudioBuffer> inputBuffer; // should be downmixed
-    //std::shared_ptr<const AudioBuffer> inputBuffer;
-    std::function<void(const ParameterSnapshot& s)> spawnCallback;
+        AtomicSharedPtr<const AudioBuffer> inputBuffer; // should be downmixed
+        //std::shared_ptr<const AudioBuffer> inputBuffer;
+        std::function<void(const ParameterSnapshot& s)> spawnCallback;
 
-    const float refreshRate;
-    int accumulator;
-    int threshold;
+        const float refreshRate;
+        int accumulator;
+        int threshold;
 
-    EnvelopeLookUpTable envLut;
-    PositionModulator posMod;
-    Scheduler scheduler;
-    GrainPool pool;
-    VoiceManager voiceManager;
+        EnvelopeLookUpTable envLut;
+        PositionModulator posMod;
+        Scheduler scheduler;
+        GrainPool pool;
+        VoiceManager voiceManager;
 
-    juce::dsp::Gain<float> gainProcessor;
+        juce::dsp::Gain<float> gainProcessor;
 
-    juce::ADSR adsr;
-    juce::ADSR::Parameters adsrParams;
-    // smoothed value : we only smooth parameters that change the life cycle of the grains.
-    juce::SmoothedValue<float> speedSmooth;
-    //juce::SmoothedValue<float> sustainRatioSmooth;
-    SmoothedParameters smoothedParams;
+        juce::ADSR adsr;
+        juce::ADSR::Parameters adsrParams;
+        // smoothed value : we only smooth parameters that change the life cycle of the grains.
+        juce::SmoothedValue<float> speedSmooth;
+        //juce::SmoothedValue<float> sustainRatioSmooth;
+        SmoothedParameters smoothedParams;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularEngine)
-};
-
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularEngine)
+    };
+}
 //juce::dsp::DryWetMixer<float> mixerProcessor;
 //juce::dsp::Reverb reverbProcessor;
 //juce::dsp::Reverb::Parameters params;

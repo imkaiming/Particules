@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <array>
 #include <functional>
-
+#include <random>
 // only for compiler macros
 
 #if JUCE_DEBUG
