@@ -25,65 +25,122 @@ namespace particules
 
     void PositionModulator::initTableData()
     {
-        const float invSize = 1.f / (float)SIZE;
-        for(int i = 0; i < SIZE; ++i)
-        {
-            const float val = static_cast<float>(i) * invSize;
-            sineTable[i] = getUnipolarSine(val);
-            squareTable[i] = getUnipolarSquare(val);
-            triangleTable[i] = getUnipolarTriangular(val);
-            randomTable[i] = r.nextFloat();
-        }
+        sineLUT.populate(PositionModulator::initSine);
+        triangleLUT.populate(PositionModulator::initTriangle);
+        squareLUT.populate(PositionModulator::initSquare);
+        randomLUT.populate(PositionModulator::initRandom);
+
+        //const float invSize = 1.f / (float)SIZE;
+        //for(int i = 0; i < SIZE; ++i)
+        //{
+        //    const float val = static_cast<float>(i) * invSize;
+        //    sineLUT[i] = getUnipolarSine(val);
+        //    squareLUT[i] = getUnipolarSquare(val);
+        //    triangleLUT[i] = getUnipolarTriangular(val);
+        //    randomLUT[i] = r.nextFloat();
+        //}
     }
 
     void PositionModulator::initTablePtr()
     {
-        tables[static_cast<int>(TraversalMode::Sine)] = sineTable.data();
-        tables[static_cast<int>(TraversalMode::Triangle)] = triangleTable.data();
-        tables[static_cast<int>(TraversalMode::Square)] = squareTable.data();
-        tables[static_cast<int>(TraversalMode::Random)] = randomTable.data();
+        positionTables[static_cast<int>(TraversalMode::Sine)] = &sineLUT;
+        positionTables[static_cast<int>(TraversalMode::Triangle)] = &triangleLUT;
+        positionTables[static_cast<int>(TraversalMode::Square)] = &squareLUT;
+        positionTables[static_cast<int>(TraversalMode::Random)] = &randomLUT;
     }
 
-    void PositionModulator::reset() { mPhaseAccumulator = 0.f; }
+    void PositionModulator::reset() { phaseGen.reset(); }
 
-    void PositionModulator::setSampleRate(double sr)
-    {
-        jassert(sr > 0);
-        mSampleRate = static_cast<float>(sr);
-    }
+    void PositionModulator::setSampleRate(double sr) { phaseGen.setSampleRate(sr); }
+
+    void PositionModulator::advanceBlock(int numSamples) { phaseGen.advance(numSamples); }
 
     void PositionModulator::setParameters(TraversalMode traversalMod, float traversalFreq)
     {
-        const float safeFreq = std::max(traversalFreq, 0.001f);
-
-        mTraversalFreq = safeFreq;
-        mPhaseIncrement = mTraversalFreq / mSampleRate;
-        mTraversalMod = traversalMod;
+        if(mTraversalMod != traversalMod)
+        {
+            reset();
+            mTraversalMod = traversalMod;
+        }
+        phaseGen.setFrequency(traversalFreq);
     }
 
-    void PositionModulator::advanceBlock(int numSamples)
-    {
-        mPhaseAccumulator += mPhaseIncrement * numSamples;
-        //mPhaseAccumulator = std::fmod(mPhaseAccumulator, 1.0f);
-        if(mPhaseAccumulator >= 1.f)
-            mPhaseAccumulator -= static_cast<int>(mPhaseAccumulator);
-        //mPhaseAccumulator -= std::floor(mPhaseAccumulator);
-    }
-
-    const float PositionModulator::computePhase()
+    const float PositionModulator::getPhase()
     {
         if(mTraversalMod == TraversalMode::None)
             return 0.f;
 
-        const float* table = tables[static_cast<int>(mTraversalMod)];
+        const LookUpTable* table = positionTables[static_cast<int>(mTraversalMod)];
 
-        float phase = mPhaseAccumulator;
-        phase -= static_cast<int>(phase);
-
-        const int i = (int)(phase * SIZE) & (SIZE - 1);
-        return table[i];
+        return table->getValue(phaseGen.getPhase());
     }
-    /*
+
+    // init functions
+    void PositionModulator::initSine(std::span<float> table) noexcept
+    {
+        const float invSize = 1.f / (float)table.size();
+        for(int i = 0; i < table.size(); ++i)
+        {
+            const float phase = static_cast<float>(i) * invSize;
+            table[i] = 0.5f * (std::sin(twoPi * phase) + 1.f);
+        }
+    }
+    void PositionModulator::initSquare(std::span<float> table) noexcept
+    {
+        const float invSize = 1.f / (float)table.size();
+        for(int i = 0; i < table.size(); ++i)
+        {
+            const float phase = static_cast<float>(i) * invSize;
+            const float p = phase - std::floor(phase);
+            table[i] = (p >= 0.5f) ? 1.f : 0.f;
+        }
+    }
+    void PositionModulator::initTriangle(std::span<float> table) noexcept
+    {
+        const float invSize = 1.f / (float)table.size();
+        for(int i = 0; i < table.size(); ++i)
+        {
+            const float phase = static_cast<float>(i) * invSize;
+            const float p = phase - std::floor(phase);
+            table[i] = 1.0f - std::fabs(p * 2.0f - 1.0f);
+        }
+    }
+
+    void PositionModulator::initRandom(std::span<float> table) noexcept
+    {
+        static juce::Random r;
+        for(int i = 0; i < table.size(); ++i)
+        {
+            table[i] = r.nextFloat();
+        }
+    }
+}
+// mod types
+
+//    float PositionModulator::getUnipolarCos(float normalizedPhase) { return 0.5f * (std::cos(twoPi * normalizedPhase) + 1.f); }
+//
+//    float PositionModulator::getUnipolarSine(float normalizedPhase) { return 0.5f * (std::sin(twoPi * normalizedPhase) + 1.0f); }
+//
+//    float PositionModulator::getUnipolarTriangular(float normalizedPhase)
+//    {
+//        const float p = normalizedPhase - std::floor(normalizedPhase);
+//        return 1.0f - std::fabs(p * 2.0f - 1.0f);
+//    }
+//
+//    float PositionModulator::getUnipolarSquare(float normalizedPhase)
+//    {
+//        const float p = normalizedPhase - std::floor(normalizedPhase);
+//        return (p >= 0.5f);
+//    }
+//}
+//float PositionModulator::getRandom()
+//{
+//    static std::mt19937 rng(std::random_device{}());
+//    static std::uniform_real_distribution<float> dist(0.f, 1.f);
+//    return dist(rng);
+//}
+
+/*
 float PositionModulator::getPhaseAtOffset(int offset)
 {
     float phase = mPhaseAccumulator + offset * mPhaseIncrement;
@@ -91,7 +148,7 @@ float PositionModulator::getPhaseAtOffset(int offset)
     return phase;
 }
 */
-    /*
+/*
 float PositionModulator::computePhaseAtOffset(int offset)
 {
     float normalizedPhase = getPhaseAtOffset(offset);
@@ -120,28 +177,3 @@ float PositionModulator::computePhaseAtOffset(int offset)
     return value;
 }
 */
-
-    // mod types
-
-    float PositionModulator::getUnipolarCos(float normalizedPhase) { return 0.5f * (std::cos(twoPi * normalizedPhase) + 1.f); }
-
-    float PositionModulator::getUnipolarSine(float normalizedPhase) { return 0.5f * (std::sin(twoPi * normalizedPhase) + 1.0f); }
-
-    float PositionModulator::getUnipolarTriangular(float normalizedPhase)
-    {
-        const float p = normalizedPhase - std::floor(normalizedPhase);
-        return 1.0f - std::fabs(p * 2.0f - 1.0f);
-    }
-
-    float PositionModulator::getUnipolarSquare(float normalizedPhase)
-    {
-        const float p = normalizedPhase - std::floor(normalizedPhase);
-        return (p >= 0.5f);
-    }
-}
-//float PositionModulator::getRandom()
-//{
-//    static std::mt19937 rng(std::random_device{}());
-//    static std::uniform_real_distribution<float> dist(0.f, 1.f);
-//    return dist(rng);
-//}

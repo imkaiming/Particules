@@ -123,7 +123,7 @@ namespace particules
 
     void ThumbnailComponent::setCallbackOnThumbnailReady(std::function<void()> foo) { onThumbnailReady = std::move(foo); }
 
-    void ThumbnailComponent::setNumSamples(const float val) { grainVisualComponent.setNumSamples(val); }
+    void ThumbnailComponent::setNumSamples(const int val) { grainVisualComponent.setNumSamples(val); }
 
     void ThumbnailComponent::resized()
     {

@@ -19,10 +19,8 @@ namespace particules
         pool.reset();
     }
 
-    //void VoiceManager::render(const int currentSample, const int numChannels, AudioBlock& outputBlock, const AudioBuffer* inputBuffer,
-    //   const SmoothedParameters& params)
     void VoiceManager::render(int currentSample, int outputNumChannels, float* const* outputPtrs, const float* const* inputPtrs,
-        int inputNumSamples, const SmoothedParameters& params)
+        const SmoothedParameters& params)
     {
         for(int i = activeCount - 1; i >= 0; --i) // backward iteration
         {
@@ -31,18 +29,20 @@ namespace particules
 
             const float phase = g->getPhase();
             const float envelopeValue = envLut.getEnvelopeValue(phase);
+            const float readPos = g->getReadPosition();
+
+            int index = static_cast<int>(readPos);
+            float frac = readPos - (float)index;
 
             for(int channel = 0; channel < outputNumChannels; ++channel)
             {
+                // interpolating read position
                 const float* sample = inputPtrs[channel];
-                int index = static_cast<int>(g->getReadPosition());
-                const float readPos = g->getReadPosition();
-                float frac = readPos - (float)index;
-                const float s0 = sample[index];
-                const float s1 = sample[index + 1];
-                //const float s1 = sample[(index + 1) % inputNumSamples];
+                const float s0 = sample[index] * envelopeValue;
+                const float s1 =
+                    sample[index + 1] * envelopeValue; // buffer is safe because we added one value before setting the input
 
-                outputPtrs[channel][currentSample] += lerp(s0, s1, frac) * envelopeValue;
+                outputPtrs[channel][currentSample] += lerp(s0, s1, frac);
                 //outputBlock.addSample(channel, currentSample, lerp(s0, s1, frac) * envelopeValue);
             }
 
@@ -70,7 +70,7 @@ namespace particules
 
         envLut.setEnvelopeMode(snapshot.envMode);
 
-        grain->config(snapshot, posMod.computePhase()); // init the grain here before process with the snapshot
+        grain->config(snapshot, posMod.getPhase()); // init the grain here before process with the snapshot
         activeHandles[activeCount++] = handle;
     }
 
@@ -90,7 +90,7 @@ namespace particules
         {
             const GrainHandle h = activeHandles[i];
             const Grain* g = pool.get(h);
-            if(g != nullptr) // ← sécurité obligatoire
+            if(g != nullptr) 
             {
                 snap.grainVisuals[snap.count++] = {
                     g->getReadPosition(), visualY[h.index], envLut.getEnvelopeValue(g->getPhase())};
@@ -102,20 +102,21 @@ namespace particules
     }
 }
 
-//void VoiceManager::getAllActiveGrains(std::vector<GrainPoint>& out) const
-//{
-//    out.clear();
-//    out.reserve(activeCount);
-//    for(int i = 0; i < activeCount; ++i)
-//    {
-//        GrainHandle h = activeHandles[i];
-//        const Grain* g = pool.get(h);
-//        GrainPoint gp{g->getReadPosition(), visualY[h.index], envLut.getEnvelopeValue(g->getPhase())};
-//        out.push_back(gp);
-//    }
-//}
-
 /*
+
+void VoiceManager::getAllActiveGrains(std::vector<GrainPoint>& out) const
+{
+    out.clear();
+    out.reserve(activeCount);
+    for(int i = 0; i < activeCount; ++i)
+    {
+        GrainHandle h = activeHandles[i];
+        const Grain* g = pool.get(h);
+        GrainPoint gp{g->getReadPosition(), visualY[h.index], envLut.getEnvelopeValue(g->getPhase())};
+        out.push_back(gp);
+    }
+}
+
 void VoiceManager::process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)
 {
     //processGrainsSamples(outputBlock, bufferSize, inputSource);
@@ -189,4 +190,5 @@ void VoiceManager::processSamplesGrains(AudioBlock& outputBlock, int bufferSize,
         }
     }
 }
+
 */

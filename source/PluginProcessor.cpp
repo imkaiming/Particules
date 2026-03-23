@@ -240,10 +240,7 @@ namespace particules
         paramsView.setNumChannels(inputChannels);
         paramsView.setNumSamples(numSamples);
 
-        //DBG("buffer last sample -1 is = " + (str)buffer.getReadPointer(0)[numSamples - 1]);
-        //DBG("buffer last sample is = " + (str)buffer.getReadPointer(0)[numSamples]);
-
-        // add one more value to the buffer to make it safe to interpolate without modulo in the VoiceManager
+        // adding a guard sample to the input buffer to make it safe to interpolate the buffer's read position
         AudioBuffer tempBuffer(inputChannels, numSamples + 1);
 
         for(int ch = 0; ch < inputChannels; ch++)
@@ -251,11 +248,6 @@ namespace particules
             juce::FloatVectorOperations::copy(tempBuffer.getWritePointer(ch), buffer.getReadPointer(ch), numSamples);
             tempBuffer.getWritePointer(ch)[numSamples] = tempBuffer.getReadPointer(ch)[0];
         }
-
-        //DBG("temp last sample -1 is = " + (str)tempBuffer.getReadPointer(0)[numSamples - 1]);
-        //DBG("temp last sample is = " + (str)tempBuffer.getReadPointer(0)[numSamples]);
-        //DBG("temp nnum sample is = " + (str)tempBuffer.getNumSamples());
-        //DBG("buffer nnum sample is = " + (str)buffer->getNumSamples());
 
         const AudioBuffer safeBuffer(tempBuffer);
 

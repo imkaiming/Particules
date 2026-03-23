@@ -24,7 +24,7 @@ namespace particules
 
         void setFile(const juce::File&);
         void setCallbackOnThumbnailReady(std::function<void()>);
-        void setNumSamples(const float);
+        void setNumSamples(const int);
 
     private:
         void paint(juce::Graphics&) override;

@@ -6,11 +6,10 @@
 
 namespace particules
 {
-
     class LookUpTable
     {
     public:
-        LookUpTable() = default;
+        LookUpTable();
         ~LookUpTable() = default;
 
         const float getValue(float phase) const noexcept;
@@ -22,7 +21,7 @@ namespace particules
         }
         //void populateTable(std::function<void(std::span<float>)> fn);
 
-    protected:
+    private: // make this protected if you want to specialized the LUT
         static constexpr int SIZE = maxLutSize;
         std::array<float, SIZE> table;
 

@@ -4,8 +4,8 @@
 namespace particules
 {
     GranularEngine::GranularEngine(GrainVisualBuffer& vb)
-        : scheduler{}, voiceManager{pool, posMod, envLut, vb}, pool{}, posMod{}, refreshRate{60.f}, accumulator{0}, threshold{0},
-          smoothedParams{}
+        : scheduler{}, voiceManager{pool, posMod, envLut, vb}, pool{}, posMod{}, refreshRate{60.f}, sampleAccumulator{0},
+          threshold{0}, smoothedParams{}
     {
         spawnCallback = [this](const ParameterSnapshot& s) { voiceManager.spawn(s); };
     }
@@ -16,10 +16,13 @@ namespace particules
     void GranularEngine::process(
         AudioBuffer& bufferOut, int bufferSize, float* const* outputPtrs, int outputNumChannels, const ParameterSnapshot snapshot)
     {
-        auto bufferGuard = inputBuffer.load();
-        //std::shared_ptr<const AudioBuffer> bufferGuard = inputBuffer.load();
+        // *** security *** //
+
+        auto bufferGuard = inputBufferPtr.load();
         if(!bufferGuard)
             return;
+
+        // *** parameters *** //
 
         const AudioBuffer* inputBuffer = bufferGuard.get();
 
@@ -35,11 +38,13 @@ namespace particules
         posMod.setParameters(snapshot.traversalMode, snapshot.traversalFreq);
         scheduler.setEmission(snapshot.emission);
 
+        // *** dsp *** //
+
         for(int currentSample = 0; currentSample < bufferSize; currentSample++)
         {
             updateSmoothedParameters();
             scheduler.tick(spawnCallback, snapshot);
-            voiceManager.render(currentSample, outputNumChannels, outputPtrs, inputPtrs, inputNumSamples, smoothedParams);
+            voiceManager.render(currentSample, outputNumChannels, outputPtrs, inputPtrs, smoothedParams);
 
             const float env = adsr.getNextSample();
             for(int ch = 0; ch < outputNumChannels; ++ch)
@@ -50,10 +55,12 @@ namespace particules
 
         gainProcess(outputBlock, snapshot.linearGain);
 
-        accumulator += bufferSize;
-        while(accumulator >= threshold)
+        // *** UI *** //
+
+        sampleAccumulator += bufferSize;
+        while(sampleAccumulator >= threshold)
         {
-            accumulator -= threshold;
+            sampleAccumulator -= threshold;
             voiceManager.writeVisualSnapshot();
         }
     }

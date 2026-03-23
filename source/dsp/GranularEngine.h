@@ -35,9 +35,9 @@ namespace particules
         void init(double, int, int);
         int getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); }
 
-        void setInputBuffer(std::shared_ptr<const AudioBuffer> ptr) noexcept { inputBuffer.store(std::move(ptr)); }
-        std::shared_ptr<const AudioBuffer> getInputBuffer() const noexcept { return inputBuffer.load(); }
-        const bool isInputBufferLoaded() const noexcept { return inputBuffer.load() != nullptr; }
+        void setInputBuffer(std::shared_ptr<const AudioBuffer> ptr) noexcept { inputBufferPtr.store(std::move(ptr)); }
+        std::shared_ptr<const AudioBuffer> getInputBuffer() const noexcept { return inputBufferPtr.load(); }
+        const bool isInputBufferLoaded() const noexcept { return inputBufferPtr.load() != nullptr; }
 
     private:
         void gainProcess(juce::dsp::ProcessContextReplacing<float>, const float);
@@ -46,12 +46,12 @@ namespace particules
 
         static constexpr uint8_t mMaxEvent = maxSpawnsPerBlock;
 
-        AtomicSharedPtr<const AudioBuffer> inputBuffer; // should be downmixed
+        AtomicSharedPtr<const AudioBuffer> inputBufferPtr; // should be downmixed
         //std::shared_ptr<const AudioBuffer> inputBuffer;
         std::function<void(const ParameterSnapshot& s)> spawnCallback;
 
         const float refreshRate;
-        int accumulator;
+        int sampleAccumulator;
         int threshold;
 
         GrainEnvelope envLut;

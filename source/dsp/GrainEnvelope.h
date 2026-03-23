@@ -8,6 +8,7 @@
 
 // LUT TABLE
 // fadeIn : 0 -> 0.5
+// sustain holds 0.5
 // fadeOut : 0.5 -> 1
 
 // This class just builds and holds tables datas.
@@ -20,7 +21,7 @@ namespace particules
         GrainEnvelope();
         ~GrainEnvelope() = default;
 
-        const float getEnvelopeValue(float phase);
+        const float getEnvelopeValue(float phase) const noexcept;
         void setEnvelopeMode(EnvelopeMode m) noexcept { envMode = m; }
 
     private:
@@ -48,8 +49,6 @@ namespace particules
         LookUpTable triangleLUT;
         LookUpTable expLUT;
         LookUpTable smoothedLUT;
-
-        PhaseGenerator phaseGen;
 
         //std::array<const float*, 7> tables;
 

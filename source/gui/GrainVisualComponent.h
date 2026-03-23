@@ -27,7 +27,7 @@ namespace particules
         void paint(juce::Graphics& g) override;
         void resized() override;
 
-        void setNumSamples(const float);
+        void setNumSamples(const int);
 
     private:
         static constexpr int MAXGRAINS = static_cast<int>(Grains::maxGrains);
@@ -37,7 +37,7 @@ namespace particules
 
         juce::Colour colour;
         GrainVisualBuffer& visualBuffer;
-        float numSamples;
+        int numSamples;
 
         float invWidthSamples;
     };

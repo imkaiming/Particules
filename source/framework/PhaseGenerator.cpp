@@ -14,17 +14,18 @@ namespace particules
             setIncrement();
     }
 
-    void PhaseGenerator::setIncrement() { increment = frequency / (float)sampleRate; }
+    void PhaseGenerator::setIncrement() { increment = frequency / static_cast<float>(sampleRate); }
 
     void PhaseGenerator::advance(int numSamples)
     {
         phase += increment * numSamples;
-
-        // truncation wrap
-        if(phase >= 1.f)
-            phase -= static_cast<int>(phase); // std::floor ?
+        phase -= std::floor(phase);
     }
 
-    float PhaseGenerator::getPhase() const noexcept { return phase; }
-
+    float PhaseGenerator::getPhase() const noexcept
+    {
+        float p = phase;
+        p -= std::floor(p);
+        return p;
+    }
 }

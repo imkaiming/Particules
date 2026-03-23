@@ -23,7 +23,7 @@ namespace particules
         void reset();
         //void render(const int, const int, AudioBlock&, const AudioBuffer*, const SmoothedParameters&);
         void render(int currentSample, int outputNumChannels, float* const* outputPtrs, const float* const* inputPtrs,
-            int inputNumSamples, const SmoothedParameters& params);
+            const SmoothedParameters& params);
 
         //void process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
         //void processGrainsSamples(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);

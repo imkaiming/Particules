@@ -28,7 +28,7 @@ namespace particules
         }
     }
 
-    void GrainVisualComponent::setNumSamples(const float val)
+    void GrainVisualComponent::setNumSamples(const int val)
     {
         if(val > 0)
         {
@@ -44,7 +44,7 @@ namespace particules
     void GrainVisualComponent::resized()
     {
         if(numSamples > 0)
-            invWidthSamples = static_cast<float>(getWidth()) / numSamples;
+            invWidthSamples = static_cast<float>(getWidth()) / static_cast<float>(numSamples);
     }
 }
 
