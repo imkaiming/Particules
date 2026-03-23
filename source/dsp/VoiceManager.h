@@ -42,7 +42,7 @@ namespace particules
         GrainPool& pool;
 
         std::array<GrainHandle, SIZE> activeHandles;
-        uint16_t activeCount;
+        int activeCount;
 
         GrainVisualBuffer& visualBuffer;
         std::array<float, SIZE> visualY;

@@ -26,8 +26,8 @@ namespace particules
         void setCurrentFile(juce::File& f) noexcept { currentFile = f; };
 
     private:
-        static constexpr int maxFileSize = maxFileSize;
-        static constexpr double maxDuration = maxFileDuration;
+        static constexpr int MAX_FILE_SIZE = maxFileSize;
+        static constexpr double MAX_DURATION = maxFileDuration;
         void showErrorWindow(const juce::String&);
 
         double sampleRate;

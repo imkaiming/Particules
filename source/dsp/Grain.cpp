@@ -6,7 +6,7 @@ namespace particules
 {
     Grain::Grain()
         : durationSamples{0}, startPositionSamples{0}, speed{1.f}, sustainWidthSamples{0}, selectionWindow{0}, fadeInSamples{0},
-          fadeOutSamples{0}, elapsedSamples{0}, /* delaySamples{0},*/ readPosition{0.f}, inputNumChannels{0},
+          fadeOutSamples{0}, elapsedSamples{0}, readPosition{0.f}, inputNumChannels{0},
           inputNumSamples{0} //, isInitialized{false} //, linearGain{1.f}
     {
         reset();
@@ -106,9 +106,9 @@ namespace particules
 
         const float elapsed = static_cast<float>(elapsedSamples);
 
-        if(elapsed < fadeInSamples)
+        if(elapsed < static_cast<float>(fadeInSamples))
             return 0.5f * (elapsed * invFadeInSamples);
-        else if(elapsed < fadeOutSamples)
+        else if(elapsed < static_cast<float>(fadeOutSamples))
             return 0.5f;
         else
         {

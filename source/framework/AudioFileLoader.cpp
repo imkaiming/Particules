@@ -54,9 +54,9 @@ namespace particules
 
         // si le reader de fichier lit un fichier de plus de MaxDuration alors on annule tout
         const double fileDuration = static_cast<double>(reader->lengthInSamples) / reader->sampleRate;
-        if(fileDuration >= maxDuration)
+        if(fileDuration >= MAX_DURATION)
         {
-            showErrorWindow("The file duration must not exceed " + (juce::String)maxDuration + " seconds."
+            showErrorWindow("The file duration must not exceed " + (juce::String)MAX_DURATION+ " seconds."
                             + "/nYour file is currently " + juce::String(fileDuration, 2) + " seconds.");
             return false;
         }
@@ -72,7 +72,7 @@ namespace particules
         const int numSamples = (int)reader->lengthInSamples;
         const int inputNumChannels = reader->numChannels;
 
-        if(file.getSize() > maxFileSize)
+        if(file.getSize() > MAX_FILE_SIZE)
         {
             showErrorWindow("File too large to process (" + juce::String(file.getSize() / 2 * (1024 * 1024)) + " MB estimated)");
             return false;

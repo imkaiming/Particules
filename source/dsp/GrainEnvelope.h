@@ -30,7 +30,7 @@ namespace particules
         void initTableData();
         void initTablePtr();
 
-        static const float smoothedStep(float x) noexcept { return x * x * (3.f - 2.f * x); };
+        static const float smoothedStep(float x) noexcept { return x * x * (3.f - 2.f * x); }
         static void initHann(std::span<float>) noexcept;
         static void initGaussian(std::span<float>) noexcept;
         static void initTriangle(std::span<float>) noexcept;

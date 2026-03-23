@@ -249,9 +249,7 @@ namespace particules
             tempBuffer.getWritePointer(ch)[numSamples] = tempBuffer.getReadPointer(ch)[0];
         }
 
-        const AudioBuffer safeBuffer(tempBuffer);
-
-        std::shared_ptr<const AudioBuffer> safeBufferPtr = std::make_shared<const AudioBuffer>(safeBuffer);
+        std::shared_ptr<const AudioBuffer> safeBufferPtr = std::make_shared<const AudioBuffer>(std::move(tempBuffer));
 
         granularEngine.setInputBuffer(std::move(safeBufferPtr));
     }
