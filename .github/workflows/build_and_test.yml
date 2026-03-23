@@ -214,11 +214,14 @@ jobs:
             --distribution distribution.xml \
             --resources ./resources \
             --package-path . \
-            --sign "" \
-            "${{ env.ARTIFACT_NAME }}.pkg" || {
-              echo "productbuild failed — check distribution.xml and pkg filenames match!"
-              exit 1
-            }
+            --sign "-" \
+            "${{ env.ARTIFACT_NAME }}.pkg"
+
+            #"${{ env.ARTIFACT_NAME }}.pkg" || {
+            #  echo "productbuild failed — check distribution.xml and pkg filenames match!"
+            #  exit 1
+            #}
+
           
           # Final check
           ls -la "${{ env.ARTIFACT_NAME }}.pkg" && echo "Installer created successfully" || exit 1
