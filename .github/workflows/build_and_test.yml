@@ -184,17 +184,17 @@ jobs:
           pkgbuild --identifier "${{ env.BUNDLE_ID }}.vst3.pkg" --version ${{ env.VERSION }} --component "${{ env.VST3_PATH }}" --install-location "/Library/Audio/Plug-Ins/VST3"     "packaging/${{ env.PRODUCT_NAME }}.vst3.pkg"
           pkgbuild --identifier "${{ env.BUNDLE_ID }}.clap.pkg" --version ${{ env.VERSION }} --component "${{ env.CLAP_PATH }}" --install-location "/Library/Audio/Plug-Ins/CLAP"     "packaging/${{ env.PRODUCT_NAME }}.clap.pkg"
           
-          # Standalone app (special root + plist tweak)
+          # Standalone app (special handling)
           pkgbuild --analyze --root "$(dirname "${{ env.STANDALONE_PATH }}")" standalone.plist
           plutil -replace BundleIsRelocatable -bool NO standalone.plist
           pkgbuild --identifier "${{ env.BUNDLE_ID }}.app.pkg" --version ${{ env.VERSION }} --root "$(dirname "${{ env.STANDALONE_PATH }}")" --component-plist standalone.plist --install-location "/Applications" "packaging/${{ env.PRODUCT_NAME }}.app.pkg"
           
           cd packaging
           
-          # Substitute variables → create final distribution.xml
+          # Generate distribution.xml
           envsubst < distribution.xml.template > distribution.xml
           
-          # === Debug output ===
+          # Debug output (keep this for now)
           echo "=== Environment variables used ==="
           echo "PRODUCT_NAME=${{ env.PRODUCT_NAME }}"
           echo "VERSION=${{ env.VERSION }}"
@@ -206,25 +206,24 @@ jobs:
           echo "=================================="
           
           echo "=== Available .pkg files ==="
-          ls -la *.pkg || echo "No .pkg files found!"
+          ls -la *.pkg
           echo "============================"
           
-          # Build the combined installer (unsigned for now)
+          # === BUILD THE FINAL INSTALLER (UNSIGNED) ===
           productbuild \
             --distribution distribution.xml \
             --resources ./resources \
             --package-path . \
-            --sign "-" \
             "${{ env.ARTIFACT_NAME }}.pkg"
 
-            #"${{ env.ARTIFACT_NAME }}.pkg" || {
-            #  echo "productbuild failed — check distribution.xml and pkg filenames match!"
-            #  exit 1
-            #}
-
-          
-          # Final check
-          ls -la "${{ env.ARTIFACT_NAME }}.pkg" && echo "Installer created successfully" || exit 1
+          # Verify it was created
+          if [ -f "${{ env.ARTIFACT_NAME }}.pkg" ]; then
+            echo "Success: ${{ env.ARTIFACT_NAME }}.pkg created (${ARTIFACT_NAME}.pkg)"
+            ls -lh "${{ env.ARTIFACT_NAME }}.pkg"
+          else
+            echo "Failed to create final .pkg"
+            exit 1
+          fi
 
       - name: Zip
         if: ${{ runner.os == 'Linux' }}
