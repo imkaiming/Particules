@@ -1,14 +1,14 @@
-#include "TitleFrame.h"
-#include "../utils/CustomLookAndFeel.h"
-#include "../utils/MyColours.h"
+#include "TitlePanel.h"
+#include "../../utils/CustomLookAndFeel.h"
+#include "../../utils/MyColours.h"
 
 
 namespace particules
 {
 
-    TitleFrame::TitleFrame(CustomLookAndFeel& look) : look{look} { addAndMakeVisible(&titreLabel); }
+    TitlePanel::TitlePanel(CustomLookAndFeel& look) : look{look} { addAndMakeVisible(&titreLabel); }
 
-    void TitleFrame::paint(juce::Graphics& g)
+    void TitlePanel::paint(juce::Graphics& g)
     {
         titreLabel.setText((const juce::String) "Particules", juce::dontSendNotification);
         titreLabel.setJustificationType(juce::Justification::centred);
@@ -26,7 +26,7 @@ namespace particules
         //g.drawText("ParticulesS", getLocalBounds(), juce::Justification::centred, true);
     }
 
-    void TitleFrame::resized()
+    void TitlePanel::resized()
     {
         float h = getHeight() / 30.f;
         juce::FlexBox flexbox;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../framework/Types.h"
+#include "../../framework/Core.h"
 
 namespace particules
 {
@@ -15,5 +16,6 @@ namespace particules
         CustomLookAndFeel& customLookAndFeel;
         ParticulesAudioProcessor& audioProcessor;
         GrainVisualBuffer& visualBuffer;
+        juce::AudioThumbnail& audioThumbnail;
     };
 }

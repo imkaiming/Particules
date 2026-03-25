@@ -3,8 +3,9 @@
 namespace particules
 {
 
-    GrainVisualComponent::GrainVisualComponent(GrainVisualBuffer& vb)
-        : visualBuffer{vb}, numSamples{0}, invWidthSamples{0.f}, colour{MyColours::lavender}
+    GrainVisualComponent::GrainVisualComponent(UIContext& uic)
+        : visualBuffer{uic.visualBuffer}, parameterView{uic.paramsView}, numSamples{0}, invWidthSamples{0.f},
+          colour{MyColours::lavender}
     {
         startTimerHz(60);
     }
@@ -28,7 +29,7 @@ namespace particules
         }
     }
 
-    void GrainVisualComponent::setNumSamples(const int val)
+    void GrainVisualComponent::setNumSamples(int val)
     {
         if(val > 0)
         {

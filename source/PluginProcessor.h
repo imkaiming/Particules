@@ -80,6 +80,10 @@ namespace particules
         ParameterView paramsView; // fait le pont entre apvts et le synth
         GranularEngine granularEngine; // le moteur de la synthèse granulaire
 
+        const int samplesPerThumbnail = 64;
+        juce::AudioThumbnailCache cache;
+        juce::AudioThumbnail audioThumbnail;
+
         CustomLookAndFeel customLookAndFeel;
         UIContext uiContext;
 
@@ -88,7 +92,8 @@ namespace particules
         //std::function<void(std::shared_ptr<const AudioBuffer>)> setInputBufferCallback;
 
         GrainVisualBuffer visualBuffer;
-
+        //juce::UndoManager undoManager;
+        //juce::AbstractFifo fifo;
         //juce::ADSR::Parameters adsrParameters;
         //juce::ADSR adsr;
 

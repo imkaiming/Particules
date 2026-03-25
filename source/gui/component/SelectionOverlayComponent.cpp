@@ -1,24 +1,24 @@
-#include "SelectionOverlay.h"
+#include "SelectionOverlayComponent.h"
 
 
 namespace particules
 {
 
-    SelectionOverlay::SelectionOverlay() : start{0.f}, width{1.f} { /*setSelection(0.f);*/ }
+    SelectionOverlayComponent::SelectionOverlayComponent() : start{0.f}, width{1.f} { /*setSelection(0.f);*/ }
 
-    void SelectionOverlay::setPosition(float newValue)
+    void SelectionOverlayComponent::setPosition(float newValue)
     {
         start = newValue;
         repaint();
     }
 
-    void SelectionOverlay::setSelection(float newValue)
+    void SelectionOverlayComponent::setSelection(float newValue)
     {
         width = newValue;
         repaint();
     }
 
-    void SelectionOverlay::paint(juce::Graphics& g)
+    void SelectionOverlayComponent::paint(juce::Graphics& g)
     {
         g.setColour(MyColours::red);
 

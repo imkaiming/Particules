@@ -1,30 +1,31 @@
 
 #pragma once
 
-#include "PositionOverlay.h"
-#include "SelectionOverlay.h"
+#include "PositionOverlayComponent.h"
+#include "SelectionOverlayComponent.h"
+#include "GrainVisualComponent.h"
 
-#include "../framework/Types.h"
-#include "../framework/Core.h"
-#include "../gui/GrainVisualComponent.h"
-#include "../utils/struct/UIContext.h"
+#include "../../framework/Types.h"
+#include "../../framework/Core.h"
+#include "../../utils/struct/UIContext.h"
+
 // Thumbnail is where the audio waveform is painted after being loaded by the audio file loader
+// should not own the state of the plugin
 namespace particules
 {
 
     class ParameterView;
     class ParticulesAudioProcessor;
-    //struct UIContext;
     class ThumbnailComponent : public juce::Component,
                                private juce::ChangeListener //, public juce::AudioProcessorValueTreeState::Listener
     {
     public:
-        ThumbnailComponent(int, juce::AudioFormatManager&, UIContext&);
+        ThumbnailComponent(UIContext&);
         ~ThumbnailComponent() override;
 
-        void setFile(const juce::File&);
+        //void setFile(const juce::File&);
         void setCallbackOnThumbnailReady(std::function<void()>);
-        void setNumSamples(const int);
+        //void setNumSamples(const int);
 
     private:
         void paint(juce::Graphics&) override;
@@ -45,17 +46,17 @@ namespace particules
         ValueTreeState& apvts;
         ParticulesAudioProcessor& audioProcessor;
 
-        float positionValue;
+        float positionValue; 
         float selectionValue;
 
-        juce::AudioThumbnailCache cache;
-        juce::AudioThumbnail audioThumbnail;
+        //juce::AudioThumbnailCache& cache;
+        juce::AudioThumbnail& audioThumbnail;
 
         std::function<void()> onThumbnailReady;
 
-        PositionOverlay position;
-        SelectionOverlay selection;
-        SelectionOverlay overflow; // when the selection is higher than the width it wrapped back. it add flexibility
+        PositionOverlayComponent position;
+        SelectionOverlayComponent selection;
+        SelectionOverlayComponent overflow; // when the selection is higher than the width it wrapped back. it add flexibility
 
         GrainVisualComponent grainVisualComponent;
 

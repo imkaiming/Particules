@@ -1,27 +1,27 @@
 /*
   ==============================================================================
 
-	AudioFileFrame.cpp
+	AudioFilePanel.cpp
 	Created: 3 Feb 2023 10:38:36pm
 	Author:  user
 
   ==============================================================================
 */
 
-#include "AudioFileFrame.h"
-#include "../framework/ParameterView.h"
-#include "../PluginProcessor.h"
-#include "../utils/MyColours.h"
-#include "../utils/struct/UIContext.h"
+#include "AudioFilePanel.h"
+#include "../../PluginProcessor.h"
+#include "../../framework/ParameterView.h"
+#include "../../utils/MyColours.h"
+#include "../../utils/struct/UIContext.h"
 
 namespace particules
 {
-    AudioFileFrame::AudioFileFrame(UIContext& uic)
+    AudioFilePanel::AudioFilePanel(UIContext& uic)
         : paramsView(uic.paramsView), audioProcessor(uic.audioProcessor),
-          open_btn((const juce::String) "openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-          play_pause_btn((const juce::String) "playAudioButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-          stop_btn((const juce::String) "stopAudioButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-          thumbnailComponent(64, audioProcessor.getAudioFileLoader().getFormatManager(), uic)
+          open_btn((const str) "openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
+          play_pause_btn((const str) "playAudioButton", juce::DrawableButton::ButtonStyle::ImageFitted),
+          stop_btn((const str) "stopAudioButton", juce::DrawableButton::ButtonStyle::ImageFitted),
+          thumbnailComponent(uic)
     {
         setOpenButtonImage();
         setStopButtonImage();
@@ -46,7 +46,7 @@ namespace particules
 
         thumbnailComponent.setCallbackOnThumbnailReady(callbackOnThumbnailReady);
 
-        audioProcessor.addChangeListener(this);
+        audioProcessor.addChangeListener(this); // audio processor can now send message
         /*
 	// audio file loader is a variable of audio file frame so it cannot outlive his parent.
 	std::function<void(bool)> callbackOnFileLoaded = [this](bool ok)
@@ -69,9 +69,9 @@ namespace particules
 	*/
     }
 
-    AudioFileFrame::~AudioFileFrame() { audioProcessor.removeChangeListener(this); }
+    AudioFilePanel::~AudioFilePanel() { audioProcessor.removeChangeListener(this); }
 
-    void AudioFileFrame::openFileButtonClicked()
+    void AudioFilePanel::openFileButtonClicked()
     {
         //juce::Logger::outputDebugString("openFileButtonClicked() ");
         play_pause_btn.setEnabled(false);
@@ -82,7 +82,7 @@ namespace particules
         //(paramsView.getAudioBuffer() == nullptr) ? juce::Logger::outputDebugString("paramsView.getAudioBuffer() nullptr") : juce::Logger::outputDebugString("paramsView.getAudioBuffer() not nullptr");
     }
 
-    void AudioFileFrame::filesDropped(const juce::StringArray& files, int x, int y)
+    void AudioFilePanel::filesDropped(const juce::StringArray& files, int x, int y)
     {
         play_pause_btn.setEnabled(false);
         //paramsView.setIsPlaying(false);
@@ -95,7 +95,7 @@ namespace particules
         }
     }
 
-    void AudioFileFrame::stopAudioButtonClicked()
+    void AudioFilePanel::stopAudioButtonClicked()
     {
         //DBG("stop audio button clicked");
         //DBG("param is Playing = " + (str)(paramsView.getIsPlaying() ? "true" : "false"));
@@ -103,7 +103,7 @@ namespace particules
         setPlayButtonImage();
     }
 
-    void AudioFileFrame::playAudioButtonClicked()
+    void AudioFilePanel::playAudioButtonClicked()
     {
         if(paramsView.getIsPlaying())
         {
@@ -117,35 +117,35 @@ namespace particules
         }
     }
 
-    void AudioFileFrame::setPlayButtonImage()
+    void AudioFilePanel::setPlayButtonImage()
     {
         play_pause_btn.setImages(juce::Drawable::createFromImageData(BinaryData::Play_svg, BinaryData::Play_svgSize).get(),
             juce::Drawable::createFromImageData(BinaryData::Play_Fill_svg, BinaryData::Play_Fill_svgSize).get(), nullptr, nullptr,
             nullptr, nullptr, nullptr, nullptr);
     }
 
-    void AudioFileFrame::setPauseButtonImage()
+    void AudioFilePanel::setPauseButtonImage()
     {
         play_pause_btn.setImages(juce::Drawable::createFromImageData(BinaryData::Pause_svg, BinaryData::Pause_svgSize).get(),
             juce::Drawable::createFromImageData(BinaryData::Pause_Fill_svg, BinaryData::Pause_Fill_svgSize).get(), nullptr,
             nullptr, nullptr, nullptr, nullptr, nullptr);
     }
 
-    void AudioFileFrame::setStopButtonImage()
+    void AudioFilePanel::setStopButtonImage()
     {
         stop_btn.setImages(juce::Drawable::createFromImageData(BinaryData::Stop_svg, BinaryData::Stop_svgSize).get(),
             juce::Drawable::createFromImageData(BinaryData::Stop_Fill_svg, BinaryData::Stop_Fill_svgSize).get(), nullptr, nullptr,
             nullptr, nullptr, nullptr, nullptr);
     }
 
-    void AudioFileFrame::setOpenButtonImage()
+    void AudioFilePanel::setOpenButtonImage()
     {
         open_btn.setImages(juce::Drawable::createFromImageData(BinaryData::AddFolder_svg, BinaryData::AddFolder_svgSize).get(),
             juce::Drawable::createFromImageData(BinaryData::AddFolder_Fill_svg, BinaryData::AddFolder_Fill_svgSize).get(),
             nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
     }
 
-    bool AudioFileFrame::isInterestedInFileDrag(const juce::StringArray& files)
+    bool AudioFilePanel::isInterestedInFileDrag(const juce::StringArray& files)
     {
         // is it an audio file ?
         for(juce::String file : files)
@@ -160,9 +160,9 @@ namespace particules
 
     // component section
 
-    void AudioFileFrame::paint(juce::Graphics& g) { g.fillAll(MyColours::brightBlue); }
+    void AudioFilePanel::paint(juce::Graphics& g) { g.fillAll(MyColours::brightBlue); }
 
-    void AudioFileFrame::resized()
+    void AudioFilePanel::resized()
     {
         juce::Rectangle<int> localArea = getLocalBounds();
         float w = getWidth() / 30.f;
@@ -204,19 +204,17 @@ namespace particules
         flexboxMain.items.add(juce::FlexItem(flexboxLeft).withFlex(0.05f).withMargin(h));
         flexboxMain.items.add(juce::FlexItem(flexboxRight).withFlex(0.95f).withMargin(h));
         flexboxMain.performLayout(getLocalBounds().toFloat());
+
     }
 
-    void AudioFileFrame::changeListenerCallback(juce::ChangeBroadcaster* source)
+
+    // TODO : Remove the change listener callback after MIDI implementation
+    void AudioFilePanel::changeListenerCallback(juce::ChangeBroadcaster* source)
     {
         if(source == &audioProcessor)
         {
             const juce::File& f = audioProcessor.getCurrentFile();
             bool valid = f.existsAsFile();
-            if(valid && audioProcessor.isInputBufferLoaded())
-            {
-                thumbnailComponent.setFile(f);
-                thumbnailComponent.setNumSamples(paramsView.getNumSamples());
-            }
             play_pause_btn.setEnabled(valid);
         }
     }

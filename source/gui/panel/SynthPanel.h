@@ -1,18 +1,18 @@
 #pragma once
 
-#include "../framework/Types.h"
+#include "../../framework/Types.h"
 
-#include "../gui/ThumbnailComponent.h"
+#include "../component/ThumbnailComponent.h"
 
 // the Synth Frame provide UI control that modify the apvts values only
 namespace particules
 {
 
-    class SynthFrame : public juce::Component
+    class SynthPanel: public juce::Component
     {
     public:
-        SynthFrame(ValueTreeState& apvts);
-        ~SynthFrame() = default;
+        SynthPanel(ValueTreeState& apvts);
+        ~SynthPanel() = default;
 
         void paint(juce::Graphics&) override;
         void resized() override;
@@ -33,6 +33,6 @@ namespace particules
         std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> positionSliderAttachment;
         std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> selectionSliderAttachment;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SynthFrame)
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SynthPanel)
     };
 }

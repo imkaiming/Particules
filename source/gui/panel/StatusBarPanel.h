@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include "../framework/Core.h"
-#include "../utils/struct/UIContext.h"
+#include "../../framework/Core.h"
+#include "../../utils/struct/UIContext.h"
 
 
 namespace particules
@@ -10,11 +10,11 @@ namespace particules
 
     //struct UIContext;
     class ParticulesAudioProcessor;
-    class StatusBarFrame : public juce::Component, public juce::Timer
+    class StatusBarPanel : public juce::Component, public juce::Timer
     {
     public:
-        StatusBarFrame(UIContext& uic);
-        ~StatusBarFrame() = default;
+        StatusBarPanel(UIContext& uic);
+        ~StatusBarPanel() = default;
         void paint(juce::Graphics&) override;
         void resized() override;
         void timerCallback() override;
@@ -23,6 +23,6 @@ namespace particules
         juce::Label statusLabel;
         UIContext& uic;
         ParticulesAudioProcessor& audioProcessor;
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatusBarFrame)
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatusBarPanel)
     };
 }

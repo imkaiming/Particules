@@ -17,8 +17,9 @@ namespace particules
     #endif
                   ),
           apvts(*this, nullptr, "Parameters", createParameterLayout()), //apvts stands for audio processor value tree state
-          paramsView(), granularEngine(visualBuffer), uiContext{apvts, paramsView, customLookAndFeel, *this, visualBuffer},
-          loader{}, debugPresetLoaded{false}
+          paramsView(), granularEngine(visualBuffer),
+          uiContext{apvts, paramsView, customLookAndFeel, *this, visualBuffer, audioThumbnail}, loader{},
+          debugPresetLoaded{false}, cache{5}, audioThumbnail{samplesPerThumbnail, loader.getFormatManager(), cache}
 #endif
     {
         initOnAudioLoadedCallback();
@@ -258,8 +259,12 @@ namespace particules
     {
         onAudioLoadedCallback = [this](AudioBuffer& buffer) {
             setInputBuffer(buffer);
-            // TODO send UI Notification but do not change current file
-            sendChangeMessage();
+            const juce::File& f = getCurrentFile();
+            if(f.existsAsFile())
+            {
+                audioThumbnail.setSource(new juce::FileInputSource(f)); 
+                sendChangeMessage(); // this is a message to the AudioFIlePanel stating "a new file has been succesfully loaded"
+            }
         };
     }
 

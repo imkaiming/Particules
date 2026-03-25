@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../framework/Types.h"
+#include "../../framework/Types.h"
 namespace particules
 {
-    class GrainsFrame : public juce::Component //, public juce::AudioProcessorValueTreeState::Listener
+    class GrainsPanel : public juce::Component //, public juce::AudioProcessorValueTreeState::Listener
     {
     public:
-        GrainsFrame(ValueTreeState& apvts);
-        ~GrainsFrame() = default;
+        GrainsPanel(ValueTreeState& apvts);
+        ~GrainsPanel() = default;
 
         void paint(juce::Graphics&) override;
         void resized() override;
@@ -42,6 +42,6 @@ namespace particules
         std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> envelopeModeAttachment;
         std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> traversalModeAttachment;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainsFrame)
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainsPanel)
     };
 }

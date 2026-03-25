@@ -42,6 +42,7 @@ namespace particules
                 setCurrentFile(file);
                 onAudioLoaded(bufferOut);
             }
+            
         }
     }
 

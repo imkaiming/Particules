@@ -1,17 +1,17 @@
 #include "ThumbnailComponent.h"
 
-#include "../framework/ParameterView.h"
-#include "../utils/PluginParams.h"
-#include "../utils/MyColours.h"
-#include "../utils/struct/UIContext.h"
+#include "../../framework/ParameterView.h"
+#include "../../utils/MyColours.h"
+#include "../../utils/PluginParams.h"
+#include "../../utils/struct/UIContext.h"
 
 namespace particules
 {
-
-    ThumbnailComponent::ThumbnailComponent(int samplesPerThumbnail, juce::AudioFormatManager& formatManager, UIContext& uic)
-        : uic{uic}, cache(5), audioThumbnail(samplesPerThumbnail, formatManager, cache), grainVisualComponent(uic.visualBuffer),
-          paramsView(uic.paramsView), apvts{uic.apvts}, audioProcessor{uic.audioProcessor}, positionValue{Params::Position::init},
-          selectionValue{Params::Selection::init}
+    ThumbnailComponent::ThumbnailComponent(UIContext& uic)
+        : uic{uic}, /* cache(5) ,*/ audioThumbnail(uic.audioThumbnail), grainVisualComponent(uic), paramsView(uic.paramsView),
+          apvts{uic.apvts}, audioProcessor{uic.audioProcessor},
+          positionValue{uic.apvts.getRawParameterValue(Params::Position::id)->load()},
+          selectionValue{uic.apvts.getRawParameterValue(Params::Selection::id)->load()}
     {
         updatePosition(positionValue);
         updateSelection(selectionValue);
@@ -19,10 +19,13 @@ namespace particules
 
         audioThumbnail.addChangeListener(this);
 
+        addAndMakeVisible(&grainVisualComponent);
         addAndMakeVisible(&selection);
         addAndMakeVisible(&position);
         addAndMakeVisible(&overflow);
-        addAndMakeVisible(&grainVisualComponent);
+
+        if(audioThumbnail.isFullyLoaded())
+            repaint();
 
         // apvts listener to update the UI
         //apvts.addParameterListener(Param::Position::id, this);
@@ -36,7 +39,7 @@ namespace particules
         //apvts.removeParameterListener(Param::Selection::id, this);
     }
 
-    void ThumbnailComponent::setFile(const juce::File& file) { audioThumbnail.setSource(new juce::FileInputSource(file)); }
+    //void ThumbnailComponent::setFile(const juce::File& file) { audioThumbnail.setSource(new juce::FileInputSource(file)); } 
 
     void ThumbnailComponent::paint(juce::Graphics& g)
     {
@@ -56,7 +59,6 @@ namespace particules
     void ThumbnailComponent::paintIfFileLoaded(juce::Graphics& g)
     {
         g.fillAll(MyColours::black);
-
         g.setColour(MyColours::brightBlue);
         audioThumbnail.drawChannels(g, getLocalBounds(), 0.0, audioThumbnail.getTotalLength(), 1.0f);
     }
@@ -65,6 +67,7 @@ namespace particules
     {
         if(source == &audioThumbnail)
         {
+            grainVisualComponent.setNumSamples(paramsView.getNumSamples());
             repaint();
             if(audioThumbnail.isFullyLoaded())
             {
@@ -78,21 +81,6 @@ namespace particules
         }
     }
 
-    //void ThumbnailComponent::parameterChanged(const juce::String& parameterID, float newValue)
-    //{
-    //    if(parameterID == Param::Position::id)
-    //    {
-    //        //DBG("parameter view position new value : " + juce::String(paramsView.getFilePosition()));
-    //        updatePosition(newValue);
-    //        return;
-    //    }
-    //    if(parameterID == Param::Selection::id)
-    //    {
-    //        //DBG("parameter view selection new value : " + juce::String(paramsView.getWindowSelection()));
-    //        updateSelection(newValue);
-    //        return;
-    //    }
-    //}
 
     void ThumbnailComponent::updatePosition(float value)
     {
@@ -123,7 +111,7 @@ namespace particules
 
     void ThumbnailComponent::setCallbackOnThumbnailReady(std::function<void()> foo) { onThumbnailReady = std::move(foo); }
 
-    void ThumbnailComponent::setNumSamples(const int val) { grainVisualComponent.setNumSamples(val); }
+    //void ThumbnailComponent::setNumSamples(const int val) { grainVisualComponent.setNumSamples(val); }
 
     void ThumbnailComponent::resized()
     {
@@ -134,3 +122,19 @@ namespace particules
     }
 
 }
+
+    //void ThumbnailComponent::parameterChanged(const juce::String& parameterID, float newValue)
+//{
+//    if(parameterID == Param::Position::id)
+//    {
+//        //DBG("parameter view position new value : " + juce::String(paramsView.getFilePosition()));
+//        updatePosition(newValue);
+//        return;
+//    }
+//    if(parameterID == Param::Selection::id)
+//    {
+//        //DBG("parameter view selection new value : " + juce::String(paramsView.getWindowSelection()));
+//        updateSelection(newValue);
+//        return;
+//    }
+//}

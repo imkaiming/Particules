@@ -6,7 +6,7 @@
 #pragma once
 
 #include "PluginProcessor.h"
-#include "gui/MainFrame.h"
+#include "gui/panel/MainPanel.h"
 #include "utils/CustomLookAndFeel.h"
 
 #include "melatonin_inspector/melatonin_inspector.h"
@@ -22,11 +22,11 @@ namespace particules
         void resized() override;
 
         CustomLookAndFeel& getCustomLook() { return customLookAndFeel; };
-        const MainFrame& getMainFrame() const noexcept { return mainFrame; };
+        const MainPanel& getMainPanel() const noexcept { return mainPanel; };
 
     private:
         ParticulesAudioProcessor& pluginProcessor;
-        MainFrame mainFrame;
+        MainPanel mainPanel;
         CustomLookAndFeel& customLookAndFeel;
         int width, heigth;
 

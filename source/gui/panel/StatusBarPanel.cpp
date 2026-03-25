@@ -1,13 +1,13 @@
-#include "StatusBarFrame.h"
-#include "../PluginProcessor.h"
-#include "../utils/struct/UIContext.h"
-#include "../utils/MyColours.h"
+#include "StatusBarPanel.h"
+#include "../../PluginProcessor.h"
+#include "../../utils/struct/UIContext.h"
+#include "../../utils/MyColours.h"
 
 
 namespace particules
 {
 
-    StatusBarFrame::StatusBarFrame(UIContext& uic) : uic{uic}, audioProcessor{uic.audioProcessor}
+    StatusBarPanel::StatusBarPanel(UIContext& uic) : uic{uic}, audioProcessor{uic.audioProcessor}
     {
         addAndMakeVisible(&statusLabel);
         startTimerHz(10);
@@ -18,9 +18,9 @@ namespace particules
         statusLabel.setColour(0, juce::Colours::white);
     }
 
-    void StatusBarFrame::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
+    void StatusBarPanel::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
 
-    void StatusBarFrame::resized()
+    void StatusBarPanel::resized()
     {
         float h = getHeight() / 30.f;
 
@@ -29,7 +29,7 @@ namespace particules
         flexbox.performLayout(getLocalBounds().toFloat());
     }
 
-    void StatusBarFrame::timerCallback()
+    void StatusBarPanel::timerCallback()
     {
         statusLabel.setText((const juce::String) "active grains: " + (const juce::String)audioProcessor.getNumActiveGrains(),
             juce::dontSendNotification);

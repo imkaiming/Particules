@@ -1,10 +1,9 @@
 
 #pragma once
 
-//#include "../framework/Core.h"
 #include "BinaryData.h"
 
-#include "ThumbnailComponent.h"
+#include "../component/ThumbnailComponent.h"
 
 // the Audio File Frame provide the control to load and play the audio.
 namespace particules
@@ -12,13 +11,11 @@ namespace particules
 
     class ParameterView;
     class ParticulesAudioProcessor;
-    //class SynthFrame;
-    //struct UIContext;
-    class AudioFileFrame : public juce::Component, public juce::FileDragAndDropTarget, public juce::ChangeListener
+    class AudioFilePanel : public juce::Component, public juce::FileDragAndDropTarget, public juce::ChangeListener
     {
     public:
-        AudioFileFrame(UIContext& uic);
-        ~AudioFileFrame();
+        AudioFilePanel(UIContext& uic);
+        ~AudioFilePanel();
         void paint(juce::Graphics&) override;
         void resized() override;
 
@@ -49,7 +46,7 @@ namespace particules
         bool isInterestedInFileDrag(const juce::StringArray&);
         void filesDropped(const juce::StringArray&, int, int);
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFileFrame)
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFilePanel)
     };
 
 }

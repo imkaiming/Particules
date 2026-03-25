@@ -1,12 +1,13 @@
-#include "GrainsFrame.h"
-#include "../utils/PluginParams.h"
-#include "../utils/MyColours.h"
+#include "GrainsPanel.h"
+#include "../../utils/PluginParams.h"
+#include "../../utils/MyColours.h"
 
 namespace particules
 {
-    GrainsFrame::GrainsFrame(ValueTreeState& apvts) : apvts{apvts}
+    GrainsPanel::GrainsPanel(ValueTreeState& apvts) : apvts{apvts}
     {
-        emissionSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Params::Emission::id, emissionSlider);
+        emissionSliderAttachment =
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Params::Emission::id, emissionSlider);
 
         durationSliderAttachment =
             std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Params::Duration::id, durationSlider);
@@ -139,9 +140,9 @@ namespace particules
         //apvts.addPluginParamseterListener(Params::EnvelopeMode::id, this);
     }
 
-    void GrainsFrame::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
+    void GrainsPanel::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
 
-    void GrainsFrame::resized()
+    void GrainsPanel::resized()
     {
         float h = getHeight() / 30.f;
 
@@ -209,7 +210,7 @@ namespace particules
     }
 }
 
-//void GrainsFrame::parameterChanged(const juce::String& parameterID, float newValue)
+//void GrainsPanel::parameterChanged(const juce::String& parameterID, float newValue)
 //{
 //    if(parameterID == Params::TraversalMode::id)
 //    {

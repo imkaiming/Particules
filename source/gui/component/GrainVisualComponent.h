@@ -1,9 +1,8 @@
-#include "../framework/GrainVisualBuffer.h"
-#include "../utils/MyColours.h"
-//#include "../framework/Core.h"
-#include "../framework/Constants.h"
-#include "../utils/PluginParams.h"
-
+#include "../../framework/GrainVisualBuffer.h"
+#include "../../utils/MyColours.h"
+#include "../../framework/Constants.h"
+#include "../../utils/PluginParams.h"
+#include "../../utils/struct/UIContext.h"
 #pragma once
 
 /**
@@ -21,13 +20,13 @@ namespace particules
     class GrainVisualComponent : public juce::Component, private juce::Timer
     {
     public:
-        GrainVisualComponent(GrainVisualBuffer& vb);
+        GrainVisualComponent(UIContext&);
         ~GrainVisualComponent() override;
 
         void paint(juce::Graphics& g) override;
         void resized() override;
 
-        void setNumSamples(const int);
+        void setNumSamples(int);
 
     private:
         static constexpr int MAXGRAINS = static_cast<int>(Grains::maxGrains);
@@ -37,6 +36,7 @@ namespace particules
 
         juce::Colour colour;
         GrainVisualBuffer& visualBuffer;
+        ParameterView& parameterView;
         int numSamples;
 
         float invWidthSamples;

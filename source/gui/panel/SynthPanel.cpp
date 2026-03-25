@@ -1,11 +1,11 @@
-#include "SynthFrame.h"
-#include "../utils/MyColours.h"
-#include "../utils/PluginParams.h"
+#include "SynthPanel.h"
+#include "../../utils/MyColours.h"
+#include "../../utils/PluginParams.h"
 
 namespace particules
 {
 
-    SynthFrame::SynthFrame(ValueTreeState& apvts)
+    SynthPanel::SynthPanel(ValueTreeState& apvts)
     {
         mixSliderAttachment =
             std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Params::Mix::id, mixSlider);
@@ -80,9 +80,9 @@ namespace particules
         addAndMakeVisible(&selectionLabel);
     }
 
-    void SynthFrame::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
+    void SynthPanel::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
 
-    void SynthFrame::resized()
+    void SynthPanel::resized()
     {
         float h = getHeight() / 30.f;
 

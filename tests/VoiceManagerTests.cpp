@@ -25,12 +25,12 @@ namespace particulesTest
         Grain g;
         PositionModulator posMod{};
         GrainPool pool;
-        VoiceManager vm;
+        //VoiceManager vm;
         AudioBuffer inputBuffer{2, 48000};
         AudioBlock outputBlock{inputBuffer};
         ParameterSnapshot snapshot;
 
-        VoiceManagerFixture() : vm{pool, posMod, lut, vb}
+        VoiceManagerFixture() //: vm{}
         {
             snapshot.durationSamples = 48000;
             snapshot.emission = 1;

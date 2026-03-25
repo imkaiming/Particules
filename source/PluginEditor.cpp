@@ -4,7 +4,7 @@
 namespace particules
 {
     ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(ParticulesAudioProcessor& p)
-        : AudioProcessorEditor(&p), pluginProcessor(p), mainFrame(p.getUIContext()),
+        : AudioProcessorEditor(&p), pluginProcessor(p), mainPanel(p.getUIContext()),
           customLookAndFeel(p.getUIContext().customLookAndFeel)
     {
         setLookAndFeel(&customLookAndFeel);
@@ -19,7 +19,7 @@ namespace particules
         heigth = 350;
         setSize(width, heigth);
 
-        addAndMakeVisible(&mainFrame);
+        addAndMakeVisible(&mainPanel);
 
 #if ENABLE_DEBUG_PRESET
         pluginProcessor.loadDebugPreset();
@@ -41,6 +41,6 @@ namespace particules
         juce::Rectangle<int> area = getLocalBounds();
         area.removeFromLeft(w);
         area.removeFromRight(w);
-        mainFrame.setBounds(area);
+        mainPanel.setBounds(area);
     }
 }
