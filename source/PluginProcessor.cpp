@@ -140,6 +140,14 @@ namespace particules
     void ParticulesAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
     {
         juce::ValueTree vt = apvts.copyState();
+        const juce::File& f = getCurrentFile();
+        if(f.existsAsFile())
+        {
+            juce::ValueTree audioFileNode("AudioFile");
+            audioFileNode.setProperty("path", f.getFullPathName(), nullptr);
+            vt.appendChild(audioFileNode, nullptr);
+        }
+
         std::unique_ptr<juce::XmlElement> xml(vt.createXml());
         copyXmlToBinary(*xml, destData);
     }
@@ -147,15 +155,21 @@ namespace particules
     void ParticulesAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
     {
         std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+        if(xmlState == nullptr)
+            return;
 
-        if(xmlState.get() != nullptr)
+        // si on trouve un fichier xml alors on met à jours les données dans apvts
+        if(xmlState->hasTagName(apvts.state.getType()))
         {
-            // si on trouve un fichier xml alors on met à jours les données dans apvts
-            if(xmlState->hasTagName(apvts.state.getType()))
-                apvts.replaceState(juce::ValueTree::fromXml(*xmlState));
-        }
-        else
-        {
+            juce::ValueTree vt = juce::ValueTree::fromXml(*xmlState);
+            juce::ValueTree audioFileNode = vt.getChildWithName("AudioFile");
+            if(audioFileNode.isValid())
+            {
+                str path = audioFileNode.getProperty("path");
+                loadFile(path);
+            }
+            vt.removeChild(audioFileNode, nullptr);
+            apvts.replaceState(vt);
         }
 
         //juce::Logger::outputDebugString("apvts mix : " + (juce::String)apvts.getRawParameterValue(MIX_ID)->load());
@@ -262,7 +276,7 @@ namespace particules
             const juce::File& f = getCurrentFile();
             if(f.existsAsFile())
             {
-                audioThumbnail.setSource(new juce::FileInputSource(f)); 
+                audioThumbnail.setSource(new juce::FileInputSource(f));
                 sendChangeMessage(); // this is a message to the AudioFIlePanel stating "a new file has been succesfully loaded"
             }
         };

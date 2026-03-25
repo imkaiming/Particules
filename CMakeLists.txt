@@ -61,6 +61,8 @@ add_subdirectory (modules/melatonin_inspector)
 
 # See `docs/CMake API.md` in the JUCE repo for all config options
 juce_add_plugin("${PROJECT_NAME}"
+    IS_SYNTH TRUE # it supress audio input busses
+    NEEDS_MIDI_INPUT TRUE
     # Icons for the standalone app
     #ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/packaging/icon.png"
 
@@ -70,7 +72,6 @@ juce_add_plugin("${PROJECT_NAME}"
 
     # On MacOS, plugin is copied to /Users/yourname/Library/Audio/Plug-Ins/
     COPY_PLUGIN_AFTER_BUILD FALSE
-
     # Change me!
     # A four-character plugin id
     # First character MUST be uppercase for AU formats
