@@ -143,9 +143,17 @@ namespace particules
         const juce::File& f = getCurrentFile();
         if(f.existsAsFile())
         {
+            // adding the input buffer to the value tree
             juce::ValueTree audioFileNode("AudioFile");
             audioFileNode.setProperty("path", f.getFullPathName(), nullptr);
             vt.appendChild(audioFileNode, nullptr);
+
+            juce::ValueTree runtimeParametersNode("RuntimeParameters");
+            runtimeParametersNode.setProperty("isPlaying", paramsView.getIsPlaying(), nullptr);
+            runtimeParametersNode.setProperty("numSamples", paramsView.getNumSamples(), nullptr);
+            runtimeParametersNode.setProperty("sampleRate", paramsView.getSampleRate(), nullptr);
+            runtimeParametersNode.setProperty("numChannels", paramsView.getNumChannels(), nullptr);
+            vt.appendChild(runtimeParametersNode, nullptr);
         }
 
         std::unique_ptr<juce::XmlElement> xml(vt.createXml());
@@ -169,6 +177,17 @@ namespace particules
                 loadFile(path);
             }
             vt.removeChild(audioFileNode, nullptr);
+
+            juce::ValueTree runtimeParametersNode = vt.getChildWithName("RuntimeParameters");
+            if(runtimeParametersNode.isValid())
+            {
+                paramsView.setIsPlaying(runtimeParametersNode.getProperty("isPlaying"));
+                paramsView.setIsPlaying(runtimeParametersNode.getProperty("numChannels"));
+                paramsView.setIsPlaying(runtimeParametersNode.getProperty("sampleRate"));
+                paramsView.setIsPlaying(runtimeParametersNode.getProperty("numSamples"));
+            }
+            vt.removeChild(runtimeParametersNode, nullptr);
+
             apvts.replaceState(vt);
         }
 

@@ -20,8 +20,7 @@ namespace particules
         : paramsView(uic.paramsView), audioProcessor(uic.audioProcessor),
           open_btn((const str) "openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
           play_pause_btn((const str) "playAudioButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-          stop_btn((const str) "stopAudioButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-          thumbnailComponent(uic)
+          stop_btn((const str) "stopAudioButton", juce::DrawableButton::ButtonStyle::ImageFitted), thumbnailComponent(uic)
     {
         setOpenButtonImage();
         setStopButtonImage();
@@ -37,7 +36,10 @@ namespace particules
         addAndMakeVisible(&stop_btn);
         addAndMakeVisible(&thumbnailComponent);
 
-        play_pause_btn.setEnabled(false);
+        if(paramsView.getIsPlaying())
+            play_pause_btn.setEnabled(true);
+        else
+            play_pause_btn.setEnabled(false);
 
         std::function<void()> callbackOnThumbnailReady = [this]() {
             //juce::Logger::outputDebugString("10) callback after thumbnail painted");
@@ -204,9 +206,7 @@ namespace particules
         flexboxMain.items.add(juce::FlexItem(flexboxLeft).withFlex(0.05f).withMargin(h));
         flexboxMain.items.add(juce::FlexItem(flexboxRight).withFlex(0.95f).withMargin(h));
         flexboxMain.performLayout(getLocalBounds().toFloat());
-
     }
-
 
     // TODO : Remove the change listener callback after MIDI implementation
     void AudioFilePanel::changeListenerCallback(juce::ChangeBroadcaster* source)

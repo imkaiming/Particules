@@ -10,7 +10,6 @@
 #include "utils/CustomLookAndFeel.h"
 #include "utils/struct/UIContext.h"
 
-//class ParameterView;
 
 namespace particules
 {

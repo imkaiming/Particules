@@ -1,10 +1,13 @@
 #include "GrainVisualComponent.h"
 
+#include "../../framework/ParameterView.h"
+
 namespace particules
 {
 
     GrainVisualComponent::GrainVisualComponent(UIContext& uic)
-        : visualBuffer{uic.visualBuffer}, parameterView{uic.paramsView}, numSamples{0}, invWidthSamples{0.f},
+        : visualBuffer{uic.visualBuffer}, parameterView{uic.paramsView}, numSamples{parameterView.getNumSamples()},
+          invWidthSamples{0.f},
           colour{MyColours::lavender}
     {
         startTimerHz(60);
