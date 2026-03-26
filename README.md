@@ -1,6 +1,6 @@
 # Particules – Granular Synthesizer
 
-**Particules** is a real-time **granular synthesis audio plugin** using the **JUCE framework v7.0.5**.
+**Particules** is a real-time **granular synthesis audio plugin** using the **JUCE framework v8.0.12**.
 
 The project explores **grain-based sound generation**, real-time parameter control, and performance-aware audio processing, with a focus on **clarity, stability, and low-latency behavior**.
 
