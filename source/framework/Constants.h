@@ -6,7 +6,7 @@
 
 namespace particules
 {
-    // constants
+    inline constexpr int maxMidiVoice = 16;
     inline constexpr int maxSpawnsPerBlock = 16;
     inline constexpr double maxFileDuration = 600.0; // 10 min
     inline constexpr int maxFileSize = 2 * 512ULL * 1024 * 1024; // 512MB limits ULL -> Unsigned Long Long

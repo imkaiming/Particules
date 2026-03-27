@@ -20,10 +20,10 @@ namespace particules
 
         // APVTS param reads
         float getMix() const noexcept { return mix ? convertToPercentage(mix->load(std::memory_order_relaxed)) : 0.0f; }
-        float getDecibelGain() const noexcept { return gain ? gain->load(std::memory_order_relaxed) : 0.0f; }
+        float getDecibelGain() const noexcept { return output ? output->load(std::memory_order_relaxed) : 0.0f; }
         float getLinearGain() const noexcept
         {
-            return gain ? juce::Decibels::decibelsToGain(gain->load(std::memory_order_relaxed)) : 0.0f;
+            return output ? juce::Decibels::decibelsToGain(output->load(std::memory_order_relaxed)) : 0.0f;
         }
         float getSpeed() const noexcept { return speed ? speed->load(std::memory_order_relaxed) : 0.0f; }
         float getNormalizedDuration() const noexcept { return duration ? duration->load(std::memory_order_relaxed) : 0.0f; }
@@ -78,7 +78,7 @@ namespace particules
         std::atomic<float>* duration = nullptr;
         std::atomic<float>* speed = nullptr;
         std::atomic<float>* mix = nullptr;
-        std::atomic<float>* gain = nullptr;
+        std::atomic<float>* output = nullptr;
         std::atomic<float>* position = nullptr;
         std::atomic<float>* selection = nullptr;
         std::atomic<float>* sustainRatio = nullptr;

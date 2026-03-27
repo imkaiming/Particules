@@ -9,17 +9,17 @@ namespace particules
     {
         setSampleRate(sampleRate);
         //mSampleRate.store(sampleRate, std::memory_order_relaxed);
-        mix = apvts.getRawParameterValue(Params::Mix::id);
-        gain = apvts.getRawParameterValue(Params::Gain::id);
-        emission = apvts.getRawParameterValue(Params::Emission::id);
-        duration = apvts.getRawParameterValue(Params::Duration::id);
-        speed = apvts.getRawParameterValue(Params::Speed::id);
-        position = apvts.getRawParameterValue(Params::Position::id);
-        selection = apvts.getRawParameterValue(Params::Selection::id);
-        envMode = apvts.getRawParameterValue(Params::EnvelopeMode::id);
-        sustainRatio = apvts.getRawParameterValue(Params::SustainRatio::id);
-        traversalMode = apvts.getRawParameterValue(Params::TraversalMode::id);
-        traversalFreq = apvts.getRawParameterValue(Params::TraversalFreq::id);
+        mix = apvts.getRawParameterValue(global::mix::id);
+        output = apvts.getRawParameterValue(global::output::id);
+        emission = apvts.getRawParameterValue(grains::emission::id);
+        duration = apvts.getRawParameterValue(grains::duration::id);
+        speed = apvts.getRawParameterValue(grains::speed::id);
+        position = apvts.getRawParameterValue(global::position::id);
+        selection = apvts.getRawParameterValue(global::selection::id);
+        envMode = apvts.getRawParameterValue(grains::envelopeMode::id);
+        sustainRatio = apvts.getRawParameterValue(grains::sustainRatio::id);
+        traversalMode = apvts.getRawParameterValue(grains::traversalMode::id);
+        traversalFreq = apvts.getRawParameterValue(grains::traversalFreq::id);
     }
 
     EnvelopeMode ParameterView::getEnvelopeMode() const noexcept

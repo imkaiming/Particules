@@ -5,9 +5,45 @@
 
 namespace particules
 {
-    namespace Params
+    namespace adsr
     {
-        namespace Mix
+        namespace attack
+        {
+            inline constexpr const char* id = "ATTACK";
+            inline constexpr const char* name = "Attack";
+            inline constexpr const float min = 0.0f;
+            inline constexpr const float max = 10.f;
+            inline constexpr const float init = 1.f;
+        }
+        namespace decay
+        {
+            inline constexpr const char* id = "DECAY";
+            inline constexpr const char* name = "Decay";
+            inline constexpr const float min = 0.0f;
+            inline constexpr const float max = 10.f;
+            inline constexpr const float init = 1.f;
+        }
+        namespace sustain
+        {
+            inline constexpr const char* id = "SUSTAIN";
+            inline constexpr const char* name = "Sustain";
+            inline constexpr const float min = 0.0f;
+            inline constexpr const float max = 1.f;
+            inline constexpr const float init = 0.5f;
+        }
+        namespace release
+        {
+            inline constexpr const char* id = "RELEASE";
+            inline constexpr const char* name = "Release";
+            inline constexpr const float min = 0.0f;
+            inline constexpr const float max = 10.f;
+            inline constexpr const float init = 1.f;
+        }
+
+    }
+    namespace global
+    {
+        namespace mix
         {
             inline constexpr const char* id = "MIX";
             inline constexpr const char* name = "Mix";
@@ -15,7 +51,23 @@ namespace particules
             inline constexpr float max = 100.f;
             inline constexpr float init = 100.f;
         }
-        namespace Gain
+        namespace position
+        {
+            inline constexpr const char* id = "POSITION";
+            inline constexpr const char* name = "Position";
+            inline constexpr float min = 0.0f;
+            inline constexpr float max = 1.f;
+            inline constexpr float init = .0f;
+        }
+        namespace selection
+        {
+            inline constexpr const char* id = "SELECTION";
+            inline constexpr const char* name = "Selection";
+            inline constexpr float min = 0.01f;
+            inline constexpr float max = 1.f;
+            inline constexpr float init = 0.0f;
+        }
+        namespace output
         {
             inline constexpr const char* id = "OUTPUT";
             inline constexpr const char* name = "Output";
@@ -23,23 +75,28 @@ namespace particules
             inline constexpr float max = 0.0f;
             inline constexpr float init = -6.0f;
         }
-        namespace Emission
+    }
+    namespace grains
+    {
+        namespace emission
         {
             inline constexpr const char* id = "EMISSION"; // grain emissions per sec
             inline constexpr const char* name = "Emission";
             inline constexpr float min = 0.1f; // 0.1 grain per seconds (1 grain / 10 sec)
-            inline constexpr float max = 500.f; // 500 grains per seconds (1 grain / 0.002 s)
+            inline constexpr float max = 100.f; // 500 grains per seconds (1 grain / 0.002 s)
             inline constexpr float init = 1.0f;
+            inline constexpr float skewFactor = 1.0f;
         }
-        namespace Duration
+        namespace duration
         {
             inline constexpr const char* id = "DURATION"; // length of emitted grains in sec
             inline constexpr const char* name = "Duration";
-            inline constexpr float min = 0.002f; // 0.002s for every emitted grains (1/ 0.002 = 500)
-            inline constexpr float max = 10.0f; // 10 sec for every emitted grains (1/ 10 = 0.1)
+            inline constexpr float min = 0.02f; // 0.002s for every emitted grains (1/ 0.002 = 500)
+            inline constexpr float max = 10.0f;  // 10 sec for every emitted grains (1/ 10 = 0.1)
             inline constexpr float init = 1.0f;
+            inline constexpr float skewFactor = 1.0f;
         }
-        namespace Pitch
+        namespace pitch
         {
             inline constexpr const char* id = "PITCH";
             inline constexpr const char* name = "Pitch";
@@ -47,16 +104,17 @@ namespace particules
             inline constexpr float max = 12.f;
             inline constexpr float init = 0.0f;
         }
-        namespace Speed
+        namespace speed
         {
             inline constexpr const char* id = "SPEED";
             inline constexpr const char* name = "Speed";
             inline constexpr float min = 0.1f;
             inline constexpr float max = 2.f;
             inline constexpr float init = 1.f;
+            inline constexpr float skewFactor = 1.0f;
         }
 
-        namespace EnvelopeMode
+        namespace envelopeMode
         {
             inline constexpr const char* id = "ENVMODE";
             inline constexpr const char* name = "Envelope Mode";
@@ -66,54 +124,34 @@ namespace particules
 
         }
 
-        namespace Position
-        {
-            inline constexpr const char* id = "POSITION";
-            inline constexpr const char* name = "Position";
-            inline constexpr float min = 0.0f;
-            inline constexpr float max = 1.f;
-            inline constexpr float init = .0f;
-        }
-        namespace Selection
-        {
-            inline constexpr const char* id = "SELECTION";
-            inline constexpr const char* name = "Selection";
-            inline constexpr float min = 0.01f;
-            inline constexpr float max = 1.f;
-            inline constexpr float init = 0.0f;
-        }
-        namespace SustainRatio // TODO to rename to FadeRatio or SustainRatio
+        namespace sustainRatio
         {
             inline constexpr const char* id = "SUSTAINRATIO";
             inline constexpr const char* name = "SustainRatio";
             inline constexpr float min = 0.f;
             inline constexpr float max = 0.9f;
             inline constexpr float init = 0.5f;
+            inline constexpr float skewFactor = 0.5f;
         }
 
-        namespace TraversalMode
+        namespace traversalMode
         {
             inline constexpr const char* id = "TRAVERSALMODE";
             inline constexpr const char* name = "Traversal Mode";
             inline constexpr int init = 0;
             inline constexpr std::array<const char*, 5> traversalModeNames = {"Sine", "Triangle", "Square", "Random", "None"};
-            //inline constexpr const char* TraversalMode_1 = "Sinus";
-            //inline constexpr const char* TraversalMode_2 = "Square";
-            //inline constexpr const char* TraversalMode_3 = "Triangular";
-            //inline constexpr const char* TraversalMode_4 = "Random";
-            //inline constexpr const char* TraversalMode_5 = "None";
-
             //#define TRAVERSALMODE_6 "Saw Tooth"
             //#define TRAVERSALMODE_7 "Reverse Saw Tooth"
         }
 
-        namespace TraversalFreq
+        namespace traversalFreq
         {
             inline constexpr const char* id = "TRAVERSALFREQ";
             inline constexpr const char* name = "Traversal Frequency";
             inline constexpr float min = 0.01f; // low
             inline constexpr float max = 50.f; // high
             inline constexpr float init = 1.0f;
+            inline constexpr float skewFactor = 1.0f;
         }
     }
 

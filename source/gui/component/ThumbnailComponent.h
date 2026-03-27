@@ -8,6 +8,7 @@
 #include "../../framework/Types.h"
 #include "../../framework/Core.h"
 #include "../../utils/struct/UIContext.h"
+#include "../../utils/PluginParams.h"
 
 // Thumbnail is where the audio waveform is painted after being loaded by the audio file loader
 // should not own the state of the plugin
@@ -28,6 +29,9 @@ namespace particules
         //void setNumSamples(const int);
 
     private:
+        static constexpr const char* globalPositionId = global::position::id;
+        static constexpr const char* globalSelectionId = global::selection::id;
+
         void paint(juce::Graphics&) override;
         void resized() override;
 

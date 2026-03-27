@@ -2,7 +2,6 @@
 
 #include "../../framework/ParameterView.h"
 #include "../../utils/MyColours.h"
-#include "../../utils/PluginParams.h"
 #include "../../utils/struct/UIContext.h"
 
 namespace particules
@@ -10,8 +9,8 @@ namespace particules
     ThumbnailComponent::ThumbnailComponent(UIContext& uic)
         : uic{uic}, /* cache(5) ,*/ audioThumbnail(uic.audioThumbnail), grainVisualComponent(uic), paramsView(uic.paramsView),
           apvts{uic.apvts}, audioProcessor{uic.audioProcessor},
-          positionValue{uic.apvts.getRawParameterValue(Params::Position::id)->load()},
-          selectionValue{uic.apvts.getRawParameterValue(Params::Selection::id)->load()}
+          positionValue{uic.apvts.getRawParameterValue(globalPositionId)->load()},
+          selectionValue{uic.apvts.getRawParameterValue(globalSelectionId)->load()}
     {
         updatePosition(positionValue);
         updateSelection(selectionValue);
@@ -26,6 +25,8 @@ namespace particules
 
         if(audioThumbnail.isFullyLoaded())
             repaint();
+
+        grainVisualComponent.toBack(); 
 
         // apvts listener to update the UI
         //apvts.addParameterListener(Param::Position::id, this);

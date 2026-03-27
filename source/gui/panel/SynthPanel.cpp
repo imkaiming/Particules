@@ -1,6 +1,6 @@
 #include "SynthPanel.h"
 #include "../../utils/MyColours.h"
-#include "../../utils/PluginParams.h"
+//#include "../../utils/PluginParams.h"
 
 namespace particules
 {
@@ -8,19 +8,19 @@ namespace particules
     SynthPanel::SynthPanel(ValueTreeState& apvts)
     {
         mixSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Params::Mix::id, mixSlider);
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalMixId, mixSlider);
 
-        gainSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Params::Gain::id, gainSlider);
+        outputSliderAttachment =
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalOutputId, outputSlider);
 
         positionSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Params::Position::id, positionSlider);
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalPositionId, positionSlider);
 
         selectionSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, Params::Selection::id, selectionSlider);
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalSelectionId, selectionSlider);
 
         mixSlider.setName("mixSlider");
-        mixSlider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+        mixSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBar);
         mixSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
         mixSlider.setTextBoxIsEditable(true);
         mixSlider.setRange(0.0, 100.0);
@@ -29,37 +29,37 @@ namespace particules
         mixSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
         // mixSlider.onValueChane = [this]() { foo(); }
 
-        mixLabel.setText((const juce::String)Params::Mix::name, juce::dontSendNotification);
+        mixLabel.setText((const str)globalMixName, juce::dontSendNotification);
         mixLabel.attachToComponent(&mixSlider, false);
         mixLabel.setJustificationType(juce::Justification::centred);
 
-        gainSlider.setName("gainSlider");
-        gainSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-        gainSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
-        gainSlider.setTextBoxIsEditable(true);
-        gainSlider.setRange(Params::Gain::min, Params::Gain::max);
-        gainSlider.setSkewFactorFromMidPoint(-12.0);
-        //gainSlider.setTextValueSuffix(" dB");
-        //gainSlider.addListener(this);
-        gainSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+        outputSlider.setName("outputSlider");
+        outputSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
+        outputSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
+        outputSlider.setTextBoxIsEditable(true);
+        outputSlider.setRange(globalOutputMin, globalOutputMax);
+        outputSlider.setSkewFactorFromMidPoint(-12.0);
+        //outputSlider.setTextValueSuffix(" dB");
+        //outputSlider.addListener(this);
+        outputSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
 
-        gainLabel.setText((const juce::String)Params::Gain::name, juce::dontSendNotification);
-        gainLabel.attachToComponent(&gainSlider, false);
-        gainLabel.setJustificationType(juce::Justification::centred);
+        outputLabel.setText((const str)globalOutputName, juce::dontSendNotification);
+        outputLabel.attachToComponent(&outputSlider, false);
+        outputLabel.setJustificationType(juce::Justification::centred);
 
         addAndMakeVisible(&mixSlider);
-        addAndMakeVisible(&gainSlider);
+        addAndMakeVisible(&outputSlider);
         addAndMakeVisible(&mixLabel);
-        addAndMakeVisible(&gainLabel);
+        addAndMakeVisible(&outputLabel);
 
         positionSlider.setName("positionSlider");
-        positionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+        positionSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
         positionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
         positionSlider.setTextBoxIsEditable(true);
-        positionSlider.setRange(Params::Position::min, Params::Position::max);
+        positionSlider.setRange(globalPositionMin, globalPositionMax);
         //filePosSlider.addListener(this);
 
-        positionLabel.setText((const juce::String)Params::Position::name, juce::dontSendNotification);
+        positionLabel.setText((const str)globalPositionName, juce::dontSendNotification);
         positionLabel.attachToComponent(&positionSlider, false);
         positionLabel.setJustificationType(juce::Justification::centred);
 
@@ -67,10 +67,10 @@ namespace particules
         selectionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
         selectionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
         selectionSlider.setTextBoxIsEditable(true);
-        selectionSlider.setRange(Params::Selection::min, Params::Selection::max);
+        selectionSlider.setRange(globalSelectionMin, globalSelectionMax);
         //windowSelectionSlider.addListener(this);
 
-        selectionLabel.setText((const juce::String)Params::Selection::name, juce::dontSendNotification);
+        selectionLabel.setText((const str)globalSelectionName, juce::dontSendNotification);
         selectionLabel.attachToComponent(&selectionSlider, false);
         selectionLabel.setJustificationType(juce::Justification::centred);
 
@@ -102,8 +102,8 @@ namespace particules
         flexBox2.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
         flexBox2.alignContent = juce::FlexBox::AlignContent::center;
 
-        flexBox2.items.add(juce::FlexItem(gainSlider).withFlex(0.8f).withMargin(h));
-        flexBox2.items.add(juce::FlexItem(gainLabel).withFlex(0.2f));
+        flexBox2.items.add(juce::FlexItem(outputSlider).withFlex(0.8f).withMargin(h));
+        flexBox2.items.add(juce::FlexItem(outputLabel).withFlex(0.2f));
 
         juce::FlexBox flexBox3;
         flexBox3.flexDirection = juce::FlexBox::Direction::column;
