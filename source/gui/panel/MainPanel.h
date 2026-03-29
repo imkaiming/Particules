@@ -1,14 +1,12 @@
 #pragma once
 
-
 #include "../../framework/Core.h"
 #include "../../utils/struct/UIContext.h"
 
 #include "AudioFilePanel.h"
-#include "SynthPanel.h"
-#include "GrainsPanel.h"
-#include "TitlePanel.h"
+#include "ControlPanel.h"
 #include "StatusBarPanel.h"
+#include "TitlePanel.h"
 
 namespace particules
 {
@@ -19,15 +17,22 @@ namespace particules
     public:
         MainPanel(UIContext& uic);
         ~MainPanel() = default;
+
         void paint(juce::Graphics&) override;
         void resized() override;
 
     private:
-        SynthPanel synthPanel;
-        GrainsPanel grainsPanel;
-        AudioFilePanel audioFilePanel;
-        StatusBarPanel statusBarPanel;
+        //juce::Rectangle<int> withOuterPadding(const juce::Rectangle<int>& r, float ratio = 0.012f)
+        //{
+        //    int padding = juce::roundToInt(std::min(r.getWidth(), r.getHeight()) * ratio);
+        //    return r.reduced(padding);
+        //}
+
+
         TitlePanel titlePanel;
+        AudioFilePanel audioFilePanel;
+        ControlPanel controlPanel;
+        StatusBarPanel statusBarPanel;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainPanel)
     };

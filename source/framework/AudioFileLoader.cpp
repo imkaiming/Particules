@@ -42,7 +42,6 @@ namespace particules
                 setCurrentFile(file);
                 onAudioLoaded(bufferOut);
             }
-            
         }
     }
 
@@ -57,7 +56,7 @@ namespace particules
         const double fileDuration = static_cast<double>(reader->lengthInSamples) / reader->sampleRate;
         if(fileDuration >= MAX_DURATION)
         {
-            showErrorWindow("The file duration must not exceed " + (juce::String)MAX_DURATION+ " seconds."
+            showErrorWindow("The file duration must not exceed " + (juce::String)MAX_DURATION + " seconds."
                             + "/nYour file is currently " + juce::String(fileDuration, 2) + " seconds.");
             return false;
         }
@@ -117,6 +116,12 @@ namespace particules
         if(sr >= 0.0)
             sampleRate = sr;
         channelMixer.setTargetChannel(numCh);
+    }
+
+    void AudioFileLoader::setSampleRate(double sr) noexcept
+    {
+        if(sr > 0)
+            sampleRate = sr;
     }
 
     juce::AudioFormatManager& AudioFileLoader::getFormatManager() { return formatManager; }

@@ -18,11 +18,11 @@ namespace particules
                   ),
           apvts(*this, nullptr, "Parameters", createParameterLayout()), //apvts stands for audio processor value tree state
           paramsView(), granularEngine(visualBuffer),
-          uiContext{apvts, paramsView, customLookAndFeel, *this, visualBuffer, audioThumbnail}, loader{},
+          uiContext{apvts, paramsView, *this, visualBuffer, audioThumbnail}, loader{},
           debugPresetLoaded{false}, cache{5}, audioThumbnail{samplesPerThumbnail, loader.getFormatManager(), cache}
 #endif
     {
-        DBG("PLUGIN CTOR");
+        //DBG("PLUGIN CTOR");
         initOnAudioLoadedCallback();
     }
 
@@ -75,7 +75,7 @@ namespace particules
 
     void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     {
-        DBG("PREPARE TO PLAY");
+        //DBG("PREPARE TO PLAY");
         const int numChannels = getTotalNumOutputChannels();
         paramsView.init(apvts, sampleRate);
         granularEngine.init(sampleRate, numChannels, samplesPerBlock);
@@ -141,15 +141,15 @@ namespace particules
 
     void ParticulesAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
     {
-        DBG("GET STATE INFO");
+        //DBG("GET STATE INFO");
         juce::ValueTree vt = apvts.copyState();
         const juce::File& f = getCurrentFile();
         if(f.existsAsFile())
         {
             // adding the input buffer to the value tree
-            juce::ValueTree audioFileNode("AudioFile");
-            audioFileNode.setProperty("path", f.getFullPathName(), nullptr);
-            vt.appendChild(audioFileNode, nullptr);
+            //juce::ValueTree audioFileNode("AudioFile");
+            //audioFileNode.setProperty("path", f.getFullPathName(), nullptr);
+            //vt.appendChild(audioFileNode, nullptr);
 
             juce::ValueTree runtimeParametersNode("RuntimeParameters");
             runtimeParametersNode.setProperty("isPlaying", paramsView.getIsPlaying(), nullptr);
@@ -165,7 +165,7 @@ namespace particules
 
     void ParticulesAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
     {
-        DBG("SET STATE INFO");
+        //DBG("SET STATE INFO");
         std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
         if(xmlState == nullptr)
             return;
@@ -185,13 +185,13 @@ namespace particules
                 loader.setSampleRate(paramsView.getSampleRate());
             }
 
-            juce::ValueTree audioFileNode = vt.getChildWithName("AudioFile");
-            if(audioFileNode.isValid())
-            {
-                str path = audioFileNode.getProperty("path");
-                loadFile(path);
-            }
-            vt.removeChild(audioFileNode, nullptr);
+            //juce::ValueTree audioFileNode = vt.getChildWithName("AudioFile");
+            //if(audioFileNode.isValid())
+            //{
+            //    str path = audioFileNode.getProperty("path");
+            //    loadFile(path);
+            //}
+            //vt.removeChild(audioFileNode, nullptr);
 
             vt.removeChild(runtimeParametersNode, nullptr);
 

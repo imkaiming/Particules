@@ -2,17 +2,17 @@
 
 #include "../../framework/Types.h"
 
-#include "../component/ThumbnailComponent.h"
 #include "../../utils/PluginParams.h"
+#include "../component/ThumbnailComponent.h"
 
 // the Synth Frame provide UI control that modify the apvts values only
 namespace particules
 {
 
-    class SynthPanel: public juce::Component
+    class SynthPanel : public juce::Component
     {
     public:
-        SynthPanel(ValueTreeState& apvts);
+        SynthPanel(UIContext&);
         ~SynthPanel() = default;
 
         void paint(juce::Graphics&) override;
@@ -20,22 +20,19 @@ namespace particules
 
     private:
 
-        juce::Slider mixSlider;
         juce::Slider outputSlider;
         juce::Slider positionSlider;
-        juce::Slider selectionSlider;
+        juce::Slider spanSlider;
 
-        juce::Label mixLabel;
         juce::Label outputLabel;
         juce::Label positionLabel;
-        juce::Label selectionLabel;
+        juce::Label spanLabel;
 
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> mixSliderAttachment;
         std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> outputSliderAttachment;
         std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> positionSliderAttachment;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> selectionSliderAttachment;
+        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> spanSliderAttachment;
 
-        // constants 
+        // constants
         static constexpr const char* globalMixId = global::mix::id;
         static constexpr const char* globalMixName = global::mix::name;
         static constexpr const float globalMixMin = global::mix::min;

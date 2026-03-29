@@ -7,7 +7,7 @@
 
 #include "PluginProcessor.h"
 #include "gui/panel/MainPanel.h"
-#include "utils/CustomLookAndFeel.h"
+#include "utils/lookandfeel/GlobalLookAndFeel.h"
 
 #include "melatonin_inspector/melatonin_inspector.h"
 
@@ -18,17 +18,25 @@ namespace particules
     public:
         ParticulesAudioProcessorEditor(ParticulesAudioProcessor&);
         ~ParticulesAudioProcessorEditor() override;
+
         void paint(juce::Graphics&) override;
         void resized() override;
 
-        CustomLookAndFeel& getCustomLook() { return customLookAndFeel; };
+        GlobalLookAndFeel& getCustomLook() { return globalLookAndFeel; };
         const MainPanel& getMainPanel() const noexcept { return mainPanel; };
 
     private:
+        static constexpr const int windowHeightInit = UI::windowHeightInit;
+        static constexpr const int windowHeightMin = UI::windowHeightMin;
+        static constexpr const int windowHeightMax = UI::windowHeightMax;
+
+        static constexpr const int windowWidthInit = UI::windowWidthInit;
+        static constexpr const int windowWidthMin = UI::windowWidthMin;
+        static constexpr const int windowWidthMax = UI::windowWidthMax;
+
         ParticulesAudioProcessor& pluginProcessor;
         MainPanel mainPanel;
-        CustomLookAndFeel& customLookAndFeel;
-        int width, heigth;
+        GlobalLookAndFeel globalLookAndFeel;
 
 #if ENABLE_MELATONINE_INSPECTOR
         melatonin::Inspector inspector{*this};

@@ -7,7 +7,6 @@
 #include "framework/AudioFileLoader.h"
 #include "framework/GrainVisualBuffer.h"
 #include "framework/ParameterView.h"
-#include "utils/CustomLookAndFeel.h"
 #include "utils/struct/UIContext.h"
 
 
@@ -83,7 +82,6 @@ namespace particules
         juce::AudioThumbnailCache cache;
         juce::AudioThumbnail audioThumbnail;
 
-        CustomLookAndFeel customLookAndFeel;
         UIContext uiContext;
 
         AudioFileLoader loader;

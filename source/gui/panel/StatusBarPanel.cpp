@@ -18,20 +18,25 @@ namespace particules
         statusLabel.setColour(0, juce::Colours::white);
     }
 
-    void StatusBarPanel::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
+    void StatusBarPanel::paint(juce::Graphics& g)
+    {
+        const juce::Rectangle<float> inner = getLocalBounds().reduced(2).toFloat();
+        g.setColour(juce::Colours::yellow);
+        g.fillRoundedRectangle(inner, 12.0f);
+    }
 
     void StatusBarPanel::resized()
     {
-        float h = getHeight() / 30.f;
+        //float h = getHeight() / 30.f;
 
-        juce::FlexBox flexbox;
-        flexbox.items.add(juce::FlexItem(statusLabel).withFlex(1).withMargin(h));
-        flexbox.performLayout(getLocalBounds().toFloat());
+        //juce::FlexBox flexbox;
+        //flexbox.items.add(juce::FlexItem(statusLabel).withFlex(1).withMargin(h));
+        //flexbox.performLayout(getLocalBounds().toFloat());
     }
 
     void StatusBarPanel::timerCallback()
     {
-        statusLabel.setText((const juce::String) "active grains: " + (const juce::String)audioProcessor.getNumActiveGrains(),
+        statusLabel.setText((const str) "active grains: " + (const str)audioProcessor.getNumActiveGrains(),
             juce::dontSendNotification);
         repaint();
     }

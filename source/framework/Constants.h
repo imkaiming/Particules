@@ -6,6 +6,7 @@
 
 namespace particules
 {
+
     inline constexpr int maxMidiVoice = 16;
     inline constexpr int maxSpawnsPerBlock = 16;
     inline constexpr double maxFileDuration = 600.0; // 10 min
@@ -20,7 +21,15 @@ namespace particules
 
     namespace UI
     {
-        inline constexpr float grainVisualSize = 8.f;
+        inline constexpr const float grainVisualSize = 8.f;
+
+        inline constexpr const int windowWidthInit = 750; 
+        inline constexpr const int windowWidthMin = 600; 
+        inline constexpr const int windowWidthMax = 900; 
+
+        inline constexpr const int windowHeightInit = 500; 
+        inline constexpr const int windowHeightMin = 400; 
+        inline constexpr const int windowHeightMax = 600; 
     }
 }
 

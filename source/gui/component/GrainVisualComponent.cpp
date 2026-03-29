@@ -8,7 +8,7 @@ namespace particules
     GrainVisualComponent::GrainVisualComponent(UIContext& uic)
         : visualBuffer{uic.visualBuffer}, parameterView{uic.paramsView}, numSamples{parameterView.getNumSamples()},
           invWidthSamples{0.f},
-          colour{MyColours::lavender}
+          colour{colours::lavender}
     {
         startTimerHz(60);
     }

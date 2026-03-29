@@ -1,18 +1,10 @@
-/*
-  ==============================================================================
-
-	AudioFilePanel.cpp
-	Created: 3 Feb 2023 10:38:36pm
-	Author:  user
-
-  ==============================================================================
-*/
-
 #include "AudioFilePanel.h"
 #include "../../PluginProcessor.h"
 #include "../../framework/ParameterView.h"
 #include "../../utils/MyColours.h"
 #include "../../utils/struct/UIContext.h"
+#include "BinaryData.h"
+
 
 namespace particules
 {
@@ -22,6 +14,7 @@ namespace particules
           play_pause_btn((const str) "playAudioButton", juce::DrawableButton::ButtonStyle::ImageFitted),
           stop_btn((const str) "stopAudioButton", juce::DrawableButton::ButtonStyle::ImageFitted), thumbnailComponent(uic)
     {
+        /*
         setOpenButtonImage();
         setStopButtonImage();
         setPlayButtonImage();
@@ -31,10 +24,10 @@ namespace particules
         play_pause_btn.onClick = [this]() { playAudioButtonClicked(); };
 
         //addAndMakeVisible(&audioFileComponent);
-        addAndMakeVisible(&open_btn);
-        addAndMakeVisible(&play_pause_btn);
-        addAndMakeVisible(&stop_btn);
-        addAndMakeVisible(&thumbnailComponent);
+        //addAndMakeVisible(&open_btn);
+        //addAndMakeVisible(&play_pause_btn);
+        //addAndMakeVisible(&stop_btn);
+        //addAndMakeVisible(&thumbnailComponent);
 
         if(paramsView.getIsPlaying())
             play_pause_btn.setEnabled(true);
@@ -68,7 +61,8 @@ namespace particules
 	};
 
 	audioProcessor.getAudioFileLoader().setOnFileLoadedCallBack(callbackOnFileLoaded);
-	*/
+        */
+              
     }
 
     AudioFilePanel::~AudioFilePanel() { audioProcessor.removeChangeListener(this); }
@@ -162,10 +156,17 @@ namespace particules
 
     // component section
 
-    void AudioFilePanel::paint(juce::Graphics& g) { g.fillAll(MyColours::brightBlue); }
+    void AudioFilePanel::paint(juce::Graphics& g)
+    {
+        //g.fillAll(colours::brightBlue);
+        const juce::Rectangle<float> inner = getLocalBounds().reduced(2).toFloat();
+        g.setColour(colours::brightBlue);
+        g.fillRoundedRectangle(inner, 12.0f);
+    }
 
     void AudioFilePanel::resized()
     {
+        /*
         juce::Rectangle<int> localArea = getLocalBounds();
         float w = getWidth() / 30.f;
         float h = getHeight() / 30.f;
@@ -206,6 +207,8 @@ namespace particules
         flexboxMain.items.add(juce::FlexItem(flexboxLeft).withFlex(0.05f).withMargin(h));
         flexboxMain.items.add(juce::FlexItem(flexboxRight).withFlex(0.95f).withMargin(h));
         flexboxMain.performLayout(getLocalBounds().toFloat());
+        */
+
     }
 
     // TODO : Remove the change listener callback after MIDI implementation

@@ -1,27 +1,20 @@
-#include "CustomLookAndFeel.h"
-#include "../../resources/font/FuturaMedium.h"
-#include "../utils/MyColours.h"
-#include "../utils/PluginParams.h"
+#include "GlobalLookAndFeel.h"
+#include "../../../resources/font/FuturaMedium.h"
+#include "../../utils/MyColours.h"
+#include "../../utils/PluginParams.h"
 
 namespace particules
 {
 
-    CustomLookAndFeel::CustomLookAndFeel()
+    GlobalLookAndFeel::GlobalLookAndFeel()
     {
-        setColour(juce::Slider::thumbColourId, MyColours::red);
-        //setColour(juce::Slider::textBoxHighlightColourId, MyColours::black);
-        //setColour(juce::Slider::textBoxBackgroundColourId, MyColours::black);
-        setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
-
+        setColour(juce::Slider::thumbColourId, colours::red);
+        setColour(juce::Slider::textBoxOutlineColourId, colours::black);
         futuraTypeface =
             juce::Typeface::createSystemTypefaceFor(FuturaMedium::FuturaMedium_ttf, FuturaMedium::FuturaMedium_ttfSize);
-
-        //LookAndFeel::getDefaultLookAndFeel().setDefaultSansSerifTypeface(typeface);
     }
 
-    CustomLookAndFeel::~CustomLookAndFeel() {}
-
-    void CustomLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
+    void GlobalLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
         float rotaryStartAngle, float rotaryEndAngle, juce::Slider& slider)
     {
         const float diameter = static_cast<float>(juce::jmin(width, height)) - 4.0f;
@@ -35,7 +28,7 @@ namespace particules
         const float lineWidth = juce::jmin(15.0f, radius * 0.1f);
         const float arcRadius = radius - lineWidth * 0.5f;
 
-        g.setColour(MyColours::black);
+        g.setColour(colours::black);
         g.fillEllipse(radiusX, radiusY, radius * 2.0f, radius * 2.0f);
 
         g.setColour(slider.findColour(juce::Slider::rotarySliderOutlineColourId));
@@ -43,12 +36,10 @@ namespace particules
         outlineArc.addCentredArc(centerX, centerY, arcRadius, arcRadius, 0.0f, rotaryStartAngle, rotaryEndAngle, true);
         g.strokePath(outlineArc, juce::PathStrokeType(lineWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 
-        g.setColour(MyColours::jungleGreen);
+        g.setColour(colours::jungleGreen);
         juce::Path valueArc;
         valueArc.addCentredArc(centerX, centerY, arcRadius, arcRadius, 0.0f, rotaryStartAngle, angle, true);
         g.strokePath(valueArc, juce::PathStrokeType(lineWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
-
-        //setColour(juce::Slider::rotarySliderOutlineColourId, MyColours::cream);
     }
 
 }

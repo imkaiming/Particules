@@ -5,33 +5,18 @@
 namespace particules
 {
 
-    SynthPanel::SynthPanel(ValueTreeState& apvts)
+    SynthPanel::SynthPanel(UIContext& uic) 
     {
-        mixSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalMixId, mixSlider);
-
+        /*
         outputSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalOutputId, outputSlider);
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, globalOutputId, outputSlider);
 
         positionSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalPositionId, positionSlider);
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, globalPositionId, positionSlider);
 
-        selectionSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalSelectionId, selectionSlider);
+        spanSliderAttachment =
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, globalSelectionId, spanSlider);
 
-        mixSlider.setName("mixSlider");
-        mixSlider.setSliderStyle(juce::Slider::SliderStyle::LinearBar);
-        mixSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
-        mixSlider.setTextBoxIsEditable(true);
-        mixSlider.setRange(0.0, 100.0);
-        //mixSlider.setTextValueSuffix(" %");
-        //mixSlider.addListener(this);
-        mixSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
-        // mixSlider.onValueChane = [this]() { foo(); }
-
-        mixLabel.setText((const str)globalMixName, juce::dontSendNotification);
-        mixLabel.attachToComponent(&mixSlider, false);
-        mixLabel.setJustificationType(juce::Justification::centred);
 
         outputSlider.setName("outputSlider");
         outputSlider.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
@@ -41,15 +26,13 @@ namespace particules
         outputSlider.setSkewFactorFromMidPoint(-12.0);
         //outputSlider.setTextValueSuffix(" dB");
         //outputSlider.addListener(this);
-        outputSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+        outputSlider.setColour(juce::Slider::textBoxOutlineColourId, colours::black);
 
         outputLabel.setText((const str)globalOutputName, juce::dontSendNotification);
         outputLabel.attachToComponent(&outputSlider, false);
         outputLabel.setJustificationType(juce::Justification::centred);
 
-        addAndMakeVisible(&mixSlider);
         addAndMakeVisible(&outputSlider);
-        addAndMakeVisible(&mixLabel);
         addAndMakeVisible(&outputLabel);
 
         positionSlider.setName("positionSlider");
@@ -63,27 +46,31 @@ namespace particules
         positionLabel.attachToComponent(&positionSlider, false);
         positionLabel.setJustificationType(juce::Justification::centred);
 
-        selectionSlider.setName("selectionSlider");
-        selectionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
-        selectionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
-        selectionSlider.setTextBoxIsEditable(true);
-        selectionSlider.setRange(globalSelectionMin, globalSelectionMax);
+        spanSlider.setName("spanSlider");
+        spanSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+        spanSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
+        spanSlider.setTextBoxIsEditable(true);
+        spanSlider.setRange(globalSelectionMin, globalSelectionMax);
         //windowSelectionSlider.addListener(this);
 
-        selectionLabel.setText((const str)globalSelectionName, juce::dontSendNotification);
-        selectionLabel.attachToComponent(&selectionSlider, false);
-        selectionLabel.setJustificationType(juce::Justification::centred);
+        spanLabel.setText((const str)globalSelectionName, juce::dontSendNotification);
+        spanLabel.attachToComponent(&spanSlider, false);
+        spanLabel.setJustificationType(juce::Justification::centred);
 
-        addAndMakeVisible(&positionSlider);
-        addAndMakeVisible(&selectionSlider);
-        addAndMakeVisible(&positionLabel);
-        addAndMakeVisible(&selectionLabel);
+        //addAndMakeVisible(&positionSlider);
+        //addAndMakeVisible(&spanSlider);
+        //addAndMakeVisible(&positionLabel);
+        //addAndMakeVisible(&spanLabel);
+        */
+        //addAndMakeVisible(&adsrPanel);
+
     }
 
-    void SynthPanel::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
+    void SynthPanel::paint(juce::Graphics& g) { /* g.fillAll(juce::Colours::purple); */}
 
     void SynthPanel::resized()
     {
+        /*
         float h = getHeight() / 30.f;
 
         juce::FlexBox mainFlexBox;
@@ -93,9 +80,6 @@ namespace particules
         flexBox1.flexDirection = juce::FlexBox::Direction::column;
         flexBox1.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
         flexBox1.alignContent = juce::FlexBox::AlignContent::center;
-
-        flexBox1.items.add(juce::FlexItem(mixSlider).withFlex(0.8f).withMargin(h));
-        flexBox1.items.add(juce::FlexItem(mixLabel).withFlex(0.2f));
 
         juce::FlexBox flexBox2;
         flexBox2.flexDirection = juce::FlexBox::Direction::column;
@@ -120,8 +104,8 @@ namespace particules
         flexBox4.justifyContent = juce::FlexBox::JustifyContent::spaceAround;
         flexBox4.alignContent = juce::FlexBox::AlignContent::center;
 
-        flexBox4.items.add(juce::FlexItem(selectionLabel).withFlex(0.2f).withMargin(h));
-        flexBox4.items.add(juce::FlexItem(selectionSlider).withFlex(0.5f));
+        flexBox4.items.add(juce::FlexItem(spanLabel).withFlex(0.2f).withMargin(h));
+        flexBox4.items.add(juce::FlexItem(spanSlider).withFlex(0.5f));
 
         juce::FlexBox flexBox5;
         flexBox5.flexDirection = juce::FlexBox::Direction::column;
@@ -134,5 +118,6 @@ namespace particules
         mainFlexBox.items.add(juce::FlexItem(flexBox2).withFlex(0.25f)); // .withMargin(h));
 
         mainFlexBox.performLayout(getLocalBounds().toFloat());
+        */
     }
 }

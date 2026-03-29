@@ -52,15 +52,15 @@ namespace particules
 
     void ThumbnailComponent::paintIfNoFileLoaded(juce::Graphics& g)
     {
-        g.fillAll(MyColours::black);
-        g.setColour(MyColours::cream);
+        g.fillAll(colours::black);
+        g.setColour(colours::cream);
         g.drawFittedText("No File Loaded", getLocalBounds(), juce::Justification::centred, 1);
     }
 
     void ThumbnailComponent::paintIfFileLoaded(juce::Graphics& g)
     {
-        g.fillAll(MyColours::black);
-        g.setColour(MyColours::brightBlue);
+        g.fillAll(colours::black);
+        g.setColour(colours::brightBlue);
         audioThumbnail.drawChannels(g, getLocalBounds(), 0.0, audioThumbnail.getTotalLength(), 1.0f);
     }
 

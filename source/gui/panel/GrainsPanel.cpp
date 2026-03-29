@@ -5,6 +5,7 @@ namespace particules
 {
     GrainsPanel::GrainsPanel(ValueTreeState& apvts) : apvts{apvts}
     {
+        /*
         emissionSliderAttachment =
             std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, grainsEmissionId, emissionSlider);
 
@@ -30,7 +31,7 @@ namespace particules
         emissionSlider.setTextBoxIsEditable(true);
         emissionSlider.setRange(grainsEmissionMin, grainsEmissionMax);
         emissionSlider.setSkewFactorFromMidPoint(grainsEmissionSkewFactor);
-        emissionSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+        emissionSlider.setColour(juce::Slider::textBoxOutlineColourId, colours::black);
 
         emissionLabel.setText((const str)grainsEmissionName, juce::dontSendNotification);
         emissionLabel.attachToComponent(&emissionSlider, false);
@@ -42,7 +43,7 @@ namespace particules
         durationSlider.setTextBoxIsEditable(true);
         durationSlider.setRange(grainsDurationMin, grainsDurationMax);
         durationSlider.setSkewFactorFromMidPoint(grainsDurationSkewFactor);
-        durationSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+        durationSlider.setColour(juce::Slider::textBoxOutlineColourId, colours::black);
 
         durationLabel.setText((const str)grainsDurationName, juce::dontSendNotification);
         durationLabel.attachToComponent(&durationSlider, false);
@@ -53,7 +54,7 @@ namespace particules
         speedSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 100, 25);
         speedSlider.setTextBoxIsEditable(true);
         speedSlider.setRange(grainsSpeedMin, grainsSpeedMax);
-        speedSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+        speedSlider.setColour(juce::Slider::textBoxOutlineColourId, colours::black);
 
         speedLabel.setText((const str)grainsSpeedName, juce::dontSendNotification);
         speedLabel.attachToComponent(&speedSlider, false);
@@ -65,7 +66,7 @@ namespace particules
         sustainRatioSlider.setTextBoxIsEditable(true);
         sustainRatioSlider.setRange(grainsSustainRatioMin, grainsSustainRatioMax);
         sustainRatioSlider.setSkewFactorFromMidPoint(grainsSustainRatioSkewFactor);
-        sustainRatioSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+        sustainRatioSlider.setColour(juce::Slider::textBoxOutlineColourId, colours::black);
 
         sustainRatioLabel.setText((const str)grainsSustainRatioName, juce::dontSendNotification);
         sustainRatioLabel.attachToComponent(&sustainRatioSlider, false);
@@ -77,23 +78,23 @@ namespace particules
         traversalFreqSlider.setTextBoxIsEditable(true);
         traversalFreqSlider.setRange(grainsTraversalFreqMin, grainsTraversalFreqMax);
         traversalFreqSlider.setSkewFactorFromMidPoint(grainsTraversalFreqSkewFactor);
-        traversalFreqSlider.setColour(juce::Slider::textBoxOutlineColourId, MyColours::black);
+        traversalFreqSlider.setColour(juce::Slider::textBoxOutlineColourId, colours::black);
 
         traversalFreqLabel.setText((const str)grainsTraversalFreqName, juce::dontSendNotification);
         traversalFreqLabel.attachToComponent(&traversalFreqSlider, false);
         traversalFreqLabel.setJustificationType(juce::Justification::centred);
 
-        addAndMakeVisible(&emissionSlider);
-        addAndMakeVisible(&durationSlider);
-        addAndMakeVisible(&speedSlider);
-        addAndMakeVisible(&sustainRatioSlider);
-        addAndMakeVisible(&traversalFreqSlider);
+        //addAndMakeVisible(&emissionSlider);
+        //addAndMakeVisible(&durationSlider);
+        //addAndMakeVisible(&speedSlider);
+        //addAndMakeVisible(&sustainRatioSlider);
+        //addAndMakeVisible(&traversalFreqSlider);
 
-        addAndMakeVisible(&emissionLabel);
-        addAndMakeVisible(&durationLabel);
-        addAndMakeVisible(&speedLabel);
-        addAndMakeVisible(&sustainRatioLabel);
-        addAndMakeVisible(&traversalFreqLabel);
+        //addAndMakeVisible(&emissionLabel);
+        //addAndMakeVisible(&durationLabel);
+        //addAndMakeVisible(&speedLabel);
+        //addAndMakeVisible(&sustainRatioLabel);
+        //addAndMakeVisible(&traversalFreqLabel);
 
         //ComboBoxPlugingrainserAttachment(RangedAudioPlugingrainser& parameter, ComboBox& combo,
         //	UndoManager* undoManager = nullptr);
@@ -119,30 +120,32 @@ namespace particules
         traversalModeLabel.attachToComponent(&traversalModeList, false);
         traversalModeLabel.setJustificationType(juce::Justification::centred);
 
-        /*
-	envelopeList.onChange = [this] {
-		this->paramsView->setEnvelopeType(envelopeList.getSelectedId());
-	};
+        
+	//envelopeList.onChange = [this] {
+	//	this->paramsView->setEnvelopeType(envelopeList.getSelectedId());
+	//};
 
-	traversalModeList.onChange = [this] {
-		this->paramsView->setTraversalModeValue(traversalModeList.getSelectedId());
-	};
-	*/
+	//traversalModeList.onChange = [this] {
+	//	this->paramsView->setTraversalModeValue(traversalModeList.getSelectedId());
+	//};
+	
 
-        addAndMakeVisible(&envelopeModeList);
-        addAndMakeVisible(&envModeLabel);
+        //addAndMakeVisible(&envelopeModeList);
+        //addAndMakeVisible(&envModeLabel);
 
-        addAndMakeVisible(&traversalModeList);
-        addAndMakeVisible(&traversalModeLabel);
+        //addAndMakeVisible(&traversalModeList);
+        //addAndMakeVisible(&traversalModeLabel);
 
         //apvts.addPlugingrainserListener(grainsTraversalMode::id, this);
         //apvts.addPlugingrainserListener(grainsEnvelopeMode::id, this);
+        */
     }
 
-    void GrainsPanel::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
+    void GrainsPanel::paint(juce::Graphics& g) { /* g.fillAll(colours::green); */}
 
     void GrainsPanel::resized()
     {
+        /*
         float h = getHeight() / 30.f;
 
         juce::FlexBox mainFlexBox;
@@ -206,6 +209,7 @@ namespace particules
         mainFlexBox.items.add(juce::FlexItem(flexBox6).withFlex(0.2f));
 
         mainFlexBox.performLayout(getLocalBounds().toFloat());
+        */
     }
 }
 

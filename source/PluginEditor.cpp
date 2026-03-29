@@ -5,22 +5,19 @@ namespace particules
 {
     ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(ParticulesAudioProcessor& p)
         : AudioProcessorEditor(&p), pluginProcessor(p), mainPanel(p.getUIContext()),
-          customLookAndFeel(p.getUIContext().customLookAndFeel)
+          globalLookAndFeel()
     {
-        setLookAndFeel(&customLookAndFeel);
+        setLookAndFeel(&globalLookAndFeel);
 
         setResizable(true, true);
-        setResizeLimits(450, 225, 1200, 600);
+        setResizeLimits(windowWidthMin, windowHeightMin, windowWidthMax, windowHeightMax);
 
-        const float ratio = 2.f;
+        const float ratio = 1.5f; // ratio 3:2
         getConstrainer()->setFixedAspectRatio(ratio);
 
-        width = 700;
-        heigth = 350;
-        setSize(width, heigth);
+        setSize(windowWidthInit, windowHeightInit);
 
         addAndMakeVisible(&mainPanel);
-
 #if ENABLE_DEBUG_PRESET
         pluginProcessor.loadDebugPreset();
 #endif
@@ -33,14 +30,7 @@ namespace particules
 
     ParticulesAudioProcessorEditor::~ParticulesAudioProcessorEditor() { setLookAndFeel(nullptr); }
 
-    void ParticulesAudioProcessorEditor::paint(juce::Graphics& g) { g.fillAll(MyColours::black); }
+    void ParticulesAudioProcessorEditor::paint(juce::Graphics& g) { /* g.fillAll(colours::black); */ }
 
-    void ParticulesAudioProcessorEditor::resized()
-    {
-        int w = getWidth() / 300;
-        juce::Rectangle<int> area = getLocalBounds();
-        area.removeFromLeft(w);
-        area.removeFromRight(w);
-        mainPanel.setBounds(area);
-    }
+    void ParticulesAudioProcessorEditor::resized() { mainPanel.setBounds(getLocalBounds()); }
 }

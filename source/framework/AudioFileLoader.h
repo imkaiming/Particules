@@ -21,6 +21,7 @@ namespace particules
         bool loadAudioFromFile(juce::File&, AudioBuffer&);
 
         void init(double, int) noexcept;
+        void setSampleRate(double) noexcept;
         juce::AudioFormatManager& getFormatManager();
         const juce::File& getCurrentFile() const noexcept { return currentFile; };
         void setCurrentFile(juce::File& f) noexcept { currentFile = f; };

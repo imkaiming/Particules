@@ -20,7 +20,7 @@ namespace particules
 
     void SelectionOverlayComponent::paint(juce::Graphics& g)
     {
-        g.setColour(MyColours::red);
+        g.setColour(colours::red);
 
         if(start + width > getWidth())
         {

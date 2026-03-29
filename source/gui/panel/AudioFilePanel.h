@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include "BinaryData.h"
 
 #include "../component/ThumbnailComponent.h"
 
@@ -38,7 +37,6 @@ namespace particules
         void setStopButtonImage();
 
         // Buttons methods
-        //void initDrawableButtons();
         void openFileButtonClicked();
         void stopAudioButtonClicked();
         void playAudioButtonClicked();

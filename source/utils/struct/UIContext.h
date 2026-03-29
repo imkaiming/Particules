@@ -6,14 +6,14 @@
 namespace particules
 {
     class ParameterView;
-    class CustomLookAndFeel;
+    //class CustomLookAndFeel;
     class ParticulesAudioProcessor;
     class GrainVisualBuffer;
     struct UIContext
     {
         ValueTreeState& apvts;
         ParameterView& paramsView;
-        CustomLookAndFeel& customLookAndFeel;
+        //CustomLookAndFeel& customLookAndFeel;
         ParticulesAudioProcessor& audioProcessor;
         GrainVisualBuffer& visualBuffer;
         juce::AudioThumbnail& audioThumbnail;
