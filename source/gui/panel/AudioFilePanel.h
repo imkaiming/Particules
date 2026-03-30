@@ -2,8 +2,10 @@
 #pragma once
 
 #include "../../framework/Types.h"
+#include "../../utils/lookandfeel/HandleSliderLookAndFeel.h"
 #include "../component/ThumbnailComponent.h"
-#include "../component/HandleSliderComponent.h"
+#include "../component/PositionOverlayComponent.h"
+#include "../component/SpanOverlayComponent.h"
 
 // the Audio File Frame provide the control to load and play the audio.
 namespace particules
@@ -29,14 +31,21 @@ namespace particules
         ValueTreeState& apvts;
         ThumbnailComponent thumbnailComponent; // after the file is loaded draw the waveform
 
-        HandleSliderComponent positionSlider;
-        HandleSliderComponent spanSlider;
+        juce::Slider positionSlider;
+        juce::Slider spanSlider;
 
-        //juce::Label positionLabel;
-        //juce::Label spanLabel;
+        HandleSliderLookAndFeel sliderLookAndFeel;
 
         std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> positionSliderAttachment;
         std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> spanSliderAttachment;
+
+        void updateOverflow(float value);
+        void updatePosition(float value); // update the position marker when changing the file position slider value
+        void updateSpan(float value);
+
+        PositionOverlayComponent positionOverlay;
+        SpanOverlayComponent spanOverlay;
+        SpanOverlayComponent overflowOverlay; // when the selection is higher than the width it wrapped back. it add flexibility
 
         static constexpr const char* globalPositionId = global::position::id;
         static constexpr const char* globalPositionName = global::position::name;

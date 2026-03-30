@@ -8,8 +8,7 @@ namespace particules
 {
     ThumbnailComponent::ThumbnailComponent(UIContext& uic)
         : uic{uic}, audioThumbnail(uic.audioThumbnail), grainVisualComponent(uic), paramsView(uic.paramsView), apvts{uic.apvts},
-          audioProcessor{uic.audioProcessor}, positionValue{uic.apvts.getRawParameterValue(globalPositionId)->load()},
-          selectionValue{uic.apvts.getRawParameterValue(globalSpanId)->load()}
+          audioProcessor{uic.audioProcessor}
     {
         //updatePosition(positionValue);
         //updateSelection(selectionValue);
@@ -18,9 +17,7 @@ namespace particules
         audioThumbnail.addChangeListener(this);
 
         addAndMakeVisible(&grainVisualComponent);
-        addAndMakeVisible(&selection);
-        addAndMakeVisible(&position);
-        addAndMakeVisible(&overflow);
+
 
         if(audioThumbnail.isFullyLoaded())
             repaint();
@@ -85,7 +82,7 @@ namespace particules
         for(int i = 1; i < numRows; ++i)
         {
             const float y = h * static_cast<float>(i) / static_cast<float>(numRows);
-   
+
             const float alpha = (i == numRows / 2) ? 0.12f : 0.06f;
             g.setColour(juce::Colours::white.withAlpha(alpha));
             g.drawHorizontalLine(static_cast<int>(y), 0.0f, w);
@@ -94,9 +91,6 @@ namespace particules
 
     void ThumbnailComponent::resized()
     {
-        position.setBounds(getLocalBounds());
-        selection.setBounds(getLocalBounds());
-        overflow.setBounds(getLocalBounds());
         grainVisualComponent.setBounds(getLocalBounds());
     }
 
@@ -117,33 +111,6 @@ namespace particules
             }
         }
     }
-
-    void ThumbnailComponent::updatePosition(float value)
-    {
-        positionValue = value;
-        position.setPosition(positionValue * getWidth());
-        selection.setPosition(positionValue * getWidth());
-        //DBG("update pos is called");
-        float f = selectionValue * getWidth() + positionValue * getWidth() - (float)getWidth();
-        if(f >= 0.f)
-            updateOverflow(f);
-        else
-            updateOverflow(0.f);
-    }
-
-    void ThumbnailComponent::updateSelection(float value)
-    {
-        selectionValue = value;
-        selection.setSelection(selectionValue * getWidth());
-
-        float f = selectionValue * getWidth() + positionValue * getWidth() - (float)getWidth();
-        if(f >= 0.f)
-            updateOverflow(f);
-        else
-            updateOverflow(0.f);
-    }
-
-    void ThumbnailComponent::updateOverflow(float value) { overflow.setSelection(value); }
 
     void ThumbnailComponent::setCallbackOnThumbnailReady(std::function<void()> foo) { onThumbnailReady = std::move(foo); }
 

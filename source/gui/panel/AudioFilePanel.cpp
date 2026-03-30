@@ -26,12 +26,33 @@ namespace particules
         spanSlider.setTextBoxIsEditable(true);
         spanSlider.setRange(globalSpanMin, globalSpanMax);
 
+        positionSlider.onValueChange = [this] { updatePosition(positionSlider.getValue()); };
+        spanSlider.onValueChange = [this] { updateSpan(spanSlider.getValue()); };
+
+        positionSlider.setLookAndFeel(&sliderLookAndFeel);
+        spanSlider.setLookAndFeel(&sliderLookAndFeel);
+
         addAndMakeVisible(&positionSlider);
         addAndMakeVisible(&spanSlider);
         addAndMakeVisible(&thumbnailComponent);
+        addAndMakeVisible(&spanOverlay);
+        addAndMakeVisible(&positionOverlay);
+        addAndMakeVisible(&overflowOverlay);
+
+        spanOverlay.toFront(false);
+        positionOverlay.toFront(false);
+        overflowOverlay.toFront(false);
+
+        //updatePosition(uic.apvts.getRawParameterValue(globalPositionId)->load());
+        //updateSpan(uic.apvts.getRawParameterValue(globalSpanId)->load());
     }
 
-    AudioFilePanel::~AudioFilePanel() { audioProcessor.removeChangeListener(this); }
+    AudioFilePanel::~AudioFilePanel()
+    {
+        audioProcessor.removeChangeListener(this);
+        positionSlider.setLookAndFeel(nullptr);
+        spanSlider.setLookAndFeel(nullptr);
+    }
 
     void AudioFilePanel::filesDropped(const juce::StringArray& files, int x, int y)
     {
@@ -64,22 +85,63 @@ namespace particules
         g.setColour(colours::brightBlue);
         g.fillRoundedRectangle(inner, 12.0f);
     }
-
+    /*
     void AudioFilePanel::resized()
     {
-        juce::Rectangle<int> area = getLocalBounds().reduced(10, 10);
+        juce::Rectangle<int> sliderArea = getBounds().reduced(0,2);
+        juce::Rectangle<int> area = getLocalBounds().reduced(10, 2);
 
-        const int sliderH = 16;
-        const int gap = 4;
+        juce::FlexBox fb;
+        fb.flexDirection = juce::FlexBox::Direction::column;
+        fb.alignItems = juce::FlexBox::AlignItems::stretch;
 
-        spanSlider.setBounds(area.removeFromTop(sliderH));
-        area.removeFromTop(gap);
+        fb.items.add(juce::FlexItem(spanSlider).withFlex(0.10f));
+        fb.items.add(juce::FlexItem(thumbnailComponent).withFlex(0.80f));
+        fb.items.add(juce::FlexItem(positionSlider).withFlex(0.10f));
 
-        const juce::Rectangle<int> thumbArea = area.withTrimmedBottom(sliderH + gap);
-        thumbnailComponent.setBounds(thumbArea);
+        fb.performLayout(area);
 
-        area.removeFromTop(thumbArea.getHeight() + gap);
-        positionSlider.setBounds(area.removeFromTop(sliderH));
+        juce::Rectangle<int> thumbBounds = thumbnailComponent.getBounds();
+
+        spanOverlay.setBounds(thumbBounds);
+        positionOverlay.setBounds(thumbBounds);
+        overflowOverlay.setBounds(thumbBounds);
+
+        updatePosition(positionSlider.getValue());
+        updateSpan(spanSlider.getValue());
+    }
+    */
+
+        void AudioFilePanel::resized()
+    {
+        auto bounds = getLocalBounds();
+
+        const int padY = 2;
+        const int padX = 8;
+
+        bounds = bounds.reduced(0, padY);
+
+        const int totalH = bounds.getHeight();
+
+        const int sliderH = (int)(totalH * 0.10f);
+        const int thumbH = (int)(totalH * 0.80f);
+
+        auto topSliderArea = bounds.removeFromTop(sliderH);
+        auto thumbArea = bounds.removeFromTop(thumbH);
+        auto bottomSliderArea = bounds;
+
+        spanSlider.setBounds(topSliderArea);
+        positionSlider.setBounds(bottomSliderArea);
+
+        auto thumbReduced = thumbArea.reduced(padX, 0);
+        thumbnailComponent.setBounds(thumbReduced);
+
+        spanOverlay.setBounds(thumbReduced);
+        positionOverlay.setBounds(thumbReduced);
+        overflowOverlay.setBounds(thumbReduced);
+
+        updatePosition(positionSlider.getValue());
+        updateSpan(spanSlider.getValue());
     }
 
     // TODO : Remove the change listener callback after MIDI implementation
@@ -92,6 +154,44 @@ namespace particules
             //play_pause_btn.setEnabled(valid);
         }
     }
+
+    void AudioFilePanel::updatePosition(float position)
+    {
+        const float width = (float)positionOverlay.getWidth();
+
+        const float startPx = position * width;
+        const float spanPx = spanSlider.getValue() * width;
+        const float endPx = startPx + spanPx;
+
+        positionOverlay.setPosition(startPx);
+        spanOverlay.setPosition(startPx);
+
+        const float overflowPx = juce::jmax(0.0f, endPx - width);
+        updateOverflow(overflowPx);
+
+        positionOverlay.repaint();
+        spanOverlay.repaint();
+        overflowOverlay.repaint();
+    }
+
+    void AudioFilePanel::updateSpan(float span)
+    {
+        const float width = (float)positionOverlay.getWidth();
+
+        const float startPx = positionSlider.getValue() * width;
+        const float spanPx = span * width;
+        const float endPx = startPx + spanPx;
+
+        spanOverlay.setSpan(spanPx);
+
+        const float overflowPx = juce::jmax(0.0f, endPx - width);
+        updateOverflow(overflowPx);
+
+        spanOverlay.repaint();
+        overflowOverlay.repaint();
+    }
+
+    void AudioFilePanel::updateOverflow(float value) { overflowOverlay.setSpan(value); }
 
 }
 

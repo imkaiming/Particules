@@ -15,7 +15,7 @@ namespace particules
 
     void PositionOverlayComponent::paint(juce::Graphics& g)
     {
-        g.setColour(colours::cream);
+        g.setColour(colours::cream.withAlpha(0.5f));
         g.drawLine(startPos, 0.f, startPos, (float)getHeight(), 2.0f);
     }
 

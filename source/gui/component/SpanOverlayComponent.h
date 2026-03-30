@@ -6,20 +6,20 @@
 namespace particules
 {
 
-    class SelectionOverlayComponent : public juce::Component
+    class SpanOverlayComponent : public juce::Component
     {
     public:
-        SelectionOverlayComponent();
-        ~SelectionOverlayComponent() = default;
+        SpanOverlayComponent();
+        ~SpanOverlayComponent() = default;
 
         void paint(juce::Graphics&) override;
         void setPosition(float);
-        void setSelection(float);
+        void setSpan(float);
 
     private:
         float start;
         float width;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SelectionOverlayComponent)
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpanOverlayComponent)
     };
 }
