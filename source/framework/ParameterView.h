@@ -30,7 +30,7 @@ namespace particules
         float getEmission() const noexcept { return emission ? emission->load(std::memory_order_relaxed) : 0.0f; }
         float getNormalizedWindowSelection() const noexcept
         {
-            return selection ? selection->load(std::memory_order_relaxed) : 0.0f;
+            return span ? span->load(std::memory_order_relaxed) : 0.0f;
         }
         float getNormalizedStartPosition() const noexcept { return position ? position->load(std::memory_order_relaxed) : 0.0f; }
         float getNormalizedSustainRatio() const noexcept
@@ -80,7 +80,7 @@ namespace particules
         std::atomic<float>* mix = nullptr;
         std::atomic<float>* output = nullptr;
         std::atomic<float>* position = nullptr;
-        std::atomic<float>* selection = nullptr;
+        std::atomic<float>* span = nullptr;
         std::atomic<float>* sustainRatio = nullptr;
         std::atomic<float>* envMode = nullptr;
         std::atomic<float>* traversalMode = nullptr;

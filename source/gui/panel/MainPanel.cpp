@@ -13,7 +13,7 @@ namespace particules
         addAndMakeVisible(&statusBarPanel);
     }
 
-    void MainPanel::paint(juce::Graphics& g) { g.fillAll(colours::gray); }
+    void MainPanel::paint(juce::Graphics& g) { g.fillAll(colours::smokyBlack); }
 
     void MainPanel::resized()
     {

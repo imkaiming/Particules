@@ -5,83 +5,38 @@
 #include "../../utils/struct/UIContext.h"
 #include "BinaryData.h"
 
-
 namespace particules
 {
     AudioFilePanel::AudioFilePanel(UIContext& uic)
-        : paramsView(uic.paramsView), audioProcessor(uic.audioProcessor),
-          open_btn((const str) "openFileButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-          play_pause_btn((const str) "playAudioButton", juce::DrawableButton::ButtonStyle::ImageFitted),
-          stop_btn((const str) "stopAudioButton", juce::DrawableButton::ButtonStyle::ImageFitted), thumbnailComponent(uic)
+        : paramsView(uic.paramsView), apvts{uic.apvts}, audioProcessor(uic.audioProcessor), thumbnailComponent(uic)
     {
-        /*
-        setOpenButtonImage();
-        setStopButtonImage();
-        setPlayButtonImage();
-
-        open_btn.onClick = [this]() { openFileButtonClicked(); };
-        stop_btn.onClick = [this]() { stopAudioButtonClicked(); };
-        play_pause_btn.onClick = [this]() { playAudioButtonClicked(); };
-
-        //addAndMakeVisible(&audioFileComponent);
-        //addAndMakeVisible(&open_btn);
-        //addAndMakeVisible(&play_pause_btn);
-        //addAndMakeVisible(&stop_btn);
-        //addAndMakeVisible(&thumbnailComponent);
-
-        if(paramsView.getIsPlaying())
-            play_pause_btn.setEnabled(true);
-        else
-            play_pause_btn.setEnabled(false);
-
-        std::function<void()> callbackOnThumbnailReady = [this]() {
-            //juce::Logger::outputDebugString("10) callback after thumbnail painted");
-            //play_btn.setEnabled(true);
-        };
-
-        thumbnailComponent.setCallbackOnThumbnailReady(callbackOnThumbnailReady);
-
         audioProcessor.addChangeListener(this); // audio processor can now send message
-        /*
-	// audio file loader is a variable of audio file frame so it cannot outlive his parent.
-	std::function<void(bool)> callbackOnFileLoaded = [this](bool ok)
-	{
-		// UI operation on the message thread
-		juce::MessageManager::callAsync([this, ok]()
-		{
-			if(juce::MessageManager* m = juce::MessageManager::getInstance())
-			{
-				if(m->currentThreadHasLockedMessageManager())
-				{
-					//std::shared_ptr<const SampleSource> src = paramsView.getSampleSource();
-					play_btn.setEnabled(ok); //&& src);
-				}
-			}
-		});
-	};
 
-	audioProcessor.getAudioFileLoader().setOnFileLoadedCallBack(callbackOnFileLoaded);
-        */
-              
+        positionSliderAttachment =
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalPositionId, positionSlider);
+        spanSliderAttachment =
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalSpanId, spanSlider);
+
+        positionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+        positionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
+        positionSlider.setRange(globalPositionMin, globalPositionMax);
+
+        spanSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+        spanSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
+        spanSlider.setTextBoxIsEditable(true);
+        spanSlider.setRange(globalSpanMin, globalSpanMax);
+
+        addAndMakeVisible(&positionSlider);
+        addAndMakeVisible(&spanSlider);
+        addAndMakeVisible(&thumbnailComponent);
     }
 
     AudioFilePanel::~AudioFilePanel() { audioProcessor.removeChangeListener(this); }
 
-    void AudioFilePanel::openFileButtonClicked()
-    {
-        //juce::Logger::outputDebugString("openFileButtonClicked() ");
-        play_pause_btn.setEnabled(false);
-        paramsView.setIsPlaying(false);
-        audioProcessor.loadFile();
-
-        //(paramsView.getAudioLoaded() == true) ? juce::Logger::outputDebugString("paramsView.getAudioLoaded() true") : juce::Logger::outputDebugString("paramsView.getAudioLoaded() false");
-        //(paramsView.getAudioBuffer() == nullptr) ? juce::Logger::outputDebugString("paramsView.getAudioBuffer() nullptr") : juce::Logger::outputDebugString("paramsView.getAudioBuffer() not nullptr");
-    }
-
     void AudioFilePanel::filesDropped(const juce::StringArray& files, int x, int y)
     {
-        play_pause_btn.setEnabled(false);
         //paramsView.setIsPlaying(false);
+        //audioProcessor.release();
         for(juce::String file : files)
         {
             if(isInterestedInFileDrag(file))
@@ -90,6 +45,90 @@ namespace particules
             }
         }
     }
+
+    bool AudioFilePanel::isInterestedInFileDrag(const juce::StringArray& files)
+    {
+        for(juce::String file : files)
+        {
+            if(file.endsWithIgnoreCase(".wav") || file.endsWithIgnoreCase(".aif") || file.endsWithIgnoreCase(".mp3"))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void AudioFilePanel::paint(juce::Graphics& g)
+    {
+        const juce::Rectangle<float> inner = getLocalBounds().reduced(2).toFloat();
+        g.setColour(colours::brightBlue);
+        g.fillRoundedRectangle(inner, 12.0f);
+    }
+
+    void AudioFilePanel::resized()
+    {
+        juce::Rectangle<int> area = getLocalBounds().reduced(10, 10);
+
+        const int sliderH = 16;
+        const int gap = 4;
+
+        spanSlider.setBounds(area.removeFromTop(sliderH));
+        area.removeFromTop(gap);
+
+        const juce::Rectangle<int> thumbArea = area.withTrimmedBottom(sliderH + gap);
+        thumbnailComponent.setBounds(thumbArea);
+
+        area.removeFromTop(thumbArea.getHeight() + gap);
+        positionSlider.setBounds(area.removeFromTop(sliderH));
+    }
+
+    // TODO : Remove the change listener callback after MIDI implementation
+    void AudioFilePanel::changeListenerCallback(juce::ChangeBroadcaster* source)
+    {
+        if(source == &audioProcessor)
+        {
+            const juce::File& f = audioProcessor.getCurrentFile();
+            bool valid = f.existsAsFile();
+            //play_pause_btn.setEnabled(valid);
+        }
+    }
+
+}
+
+/*
+ 
+     AudioFilePanel::AudioFilePanel(UIContext& uic)
+        : paramsView(uic.paramsView), audioProcessor(uic.audioProcessor), thumbnailComponent(uic)
+    {
+        audioProcessor.addChangeListener(this); // audio processor can now send message
+
+
+        std::function<void()> onThumbnailReady = [this]() {
+            //juce::Logger::outputDebugString("10) callback after thumbnail painted");
+            //play_btn.setEnabled(true);
+        };
+
+        thumbnailComponent.setCallbackOnThumbnailReady(onThumbnailReady);
+
+        // audio file loader is a variable of audio file frame so it cannot outlive his parent.
+
+
+        std::function<void(bool)> onFileLoaded = [this](bool ok) {
+            // UI operation on the message thread
+            juce::MessageManager::callAsync([this, ok]() {
+                if(juce::MessageManager* m = juce::MessageManager::getInstance())
+                {
+                    if(m->currentThreadHasLockedMessageManager())
+                    {
+                        //std::shared_ptr<const SampleSource> src = paramsView.getSampleSource();
+                        //play_btn.setEnabled(ok); //&& src);
+                    }
+                }
+            });
+        };
+}
+
+//audioProcessor.getAudioFileLoader().setOnFileLoadedCallBack(onFileLoaded);
 
     void AudioFilePanel::stopAudioButtonClicked()
     {
@@ -141,85 +180,5 @@ namespace particules
             nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
     }
 
-    bool AudioFilePanel::isInterestedInFileDrag(const juce::StringArray& files)
-    {
-        // is it an audio file ?
-        for(juce::String file : files)
-        {
-            if(file.endsWithIgnoreCase(".wav") || file.endsWithIgnoreCase(".aif") || file.endsWithIgnoreCase(".mp3"))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 
-    // component section
-
-    void AudioFilePanel::paint(juce::Graphics& g)
-    {
-        //g.fillAll(colours::brightBlue);
-        const juce::Rectangle<float> inner = getLocalBounds().reduced(2).toFloat();
-        g.setColour(colours::brightBlue);
-        g.fillRoundedRectangle(inner, 12.0f);
-    }
-
-    void AudioFilePanel::resized()
-    {
-        /*
-        juce::Rectangle<int> localArea = getLocalBounds();
-        float w = getWidth() / 30.f;
-        float h = getHeight() / 30.f;
-
-        localArea.removeFromTop(static_cast<int>(h));
-        localArea.removeFromBottom(static_cast<int>(h));
-
-        juce::Rectangle<int> buttonsArea = localArea.removeFromLeft(static_cast<int>(w));
-        localArea.removeFromLeft(static_cast<int>(h));
-        localArea.removeFromRight(static_cast<int>(h));
-
-        juce::Rectangle<int> SpectrumArea = localArea.removeFromLeft(localArea.getWidth());
-
-        // on d	clare les flexbox
-        juce::FlexBox flexboxMain;
-        flexboxMain.flexDirection = juce::FlexBox::Direction::row;
-
-        juce::FlexBox flexboxLeft;
-        flexboxLeft.flexDirection = juce::FlexBox::Direction::column;
-        flexboxLeft.flexWrap = juce::FlexBox::Wrap::noWrap;
-        flexboxLeft.alignContent = juce::FlexBox::AlignContent::stretch;
-        flexboxLeft.alignItems = juce::FlexBox::AlignItems::stretch;
-        flexboxLeft.justifyContent = juce::FlexBox::JustifyContent::center;
-
-        juce::FlexBox flexboxRight;
-        flexboxRight.flexDirection = juce::FlexBox::Direction::column;
-        flexboxRight.flexWrap = juce::FlexBox::Wrap::noWrap;
-        flexboxRight.alignContent = juce::FlexBox::AlignContent::stretch;
-        flexboxRight.alignItems = juce::FlexBox::AlignItems::stretch;
-
-        // on ajoute les items dans les flexbox
-
-        flexboxLeft.items.add(juce::FlexItem(open_btn).withHeight(buttonsArea.getWidth() * 2.f));
-        flexboxLeft.items.add(juce::FlexItem(play_pause_btn).withHeight(buttonsArea.getWidth() * 1.33f));
-
-        flexboxRight.items.add(juce::FlexItem(thumbnailComponent).withHeight(SpectrumArea.getHeight() * 1.f));
-
-        flexboxMain.items.add(juce::FlexItem(flexboxLeft).withFlex(0.05f).withMargin(h));
-        flexboxMain.items.add(juce::FlexItem(flexboxRight).withFlex(0.95f).withMargin(h));
-        flexboxMain.performLayout(getLocalBounds().toFloat());
-        */
-
-    }
-
-    // TODO : Remove the change listener callback after MIDI implementation
-    void AudioFilePanel::changeListenerCallback(juce::ChangeBroadcaster* source)
-    {
-        if(source == &audioProcessor)
-        {
-            const juce::File& f = audioProcessor.getCurrentFile();
-            bool valid = f.existsAsFile();
-            play_pause_btn.setEnabled(valid);
-        }
-    }
-
-}
+    */

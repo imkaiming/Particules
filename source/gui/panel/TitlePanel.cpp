@@ -1,4 +1,5 @@
 #include "TitlePanel.h"
+#include "../../PluginProcessor.h"
 #include "../../framework/ParameterView.h"
 #include "../../utils/MyColours.h"
 #include "../../utils/struct/UIContext.h"
@@ -17,16 +18,17 @@ namespace particules
 
         pauseBtn.onClick = [this]() { pauseButtonClicked(); };
         playBtn.onClick = [this]() { playButtonClicked(); };
+        loadBtn.onClick = [this]() { loadSampleButtonClicked(); };
 
         titleLabel.setText("Particules", juce::dontSendNotification);
         titleLabel.setJustificationType(juce::Justification::centred);
         titleLabel.setColour(juce::Label::textColourId, juce::Colours::white);
         titleLabel.setFont(juce::Font(18.0f));
-        titleLabel.setSize(100, titleLabel.getFont().getHeight());
+        titleLabel.setSize(100, static_cast<int>(titleLabel.getFont().getHeight()));
 
-        loadButton.setButtonText("Load Sample");
-        loadButton.setEnabled(true);
-        loadButton.setColour(juce::Label::textColourId, juce::Colours::white);
+        loadBtn.setButtonText("Load Sample");
+        loadBtn.setEnabled(true);
+        loadBtn.setColour(juce::Label::textColourId, juce::Colours::white);
 
         fileNameBox.setJustificationType(juce::Justification::centred);
         fileNameBox.setColour(juce::Label::textColourId, juce::Colours::white);
@@ -44,7 +46,7 @@ namespace particules
 
         leftArea.addAndMakeVisible(titleLabel);
 
-        loadArea.addAndMakeVisible(loadButton);
+        loadArea.addAndMakeVisible(loadBtn);
         fileArea.addAndMakeVisible(fileNameBox);
 
         rightArea.addAndMakeVisible(btnArea);
@@ -54,19 +56,23 @@ namespace particules
 
     TitlePanel::~TitlePanel() { fileNameBox.setLookAndFeel(nullptr); }
 
-    void TitlePanel::pauseButtonClicked() { paramsView.setIsPlaying(false); }
+    void TitlePanel::pauseButtonClicked()
+    {
+        paramsView.setIsPlaying(false);
+        // TODO : simulate the end of a midi noteOn() C3 and proceed to the release
+        // also reset the grain pool state and the grain visual buffer at the complete stop
+    }
 
     void TitlePanel::playButtonClicked()
     {
-        if(paramsView.getIsPlaying())
-        {
-            paramsView.setIsPlaying(false);
-        }
-        else
-        {
+        //if(paramsView.getIsPlaying())
+        //{
+        //    // TODO : simulate the start of a midi noteOn() C3
+        //    paramsView.setIsPlaying(false);
+        //}
             paramsView.setIsPlaying(true);
-        }
     }
+
     void TitlePanel::setPlayButtonImage()
     {
         playBtn.setImages(juce::Drawable::createFromImageData(BinaryData::Play_svg, BinaryData::Play_svgSize).get(),
@@ -79,6 +85,13 @@ namespace particules
         pauseBtn.setImages(juce::Drawable::createFromImageData(BinaryData::Pause_svg, BinaryData::Pause_svgSize).get(),
             juce::Drawable::createFromImageData(BinaryData::Pause_Fill_svg, BinaryData::Pause_Fill_svgSize).get(), nullptr,
             nullptr, nullptr, nullptr, nullptr, nullptr);
+    }
+
+    void TitlePanel::loadSampleButtonClicked()
+    {
+        // trigger the midi onNoteOff()
+        paramsView.setIsPlaying(false);
+        audioProcessor.loadFile();
     }
 
     void TitlePanel::paint(juce::Graphics& g)
@@ -133,7 +146,7 @@ namespace particules
         fb.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
         fb.alignItems = juce::FlexBox::AlignItems::center;
 
-        fb.items.add(juce::FlexItem(loadButton).withWidth(90.f).withHeight(25.f));
+        fb.items.add(juce::FlexItem(loadBtn).withWidth(90.f).withHeight(25.f));
         fb.performLayout(area);
     }
 
@@ -152,7 +165,7 @@ namespace particules
         fileNameBox.repaint();
     }
 
-void TitlePanel::layoutRight()
+    void TitlePanel::layoutRight()
     {
         juce::Rectangle<int> area = rightArea.getLocalBounds();
 
@@ -160,8 +173,8 @@ void TitlePanel::layoutRight()
         fb.flexDirection = juce::FlexBox::Direction::row;
         fb.alignItems = juce::FlexBox::AlignItems::stretch;
 
-        fb.items.add(juce::FlexItem().withFlex(1.0f)); 
-        fb.items.add(juce::FlexItem(btnArea).withFlex(1.0f)); 
+        fb.items.add(juce::FlexItem().withFlex(1.0f));
+        fb.items.add(juce::FlexItem(btnArea).withFlex(1.0f));
 
         fb.performLayout(area);
 

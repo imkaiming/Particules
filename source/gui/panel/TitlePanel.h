@@ -27,7 +27,7 @@ namespace particules
         ParticulesAudioProcessor& audioProcessor;
 
         juce::Label titleLabel;
-        juce::TextButton loadButton;
+        juce::TextButton loadBtn;
         juce::Label fileNameBox;
 
         juce::DrawableButton pauseBtn;
@@ -41,6 +41,7 @@ namespace particules
 
         void pauseButtonClicked();
         void playButtonClicked();
+        void loadSampleButtonClicked();
 
         void layoutLeft();
         void layoutLoad();

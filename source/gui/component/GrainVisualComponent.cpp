@@ -10,6 +10,7 @@ namespace particules
           invWidthSamples{0.f},
           colour{colours::lavender}
     {
+        setOpaque(false);
         startTimerHz(60);
     }
 

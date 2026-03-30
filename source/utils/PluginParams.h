@@ -59,10 +59,10 @@ namespace particules
             inline constexpr float max = 1.f;
             inline constexpr float init = .0f;
         }
-        namespace selection
+        namespace span
         {
-            inline constexpr const char* id = "SELECTION";
-            inline constexpr const char* name = "Selection";
+            inline constexpr const char* id = "SPAN";
+            inline constexpr const char* name = "Span";
             inline constexpr float min = 0.01f;
             inline constexpr float max = 1.f;
             inline constexpr float init = 0.0f;

@@ -7,14 +7,13 @@
 namespace particules
 {
     ThumbnailComponent::ThumbnailComponent(UIContext& uic)
-        : uic{uic}, /* cache(5) ,*/ audioThumbnail(uic.audioThumbnail), grainVisualComponent(uic), paramsView(uic.paramsView),
-          apvts{uic.apvts}, audioProcessor{uic.audioProcessor},
-          positionValue{uic.apvts.getRawParameterValue(globalPositionId)->load()},
-          selectionValue{uic.apvts.getRawParameterValue(globalSelectionId)->load()}
+        : uic{uic}, audioThumbnail(uic.audioThumbnail), grainVisualComponent(uic), paramsView(uic.paramsView), apvts{uic.apvts},
+          audioProcessor{uic.audioProcessor}, positionValue{uic.apvts.getRawParameterValue(globalPositionId)->load()},
+          selectionValue{uic.apvts.getRawParameterValue(globalSpanId)->load()}
     {
-        updatePosition(positionValue);
-        updateSelection(selectionValue);
-        updateOverflow(positionValue);
+        //updatePosition(positionValue);
+        //updateSelection(selectionValue);
+        //updateOverflow(positionValue);
 
         audioThumbnail.addChangeListener(this);
 
@@ -26,7 +25,8 @@ namespace particules
         if(audioThumbnail.isFullyLoaded())
             repaint();
 
-        grainVisualComponent.toBack(); 
+        setOpaque(false);
+        grainVisualComponent.toBack();
 
         // apvts listener to update the UI
         //apvts.addParameterListener(Param::Position::id, this);
@@ -40,8 +40,6 @@ namespace particules
         //apvts.removeParameterListener(Param::Selection::id, this);
     }
 
-    //void ThumbnailComponent::setFile(const juce::File& file) { audioThumbnail.setSource(new juce::FileInputSource(file)); } 
-
     void ThumbnailComponent::paint(juce::Graphics& g)
     {
         if(audioThumbnail.getNumChannels() == 0)
@@ -53,15 +51,53 @@ namespace particules
     void ThumbnailComponent::paintIfNoFileLoaded(juce::Graphics& g)
     {
         g.fillAll(colours::black);
+        paintGrid(g);
         g.setColour(colours::cream);
         g.drawFittedText("No File Loaded", getLocalBounds(), juce::Justification::centred, 1);
     }
 
     void ThumbnailComponent::paintIfFileLoaded(juce::Graphics& g)
     {
-        g.fillAll(colours::black);
+        g.fillAll(colours::smokyBlack);
+        paintGrid(g);
         g.setColour(colours::brightBlue);
         audioThumbnail.drawChannels(g, getLocalBounds(), 0.0, audioThumbnail.getTotalLength(), 1.0f);
+    }
+
+    void ThumbnailComponent::paintGrid(juce::Graphics& g)
+    {
+        const juce::Rectangle<int> area = getLocalBounds();
+        const float w = static_cast<float>(area.getWidth());
+        const float h = static_cast<float>(area.getHeight());
+
+        const int numColumns = 10;
+        // vertical lines
+        g.setColour(juce::Colours::white.withAlpha(0.06f));
+
+        for(int i = 1; i < numColumns; ++i)
+        {
+            const float x = w * static_cast<float>(i) / static_cast<float>(numColumns);
+            g.drawVerticalLine(static_cast<int>(x), 0.0f, h);
+        }
+
+        // horizontal lines
+        const int numRows = 4;
+        for(int i = 1; i < numRows; ++i)
+        {
+            const float y = h * static_cast<float>(i) / static_cast<float>(numRows);
+   
+            const float alpha = (i == numRows / 2) ? 0.12f : 0.06f;
+            g.setColour(juce::Colours::white.withAlpha(alpha));
+            g.drawHorizontalLine(static_cast<int>(y), 0.0f, w);
+        }
+    }
+
+    void ThumbnailComponent::resized()
+    {
+        position.setBounds(getLocalBounds());
+        selection.setBounds(getLocalBounds());
+        overflow.setBounds(getLocalBounds());
+        grainVisualComponent.setBounds(getLocalBounds());
     }
 
     void ThumbnailComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
@@ -81,7 +117,6 @@ namespace particules
             }
         }
     }
-
 
     void ThumbnailComponent::updatePosition(float value)
     {
@@ -112,19 +147,9 @@ namespace particules
 
     void ThumbnailComponent::setCallbackOnThumbnailReady(std::function<void()> foo) { onThumbnailReady = std::move(foo); }
 
-    //void ThumbnailComponent::setNumSamples(const int val) { grainVisualComponent.setNumSamples(val); }
-
-    void ThumbnailComponent::resized()
-    {
-        position.setBounds(getLocalBounds());
-        selection.setBounds(getLocalBounds());
-        overflow.setBounds(getLocalBounds());
-        grainVisualComponent.setBounds(getLocalBounds());
-    }
-
 }
 
-    //void ThumbnailComponent::parameterChanged(const juce::String& parameterID, float newValue)
+//void ThumbnailComponent::parameterChanged(const juce::String& parameterID, float newValue)
 //{
 //    if(parameterID == Param::Position::id)
 //    {

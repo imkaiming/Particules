@@ -124,7 +124,7 @@ namespace particules
         for(int i = inputuNumChannels; i < outputNumChannels; ++i)
             juce::FloatVectorOperations::clear(outputPtrs[i], bufferSize);
 
-        if(paramsView.getIsPlaying() || !paramsView.getIsGrainsEmpty())
+        if(paramsView.getIsPlaying())// || !paramsView.getIsGrainsEmpty())
             granularEngine.process(buffer, bufferSize, outputPtrs, outputNumChannels, snapshot);
     }
 
@@ -264,8 +264,8 @@ namespace particules
         layout.add(std::make_unique<juce::AudioParameterFloat>(global::position::id, global::position::name,
             juce::NormalisableRange<float>(global::position::min, global::position::max, 0.001f), global::position::init));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(global::selection::id, global::selection::name,
-            juce::NormalisableRange<float>(global::selection::min, global::selection::max, 0.001f), global::selection::init));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(global::span::id, global::span::name,
+            juce::NormalisableRange<float>(global::span::min, global::span::max, 0.001f), global::span::init));
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(grains::sustainRatio::id, grains::sustainRatio::name,
             juce::NormalisableRange<float>(grains::sustainRatio::min, grains::sustainRatio::max, 0.01f),
@@ -331,7 +331,7 @@ namespace particules
             if(f.existsAsFile())
             {
                 audioThumbnail.setSource(new juce::FileInputSource(f));
-                sendChangeMessage(); // this is a message to the AudioFIlePanel stating "a new file has been succesfully loaded"
+                sendChangeMessage(); // this is a message to the AudioFilePanel stating "a new file has been succesfully loaded"
             }
         };
     }
@@ -368,8 +368,8 @@ namespace particules
         juce::NormalisableRange<float> gainRange(global::output::min, global::output::max);
         const float normalizedGain = gainRange.convertTo0to1(global::output::init);
 
-        juce::NormalisableRange<float> EmissionRange(grains::emission::min, grains::emission::max);
-        const float normalizedEmission = EmissionRange.convertTo0to1(10);
+        juce::NormalisableRange<float> emissionRange(grains::emission::min, grains::emission::max);
+        const float normalizedEmission = emissionRange.convertTo0to1(10);
 
         juce::NormalisableRange<float> durationRange(grains::duration::min, grains::duration::max);
         const float normalizedDuration = durationRange.convertTo0to1(0.05f);
@@ -380,8 +380,8 @@ namespace particules
         juce::NormalisableRange<float> positionRange(global::position::min, global::position::max);
         const float normalizedPosition = positionRange.convertTo0to1(0);
 
-        juce::NormalisableRange<float> selectionRange(global::selection::min, global::selection::max);
-        const float normalizedSelection = selectionRange.convertTo0to1(0.25f);
+        juce::NormalisableRange<float> spanRange(global::span::min, global::span::max);
+        const float normalizedSpan= spanRange.convertTo0to1(0.25f);
 
         juce::NormalisableRange<float> TraversalFreqRange(grains::traversalFreq::min, grains::traversalFreq::max);
         const float normalizedTraversalFreq = TraversalFreqRange.convertTo0to1(1.f);
@@ -395,7 +395,7 @@ namespace particules
         apvts.getParameter(grains::duration::id)->setValueNotifyingHost(normalizedDuration);
         apvts.getParameter(grains::speed::id)->setValueNotifyingHost(normalizedSpeed);
         apvts.getParameter(global::position::id)->setValueNotifyingHost(normalizedPosition);
-        apvts.getParameter(global::selection::id)->setValueNotifyingHost(normalizedSelection);
+        apvts.getParameter(global::span::id)->setValueNotifyingHost(normalizedSpan);
         apvts.getParameter(grains::traversalFreq::id)->setValueNotifyingHost(normalizedTraversalFreq);
         apvts.getParameter(grains::sustainRatio::id)->setValueNotifyingHost(normalizedSustainRatio);
         apvts.getParameter(grains::envelopeMode::id)->setValueNotifyingHost(0.f);

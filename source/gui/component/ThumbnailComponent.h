@@ -24,19 +24,18 @@ namespace particules
         ThumbnailComponent(UIContext&);
         ~ThumbnailComponent() override;
 
-        //void setFile(const juce::File&);
         void setCallbackOnThumbnailReady(std::function<void()>);
-        //void setNumSamples(const int);
 
     private:
         static constexpr const char* globalPositionId = global::position::id;
-        static constexpr const char* globalSelectionId = global::selection::id;
+        static constexpr const char* globalSpanId = global::span::id;
 
         void paint(juce::Graphics&) override;
         void resized() override;
 
         void paintIfNoFileLoaded(juce::Graphics&);
         void paintIfFileLoaded(juce::Graphics&);
+        void paintGrid(juce::Graphics&);
 
         void changeListenerCallback(juce::ChangeBroadcaster*) override; // to change the waveform when changing the audio
         //void parameterChanged(const juce::String& parameterID, float newValue) override;

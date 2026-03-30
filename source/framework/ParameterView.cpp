@@ -15,7 +15,7 @@ namespace particules
         duration = apvts.getRawParameterValue(grains::duration::id);
         speed = apvts.getRawParameterValue(grains::speed::id);
         position = apvts.getRawParameterValue(global::position::id);
-        selection = apvts.getRawParameterValue(global::selection::id);
+        span = apvts.getRawParameterValue(global::span::id);
         envMode = apvts.getRawParameterValue(grains::envelopeMode::id);
         sustainRatio = apvts.getRawParameterValue(grains::sustainRatio::id);
         traversalMode = apvts.getRawParameterValue(grains::traversalMode::id);
