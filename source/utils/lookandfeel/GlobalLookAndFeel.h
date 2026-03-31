@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../framework/Core.h"
-#include "BinaryData.h"
+#include "../../framework/Types.h"
 
 namespace particules
 {
@@ -18,6 +18,7 @@ namespace particules
 
     private:
         juce::Typeface::Ptr futuraTypeface;
+        juce::Image metalKnobImage;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GlobalLookAndFeel)
     };

@@ -9,7 +9,7 @@ namespace particules
 {
     class ParameterView;
     class ParticulesAudioProcessor;
-    class UIContext;
+    struct UIContext;
     class LabelBoxLookAndFeel;
     class TitlePanel : public juce::Component
     {

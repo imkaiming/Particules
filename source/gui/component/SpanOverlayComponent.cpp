@@ -3,7 +3,7 @@
 namespace particules
 {
 
-    SpanOverlayComponent::SpanOverlayComponent() : start{0.f}, width{1.f} {}
+    SpanOverlayComponent::SpanOverlayComponent() : start{0.f}, width{0.f} {}
 
     void SpanOverlayComponent::setPosition(float newValue)
     {

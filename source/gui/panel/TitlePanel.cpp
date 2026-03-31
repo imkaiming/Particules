@@ -70,7 +70,7 @@ namespace particules
         //    // TODO : simulate the start of a midi noteOn() C3
         //    paramsView.setIsPlaying(false);
         //}
-            paramsView.setIsPlaying(true);
+        paramsView.setIsPlaying(true);
     }
 
     void TitlePanel::setPlayButtonImage()
@@ -97,8 +97,13 @@ namespace particules
     void TitlePanel::paint(juce::Graphics& g)
     {
         const juce::Rectangle<float> inner = getLocalBounds().reduced(2).toFloat();
-        g.setColour(juce::Colours::purple);
+        g.setColour(colours::panel::audioFilePanel);
         g.fillRoundedRectangle(inner, 12.0f);
+
+        const float lineThickness = 2.0f;
+
+        g.setColour(colours::panel::contourPanel);
+        g.drawRoundedRectangle(inner, 12.0f, lineThickness);
     }
 
     void TitlePanel::resized()

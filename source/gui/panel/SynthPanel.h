@@ -19,15 +19,10 @@ namespace particules
         void resized() override;
 
     private:
-
         juce::Slider outputSlider;
-
-
         juce::Label outputLabel;
 
-
         std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> outputSliderAttachment;
-
 
         // constants
         static constexpr const char* globalOutputId = global::output::id;

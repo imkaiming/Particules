@@ -82,9 +82,9 @@ namespace particules
         std::atomic<float>* position = nullptr;
         std::atomic<float>* span = nullptr;
         std::atomic<float>* sustainRatio = nullptr;
-        std::atomic<float>* envMode = nullptr;
-        std::atomic<float>* traversalMode = nullptr;
         std::atomic<float>* traversalFreq = nullptr;
+        std::atomic<float>* traversalMode = nullptr;
+        std::atomic<float>* envMode = nullptr;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterView)
     };

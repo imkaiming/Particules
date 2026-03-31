@@ -5,10 +5,12 @@
 
 namespace particules
 {
+    struct UIContext;
+    class ParameterView;
     class GrainsPanel : public juce::Component //, public juce::AudioProcessorValueTreeState::Listener
     {
     public:
-        GrainsPanel(ValueTreeState& apvts);
+        GrainsPanel(UIContext&);
         ~GrainsPanel() = default;
 
         void paint(juce::Graphics&) override;
@@ -17,6 +19,7 @@ namespace particules
     private:
         //void parameterChanged(const juce::String& parameterID, float newValue) override;
         ValueTreeState& apvts;
+        ParameterView& paramsView;
 
         juce::Slider emissionSlider;
         juce::Slider durationSlider;
@@ -44,7 +47,6 @@ namespace particules
         std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> envelopeModeAttachment;
         std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> traversalModeAttachment;
 
-        // constants
         static constexpr const char* grainsEmissionId = grains::emission::id;
         static constexpr const char* grainsEmissionName = grains::emission::name;
         static constexpr const float grainsEmissionMin = grains::emission::min;
@@ -80,7 +82,6 @@ namespace particules
 
         static constexpr const char* grainsTraversalModeId = grains::traversalMode::id;
         static constexpr const char* grainsTraversalModeName = grains::traversalMode::name;
-
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainsPanel)
     };

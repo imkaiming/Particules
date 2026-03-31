@@ -1,8 +1,7 @@
 #include "StatusBarPanel.h"
 #include "../../PluginProcessor.h"
-#include "../../utils/struct/UIContext.h"
 #include "../../utils/MyColours.h"
-
+#include "../../utils/struct/UIContext.h"
 
 namespace particules
 {
@@ -21,8 +20,13 @@ namespace particules
     void StatusBarPanel::paint(juce::Graphics& g)
     {
         const juce::Rectangle<float> inner = getLocalBounds().reduced(2).toFloat();
-        g.setColour(juce::Colours::yellow);
+        g.setColour(colours::panel::audioFilePanel);
         g.fillRoundedRectangle(inner, 12.0f);
+
+        const float lineThickness = 2.0f;
+
+        g.setColour(colours::panel::contourPanel);
+        g.drawRoundedRectangle(inner, 12.0f, lineThickness);
     }
 
     void StatusBarPanel::resized()
@@ -36,8 +40,8 @@ namespace particules
 
     void StatusBarPanel::timerCallback()
     {
-        statusLabel.setText((const str) "active grains: " + (const str)audioProcessor.getNumActiveGrains(),
-            juce::dontSendNotification);
+        statusLabel.setText(
+            (const str) "active grains: " + (const str)audioProcessor.getNumActiveGrains(), juce::dontSendNotification);
         repaint();
     }
 }

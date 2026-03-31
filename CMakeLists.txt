@@ -82,7 +82,7 @@ juce_add_plugin("${PROJECT_NAME}"
     # Note: this must have at least one upper-case character
     PLUGIN_CODE P001
     FORMATS "${FORMATS}"
-    PLUGIN_MANUFACTURER_CODE KAI
+    PLUGIN_MANUFACTURER_CODE KAIM
     # The name of your final executable
     # This is how it's listed in the DAW
     # This can be different from PROJECT_NAME and can have spaces!
@@ -117,8 +117,11 @@ file(GLOB_RECURSE SourceFiles CONFIGURE_DEPENDS
 file(GLOB_RECURSE ResourcesFiles CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/resources/*")
 
+list (FILTER ResourcesFiles EXCLUDE REGEX "/\\.DS_Store$")
 
 juce_add_binary_data(BinaryDataAssets SOURCES ${ResourcesFiles})
+
+set_target_properties(BinaryDataAssets PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
@@ -170,7 +173,6 @@ target_link_libraries(SharedCode
     juce_graphics
     juce_gui_basics
     juce_core
-    #juce_gui_extra
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags)

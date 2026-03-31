@@ -13,7 +13,7 @@ namespace particules
         addAndMakeVisible(&statusBarPanel);
     }
 
-    void MainPanel::paint(juce::Graphics& g) { g.fillAll(colours::smokyBlack); }
+    void MainPanel::paint(juce::Graphics& g) { g.fillAll(colours::panel::outerPanel); }
 
     void MainPanel::resized()
     {
@@ -27,10 +27,10 @@ namespace particules
         fb.flexDirection = juce::FlexBox::Direction::column;
         fb.alignItems = juce::FlexBox::AlignItems::stretch;
 
-        fb.items.add(juce::FlexItem(titlePanel).withFlex(0.0f).withMinHeight(64).withMargin({0, 0, verticalGap, 0}));
-        fb.items.add(juce::FlexItem(audioFilePanel).withFlex(0.40f).withMargin({0, 0, verticalGap, 0}));
+        fb.items.add(juce::FlexItem(titlePanel).withFlex(0.0f).withMinHeight(48).withMargin({0, 0, verticalGap, 0}));
+        fb.items.add(juce::FlexItem(audioFilePanel).withFlex(0.45f).withMargin({0, 0, verticalGap, 0}));
         fb.items.add(juce::FlexItem(controlPanel).withFlex(0.40f).withMargin({0, 0, verticalGap, 0}));
-        fb.items.add(juce::FlexItem(statusBarPanel).withFlex(0.0f).withMinHeight(36).withMargin(0));
+        fb.items.add(juce::FlexItem(statusBarPanel).withFlex(0.0f).withMinHeight(24).withMargin(0));
 
         fb.performLayout(area);
     }

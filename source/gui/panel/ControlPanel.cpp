@@ -3,7 +3,7 @@
 namespace particules
 {
 
-    ControlPanel::ControlPanel(UIContext& uic) : uic{uic}, adsrPanel{uic}, synthPanel{uic}, grainsPanel{uic.apvts}
+    ControlPanel::ControlPanel(UIContext& uic) : uic{uic}, adsrPanel{uic}, synthPanel{uic}, grainsPanel{uic}
     {
         addAndMakeVisible(&grainsPanel);
         addAndMakeVisible(&adsrPanel);
@@ -13,8 +13,14 @@ namespace particules
     void ControlPanel::paint(juce::Graphics& g)
     {
         const juce::Rectangle<float> inner = getLocalBounds().reduced(2).toFloat();
-        g.setColour(juce::Colours::beige);
+        //g.setColour(colours::accent::lightgreyAccent);
+        g.setColour(colours::panel::controlPanel);
         g.fillRoundedRectangle(inner, 12.0f);
+
+        const float lineThickness = 2.0f;
+
+        g.setColour(colours::panel::contourPanel);
+        g.drawRoundedRectangle(inner, 12.0f, lineThickness);
     }
 
     void ControlPanel::resized()

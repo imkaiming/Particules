@@ -82,8 +82,13 @@ namespace particules
     void AudioFilePanel::paint(juce::Graphics& g)
     {
         const juce::Rectangle<float> inner = getLocalBounds().reduced(2).toFloat();
-        g.setColour(colours::brightBlue);
+        g.setColour(colours::panel::audioFilePanel);
         g.fillRoundedRectangle(inner, 12.0f);
+
+        const float lineThickness = 2.0f;
+
+        g.setColour(colours::panel::contourPanel);
+        g.drawRoundedRectangle(inner, 12.0f, lineThickness);
     }
     /*
     void AudioFilePanel::resized()
@@ -112,7 +117,7 @@ namespace particules
     }
     */
 
-        void AudioFilePanel::resized()
+    void AudioFilePanel::resized()
     {
         auto bounds = getLocalBounds();
 
