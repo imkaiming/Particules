@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../utils/math/Lerp.h"
-#include "Constants.h"
-#include "Core.h"
+#include "../../utils/math/Lerp.h"
+#include "../Constants.h"
+#include "../Core.h"
 
 namespace particules
 {

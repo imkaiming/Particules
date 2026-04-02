@@ -1,13 +1,12 @@
 #include "Grain.h"
-#include "../utils/struct/ParameterSnapshot.h"
 #include "../utils/struct/SmoothedParameters.h"
 
 namespace particules
 {
     Grain::Grain()
         : durationSamples{0}, startPositionSamples{0}, speed{1.f}, sustainWidthSamples{0}, selectionWindow{0}, fadeInSamples{0},
-          fadeOutSamples{0}, elapsedSamples{0}, readPosition{0.f}, inputNumChannels{0},
-          inputNumSamples{0} //, isInitialized{false} //, linearGain{1.f}
+          fadeOutSamples{0}, elapsedSamples{0}, readPosition{0.f}, inputNumSamples{0}
+    //, linearGain{1.f} /* inputNumChannels{0},*/
     {
         reset();
     }
@@ -28,28 +27,28 @@ namespace particules
         readPosition = 0.f;
     }
 
-    void Grain::config(const ParameterSnapshot& snapshot, float normalizedPosMod)
+    void Grain::config(const ParameterSnapshot& ps, float normalizedPosMod)
     {
         elapsedSamples = 0;
 
-        durationSamples = snapshot.durationSamples;
-        inputNumSamples = snapshot.inputNumSamples;
-        inputNumChannels = snapshot.inputNumChannels;
+        inputNumSamples = ps.inputNumSamples;
+        //inputNumChannels = es.inputNumChannels;
+        durationSamples = ps.durationSamples;
 
         // position data
-        const int positionModulationSamples = static_cast<int>(normalizedPosMod * snapshot.selectionSamples);
-        startPositionSamples = (snapshot.startPositionSamples + positionModulationSamples) % inputNumSamples;
+        const int positionModulationSamples = static_cast<int>(normalizedPosMod * ps.selectionSamples);
+        startPositionSamples = (ps.startPositionSamples + positionModulationSamples) % inputNumSamples;
         readPosition = static_cast<float>(startPositionSamples);
-        selectionWindow = snapshot.selectionSamples;
+        selectionWindow = ps.selectionSamples;
 
-        speed = snapshot.speed;
+        speed = ps.speed;
         //delaySamples = delay;
 
         // envelope data
-        //setEnvelopeData(static_cast<int>(snapshot.sustainRatio));
+        //setEnvelopeData(static_cast<int>(ps.sustainRatio));
 
-        //linearGain = snapshot.linearGain;
-        sustainWidthSamples = static_cast<int>(snapshot.sustainRatio * durationSamples);
+        //linearGain = ps.linearGain;
+        sustainWidthSamples = static_cast<int>(ps.sustainRatio * durationSamples);
         fadeInSamples = static_cast<int>(0.5f * (durationSamples - sustainWidthSamples));
         fadeOutSamples = fadeInSamples + sustainWidthSamples;
         fadeInSamples = std::max<int>(fadeInSamples, 1);
@@ -64,24 +63,6 @@ namespace particules
         speed = params.speed;
         //setEnvelopeData(params.sustainRatio);
     }
-
-    //const float Grain::getCurrentSample(const AudioBuffer* inputBuffer, const int outChannel) noexcept
-    //{
-    //    //if(delaySamples > 0)
-    //    //    return 0.f;
-    //
-    //    const int intputNumsChannels = inputBuffer->getNumChannels();
-    //    const float* sample = inputBuffer->getReadPointer(outChannel);
-    //
-    //    // interpolation
-    //    int index = static_cast<int>(readPosition);
-    //    float frac = readPosition - (float)index;
-    //    const float s0 = sample[index];
-    //    const float s1 = sample[(index + 1) % inputNumSamples];
-    //
-    //    return lerp(s0, s1, frac);
-    //}
-
     const float Grain::getReadPosition() const noexcept { return readPosition; }
 
     void Grain::nextReadPosition() noexcept

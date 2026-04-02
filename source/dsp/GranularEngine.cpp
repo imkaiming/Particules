@@ -1,20 +1,20 @@
 #include "GranularEngine.h"
-#include "../framework/ParameterView.h"
+#include "../framework/bridge/ParameterView.h"
 
 namespace particules
 {
-    GranularEngine::GranularEngine(GrainVisualBuffer& vb)
+    GranularEngine::GranularEngine(GrainVisualBuffer& vb, EngineState& es)
         : scheduler{}, voiceManager{pool, posMod, envLut, vb}, pool{}, posMod{}, refreshRate{60.f}, sampleAccumulator{0},
-          threshold{0}, smoothedParams{}
+          threshold{0}, smoothedParams{}, engineState{es}
     {
-        spawnCallback = [this](const ParameterSnapshot& s) { voiceManager.spawn(s); };
+        spawnCallback = [this](const ParameterSnapshot& ps) { voiceManager.spawn(ps); };
     }
 
     // pour 1024 buffer size en 48kHz on a une fenetre de 21ms par appelle de compute.
     // si Emission = 500g/s (1g chaque 0.002s) alors on a interOnSet = 48000/500 = 96 sample.
     // 1024/96 = 10.66 grains par appel
-    void GranularEngine::process(
-        AudioBuffer& bufferOut, int bufferSize, float* const* outputPtrs, int outputNumChannels, const ParameterSnapshot snapshot)
+    void GranularEngine::process(AudioBuffer& bufferOut, int bufferSize, float* const* outputPtrs, int outputNumChannels,
+        const ParameterSnapshot& ps)
     {
         // *** security *** //
 
@@ -34,16 +34,16 @@ namespace particules
 
         jassert(inputNumsChannels == outputNumChannels);
 
-        setTargetSmoothedValue(snapshot);
-        posMod.setParameters(snapshot.traversalMode, snapshot.traversalFreq);
-        scheduler.setEmission(snapshot.emission);
+        setTargetSmoothedValue(ps);
+        posMod.setParameters(ps.traversalMode, ps.traversalFreq);
+        scheduler.setEmission(ps.emission);
 
         // *** dsp *** //
 
         for(int currentSample = 0; currentSample < bufferSize; currentSample++)
         {
             updateSmoothedParameters();
-            scheduler.tick(spawnCallback, snapshot);
+            scheduler.tick(spawnCallback, ps);
             voiceManager.render(currentSample, outputNumChannels, outputPtrs, inputPtrs, smoothedParams);
 
             const float env = adsr.getNextSample();
@@ -53,15 +53,17 @@ namespace particules
 
         posMod.advanceBlock(bufferSize);
 
-        gainProcess(outputBlock, snapshot.linearGain);
+        gainProcess(outputBlock, ps.linearGain);
 
         // *** UI *** //
 
+        // write at 60hz speed
         sampleAccumulator += bufferSize;
-        while(sampleAccumulator >= threshold)
+        while(sampleAccumulator >= threshold) 
         {
             sampleAccumulator -= threshold;
             voiceManager.writeVisualSnapshot();
+            engineState.setNumActiveGrains(pool.getNumActiveGrains());
         }
     }
 
@@ -108,12 +110,12 @@ namespace particules
         //smoothedParams.sustainRatio = sustainRatioSmooth.getNextValue();
     }
 
-    void GranularEngine::setTargetSmoothedValue(const ParameterSnapshot& snapshot) noexcept
+    void GranularEngine::setTargetSmoothedValue(const ParameterSnapshot& ps) noexcept
     {
-        if(speedSmooth.getTargetValue() != snapshot.speed)
-            speedSmooth.setTargetValue(snapshot.speed);
+        if(speedSmooth.getTargetValue() != ps.speed)
+            speedSmooth.setTargetValue(ps.speed);
 
-        //if(sustainRatioSmooth.getTargetValue() != snapshot.sustainRatio)
-        //    sustainRatioSmooth.setTargetValue(snapshot.sustainRatio);
+        //if(sustainRatioSmooth.getTargetValue() != ps.sustainRatio)
+        //    sustainRatioSmooth.setTargetValue(ps.sustainRatio);
     }
 }

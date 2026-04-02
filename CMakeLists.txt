@@ -1,17 +1,16 @@
+############# PROJECT SETTINGS #############
+############################################
+
 cmake_minimum_required(VERSION 3.25)
 
 # This tells cmake we have goodies in the /cmake folder
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include (PamplejuceVersion)
+include (CPM) # Modern concise way to add dependencies to your project
+include(PamplejuceMacOS) # Configures universal binaries and decides which version of macOS to support
+include(JUCEDefaults) # Couple tweaks that IMO should be JUCE defaults
 
-# Modern concise way to add dependencies to your project
-include (CPM)
-
-# Configures universal binaries and decides which version of macOS to support
-include(PamplejuceMacOS)
-
-# Couple tweaks that IMO should be JUCE defaults
-include(JUCEDefaults)
+set(CMAKE_UNITY_BUILD ON)
 
 # This is the internal name of the project and the name of JUCE's shared code target
 # Note: This cannot have spaces (it may be 2024, but you can't have it all!)
@@ -26,23 +25,21 @@ set(PROJECT_NAME "Particules")
 # allowing you to change parameters and behavior without breaking existing user projects
 set(PRODUCT_NAME "Particules")
 
-# Change me! Used for the MacOS bundle name and Installers
-set(COMPANY_NAME "KaiMing")
+set(COMPANY_NAME "KaiMing") # Used for the MacOS bundle name and Installers
 
-# Change me! Used for the MacOS bundle identifier (and signing)
-set(BUNDLE_ID "com.kaiming.particules")
+set(BUNDLE_ID "com.kaiming.particules") # Used for the MacOS bundle identifier (and signing)
 
-# Change me! Set the plugin formats you want built
-# Valid choices: AAX Unity VST VST3 AU AUv3 Standalone
-set(FORMATS Standalone AU VST3 AUv3)
+set(FORMATS Standalone AU VST3 AUv3) # Valid choices: AAX Unity VST VST3 AU AUv3 Standalone
 
 # Force JUCE to work with sccache
 # instruct MSVC to embed debug info (/Z7) instead of emitting a .pdb
 set(CMAKE_POLICY_DEFAULT_CMP0141        NEW      CACHE STRING "" FORCE)
 set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT Embedded CACHE STRING "" FORCE)
 
-# For simplicity, the name of the CMake project is also the name of the target
 project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
+
+############## JUCE ##############
+##################################
 
 # JUCE is setup as a submodule in the /JUCE folder
 # Locally, you must run `git submodule update --init --recursive` once
@@ -50,148 +47,231 @@ project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
 # On Github Actions, this is done as a part of actions/checkout
 add_subdirectory(JUCE)
 
-# Add CLAP format
-add_subdirectory(modules/clap-juce-extensions EXCLUDE_FROM_ALL)
+############# MODULES #############
+###################################
+
+add_subdirectory(modules/clap-juce-extensions EXCLUDE_FROM_ALL) # Add CLAP format
 
 # Add any other modules you want modules here, before the juce_add_plugin call
 # juce_add_module(modules/my_module)
 
-# This adds the melatonin inspector module
 add_subdirectory (modules/melatonin_inspector)
+
+############# RESOURCES #############
+#####################################
+
+file(GLOB_RECURSE ResourcesFiles CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/resources/*")
+
+list(FILTER ResourcesFiles EXCLUDE REGEX "/\\.DS_Store$")
+
+juce_add_binary_data(BinaryDataAssets SOURCES ${ResourcesFiles})
+set_target_properties(BinaryDataAssets PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+
+############# PLUGIN TARGET #############
+#########################################
 
 # See `docs/CMake API.md` in the JUCE repo for all config options
 juce_add_plugin("${PROJECT_NAME}"
     IS_SYNTH TRUE # it supress audio input busses
     NEEDS_MIDI_INPUT TRUE
-    # Icons for the standalone app
     #ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/packaging/icon.png"
-
-    # Change me!
     COMPANY_NAME "${COMPANY_NAME}"
     BUNDLE_ID "${BUNDLE_ID}"
-
-    # On MacOS, plugin is copied to /Users/yourname/Library/Audio/Plug-Ins/
-    COPY_PLUGIN_AFTER_BUILD FALSE
-    # Change me!
-    # A four-character plugin id
+    COPY_PLUGIN_AFTER_BUILD FALSE # On MacOS, plugin is copied to /Users/yourname/Library/Audio/Plug-Ins/
     # First character MUST be uppercase for AU formats
-    PLUGIN_MANUFACTURER_CODE Pgsm
-
-    # Change me!
-    # A unique four-character plugin id
+    PLUGIN_MANUFACTURER_CODE KAIM # A four-character plugin id
     # Note: this must have at least one upper-case character
-    PLUGIN_CODE P001
+    PLUGIN_CODE P001 # A unique four-character plugin id
     FORMATS "${FORMATS}"
-    PLUGIN_MANUFACTURER_CODE KAIM
     # The name of your final executable
     # This is how it's listed in the DAW
     # This can be different from PROJECT_NAME and can have spaces!
     # You might want to use v${MAJOR_VERSION} here once you go to v2...
     PRODUCT_NAME "${PRODUCT_NAME}"
-    IS_STANDALONE TRUE
+    IS_STANDALONE TRUE)
+
+juce_generate_juce_header(${PROJECT_NAME})
+
+clap_juce_extensions_plugin(TARGET "${PROJECT_NAME}" CLAP_ID "${BUNDLE_ID}" CLAP_FEATURES audio-effect)
+
+############# GUI APP TARGET #############
+##########################################
+
+set(PROJECT_GUI_APP_NAME "GuiApp")
+
+juce_add_gui_app(${PROJECT_GUI_APP_NAME} PRODUCT_NAME ${PROJECT_GUI_APP_NAME})
+
+set_target_properties(${PROJECT_GUI_APP_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gui") 
+
+############# CORE LIB #############
+####################################
+
+add_library(Core STATIC)
+
+target_compile_features(Core PUBLIC cxx_std_20)
+
+target_include_directories(Core PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/source")
+
+file(GLOB_RECURSE CoreSources CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/dsp/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/dsp/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/*.h")
+
+target_sources(Core PRIVATE ${CoreSources})
+
+target_link_libraries(Core PUBLIC
+    juce::juce_core
+    juce::juce_dsp
+    juce::juce_audio_basics
+    juce::juce_audio_formats
+    juce::juce_audio_utils
+    juce::juce_audio_processors)
+
+########### GUI LIB ############
+################################
+
+add_library(Gui STATIC)
+
+target_compile_features(Gui PUBLIC cxx_std_20)
+
+target_include_directories(Gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/source")
+
+file(GLOB_RECURSE GuiSources CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/gui/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/gui/*.h"
 )
+
+target_sources(Gui PRIVATE ${GuiSources})
+
+target_link_libraries(Gui PUBLIC
+    BinaryDataAssets
+    melatonin_inspector
+
+    juce::juce_core
+    juce::juce_gui_basics
+    juce::juce_graphics
+    juce::juce_events)
+
+########### SHAREDCODE ##########
+#################################
 
 # This lets us use our code in both the JUCE targets and our Test target
 # Without running into ODR violations
 add_library(SharedCode INTERFACE)
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
+include(SharedCodeDefaults) # Enable fast math, C++20 and a few other target defaults
 
-clap_juce_extensions_plugin(TARGET "${PROJECT_NAME}"
-    CLAP_ID "${BUNDLE_ID}"
-    CLAP_FEATURES audio-effect)
+#file(GLOB_RECURSE SourceFiles CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/source/*.h")
+#target_include_directories(SharedCode PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/source")
+#target_sources(SharedCode PRIVATE ${SourceFiles})
+#target_compile_features(SharedCode PUBLIC cxx_std_20) 
 
-# Enable fast math, C++20 and a few other target defaults
-include(SharedCodeDefaults)
-
-
-# Manually list all .h and .cpp files for the plugin
-# If you are like me, you'll use globs for your sanity.
-# Just ensure you employ CONFIGURE_DEPENDS so the build system picks up changes
-# If you want to appease the CMake gods and avoid globs, manually add files like so:
-# set(SourceFiles Source/PluginEditor.h Source/PluginProcessor.h Source/PluginEditor.cpp Source/PluginProcessor.cpp)
-file(GLOB_RECURSE SourceFiles CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/*.h"
-)
-file(GLOB_RECURSE ResourcesFiles CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/resources/*")
-
-list (FILTER ResourcesFiles EXCLUDE REGEX "/\\.DS_Store$")
-
-juce_add_binary_data(BinaryDataAssets SOURCES ${ResourcesFiles})
-
-set_target_properties(BinaryDataAssets PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
-
-target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/source")
-
-target_sources(SharedCode INTERFACE ${SourceFiles} ${ResourcesFiles})
-
-
-# Adds a BinaryData target for embedding assets into the binary
-#include(Assets)
-
-# MacOS only: Cleans up folder and target organization on Xcode.
-include(XcodePrettify)
- 
 # This is where you can set preprocessor definitions for JUCE and your plugin
-target_compile_definitions(SharedCode
-    INTERFACE
-
-    # JUCE_WEB_BROWSER and JUCE_USE_CURL off by default
+target_compile_definitions(SharedCode INTERFACE
     JUCE_WEB_BROWSER=0  # If you set this to 1, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
     JUCE_USE_CURL=0     # If you set this to 1, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
     JUCE_VST3_CAN_REPLACE_VST2=0
-
-    # Uncomment if you are paying for a an Indie/Pro license or releasing under GPLv3
-    # JUCE_DISPLAY_SPLASH_SCREEN=0
-
-    # lets the app known if we're Debug or Release
-    CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
+    # JUCE_DISPLAY_SPLASH_SCREEN=0 # Uncomment if you are paying for a an Indie/Pro license or releasing under GPLv3
+    CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" # lets the app known if we're Debug or Release
     VERSION="${CURRENT_VERSION}"
-
-    # JucePlugin_Name is for some reason doesn't use the nicer PRODUCT_NAME
-    PRODUCT_NAME_WITHOUT_VERSION="{PROJECT_NAME}"
-)
+    PRODUCT_NAME_WITHOUT_VERSION="${PROJECT_NAME}") # JucePlugin_Name is for some reason doesn't use the nicer PRODUCT_NAME
 
 # Link to any other modules you added (with juce_add_module) here!
 # Usually JUCE modules must have PRIVATE visibility
 # See https://github.com/juce-framework/JUCE/blob/master/docs/CMake%20API.md#juce_add_module
 # However, with Pamplejuce, you'll link modules to SharedCode with INTERFACE visibility
 # This allows the JUCE plugin targets and the Tests target to link against it
-target_link_libraries(SharedCode
-    INTERFACE
-    #Assets
-    BinaryDataAssets
-    melatonin_inspector
-    juce_audio_utils
-    juce_audio_basics
-    juce_audio_formats
-    juce_audio_processors
-    juce_dsp
-    juce_events
-    juce_graphics
-    juce_gui_basics
-    juce_core
+target_link_libraries(SharedCode INTERFACE
+    Core
+    Gui
+    
+    juce::juce_audio_processors
+
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags)
 
-# Link the JUCE plugin targets our SharedCode target
-target_link_libraries("${PROJECT_NAME}" PRIVATE SharedCode)
+########## PLUGIN SOURCES ##########
+####################################
 
-# target_precompile_headers(${PROJECT_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/pch.h")
+target_sources(${PROJECT_NAME} PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginEditor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginEditor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginProcessor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginProcessor.h"
+)
 
-# IPP support, comment out to disable
-include(PamplejuceIPP)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
-# Everything related to the tests target
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    BUILDING_PLUGIN_APP=1
+    BUILDING_GUI_APP=0)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    SharedCode)
+    #BinaryDataAssets
+    #melatonin_inspector)
+
+    #juce::juce_audio_utils # transitively included by Core
+    #juce::juce_audio_formats
+    #juce::juce_audio_processors
+
+    #juce::juce_recommended_config_flags
+    #juce::juce_recommended_lto_flags
+    #juce::juce_recommended_warning_flags)
+    
+# target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
+
+########### GUI APP SOURCE ############
+#######################################
+
+# target_include_directories(${PROJECT_GUI_APP_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/source")
+
+target_sources(${PROJECT_GUI_APP_NAME} PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/GuiAppEditor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/GuiAppEditor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/GuiAppProcessor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/GuiAppProcessor.h")
+
+target_compile_features(${PROJECT_GUI_APP_NAME} PRIVATE cxx_std_20)
+
+target_link_libraries(${PROJECT_GUI_APP_NAME} PRIVATE
+    # Core
+    Gui
+    BinaryDataAssets
+
+    juce::juce_audio_processors
+
+    juce::juce_recommended_config_flags
+    juce::juce_recommended_warning_flags)
+
+target_compile_definitions(${PROJECT_GUI_APP_NAME} PRIVATE
+    BUILDING_PLUGIN_APP=0
+    BUILDING_GUI_APP=1)
+
+############# PCH ##############
+################################
+
+#target_precompile_headers(Core PRIVATE
+#    "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/source/framework/pch/pch_plugin.h>")
+
+#target_precompile_headers(Gui PRIVATE
+#    "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/source/framework/pch/pch_gui.h>")
+
+#target_precompile_headers(${PROJECT_NAME} PRIVATE
+#    "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/source/framework/pch/pch_plugin.h>")
+
+#target_precompile_headers(${PROJECT_GUI_APP_NAME} PRIVATE
+#       "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/source/framework/pch/pch_gui.h>")
+
+############ OPTIONAL  ############
+###################################
+
+include(PamplejuceIPP) # IPP support, comment out to disable
 include(Tests)
-#target_compile_features(Tests PRIVATE cxx_std_20)
-
-# A separate target for Benchmarks (keeps the Tests target fast)
 include(Benchmarks)
-#target_compile_features(Benchmarks PRIVATE cxx_std_20)
-
-# Output some config for CI (like our PRODUCT_NAME)
-include(GitHubENV)
+include(GitHubENV) # Output some config for CI (like our PRODUCT_NAME)

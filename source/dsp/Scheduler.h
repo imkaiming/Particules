@@ -17,6 +17,7 @@
 #pragma once
 
 #include "../framework/Constants.h"
+#include "../framework/Core.h"
 #include "../utils/struct/ParameterSnapshot.h"
 
 // Scheduler compute onsets

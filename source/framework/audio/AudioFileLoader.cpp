@@ -3,7 +3,7 @@
 
 namespace particules
 {
-    AudioFileLoader::AudioFileLoader() : sampleRate{0.0} { formatManager.registerBasicFormats(); }
+    AudioFileLoader::AudioFileLoader() : sampleRate{0.0}, formatManager{} { formatManager.registerBasicFormats(); }
 
     void AudioFileLoader::loadFile(AudioLoadedCallback onAudioLoaded)
     {

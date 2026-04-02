@@ -9,7 +9,7 @@
 namespace particulesTest
 {
     using namespace particules;
-    static constexpr int MAX_GRAINS = Grains::maxGrains;
+    static constexpr int MAX_GRAINS = global::maxGrains;
 
     struct GrainPoolFixture
     {

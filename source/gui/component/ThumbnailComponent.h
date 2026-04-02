@@ -5,6 +5,8 @@
 
 #include "../../framework/Core.h"
 #include "../../framework/Types.h"
+#include "../../framework/bridge/EngineState.h"
+#include "../../framework/bridge/UIState.h"
 #include "../../utils/PluginParams.h"
 #include "../../utils/struct/UIContext.h"
 
@@ -38,12 +40,10 @@ namespace particules
         void changeListenerCallback(juce::ChangeBroadcaster*) override; // to change the waveform when changing the audio
         //void parameterChanged(const juce::String& parameterID, float newValue) override;
 
-        UIContext& uic;
-        ParameterView& paramsView;
-        ValueTreeState& apvts;
-        ParticulesAudioProcessor& audioProcessor;
+        EngineState& engineState;
+        UIState& uiState;
+        //ValueTreeState& apvts;
 
-        //juce::AudioThumbnailCache& cache;
         juce::AudioThumbnail& audioThumbnail;
 
         std::function<void()> onThumbnailReady;

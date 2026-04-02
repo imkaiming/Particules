@@ -17,7 +17,7 @@ namespace particules
         ~Grain() = default;
 
         void reset();
-        void config(const ParameterSnapshot& snapshot, float normalizedPosMod);
+        void config(const ParameterSnapshot&, float);
 
         //const float getCurrentSample(const AudioBuffer*, const int) noexcept;
 
@@ -48,7 +48,7 @@ namespace particules
         int fadeInSamples; // 0 to fadeIn
         int fadeOutSamples; // fadeOut to durationSamples
         int inputNumSamples;
-        int inputNumChannels;
+        //int inputNumChannels;
 
         float speed; // change the pitch and accelerate the lecture
         float readPosition;

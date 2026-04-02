@@ -1,7 +1,8 @@
 #include "TitlePanel.h"
 #include "../../PluginProcessor.h"
-#include "../../framework/ParameterView.h"
+#include "../../framework/bridge/ParameterView.h"
 #include "../../utils/MyColours.h"
+#include "../../utils/PluginParams.h"
 #include "../../utils/struct/UIContext.h"
 #include "BinaryData.h"
 
@@ -10,8 +11,8 @@ namespace particules
 
     TitlePanel::TitlePanel(UIContext& uic)
         : playBtn((const str) "playBtn", juce::DrawableButton::ButtonStyle::ImageFitted),
-          pauseBtn((const str) "pauseBtn", juce::DrawableButton::ButtonStyle::ImageFitted), paramsView{uic.paramsView},
-          audioProcessor{uic.audioProcessor}
+          pauseBtn((const str) "pauseBtn", juce::DrawableButton::ButtonStyle::ImageFitted), uic{uic},
+          loadFileCallback{uic.facade.loadFilePath}
     {
         setPauseButtonImage();
         setPlayButtonImage();
@@ -58,19 +59,18 @@ namespace particules
 
     void TitlePanel::pauseButtonClicked()
     {
-        paramsView.setIsPlaying(false);
+        juce::RangedAudioParameter* playParameter = uic.apvts.getParameter(global::play::id);
+        playParameter->setValueNotifyingHost(0.f);
         // TODO : simulate the end of a midi noteOn() C3 and proceed to the release
         // also reset the grain pool state and the grain visual buffer at the complete stop
     }
 
     void TitlePanel::playButtonClicked()
     {
-        //if(paramsView.getIsPlaying())
-        //{
-        //    // TODO : simulate the start of a midi noteOn() C3
-        //    paramsView.setIsPlaying(false);
-        //}
-        paramsView.setIsPlaying(true);
+        juce::RangedAudioParameter* playParameter = uic.apvts.getParameter(global::play::id);
+        playParameter->setValueNotifyingHost(1.f);
+        // TODO : simulate the start of a midi noteOn() C3
+        // uic.facade.play();
     }
 
     void TitlePanel::setPlayButtonImage()
@@ -90,8 +90,11 @@ namespace particules
     void TitlePanel::loadSampleButtonClicked()
     {
         // trigger the midi onNoteOff()
-        paramsView.setIsPlaying(false);
-        audioProcessor.loadFile();
+        //paramsView.setIsPlaying(false);
+
+        juce::RangedAudioParameter* playParameter = uic.apvts.getParameter(global::play::id);
+        playParameter->setValueNotifyingHost(0.f);
+        uic.facade.loadFile();
     }
 
     void TitlePanel::paint(juce::Graphics& g)

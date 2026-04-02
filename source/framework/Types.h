@@ -1,11 +1,10 @@
 #pragma once
 
-#include "pch.h"
-
 // type aliases used in the project
 
-using ValueTreeState = juce::AudioProcessorValueTreeState;
-using AudioBlock = juce::dsp::AudioBlock<float>;
-using AudioBuffer = juce::AudioBuffer<float>;
-using str = juce::String;
-using AudioLoadedCallback = std::function<void(AudioBuffer&)>;
+//using ValueTreeState = juce::AudioProcessorValueTreeState;       // juce::juce_audio_processors
+//using AudioBlock = juce::dsp::AudioBlock<float>;                 // juce::juce_dsp 
+//using AudioBuffer = juce::AudioBuffer<float>;                    // juce::juce_audio_basics
+//using AudioLoadedCallback = std::function<void(AudioBuffer&)>;   // juce::juce_audio_basics
+//using str = juce::String;                                        // juce::juce_core
+

@@ -1,21 +1,21 @@
 #pragma once
 
-#include "../../framework/Types.h"
 #include "../../framework/Core.h"
+#include "../../framework/Types.h"
+#include "ProcessorFacade.h"
 
 namespace particules
 {
-    class ParameterView;
-    //class CustomLookAndFeel;
-    class ParticulesAudioProcessor;
     class GrainVisualBuffer;
+    class ParameterView;
+    class EngineState;
+    class UIState;
     struct UIContext
     {
         ValueTreeState& apvts;
         ParameterView& paramsView;
-        //CustomLookAndFeel& customLookAndFeel;
-        ParticulesAudioProcessor& audioProcessor;
-        GrainVisualBuffer& visualBuffer;
-        juce::AudioThumbnail& audioThumbnail;
+        EngineState& engineState;
+        UIState& uiState;
+        ProcessorFacade facade;
     };
 }

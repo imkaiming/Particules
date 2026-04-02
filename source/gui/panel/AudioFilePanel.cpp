@@ -1,16 +1,14 @@
 #include "AudioFilePanel.h"
-#include "../../PluginProcessor.h"
-#include "../../framework/ParameterView.h"
 #include "../../utils/MyColours.h"
 #include "../../utils/struct/UIContext.h"
+//#include "../../utils/struct/ProcessorFacade.h"
 #include "BinaryData.h"
 
 namespace particules
 {
-    AudioFilePanel::AudioFilePanel(UIContext& uic)
-        : paramsView(uic.paramsView), apvts{uic.apvts}, audioProcessor(uic.audioProcessor), thumbnailComponent(uic)
+    AudioFilePanel::AudioFilePanel(UIContext& uic) : apvts{uic.apvts}, thumbnailComponent(uic), uiState{uic.uiState}, uic{uic}
     {
-        audioProcessor.addChangeListener(this); // audio processor can now send message
+        //uiState.addChangeListener(this); // can now send message
 
         positionSliderAttachment =
             std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalPositionId, positionSlider);
@@ -49,7 +47,7 @@ namespace particules
 
     AudioFilePanel::~AudioFilePanel()
     {
-        audioProcessor.removeChangeListener(this);
+        //uiState.removeChangeListener(this);
         positionSlider.setLookAndFeel(nullptr);
         spanSlider.setLookAndFeel(nullptr);
     }
@@ -58,11 +56,14 @@ namespace particules
     {
         //paramsView.setIsPlaying(false);
         //audioProcessor.release();
+        juce::RangedAudioParameter* playParameter = apvts.getParameter(global::play::id);
+        playParameter->setValueNotifyingHost(0.f);
+
         for(juce::String file : files)
         {
             if(isInterestedInFileDrag(file))
             {
-                audioProcessor.loadFile(file);
+                uic.facade.loadFilePath(file);
             }
         }
     }
@@ -150,15 +151,15 @@ namespace particules
     }
 
     // TODO : Remove the change listener callback after MIDI implementation
-    void AudioFilePanel::changeListenerCallback(juce::ChangeBroadcaster* source)
-    {
-        if(source == &audioProcessor)
-        {
-            const juce::File& f = audioProcessor.getCurrentFile();
-            bool valid = f.existsAsFile();
-            //play_pause_btn.setEnabled(valid);
-        }
-    }
+    //void AudioFilePanel::changeListenerCallback(juce::ChangeBroadcaster* source)
+    //{
+    //    if(source == &audioProcessor)
+    //    {
+    //        const juce::File& f = audioProcessor.getCurrentFile();
+    //        bool valid = f.existsAsFile();
+    //        //play_pause_btn.setEnabled(valid);
+    //    }
+    //}
 
     void AudioFilePanel::updatePosition(float position)
     {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../framework/pch.h"
+#include "../../framework/Core.h"
 
 // math utilitary function
 // expend this in the future

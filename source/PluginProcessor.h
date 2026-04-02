@@ -1,20 +1,16 @@
 #pragma once
 
-//#include <juce_events/juce_events.h>
-//#include <juce_audio_processors/juce_audio_processors.h>
-
 #include "dsp/GranularEngine.h"
-#include "framework/AudioFileLoader.h"
-#include "framework/GrainVisualBuffer.h"
-#include "framework/ParameterView.h"
+#include "framework/audio/AudioFileLoader.h"
+#include "framework/bridge/GrainVisualBuffer.h"
+#include "framework/bridge/ParameterView.h"
+#include "framework/bridge/UIState.h"
 #include "utils/struct/UIContext.h"
-
 
 namespace particules
 {
     class GranularEngine;
-    class ParticulesAudioProcessor : public juce::AudioProcessor,
-                                     public juce::ChangeBroadcaster
+    class ParticulesAudioProcessor : public juce::AudioProcessor
 #if JucePlugin_Enable_ARA
         ,
                                      public juce::AudioProcessorARAExtension
@@ -24,6 +20,7 @@ namespace particules
         ParticulesAudioProcessor();
         ~ParticulesAudioProcessor() override;
 
+        // Audio Processor classes //
         void prepareToPlay(double sampleRate, int samplesPerBlock) override;
         void releaseResources() override;
 
@@ -31,18 +28,15 @@ namespace particules
         bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 #endif
 
-        void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+        void processBlock(AudioBuffer&, juce::MidiBuffer&) override;
 
         juce::AudioProcessorEditor* createEditor() override;
         bool hasEditor() const override;
-
         const juce::String getName() const override;
-
         bool acceptsMidi() const override;
         bool producesMidi() const override;
         bool isMidiEffect() const override;
         double getTailLengthSeconds() const override;
-
         int getNumPrograms() override;
         int getCurrentProgram() override;
         void setCurrentProgram(int index) override;
@@ -52,49 +46,47 @@ namespace particules
         void getStateInformation(juce::MemoryBlock& destData) override;
         void setStateInformation(const void* data, int sizeInBytes) override;
 
+
+        // User classes //
+
         ValueTreeState& getValueTreeState() noexcept { return apvts; };
         ParameterView& getParametersView() noexcept { return paramsView; };
-        UIContext& getUIContext() noexcept { return uiContext; };
-
-        static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
-
-        void loadFile(const juce::String& path);
-        void loadFile();
+        UIContext& getUIContext() noexcept { return uic; };
         const juce::File& getCurrentFile() const noexcept { return loader.getCurrentFile(); };
         AudioFileLoader& getAudioFileLoader() noexcept { return loader; };
-
         const int getNumActiveGrains() const noexcept { return granularEngine.getNumActiveGrains(); };
-
-        void setInputBuffer(AudioBuffer&) noexcept;
         const bool isInputBufferLoaded() const noexcept { return granularEngine.isInputBufferLoaded(); };
 
-        void loadDebugPreset();
 
     private:
+
+        void setInputBuffer(AudioBuffer&) noexcept;
+
+        static ValueTreeState::ParameterLayout createParameterLayout();
+        void loadDebugPreset();
+        void loadFile(const str& path);
+        void loadFile();
         void initOnAudioLoadedCallback();
+
         bool debugPresetLoaded = false;
 
+        GrainVisualBuffer visualBuffer;
         ValueTreeState apvts; // connecte les slider du GUI et les paramètres (fourni des valeurs atomiques)
+        EngineState engineState; // own runtime plugin global parameters no snapshot
         ParameterView paramsView; // fait le pont entre apvts et le synth
-        GranularEngine granularEngine; // le moteur de la synthèse granulaire
+        UIState uiState; // own UI value
+        GranularEngine granularEngine;
 
-        const int samplesPerThumbnail = 64;
-        juce::AudioThumbnailCache cache;
-        juce::AudioThumbnail audioThumbnail;
-
-        UIContext uiContext;
+        UIContext uic;
 
         AudioFileLoader loader;
         AudioLoadedCallback onAudioLoadedCallback;
-        //std::function<void(std::shared_ptr<const AudioBuffer>)> setInputBufferCallback;
 
-        GrainVisualBuffer visualBuffer;
+        //std::function<void(std::shared_ptr<const AudioBuffer>)> setInputBufferCallback;
         //juce::UndoManager undoManager;
         //juce::AbstractFifo fifo;
         //juce::ADSR::Parameters adsrParameters;
         //juce::ADSR adsr;
-
-        //juce::UndoManager undoManager;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessor)
     };

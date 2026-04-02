@@ -1,5 +1,5 @@
 #include "GrainsPanel.h"
-#include "../../framework/ParameterView.h"
+#include "../../framework/bridge/ParameterView.h"
 #include "../../utils/MyColours.h"
 #include "../../utils/struct/UIContext.h"
 

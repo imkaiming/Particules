@@ -1,23 +1,19 @@
 #include "ThumbnailComponent.h"
 
-#include "../../framework/ParameterView.h"
+//#include "../../framework/bridge/ParameterView.h"
+#include "../../framework/bridge/UIState.h"
 #include "../../utils/MyColours.h"
 #include "../../utils/struct/UIContext.h"
 
 namespace particules
 {
     ThumbnailComponent::ThumbnailComponent(UIContext& uic)
-        : uic{uic}, audioThumbnail(uic.audioThumbnail), grainVisualComponent(uic), paramsView(uic.paramsView), apvts{uic.apvts},
-          audioProcessor{uic.audioProcessor}
+        : audioThumbnail{uiState.getAudioThumbnail()}, grainVisualComponent(uic), uiState{uic.uiState},
+          engineState{uic.engineState}
     {
-        //updatePosition(positionValue);
-        //updateSelection(selectionValue);
-        //updateOverflow(positionValue);
-
         audioThumbnail.addChangeListener(this);
 
         addAndMakeVisible(&grainVisualComponent);
-
 
         if(audioThumbnail.isFullyLoaded())
             repaint();
@@ -89,16 +85,13 @@ namespace particules
         }
     }
 
-    void ThumbnailComponent::resized()
-    {
-        grainVisualComponent.setBounds(getLocalBounds());
-    }
+    void ThumbnailComponent::resized() { grainVisualComponent.setBounds(getLocalBounds()); }
 
     void ThumbnailComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
     {
         if(source == &audioThumbnail)
         {
-            grainVisualComponent.setNumSamples(paramsView.getNumSamples());
+            grainVisualComponent.setNumSamples(engineState.getNumSamples());
             repaint();
             if(audioThumbnail.isFullyLoaded())
             {

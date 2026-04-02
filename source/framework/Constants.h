@@ -1,7 +1,5 @@
 #pragma once
 
-#include "pch.h"
-
 // global constant for the plugin
 
 namespace particules
@@ -13,7 +11,7 @@ namespace particules
     inline constexpr int maxFileSize = 2 * 512ULL * 1024 * 1024; // 512MB limits ULL -> Unsigned Long Long
     inline constexpr int maxLutSize = 2048;
 
-    namespace Grains
+    namespace global
     {
         inline constexpr int maxGrains = 500;
         inline constexpr float maxDuration = 10.0f; // seconds

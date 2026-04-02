@@ -2,7 +2,9 @@
 #include "PluginEditor.h"
 
 #include "utils/PluginParams.h"
+#include "utils/struct/EngineSnapshot.h"
 #include "utils/struct/ParameterSnapshot.h"
+#include "utils/struct/ProcessorFacade.h"
 
 namespace particules
 {
@@ -16,14 +18,14 @@ namespace particules
                   .withOutput("Output", juce::AudioChannelSet::stereo(), true)
     #endif
                   ),
-          apvts(*this, nullptr, "Parameters", createParameterLayout()), //apvts stands for audio processor value tree state
-          paramsView(), granularEngine(visualBuffer),
-          uiContext{apvts, paramsView, *this, visualBuffer, audioThumbnail}, loader{},
-          debugPresetLoaded{false}, cache{5}, audioThumbnail{samplesPerThumbnail, loader.getFormatManager(), cache}
+          apvts(*this, nullptr, "Parameters", createParameterLayout()), paramsView{engineState}, granularEngine{visualBuffer, engineState}, engineState{},
+          uiState{}, uic{apvts, paramsView, engineState, uiState}, loader{},
+          debugPresetLoaded{false}
 #endif
     {
-        //DBG("PLUGIN CTOR");
         initOnAudioLoadedCallback();
+        uic.facade.loadFile = [&] { loadFile(); };
+        uic.facade.loadFilePath = [&](const str& path) { loadFile(path); };
     }
 
     ParticulesAudioProcessor::~ParticulesAudioProcessor() {}
@@ -77,7 +79,9 @@ namespace particules
     {
         //DBG("PREPARE TO PLAY");
         const int numChannels = getTotalNumOutputChannels();
-        paramsView.init(apvts, sampleRate);
+        paramsView.init(apvts);
+        engineState.setSampleRate(sampleRate);
+        uiState.init(&visualBuffer);
         granularEngine.init(sampleRate, numChannels, samplesPerBlock);
         loader.init(sampleRate, numChannels);
     }
@@ -110,10 +114,11 @@ namespace particules
     }
 #endif
 
-    void ParticulesAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+    void ParticulesAudioProcessor::processBlock(AudioBuffer& buffer, juce::MidiBuffer& midiMessages)
     {
-        const ParameterSnapshot snapshot = paramsView.getSnapshot();
-        if(!snapshot.isValid())
+        ParameterSnapshot ps = paramsView.getSnapshot();
+
+        if(!ps.isValid())
             return;
 
         const int inputuNumChannels = getTotalNumInputChannels();
@@ -124,8 +129,8 @@ namespace particules
         for(int i = inputuNumChannels; i < outputNumChannels; ++i)
             juce::FloatVectorOperations::clear(outputPtrs[i], bufferSize);
 
-        if(paramsView.getIsPlaying())// || !paramsView.getIsGrainsEmpty())
-            granularEngine.process(buffer, bufferSize, outputPtrs, outputNumChannels, snapshot);
+        if(ps.play)
+            granularEngine.process(buffer, bufferSize, outputPtrs, outputNumChannels, ps);
     }
 
     bool ParticulesAudioProcessor::hasEditor() const
@@ -152,10 +157,10 @@ namespace particules
             //vt.appendChild(audioFileNode, nullptr);
 
             juce::ValueTree runtimeParametersNode("RuntimeParameters");
-            runtimeParametersNode.setProperty("isPlaying", paramsView.getIsPlaying(), nullptr);
-            runtimeParametersNode.setProperty("numSamples", paramsView.getNumSamples(), nullptr);
-            runtimeParametersNode.setProperty("sampleRate", paramsView.getSampleRate(), nullptr);
-            runtimeParametersNode.setProperty("numChannels", paramsView.getNumChannels(), nullptr);
+            //runtimeParametersNode.setProperty("isPlaying", engineState.getIsPlaying(), nullptr);
+            runtimeParametersNode.setProperty("numSamples", engineState.getNumSamples(), nullptr);
+            runtimeParametersNode.setProperty("sampleRate", engineState.getSampleRate(), nullptr);
+            runtimeParametersNode.setProperty("numChannels", engineState.getNumChannels(), nullptr);
             vt.appendChild(runtimeParametersNode, nullptr);
         }
 
@@ -178,11 +183,11 @@ namespace particules
             juce::ValueTree runtimeParametersNode = vt.getChildWithName("RuntimeParameters");
             if(runtimeParametersNode.isValid())
             {
-                paramsView.setIsPlaying(runtimeParametersNode.getProperty("isPlaying"));
-                paramsView.setIsPlaying(runtimeParametersNode.getProperty("numChannels"));
-                paramsView.setIsPlaying(runtimeParametersNode.getProperty("sampleRate"));
-                paramsView.setIsPlaying(runtimeParametersNode.getProperty("numSamples"));
-                loader.setSampleRate(paramsView.getSampleRate());
+                //engineState.setIsPlaying(runtimeParametersNode.getProperty("isPlaying"));
+                engineState.setNumChannels(runtimeParametersNode.getProperty("numChannels"));
+                engineState.setSampleRate(runtimeParametersNode.getProperty("sampleRate"));
+                engineState.setNumSamples(runtimeParametersNode.getProperty("numSamples"));
+                loader.setSampleRate(engineState.getSampleRate());
             }
 
             //juce::ValueTree audioFileNode = vt.getChildWithName("AudioFile");
@@ -205,12 +210,15 @@ namespace particules
         //juce::Logger::outputDebugString("apvts pitch : " + (juce::String)apvts.getRawParameterValue(PITCH_ID)->load());
     }
 
-    juce::AudioProcessorValueTreeState::ParameterLayout ParticulesAudioProcessor::createParameterLayout()
+    ValueTreeState::ParameterLayout ParticulesAudioProcessor::createParameterLayout()
     {
         juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
+        // STATE //
 
-        // ADSR // 
+        layout.add(std::make_unique<juce::AudioParameterBool>(global::play::id, global::play::name, global::play::init));
+
+        // ADSR //
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(
             adsr::attack::id, adsr::attack::name, juce::NormalisableRange<float>(adsr::attack::min, adsr::attack::max, 0.01f),
@@ -232,13 +240,12 @@ namespace particules
             adsr::release::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
             [](float v, int) { return juce::String(v, 1) + "s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
-
         // GLOBAL //
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(
-            global::mix::id, global::mix::name, juce::NormalisableRange<float>(global::mix::min, global::mix::max, 0.01f),
-            global::mix::init, juce::String(" %"), juce::AudioProcessorParameter::genericParameter,
-            [](float v, int) { return juce::String(v, 1) + "%"; }, [](const juce::String& s) { return s.getFloatValue(); }));
+        //layout.add(std::make_unique<juce::AudioParameterFloat>(
+        //    global::mix::id, global::mix::name, juce::NormalisableRange<float>(global::mix::min, global::mix::max, 0.01f),
+        //    global::mix::init, juce::String(" %"), juce::AudioProcessorParameter::genericParameter,
+        //    [](float v, int) { return juce::String(v, 1) + "%"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(
             global::output::id, global::output::name,
@@ -306,8 +313,8 @@ namespace particules
         const int inputChannels = buffer.getNumChannels();
         const int numSamples = buffer.getNumSamples();
 
-        paramsView.setNumChannels(inputChannels);
-        paramsView.setNumSamples(numSamples);
+        engineState.setNumChannels(inputChannels);
+        engineState.setNumSamples(numSamples);
 
         // adding a guard sample to the input buffer to make it safe to interpolate the buffer's read position
         AudioBuffer tempBuffer(inputChannels, numSamples + 1);
@@ -330,13 +337,16 @@ namespace particules
             const juce::File& f = getCurrentFile();
             if(f.existsAsFile())
             {
-                audioThumbnail.setSource(new juce::FileInputSource(f));
-                sendChangeMessage(); // this is a message to the AudioFilePanel stating "a new file has been succesfully loaded"
+                engineState.setNumSamples(buffer.getNumSamples());
+                engineState.setNumChannels(buffer.getNumChannels());
+                uiState.setNumSamples(buffer.getNumSamples());
+                uiState.setSource(f);
+                //uiState.setFileLoaded(true);
             }
         };
     }
 
-    void ParticulesAudioProcessor::loadFile(const juce::String& path) { loader.loadFile(path, onAudioLoadedCallback); }
+    void ParticulesAudioProcessor::loadFile(const str& path) { loader.loadFile(path, onAudioLoadedCallback); }
 
     void ParticulesAudioProcessor::loadFile() { loader.loadFile(onAudioLoadedCallback); }
 
@@ -381,7 +391,7 @@ namespace particules
         const float normalizedPosition = positionRange.convertTo0to1(0);
 
         juce::NormalisableRange<float> spanRange(global::span::min, global::span::max);
-        const float normalizedSpan= spanRange.convertTo0to1(0.25f);
+        const float normalizedSpan = spanRange.convertTo0to1(0.25f);
 
         juce::NormalisableRange<float> TraversalFreqRange(grains::traversalFreq::min, grains::traversalFreq::max);
         const float normalizedTraversalFreq = TraversalFreqRange.convertTo0to1(1.f);
@@ -389,7 +399,7 @@ namespace particules
         juce::NormalisableRange<float> SustainRatioRange(grains::sustainRatio::min, grains::sustainRatio::max);
         const float normalizedSustainRatio = SustainRatioRange.convertTo0to1(0.5f);
 
-        apvts.getParameter(global::mix::id)->setValueNotifyingHost(1.f); // MIX100%
+        //apvts.getParameter(global::mix::id)->setValueNotifyingHost(1.f); // MIX100%
         apvts.getParameter(global::output::id)->setValueNotifyingHost(normalizedGain);
         apvts.getParameter(grains::emission::id)->setValueNotifyingHost(normalizedEmission);
         apvts.getParameter(grains::duration::id)->setValueNotifyingHost(normalizedDuration);

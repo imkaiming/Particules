@@ -3,7 +3,7 @@
 
 #include "../../framework/Core.h"
 #include "../../framework/Types.h"
-#include "../../utils/lookandfeel/LabelBoxLookAndFeel.h"
+#include "../lookandfeel/LabelBoxLookAndFeel.h"
 
 namespace particules
 {
@@ -23,8 +23,8 @@ namespace particules
     private:
         static constexpr const char* fileNameBoxPlaceHolder = "audio_file_03.wav";
 
-        ParameterView& paramsView;
-        ParticulesAudioProcessor& audioProcessor;
+        UIContext& uic;
+        std::function<void(const str&)> loadFileCallback;
 
         juce::Label titleLabel;
         juce::TextButton loadBtn;

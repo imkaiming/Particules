@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core.h"
-#include "Constants.h"
+#include "../Core.h"
+#include "../Constants.h"
 
 // return normalized phase value based on the freq / sampleRate
 namespace particules

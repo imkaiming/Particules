@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ChannelMixer.h"
-#include "Constants.h"
-#include "Types.h"
+#include "../Constants.h"
+#include "../Core.h"
+//#include "../Types.h"
 
 namespace particules
 {

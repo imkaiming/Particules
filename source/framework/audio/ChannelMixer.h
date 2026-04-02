@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Types.h"
+//#include "../Types.h"
+#include "../Core.h"
 
 // just convert a buffer into a downmixed buffer
 // apply predefined mix matrix

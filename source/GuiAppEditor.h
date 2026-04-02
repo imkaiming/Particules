@@ -5,20 +5,18 @@
 
 #pragma once
 
-#include "PluginProcessor.h"
-#include "gui/panel/MainPanel.h"
+#include "GuiAppProcessor.h"
 #include "gui/lookandfeel/GlobalLookAndFeel.h"
 #include "gui/lookandfeel/LightRotarySliderLNF.h"
-
-#include "melatonin_inspector/melatonin_inspector.h"
+#include "gui/panel/MainPanel.h"
 
 namespace particules
 {
-    class ParticulesAudioProcessorEditor : public juce::AudioProcessorEditor
+    class GuiAppEditor : public juce::AudioProcessorEditor
     {
     public:
-        ParticulesAudioProcessorEditor(ParticulesAudioProcessor&);
-        ~ParticulesAudioProcessorEditor() override;
+        GuiAppEditor(GuiAppProcessor&);
+        ~GuiAppEditor() override;
 
         void paint(juce::Graphics&) override;
         void resized() override;
@@ -35,14 +33,11 @@ namespace particules
         static constexpr const int windowWidthMin = UI::windowWidthMin;
         static constexpr const int windowWidthMax = UI::windowWidthMax;
 
-        ParticulesAudioProcessor& pluginProcessor;
+        //DummyProcessor& dummyProcessor;
         MainPanel mainPanel;
         GlobalLookAndFeel globalLookAndFeel;
         LightRotarySliderLNF lnf;
-#if ENABLE_MELATONINE_INSPECTOR
-        melatonin::Inspector inspector{*this};
-#endif
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessorEditor)
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GuiAppEditor)
     };
 }

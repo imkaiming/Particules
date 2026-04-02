@@ -43,14 +43,20 @@ namespace particules
     }
     namespace global
     {
-        namespace mix
+        namespace play
         {
-            inline constexpr const char* id = "MIX";
-            inline constexpr const char* name = "Mix";
-            inline constexpr float min = 0.0f;
-            inline constexpr float max = 100.f;
-            inline constexpr float init = 100.f;
+            inline constexpr const char* id = "PLAY";
+            inline constexpr const char* name = "Play";
+            inline constexpr bool init = false;
         }
+        //namespace mix
+        //{
+        //    inline constexpr const char* id = "MIX";
+        //    inline constexpr const char* name = "Mix";
+        //    inline constexpr float min = 0.0f;
+        //    inline constexpr float max = 100.f;
+        //    inline constexpr float init = 100.f;
+        //}
         namespace position
         {
             inline constexpr const char* id = "POSITION";

@@ -2,18 +2,17 @@
 
 #include "../framework/Constants.h"
 #include "../framework/Core.h"
-#include "../framework/GrainVisualBuffer.h"
+#include "../framework/bridge/GrainVisualBuffer.h"
 #include "../utils/struct/GrainHandle.h"
 #include "../utils/struct/ParameterSnapshot.h"
 #include "../utils/struct/SmoothedParameters.h"
 #include "GrainEnvelope.h"
 #include "GrainPool.h"
 #include "PositionModulator.h"
+
 // VoiceManager takes segments from the spawned events and render grains from it
 namespace particules
 {
-    //struct ParameterSnapshot;
-    //struct SmoothedParameters;
     class VoiceManager
     {
     public:
@@ -28,14 +27,14 @@ namespace particules
         //void process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
         //void processGrainsSamples(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
         //void processSamplesGrains(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
-        void spawn(const ParameterSnapshot& snapshot);
+        void spawn(const ParameterSnapshot&);
 
         void writeVisualSnapshot();
 
     private:
         void removeVoice(const int index);
 
-        static constexpr int SIZE = Grains ::maxGrains;
+        static constexpr int SIZE = global ::maxGrains;
 
         GrainEnvelope& envLut;
         PositionModulator& posMod;

@@ -1,9 +1,10 @@
-#include "../../framework/GrainVisualBuffer.h"
-#include "../../utils/MyColours.h"
-#include "../../framework/Constants.h"
-#include "../../utils/PluginParams.h"
-#include "../../utils/struct/UIContext.h"
 #pragma once
+
+#include "../../framework/Constants.h"
+//#include "../../framework/bridge/EngineState.h"
+#include "../../framework/bridge/UIState.h"
+#include "../../utils/MyColours.h"
+#include "../../utils/struct/UIContext.h"
 
 /**
 * On a besoin de la valeur de la position du grain dans le buffer pour montrer sa position sur l'axe x.
@@ -29,14 +30,14 @@ namespace particules
         void setNumSamples(int);
 
     private:
-        static constexpr int MAXGRAINS = static_cast<int>(Grains::maxGrains);
+        static constexpr int MAXGRAINS = static_cast<int>(global::maxGrains);
         static constexpr float GSIZE = UI::grainVisualSize;
         static constexpr float GCENTER = GSIZE / 2.f;
         void timerCallback() override;
 
         juce::Colour colour;
-        GrainVisualBuffer& visualBuffer;
-        ParameterView& parameterView;
+        UIState& uiState;
+        //ParameterView& parameterView;
         int numSamples;
 
         float invWidthSamples;

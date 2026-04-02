@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../framework/Constants.h"
-#include "../framework/LookUpTable.h"
-#include "../framework/PhaseGenerator.h"
+#include "../framework/audio/LookUpTable.h"
+#include "../framework/audio/PhaseGenerator.h"
 #include "../utils/enum/TraversalMode.h"
 
 // unipolar LFO modulator return normalized position [0.f, 1.f]

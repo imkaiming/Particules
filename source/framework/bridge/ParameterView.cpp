@@ -1,15 +1,13 @@
 #include "ParameterView.h"
-#include "../utils/PluginParams.h"
+#include "../../utils/PluginParams.h"
 
 namespace particules
 {
-    ParameterView::ParameterView() : mIsGrainsEmpty{true}, mIsPlaying{false}, mSampleRate{0.0} {}
+    ParameterView::ParameterView(EngineState& es) : engineState{es} {}
 
-    void ParameterView::init(ValueTreeState& apvts, double sampleRate)
+    void ParameterView::init(ValueTreeState& apvts)
     {
-        setSampleRate(sampleRate);
-        //mSampleRate.store(sampleRate, std::memory_order_relaxed);
-        mix = apvts.getRawParameterValue(global::mix::id);
+        //mix = apvts.getRawParameterValue(global::mix::id);
         output = apvts.getRawParameterValue(global::output::id);
         emission = apvts.getRawParameterValue(grains::emission::id);
         duration = apvts.getRawParameterValue(grains::duration::id);
@@ -49,32 +47,31 @@ namespace particules
         return static_cast<TraversalMode>(choice);
     }
 
-    const ParameterSnapshot ParameterView::getSnapshot() const noexcept
+    ParameterSnapshot ParameterView::getSnapshot() const noexcept
     {
-        ParameterSnapshot snapshot;
+        ParameterSnapshot ps;
+        EngineSnapshot es = engineState.getSnapshot();
 
-        // get Buffer data
-        snapshot.sampleRate = getSampleRate();
-        snapshot.inputNumSamples = getNumSamples();
-        snapshot.inputNumChannels = getNumChannels();
+        ps.play = getPlay() > 0.5f ? true : false;
+        //// get Buffer data
 
         // position data
-        snapshot.startPositionSamples = static_cast<int>(getNormalizedStartPosition() * snapshot.inputNumSamples);
-        snapshot.selectionSamples = static_cast<int>(getNormalizedWindowSelection() * snapshot.inputNumSamples);
+        ps.inputNumSamples = es.inputNumSamples; // temporary
+        ps.startPositionSamples = static_cast<int>(getNormalizedStartPosition() * es.inputNumSamples);
+        ps.selectionSamples = static_cast<int>(getNormalizedWindowSelection() * es.inputNumSamples);
 
         // time data
-        snapshot.durationSamples = static_cast<int>(getNormalizedDuration() * snapshot.sampleRate);
+        ps.durationSamples = static_cast<int>(getNormalizedDuration() * es.sampleRate);
 
         // grain data
-        snapshot.mix = getMix();
-        snapshot.speed = getSpeed();
-        snapshot.emission = getEmission();
-        snapshot.envMode = getEnvelopeMode();
-        snapshot.sustainRatio = getNormalizedSustainRatio();
-        snapshot.linearGain = getLinearGain();
-        snapshot.traversalMode = getTraversalMode();
-        snapshot.traversalFreq = getTraversalFreq();
+        ps.speed = getSpeed();
+        ps.emission = getEmission();
+        ps.envMode = getEnvelopeMode();
+        ps.sustainRatio = getNormalizedSustainRatio();
+        ps.linearGain = getLinearGain();
+        ps.traversalMode = getTraversalMode();
+        ps.traversalFreq = getTraversalFreq();
 
-        return snapshot;
+        return ps;
     };
 }

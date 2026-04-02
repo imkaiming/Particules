@@ -2,6 +2,7 @@
 #pragma once
 
 #include "../../framework/Core.h"
+#include "../../framework/bridge/EngineState.h"
 #include "../../utils/struct/UIContext.h"
 
 
@@ -22,7 +23,7 @@ namespace particules
     private:
         juce::Label statusLabel;
         UIContext& uic;
-        ParticulesAudioProcessor& audioProcessor;
+        EngineState& engineState;
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatusBarPanel)
     };
 }

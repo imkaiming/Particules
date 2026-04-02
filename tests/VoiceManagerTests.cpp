@@ -28,23 +28,22 @@ namespace particulesTest
         //VoiceManager vm;
         AudioBuffer inputBuffer{2, 48000};
         AudioBlock outputBlock{inputBuffer};
-        ParameterSnapshot snapshot;
+        ParameterSnapshot ps;
+        //EngineSnapshot es;
 
         VoiceManagerFixture() //: vm{}
         {
-            snapshot.durationSamples = 48000;
-            snapshot.emission = 1;
-            snapshot.linearGain = 0.707946f;
-            snapshot.startPositionSamples = 24000;
-            snapshot.selectionSamples = 12000;
-            snapshot.speed = 1.f;
-            snapshot.mix = 1.f;
-            snapshot.sustainRatio = 0.5f;
-            snapshot.envMode = static_cast<EnvelopeMode>(1);
-            snapshot.traversalMode = TraversalMode::Sine;
-            snapshot.traversalFreq = 1.f;
-            snapshot.sampleRate = 48000.0;
-            posMod.setSampleRate(snapshot.sampleRate);
+            ps.durationSamples = 48000;
+            ps.emission = 1;
+            ps.linearGain = 0.707946f;
+            ps.startPositionSamples = 24000;
+            ps.selectionSamples = 12000;
+            ps.speed = 1.f;
+            ps.sustainRatio = 0.5f;
+            ps.envMode = static_cast<EnvelopeMode>(1);
+            ps.traversalMode = TraversalMode::Sine;
+            ps.traversalFreq = 1.f;
+            posMod.setSampleRate(48000);
         };
     };
     //TEST_CASE()

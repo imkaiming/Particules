@@ -2,10 +2,12 @@
 #pragma once
 
 #include "../../framework/Types.h"
-#include "../../utils/lookandfeel/HandleSliderLookAndFeel.h"
+#include "../lookandfeel/HandleSliderLookAndFeel.h"
 #include "../component/ThumbnailComponent.h"
 #include "../component/PositionOverlayComponent.h"
 #include "../component/SpanOverlayComponent.h"
+#include "../../framework/bridge/UIState.h"
+
 
 // the Audio File Frame provide the control to load and play the audio.
 namespace particules
@@ -13,7 +15,7 @@ namespace particules
 
     class ParameterView;
     class ParticulesAudioProcessor;
-    class AudioFilePanel : public juce::Component, public juce::FileDragAndDropTarget, public juce::ChangeListener
+    class AudioFilePanel : public juce::Component, public juce::FileDragAndDropTarget//, public juce::ChangeListener
     {
     public:
         AudioFilePanel(UIContext& uic);
@@ -22,12 +24,12 @@ namespace particules
         void resized() override;
 
     private:
-        void changeListenerCallback(juce::ChangeBroadcaster*) override;
+        //void changeListenerCallback(juce::ChangeBroadcaster*) override;
         bool isInterestedInFileDrag(const juce::StringArray&);
         void filesDropped(const juce::StringArray&, int, int);
 
-        ParameterView& paramsView;
-        ParticulesAudioProcessor& audioProcessor;
+        UIState& uiState;
+        UIContext& uic;
         ValueTreeState& apvts;
         ThumbnailComponent thumbnailComponent; // after the file is loaded draw the waveform
 

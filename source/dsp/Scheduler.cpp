@@ -22,12 +22,11 @@ namespace particules
     }
 
     //void Scheduler::tick(int index, std::function<void(int, const ParameterSnapshot&)> spawn, const ParameterSnapshot& snapshot)
-    void Scheduler::tick(std::function<void(const ParameterSnapshot&)> spawn, const ParameterSnapshot& snapshot)
+    void Scheduler::tick(std::function<void(const ParameterSnapshot&)> spawn, const ParameterSnapshot& ps)
     {
         if(phase >= interOnSet)
         {
-            //spawn(index, snapshot);
-            spawn(snapshot);
+            spawn(ps);
             phase -= interOnSet;
         }
         phase++;

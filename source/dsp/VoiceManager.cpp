@@ -56,7 +56,7 @@ namespace particules
         }
     }
 
-    void VoiceManager::spawn(const ParameterSnapshot& snapshot)
+    void VoiceManager::spawn(const ParameterSnapshot& ps)
     {
         if(activeCount >= SIZE)
             return; // cannot spawn any more grains
@@ -68,9 +68,9 @@ namespace particules
 
         visualY[handle.index] = juce::Random::getSystemRandom().nextFloat();
 
-        envLut.setEnvelopeMode(snapshot.envMode);
+        envLut.setEnvelopeMode(ps.envMode);
 
-        grain->config(snapshot, posMod.getPhase()); // init the grain here before process with the snapshot
+        grain->config(ps, posMod.getPhase()); // init the grain here before process with the snapshot
         activeHandles[activeCount++] = handle;
     }
 
@@ -90,7 +90,7 @@ namespace particules
         {
             const GrainHandle h = activeHandles[i];
             const Grain* g = pool.get(h);
-            if(g != nullptr) 
+            if(g != nullptr)
             {
                 snap.grainVisuals[snap.count++] = {
                     g->getReadPosition(), visualY[h.index], envLut.getEnvelopeValue(g->getPhase())};

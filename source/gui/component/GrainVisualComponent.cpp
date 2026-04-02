@@ -1,14 +1,12 @@
 #include "GrainVisualComponent.h"
-
-#include "../../framework/ParameterView.h"
+#include "../../framework/bridge/EngineState.h"
+#include "../../utils/struct/VisualSnapshot.h"
 
 namespace particules
 {
 
     GrainVisualComponent::GrainVisualComponent(UIContext& uic)
-        : visualBuffer{uic.visualBuffer}, parameterView{uic.paramsView}, numSamples{parameterView.getNumSamples()},
-          invWidthSamples{0.f},
-          colour{colours::lavender}
+        : uiState{uic.uiState}, numSamples{uic.engineState.getNumSamples()}, invWidthSamples{0.f}, colour{colours::lavender}
     {
         setOpaque(false);
         startTimerHz(60);
@@ -20,7 +18,7 @@ namespace particules
     {
         if(invWidthSamples == 0.f)
             return;
-        const auto& snap = visualBuffer.getSnapshot();
+        const VisualSnapshot& snap = uiState.getSnapshot();
 
         for(int i = 0; i < snap.count; ++i)
         {

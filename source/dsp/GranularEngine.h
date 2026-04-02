@@ -15,6 +15,7 @@
 #pragma once
 
 #include "../framework/Constants.h"
+#include "../framework/bridge/EngineState.h"
 #include "../framework/Types.h"
 #include "../utils/AtomicSharedPtr.h"
 #include "../utils/struct/ParameterSnapshot.h"
@@ -27,13 +28,14 @@ namespace particules
     class GranularEngine
     {
     public:
-        GranularEngine(GrainVisualBuffer& vb);
+        GranularEngine(GrainVisualBuffer& vb, EngineState& es);
         ~GranularEngine() = default;
 
-        void process(
-            AudioBuffer& output, int bufferSize, float* const* outputPtrs, int outputNumChannels, ParameterSnapshot snapshot);
+        void process(AudioBuffer& output, int bufferSize, float* const* outputPtrs, int outputNumChannels,
+            const ParameterSnapshot& ps);
         void init(double, int, int);
         int getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); }
+
 
         void setInputBuffer(std::shared_ptr<const AudioBuffer> ptr) noexcept { inputBufferPtr.store(std::move(ptr)); }
         std::shared_ptr<const AudioBuffer> getInputBuffer() const noexcept { return inputBufferPtr.load(); }
@@ -48,7 +50,7 @@ namespace particules
 
         AtomicSharedPtr<const AudioBuffer> inputBufferPtr; // should be downmixed
         //std::shared_ptr<const AudioBuffer> inputBuffer;
-        std::function<void(const ParameterSnapshot& s)> spawnCallback;
+        std::function<void(const ParameterSnapshot& ps)> spawnCallback;
 
         const float refreshRate;
         int sampleAccumulator;
@@ -69,6 +71,8 @@ namespace particules
         //juce::SmoothedValue<float> sustainRatioSmooth;
         SmoothedParameters smoothedParams;
 
+
+        EngineState& engineState;
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularEngine)
     };
 }

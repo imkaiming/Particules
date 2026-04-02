@@ -2,8 +2,8 @@
 
 #include "../framework/Constants.h"
 #include "../framework/Core.h"
-#include "../framework/LookUpTable.h"
-#include "../framework/PhaseGenerator.h"
+#include "../framework/audio/LookUpTable.h"
+#include "../framework/audio/PhaseGenerator.h"
 #include "../utils/enum/EnvelopeMode.h"
 
 // LUT TABLE

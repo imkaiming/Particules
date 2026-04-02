@@ -1,15 +1,14 @@
 #include "StatusBarPanel.h"
-#include "../../PluginProcessor.h"
 #include "../../utils/MyColours.h"
 #include "../../utils/struct/UIContext.h"
 
 namespace particules
 {
 
-    StatusBarPanel::StatusBarPanel(UIContext& uic) : uic{uic}, audioProcessor{uic.audioProcessor}
+    StatusBarPanel::StatusBarPanel(UIContext& uic) : uic{uic}, engineState{uic.engineState}
     {
         addAndMakeVisible(&statusLabel);
-        startTimerHz(10);
+        startTimerHz(30);
 
         statusLabel.setColour(0, juce::Colours::white);
         statusLabel.setSize((int)(statusLabel.getWidth() * 0.5f), (int)(statusLabel.getHeight() * 0.5f));
@@ -41,7 +40,7 @@ namespace particules
     void StatusBarPanel::timerCallback()
     {
         statusLabel.setText(
-            (const str) "active grains: " + (const str)audioProcessor.getNumActiveGrains(), juce::dontSendNotification);
+            (const str) "active grains: " + (const str)engineState.getNumActiveGrains(), juce::dontSendNotification);
         repaint();
     }
 }

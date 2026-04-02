@@ -1,5 +1,5 @@
 #include "PluginEditor.h"
-#include "PluginProcessor.h"
+//#include "PluginProcessor.h"
 
 namespace particules
 {
@@ -7,7 +7,8 @@ namespace particules
         : AudioProcessorEditor(&p), pluginProcessor(p), mainPanel(p.getUIContext()),
           globalLookAndFeel()
     {
-        setLookAndFeel(&globalLookAndFeel);
+        //setLookAndFeel(&globalLookAndFeel);
+        setLookAndFeel(&lnf);
 
         setResizable(true, true);
         setResizeLimits(windowWidthMin, windowHeightMin, windowWidthMax, windowHeightMax);

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../framework/Core.h"
+
 namespace particules
 {
     class LabelBoxLookAndFeel : public juce::LookAndFeel_V4
