@@ -60,6 +60,6 @@ namespace particules
         bool active = false;
         //bool isInitialized = false;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Grain)
+        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Grain)
     };
 }

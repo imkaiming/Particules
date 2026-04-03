@@ -1,10 +1,12 @@
 #include "PhaseGenerator.h"
 
+#include "../Core.h"
+
 namespace particules
 {
     void PhaseGenerator::setSampleRate(double sr)
     {
-        jassert(sr > 0);
+        assert(sr > 0);
         sampleRate = static_cast<float>(sr);
     }
     void PhaseGenerator::setFrequency(float f)

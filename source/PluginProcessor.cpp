@@ -1,8 +1,9 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#include <juce_audio_processors_headless/juce_audio_processors_headless.h>
+
 #include "utils/PluginParams.h"
-#include "utils/struct/EngineSnapshot.h"
 #include "utils/struct/ParameterSnapshot.h"
 #include "utils/struct/ProcessorFacade.h"
 
@@ -18,9 +19,9 @@ namespace particules
                   .withOutput("Output", juce::AudioChannelSet::stereo(), true)
     #endif
                   ),
-          apvts(*this, nullptr, "Parameters", createParameterLayout()), paramsView{engineState}, granularEngine{visualBuffer, engineState}, engineState{},
-          uiState{}, uic{apvts, paramsView, engineState, uiState}, loader{},
-          debugPresetLoaded{false}
+          apvts(*this, nullptr, "Parameters", createParameterLayout()), paramsView{engineState},
+          granularEngine{visualBuffer, engineState}, engineState{}, uiState{}, uic{apvts, paramsView, engineState, uiState},
+          loader{}, debugPresetLoaded{false}
 #endif
     {
         initOnAudioLoadedCallback();
@@ -220,70 +221,85 @@ namespace particules
 
         // ADSR //
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(
-            adsr::attack::id, adsr::attack::name, juce::NormalisableRange<float>(adsr::attack::min, adsr::attack::max, 0.01f),
-            adsr::attack::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
-            [](float v, int) { return juce::String(v, 1) + "s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{adsr::attack::id, 1}, adsr::attack::name,
+            juce::NormalisableRange<float>(adsr::attack::min, adsr::attack::max, 0.01f), adsr::attack::init,
+            juce::AudioParameterFloatAttributes{}
+                .withLabel("s")
+                .withCategory(juce::AudioProcessorParameter::genericParameter)
+                .withStringFromValueFunction([](float v, int) { return str(v, 1) + "s"; })
+                .withValueFromStringFunction([](const juce::String& s) { return s.getFloatValue(); })));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(
-            adsr::decay::id, adsr::decay::name, juce::NormalisableRange<float>(adsr::decay::min, adsr::decay::max, 0.01f),
-            adsr::decay::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
-            [](float v, int) { return juce::String(v, 1) + "s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{adsr::decay::id, 1}, adsr::decay::name,
+            juce::NormalisableRange<float>(adsr::decay::min, adsr::decay::max, 0.01f), adsr::decay::init,
+            juce::AudioParameterFloatAttributes{}
+                .withLabel("s")
+                .withCategory(juce::AudioProcessorParameter::genericParameter)
+                .withStringFromValueFunction([](float v, int) { return str(v, 1) + "s"; })
+                .withValueFromStringFunction([](const juce::String& s) { return s.getFloatValue(); })));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(
-            adsr::sustain::id, adsr::sustain::name, juce::NormalisableRange<float>(adsr::sustain::min, adsr::sustain::max, 0.01f),
-            adsr::sustain::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
-            [](float v, int) { return juce::String(v, 1) + "s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{adsr::sustain::id, 1}, adsr::sustain::name,
+            juce::NormalisableRange<float>(adsr::sustain::min, adsr::sustain::max, 0.01f), adsr::sustain::init,
+            juce::AudioParameterFloatAttributes{}
+                .withLabel("s")
+                .withCategory(juce::AudioProcessorParameter::genericParameter)
+                .withStringFromValueFunction([](float v, int) { return str(v, 1) + "s"; })
+                .withValueFromStringFunction([](const juce::String& s) { return s.getFloatValue(); })));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(
-            adsr::release::id, adsr::release::name, juce::NormalisableRange<float>(adsr::release::min, adsr::release::max, 0.01f),
-            adsr::release::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
-            [](float v, int) { return juce::String(v, 1) + "s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{adsr::release::id, 1}, adsr::release::name,
+            juce::NormalisableRange<float>(adsr::release::min, adsr::release::max, 0.01f), adsr::release::init,
+            juce::AudioParameterFloatAttributes{}
+                .withLabel("s")
+                .withCategory(juce::AudioProcessorParameter::genericParameter)
+                .withStringFromValueFunction([](float v, int) { return str(v, 1) + "s"; })
+                .withValueFromStringFunction([](const juce::String& s) { return s.getFloatValue(); })));
 
         // GLOBAL //
 
-        //layout.add(std::make_unique<juce::AudioParameterFloat>(
-        //    global::mix::id, global::mix::name, juce::NormalisableRange<float>(global::mix::min, global::mix::max, 0.01f),
-        //    global::mix::init, juce::String(" %"), juce::AudioProcessorParameter::genericParameter,
-        //    [](float v, int) { return juce::String(v, 1) + "%"; }, [](const juce::String& s) { return s.getFloatValue(); }));
-
-        layout.add(std::make_unique<juce::AudioParameterFloat>(
-            global::output::id, global::output::name,
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{global::output::id, 1}, global::output::name,
             juce::NormalisableRange<float>(global::output::min, global::output::max, 0.01f), global::output::init,
-            juce::String(" dB"), juce::AudioProcessorParameter::genericParameter,
-            [](float v, int) { return juce::String(v, 2) + " dB"; }, [](const juce::String& s) { return s.getFloatValue(); }));
+            juce::AudioParameterFloatAttributes{}
+                .withLabel("dB")
+                .withCategory(juce::AudioProcessorParameter::genericParameter)
+                .withStringFromValueFunction([](float v, int) { return str(v, 2) + " dB"; })
+                .withValueFromStringFunction([](const juce::String& s) { return s.getFloatValue(); })));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(
-            grains::emission::id, grains::emission::name,
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{grains::emission::id, 1}, grains::emission::name,
             juce::NormalisableRange<float>(grains::emission::min, grains::emission::max, 0.001f), grains::emission::init,
-            juce::String(" g/s"), juce::AudioProcessorParameter::genericParameter,
-            [](float v, int) { return juce::String(v, 2) + " g/s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
+            juce::AudioParameterFloatAttributes{}
+                .withLabel("g/s")
+                .withCategory(juce::AudioProcessorParameter::genericParameter)
+                .withStringFromValueFunction([](float v, int) { return str(v, 2) + " g/s"; })
+                .withValueFromStringFunction([](const juce::String& s) { return s.getFloatValue(); })));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(
-            grains::duration::id, grains::duration::name,
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{grains::duration::id, 1}, grains::duration::name,
             juce::NormalisableRange<float>(grains::duration::min, grains::duration::max, 0.001f), grains::duration::init,
-            juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
-            [](float v, int) { return juce::String(v, 2) + " s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
+            juce::AudioParameterFloatAttributes{}
+                .withLabel("s")
+                .withCategory(juce::AudioProcessorParameter::genericParameter)
+                .withStringFromValueFunction([](float v, int) { return str(v, 2) + " s"; })
+                .withValueFromStringFunction([](const juce::String& s) { return s.getFloatValue(); })));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(grains::speed::id, grains::speed::name,
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{grains::speed::id, 1}, grains::speed::name,
             juce::NormalisableRange<float>(grains::speed::min, grains::speed::max, 0.001f), grains::speed::init));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(global::position::id, global::position::name,
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{global::position::id, 1}, global::position::name,
             juce::NormalisableRange<float>(global::position::min, global::position::max, 0.001f), global::position::init));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(global::span::id, global::span::name,
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{global::span::id, 1}, global::span::name,
             juce::NormalisableRange<float>(global::span::min, global::span::max, 0.001f), global::span::init));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(grains::sustainRatio::id, grains::sustainRatio::name,
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{grains::sustainRatio::id, 1},
+            grains::sustainRatio::name,
             juce::NormalisableRange<float>(grains::sustainRatio::min, grains::sustainRatio::max, 0.01f),
             grains::sustainRatio::init));
 
         // ENVELOPE MODE //
+
         const juce::StringArray choicesEnvModeNames(
             grains::envelopeMode::envModeNames.data(), (int)grains::envelopeMode::envModeNames.size());
 
         layout.add(std::make_unique<juce::AudioParameterChoice>(
-            grains::envelopeMode::id, grains::envelopeMode::name, choicesEnvModeNames, 1));
+            juce::ParameterID{grains::envelopeMode::id, 1}, grains::envelopeMode::name, choicesEnvModeNames, 1));
 
         // TRAVERSAL MODE //
 
@@ -291,15 +307,19 @@ namespace particules
             grains::traversalMode::traversalModeNames.data(), (int)grains::traversalMode::traversalModeNames.size());
 
         layout.add(std::make_unique<juce::AudioParameterChoice>(
-            grains::traversalMode::id, grains::traversalMode::name, choicesTraversalModeNames, 1));
+            juce::ParameterID{grains::traversalMode::id, 1}, grains::traversalMode::name, choicesTraversalModeNames, 1));
 
         // TRAVERSAL FREQ //
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(
-            grains::traversalFreq::id, grains::traversalFreq::name,
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{grains::traversalFreq::id, 1},
+            grains::traversalFreq::name,
             juce::NormalisableRange<float>(grains::traversalFreq::min, grains::traversalFreq::max, 0.01f),
-            grains::traversalFreq::init, juce::String(" Hz"), juce::AudioProcessorParameter::genericParameter,
-            [](float v, int) { return juce::String(v, 2) + " Hz"; }, [](const juce::String& s) { return s.getFloatValue(); }));
+            grains::traversalFreq::init,
+            juce::AudioParameterFloatAttributes{}
+                .withLabel("Hz")
+                .withCategory(juce::AudioProcessorParameter::genericParameter)
+                .withStringFromValueFunction([](float v, int) { return str(v, 2) + " Hz"; })
+                .withValueFromStringFunction([](const juce::String& s) { return s.getFloatValue(); })));
 
         // ajouter pan, direction
         // randomEMISSION, randomDuration, randomPan, randomDirection, randomPitch
@@ -352,7 +372,7 @@ namespace particules
 
     void ParticulesAudioProcessor::loadDebugPreset()
     {
-        //DBG("SAMPLE RATE = " + (juce::String) paramsView.getSampleRate());
+        //DBG("SAMPLE RATE = " + (str) paramsView.getSampleRate());
         DBG("LOAD DBG PRESET");
         const juce::File debugAudio = juce::File::getSpecialLocation(juce::File::currentExecutableFile)
                                           .getParentDirectory()

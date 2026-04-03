@@ -1,9 +1,12 @@
 #include "ThumbnailComponent.h"
 
-//#include "../../framework/bridge/ParameterView.h"
+#include <juce_graphics/juce_graphics.h> // graphics
+#include <juce_audio_utils/juce_audio_utils.h> // audiothumbnail
+
 #include "../../framework/bridge/UIState.h"
-#include "../../utils/MyColours.h"
+#include "../lookandfeel/MyColours.h"
 #include "../../utils/struct/UIContext.h"
+#include "../../framework/bridge/EngineState.h"
 
 namespace particules
 {

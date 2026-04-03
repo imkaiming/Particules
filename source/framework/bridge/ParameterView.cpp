@@ -1,5 +1,12 @@
 #include "ParameterView.h"
+
+#include <juce_audio_basics/juce_audio_basics.h> // decibel
+#include <juce_audio_processors/juce_audio_processors.h> // apvts
+
 #include "../../utils/PluginParams.h"
+//#include "../../utils/math/ConvertToPercentage.h"
+#include "EngineState.h"
+
 
 namespace particules
 {
@@ -74,4 +81,9 @@ namespace particules
 
         return ps;
     };
+
+    float ParameterView::getLinearGain() const noexcept
+    {
+        return output ? juce::Decibels::decibelsToGain(output->load(std::memory_order_relaxed)) : 0.0f;
+    }
 }

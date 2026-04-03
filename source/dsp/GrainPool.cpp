@@ -10,8 +10,6 @@
 
 #include "GrainPool.h"
 #include "../utils/struct/GrainHandle.h"
-//#include "GrainEnvelope.h"
-#include "Grain.h"
 
 namespace particules
 {

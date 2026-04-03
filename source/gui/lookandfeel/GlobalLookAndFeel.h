@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../../framework/Core.h"
-#include "../../framework/Types.h"
+#include <juce_graphics/juce_graphics.h> // juce image
+#include <juce_gui_basics/juce_gui_basics.h> // look and feel
+#include <juce_core/juce_core.h> // end macro
 
 namespace particules
 {

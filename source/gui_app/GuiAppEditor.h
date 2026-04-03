@@ -5,13 +5,21 @@
 
 #pragma once
 
-#include "GuiAppProcessor.h"
-#include "gui/lookandfeel/GlobalLookAndFeel.h"
-#include "gui/lookandfeel/LightRotarySliderLNF.h"
-#include "gui/panel/MainPanel.h"
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_core/juce_core.h>
+
+#include "../gui/lookandfeel/GlobalLookAndFeel.h"
+#include "../gui/lookandfeel/LightRotarySliderLNF.h"
+#include "../gui/panel/MainPanel.h"
+
+namespace juce
+{
+    class Graphics;
+}
 
 namespace particules
 {
+    class GuiAppProcessor;
     class GuiAppEditor : public juce::AudioProcessorEditor
     {
     public:
@@ -33,7 +41,6 @@ namespace particules
         static constexpr const int windowWidthMin = UI::windowWidthMin;
         static constexpr const int windowWidthMax = UI::windowWidthMax;
 
-        //DummyProcessor& dummyProcessor;
         MainPanel mainPanel;
         GlobalLookAndFeel globalLookAndFeel;
         LightRotarySliderLNF lnf;

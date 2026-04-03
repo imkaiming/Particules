@@ -2,17 +2,17 @@
 
 #include "../../utils/enum/EnvelopeMode.h"
 #include "../../utils/enum/TraversalMode.h"
-#include "../../utils/math/ConvertToPercentage.h"
 #include "../../utils/struct/ParameterSnapshot.h"
-#include "EngineState.h"
+#include "../PluginTypes.h"
+
 #include "../Core.h"
-#include "../Types.h"
 
 // APVTS wrapper that create snapshot for the DSP
 // own atomic ptr
 
 namespace particules
 {
+    class EngineState;
     class ParameterView
     {
     public:
@@ -24,12 +24,8 @@ namespace particules
         ParameterSnapshot getSnapshot() const noexcept;
 
     private:
-
         float getDecibelGain() const noexcept { return output ? output->load(std::memory_order_relaxed) : 0.0f; }
-        float getLinearGain() const noexcept
-        {
-            return output ? juce::Decibels::decibelsToGain(output->load(std::memory_order_relaxed)) : 0.0f;
-        }
+        float getLinearGain() const noexcept;
         float getSpeed() const noexcept { return speed ? speed->load(std::memory_order_relaxed) : 0.0f; }
         float getEmission() const noexcept { return emission ? emission->load(std::memory_order_relaxed) : 0.0f; }
         float getNormalizedDuration() const noexcept { return duration ? duration->load(std::memory_order_relaxed) : 0.0f; }
@@ -40,7 +36,7 @@ namespace particules
             return sustainRatio ? sustainRatio->load(std::memory_order_relaxed) : 0.0f;
         }
         float getTraversalFreq() const noexcept { return traversalFreq ? traversalFreq->load(std::memory_order_relaxed) : 0.0f; }
-        float getPlay() const noexcept { return play? play->load(std::memory_order_relaxed) : false; }
+        float getPlay() const noexcept { return play ? play->load(std::memory_order_relaxed) : false; }
 
         EnvelopeMode getEnvelopeMode() const noexcept;
         TraversalMode getTraversalMode() const noexcept;
@@ -60,6 +56,6 @@ namespace particules
 
         EngineState& engineState;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterView)
+        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterView)
     };
 }

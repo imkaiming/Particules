@@ -1,7 +1,9 @@
 #include "GrainEnvelope.h"
 
-#include "../utils/math/Lerp.h"
+//#include "../utils/math/Lerp.h"
 #include "../utils/math/MathConstants.h"
+//#include "../framework/audio/PhaseGenerator.h"
+
 
 namespace particules
 {
@@ -36,7 +38,7 @@ namespace particules
     const float GrainEnvelope::getEnvelopeValue(float phase) const noexcept
     { 
         const LookUpTable* table = tables[(int)envMode];
-        jassert(table != nullptr);
+        assert(table != nullptr);
         return table->getValue(phase);
     }
 

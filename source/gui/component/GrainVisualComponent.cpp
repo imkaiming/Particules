@@ -1,6 +1,9 @@
 #include "GrainVisualComponent.h"
 #include "../../framework/bridge/EngineState.h"
+#include "../../framework/bridge/UIState.h"
+#include "../../utils/struct/UIContext.h"
 #include "../../utils/struct/VisualSnapshot.h"
+#include "../lookandfeel/MyColours.h"
 
 namespace particules
 {

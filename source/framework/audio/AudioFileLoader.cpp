@@ -1,6 +1,9 @@
 
 #include "AudioFileLoader.h"
 
+#include <juce_audio_basics/juce_audio_basics.h>
+#include <juce_gui_basics/juce_gui_basics.h>
+
 namespace particules
 {
     AudioFileLoader::AudioFileLoader() : sampleRate{0.0}, formatManager{} { formatManager.registerBasicFormats(); }
@@ -21,7 +24,7 @@ namespace particules
         });
     }
 
-    void AudioFileLoader::loadFile(const juce::String& path, AudioLoadedCallback onAudioLoaded)
+    void AudioFileLoader::loadFile(const str& path, AudioLoadedCallback onAudioLoaded)
     {
         juce::File file(path);
         if(currentFile == file)

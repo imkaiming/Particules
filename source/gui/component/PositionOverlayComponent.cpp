@@ -1,5 +1,9 @@
 #include "PositionOverlayComponent.h"
 
+#include <juce_graphics/juce_graphics.h>
+
+#include "../lookandfeel/MyColours.h"
+
 namespace particules
 {
 

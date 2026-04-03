@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../Core.h"
 #include "../Constants.h"
 
 // return normalized phase value based on the freq / sampleRate
+
 namespace particules
 {
     class PhaseGenerator
@@ -21,6 +21,7 @@ namespace particules
 
     private:
         static constexpr int SIZE = maxLutSize;
+
         void setIncrement() ;
         double sampleRate = 0.0;
         float phase = 0.f;

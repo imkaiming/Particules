@@ -1,5 +1,8 @@
 #pragma once
-#include "../../framework/Core.h"
+
+#include <juce_core/juce_core.h>
+#include <juce_graphics/juce_graphics.h>
+#include <juce_gui_basics/juce_gui_basics.h>
 
 namespace particules
 {
@@ -15,5 +18,7 @@ namespace particules
 
     private:
         juce::Image metalHandleImage;
+
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(HandleSliderLookAndFeel)
     };
 }

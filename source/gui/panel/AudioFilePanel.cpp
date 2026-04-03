@@ -1,8 +1,12 @@
 #include "AudioFilePanel.h"
-#include "../../utils/MyColours.h"
+
 #include "../../utils/struct/UIContext.h"
+#include "../lookandfeel/MyColours.h"
 //#include "../../utils/struct/ProcessorFacade.h"
-#include "BinaryData.h"
+#include "../../framework/GuiTypes.h"
+#include "../../framework/bridge/UIState.h"
+
+//#include "BinaryData.h"
 
 namespace particules
 {
@@ -59,7 +63,7 @@ namespace particules
         juce::RangedAudioParameter* playParameter = apvts.getParameter(global::play::id);
         playParameter->setValueNotifyingHost(0.f);
 
-        for(juce::String file : files)
+        for(str file : files)
         {
             if(isInterestedInFileDrag(file))
             {

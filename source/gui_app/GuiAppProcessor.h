@@ -1,18 +1,20 @@
 #pragma once
 
-#include "framework/Types.h"
-#include "framework/audio/AudioFileLoader.h"
-#include "framework/bridge/EngineState.h"
-#include "framework/bridge/GrainVisualBuffer.h"
-#include "framework/bridge/ParameterView.h"
-#include "framework/bridge/UIState.h"
-#include "framework/Core.h"
-#include "utils/struct/UIContext.h"
+#include <juce_audio_basics/juce_audio_basics.h> // audiobuffer and midibuffer
+#include <juce_audio_processors/juce_audio_processors.h> // audio processor
+#include <juce_core/juce_core.h> // memory block and string
+
+//#include "framework/audio/AudioFileLoader.h"
+#include "../framework/PluginTypes.h"
+#include "../framework/bridge/EngineState.h"
+#include "../framework/bridge/GrainVisualBuffer.h"
+#include "../framework/bridge/ParameterView.h"
+#include "../framework/bridge/UIState.h"
+#include "../utils/struct/UIContext.h"
 
 // just to test GUI separated than the audio DSP
 namespace particules
 {
-
     class GuiAppProcessor : public juce::AudioProcessor
     {
     public:
@@ -27,7 +29,7 @@ namespace particules
         bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 #endif
 
-        void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+        void processBlock(AudioBuffer&, juce::MidiBuffer&) override;
         juce::AudioProcessorEditor* createEditor() override;
         bool hasEditor() const override;
         const str getName() const override;
@@ -47,19 +49,12 @@ namespace particules
         UIContext& getUIContext() noexcept { return uic; };
 
     private:
-        //void loadFile(const str& path);
-        //void loadFile();
-        //void initOnAudioLoadedCallback();
-
         GrainVisualBuffer visualBuffer;
         ValueTreeState apvts;
         EngineState engineState;
         ParameterView paramsView;
         UIState uiState;
         UIContext uic;
-
-        AudioFileLoader loader;
-        //AudioLoadedCallback onAudioLoadedCallback;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GuiAppProcessor)
     };

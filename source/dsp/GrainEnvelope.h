@@ -3,7 +3,6 @@
 #include "../framework/Constants.h"
 #include "../framework/Core.h"
 #include "../framework/audio/LookUpTable.h"
-#include "../framework/audio/PhaseGenerator.h"
 #include "../utils/enum/EnvelopeMode.h"
 
 // LUT TABLE
@@ -60,6 +59,6 @@ namespace particules
         //std::array<float, SIZE> expTable;
         //std::array<float, SIZE> smoothedTable;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainEnvelope)
+        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainEnvelope)
     };
 }

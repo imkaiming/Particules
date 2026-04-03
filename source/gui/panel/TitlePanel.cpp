@@ -1,9 +1,12 @@
 #include "TitlePanel.h"
+
+#include <juce_graphics/juce_graphics.h>
+
+
 #include "../../PluginProcessor.h"
-#include "../../framework/bridge/ParameterView.h"
-#include "../../utils/MyColours.h"
 #include "../../utils/PluginParams.h"
 #include "../../utils/struct/UIContext.h"
+#include "../lookandfeel/MyColours.h"
 #include "BinaryData.h"
 
 namespace particules

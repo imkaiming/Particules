@@ -2,14 +2,13 @@
 #pragma once
 #include "../framework/Constants.h"
 #include "../framework/Core.h"
-#include "../utils/struct/GrainHandle.h"
 #include "Grain.h"
 
 // Preallocate Grains so we dont use new / delete in the audio thread
 // use LIFO
 namespace particules
 {
-    //struct GrainHandle;
+    struct GrainHandle;
     class GrainPool
     {
     public:
@@ -32,7 +31,7 @@ namespace particules
         std::array<int, SIZE> freeIndices; // unordered stack of indexes. The most recently freed grain (also cache friendly)
         int nextFree = 0;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainPool)
+        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainPool)
     };
 
 }

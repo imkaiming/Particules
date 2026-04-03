@@ -2,6 +2,8 @@
 
 #include "../../framework/Core.h"
 
+#include <juce_core/juce_core.h>
+
 // math utilitary function
 // expend this in the future
 namespace particules

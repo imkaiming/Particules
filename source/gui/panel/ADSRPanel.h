@@ -1,13 +1,18 @@
 #pragma once
 
-#include "../../framework/Constants.h"
-#include "../../framework/Core.h"
-#include "../../utils/struct/UIContext.h"
-#include "../../utils/PluginParams.h"
+
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_core/juce_core.h>
+#include <juce_gui_basics/juce_gui_basics.h>
+
+namespace juce
+{
+    class Graphics;
+}
 
 namespace particules
 {
-
+    struct UIContext;
     class ADSRPanel : public juce::Component
     {
     public:

@@ -14,28 +14,34 @@
 
 #pragma once
 
+#include <juce_audio_basics/juce_audio_basics.h>
+#include <juce_dsp/juce_dsp.h>
+
 #include "../framework/Constants.h"
-#include "../framework/bridge/EngineState.h"
-#include "../framework/Types.h"
+#include "../framework/PluginTypes.h"
 #include "../utils/AtomicSharedPtr.h"
-#include "../utils/struct/ParameterSnapshot.h"
 #include "../utils/struct/SmoothedParameters.h"
+#include "GrainEnvelope.h"
+#include "GrainPool.h"
+#include "PositionModulator.h"
 #include "Scheduler.h"
 #include "VoiceManager.h"
 
 namespace particules
 {
+    class GrainVisualBuffer;
+    struct ParameterSnapshot;
+    class EngineState;
     class GranularEngine
     {
     public:
         GranularEngine(GrainVisualBuffer& vb, EngineState& es);
         ~GranularEngine() = default;
 
-        void process(AudioBuffer& output, int bufferSize, float* const* outputPtrs, int outputNumChannels,
-            const ParameterSnapshot& ps);
+        void process(
+            AudioBuffer& output, int bufferSize, float* const* outputPtrs, int outputNumChannels, const ParameterSnapshot& ps);
         void init(double, int, int);
         int getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); }
-
 
         void setInputBuffer(std::shared_ptr<const AudioBuffer> ptr) noexcept { inputBufferPtr.store(std::move(ptr)); }
         std::shared_ptr<const AudioBuffer> getInputBuffer() const noexcept { return inputBufferPtr.load(); }
@@ -49,7 +55,6 @@ namespace particules
         static constexpr uint8_t mMaxEvent = maxSpawnsPerBlock;
 
         AtomicSharedPtr<const AudioBuffer> inputBufferPtr; // should be downmixed
-        //std::shared_ptr<const AudioBuffer> inputBuffer;
         std::function<void(const ParameterSnapshot& ps)> spawnCallback;
 
         const float refreshRate;
@@ -71,9 +76,8 @@ namespace particules
         //juce::SmoothedValue<float> sustainRatioSmooth;
         SmoothedParameters smoothedParams;
 
-
         EngineState& engineState;
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularEngine)
+        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularEngine)
     };
 }
 //juce::dsp::DryWetMixer<float> mixerProcessor;

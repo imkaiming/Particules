@@ -1,7 +1,10 @@
 #include "GrainsPanel.h"
-#include "../../framework/bridge/ParameterView.h"
-#include "../../utils/MyColours.h"
+
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_graphics/juce_graphics.h>
+
 #include "../../utils/struct/UIContext.h"
+#include "../lookandfeel/MyColours.h"
 
 namespace particules
 {
@@ -139,7 +142,7 @@ namespace particules
 
     void GrainsPanel::paint(juce::Graphics& g) {}
 
-void GrainsPanel::resized()
+    void GrainsPanel::resized()
     {
         juce::Rectangle<int> area = getLocalBounds().reduced(10);
 

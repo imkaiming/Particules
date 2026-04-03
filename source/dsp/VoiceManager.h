@@ -2,17 +2,18 @@
 
 #include "../framework/Constants.h"
 #include "../framework/Core.h"
-#include "../framework/bridge/GrainVisualBuffer.h"
 #include "../utils/struct/GrainHandle.h"
-#include "../utils/struct/ParameterSnapshot.h"
-#include "../utils/struct/SmoothedParameters.h"
-#include "GrainEnvelope.h"
-#include "GrainPool.h"
-#include "PositionModulator.h"
+
 
 // VoiceManager takes segments from the spawned events and render grains from it
 namespace particules
 {
+    class GrainPool;
+    struct SmoothedParameters;
+    struct ParameterSnapshot;
+    class GrainVisualBuffer;
+    class GrainEnvelope;
+    class PositionModulator;
     class VoiceManager
     {
     public:
@@ -46,6 +47,6 @@ namespace particules
         GrainVisualBuffer& visualBuffer;
         std::array<float, SIZE> visualY;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VoiceManager)
+        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VoiceManager)
     };
 }

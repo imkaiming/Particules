@@ -1,8 +1,8 @@
 #include "GlobalLookAndFeel.h"
-//#include "../../../resources/font/FuturaMedium.h"
-#include "../../utils/MyColours.h"
 #include "../../utils/math/MathConstants.h"
 #include "BinaryData.h"
+#include "MyColours.h"
+
 
 namespace particules
 {

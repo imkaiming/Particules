@@ -1,5 +1,8 @@
 #include "UIState.h"
+
 #include "../../utils/struct/VisualSnapshot.h"
+#include "../bridge/GrainVisualBuffer.h"
+
 
 namespace particules
 {
@@ -20,4 +23,6 @@ namespace particules
     }
 
     const VisualSnapshot& UIState::getSnapshot() const noexcept { return visualBuffer->getSnapshot(); }
+
+    void UIState::init(const GrainVisualBuffer* vb) noexcept { visualBuffer = vb; }
 }

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <juce_core/juce_core.h>
+#include <juce_gui_basics/juce_gui_basics.h>
+
 #include "../../framework/Core.h"
 #include "../../utils/struct/UIContext.h"
 
@@ -11,7 +14,7 @@
 namespace particules
 {
 
-    //struct UIContext;
+    struct UIContext;
     class MainPanel : public juce::Component
     {
     public:

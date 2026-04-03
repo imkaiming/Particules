@@ -9,10 +9,7 @@ namespace particules
     {
         static constexpr int SIZE = global::maxGrains;
 
-        //struct Snapshot
-        //{
         std::array<GrainVisual, SIZE> grainVisuals{};
         int count = 0;
-        //};
     };
 }

@@ -1,16 +1,19 @@
 #include "SynthPanel.h"
-#include "../../utils/MyColours.h"
-//#include "../../utils/PluginParams.h"
+
+#include <juce_graphics/juce_graphics.h>
+
+#include "../lookandfeel/MyColours.h"
+#include "../../utils/struct/UIContext.h"
 
 namespace particules
 {
 
-    SynthPanel::SynthPanel(UIContext& uic) 
+    SynthPanel::SynthPanel(UIContext& uic)
     {
-        /*
         outputSliderAttachment =
             std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, globalOutputId, outputSlider);
 
+        /*
         positionSliderAttachment =
             std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, globalPositionId, positionSlider);
 
@@ -63,10 +66,9 @@ namespace particules
         //addAndMakeVisible(&spanLabel);
         */
         //addAndMakeVisible(&adsrPanel);
-
     }
 
-    void SynthPanel::paint(juce::Graphics& g) { /* g.fillAll(juce::Colours::purple); */}
+    void SynthPanel::paint(juce::Graphics& g) { /* g.fillAll(juce::Colours::purple); */ }
 
     void SynthPanel::resized()
     {

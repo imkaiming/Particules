@@ -1,21 +1,29 @@
-
 #pragma once
+
+#include <juce_core/juce_core.h> // end macro
+#include <juce_events/juce_events.h> // changeListener
+#include <juce_gui_basics/juce_gui_basics.h> // component
 
 #include "GrainVisualComponent.h"
 
 #include "../../framework/Core.h"
-#include "../../framework/Types.h"
-#include "../../framework/bridge/EngineState.h"
-#include "../../framework/bridge/UIState.h"
+
 #include "../../utils/PluginParams.h"
-#include "../../utils/struct/UIContext.h"
+
+namespace juce
+{
+    class AudioThumbnail;
+    class Graphics;
+}
 
 // Thumbnail is where the audio waveform is painted after being loaded by the audio file loader
 // should not own the state of the plugin
 namespace particules
 {
-
+    class EngineState;
+    class UIState;
     class ParameterView;
+    struct UIContext;
     class ParticulesAudioProcessor;
     class ThumbnailComponent : public juce::Component,
                                private juce::ChangeListener //, public juce::AudioProcessorValueTreeState::Listener

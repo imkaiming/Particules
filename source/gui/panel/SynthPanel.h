@@ -1,14 +1,25 @@
 #pragma once
 
-#include "../../framework/Types.h"
+#include <juce_core/juce_core.h>
+#include <juce_gui_basics/juce_gui_basics.h>
+#include <juce_audio_processors/juce_audio_processors.h>
+
+#include "../../framework/GuiTypes.h"
 
 #include "../../utils/PluginParams.h"
 #include "../component/ThumbnailComponent.h"
 
 // the Synth Frame provide UI control that modify the apvts values only
+
+namespace juce
+{
+    class Graphics;
+    //class AudioProcessorValueTreeState::SliderAttachment;
+}
+
 namespace particules
 {
-
+    struct UIContext;
     class SynthPanel : public juce::Component
     {
     public:

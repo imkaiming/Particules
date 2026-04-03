@@ -1,5 +1,7 @@
 #include "GranularEngine.h"
-#include "../framework/bridge/ParameterView.h"
+#include "../framework/bridge/EngineState.h"
+#include "../utils/struct/ParameterSnapshot.h"
+#include "../framework/bridge/GrainVisualBuffer.h"
 
 namespace particules
 {

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../../utils/math/Lerp.h"
 #include "../Constants.h"
 #include "../Core.h"
 
@@ -19,12 +18,11 @@ namespace particules
         {
             fn(std::span<float>(table));
         }
-        //void populateTable(std::function<void(std::span<float>)> fn);
 
     private: // make this protected if you want to specialized the LUT
         static constexpr int SIZE = maxLutSize;
         std::array<float, SIZE> table;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LookUpTable)
+        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LookUpTable)
     };
 }

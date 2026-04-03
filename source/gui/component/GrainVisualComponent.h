@@ -1,10 +1,11 @@
 #pragma once
 
+#include <juce_core/juce_core.h> // end macro
+#include <juce_events/juce_events.h> // juce::Timer
+#include <juce_graphics/juce_graphics.h> // juce::Colour
+#include <juce_gui_basics/juce_gui_basics.h> // juce::Component
+
 #include "../../framework/Constants.h"
-//#include "../../framework/bridge/EngineState.h"
-#include "../../framework/bridge/UIState.h"
-#include "../../utils/MyColours.h"
-#include "../../utils/struct/UIContext.h"
 
 /**
 * On a besoin de la valeur de la position du grain dans le buffer pour montrer sa position sur l'axe x.
@@ -15,9 +16,16 @@
 * La classe GrainVisualComponent est appelé avec update à chaque lecture de sample ou à chaque chunk de buffer
 */
 
+namespace juce
+{
+    class Graphics;
+}
+
 namespace particules
 {
 
+    struct UIContext;
+    class UIState;
     class GrainVisualComponent : public juce::Component, private juce::Timer
     {
     public:
@@ -37,9 +45,10 @@ namespace particules
 
         juce::Colour colour;
         UIState& uiState;
-        //ParameterView& parameterView;
         int numSamples;
 
         float invWidthSamples;
+
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainVisualComponent)
     };
 }

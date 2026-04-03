@@ -10,7 +10,7 @@ include (CPM) # Modern concise way to add dependencies to your project
 include(PamplejuceMacOS) # Configures universal binaries and decides which version of macOS to support
 include(JUCEDefaults) # Couple tweaks that IMO should be JUCE defaults
 
-set(CMAKE_UNITY_BUILD ON)
+set(CMAKE_UNITY_BUILD OFF)
 
 # This is the internal name of the project and the name of JUCE's shared code target
 # Note: This cannot have spaces (it may be 2024, but you can't have it all!)
@@ -100,9 +100,35 @@ clap_juce_extensions_plugin(TARGET "${PROJECT_NAME}" CLAP_ID "${BUNDLE_ID}" CLAP
 
 set(PROJECT_GUI_APP_NAME "GuiApp")
 
-juce_add_gui_app(${PROJECT_GUI_APP_NAME} PRODUCT_NAME ${PROJECT_GUI_APP_NAME})
+juce_add_gui_app(${PROJECT_GUI_APP_NAME} PRODUCT_NAME ${PROJECT_GUI_APP_NAME}) # doesnt create any entry point
 
 set_target_properties(${PROJECT_GUI_APP_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gui") 
+
+
+############### BASE LIB ###############
+########################################
+
+# add whats common to Core and Gui lib here
+
+add_library(Base STATIC)
+
+target_include_directories(Base PUBLIC  "${CMAKE_CURRENT_SOURCE_DIR}/source")
+
+target_link_libraries(Base PRIVATE 
+    juce::juce_core
+    #juce::juce_audio_devices
+    juce::juce_audio_formats # audio format manager
+    juce::juce_audio_utils) # audio thumbnail
+
+file(GLOB_RECURSE BaseSources CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/struct/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/bridge/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/bridge/*.h") 
+
+target_sources(Base PUBLIC 
+    ${BaseSources}
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/Constants.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/Core.h")
 
 ############# CORE LIB #############
 ####################################
@@ -116,20 +142,31 @@ target_include_directories(Core PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/source")
 file(GLOB_RECURSE CoreSources CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/source/dsp/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/dsp/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/audio/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/audio/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/*.h")
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/*.h") # ProcessorFacade demande juce::String donc juce core seulement
 
-target_sources(Core PRIVATE ${CoreSources})
+#list(FILTER CoreSources EXCLUDE REGEX 
+#    "/bridge/"
+#    "GuiTypes.h")
+
+#message(STATUS "=== SHARED_SOURCES ===")
+#foreach(file ${CoreSources})
+#    message(STATUS "  ${file}")
+#endforeach()
+
+target_sources(Core PRIVATE 
+    ${CoreSources}  
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/PluginTypes.h")
 
 target_link_libraries(Core PUBLIC
-    juce::juce_core
+    Base                          # dsp depend de juce::Random pour le random
     juce::juce_dsp
     juce::juce_audio_basics
-    juce::juce_audio_formats
-    juce::juce_audio_utils
-    juce::juce_audio_processors)
+    #juce::juce_audio_formats
+    #juce::juce_audio_utils
+    juce::juce_audio_processors) # pas de apvts dans dsp mais dans framework
 
 ########### GUI LIB ############
 ################################
@@ -140,21 +177,24 @@ target_compile_features(Gui PUBLIC cxx_std_20)
 
 target_include_directories(Gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
+# gui depend de audio processor et de juce core pour juce::string
 file(GLOB_RECURSE GuiSources CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/source/gui/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/gui/*.h"
-)
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/gui/*.h")
 
-target_sources(Gui PRIVATE ${GuiSources})
+target_sources(Gui PRIVATE 
+    ${GuiSources}
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/GuiTypes.h")
 
 target_link_libraries(Gui PUBLIC
+    Base
     BinaryDataAssets
     melatonin_inspector
 
-    juce::juce_core
     juce::juce_gui_basics
     juce::juce_graphics
-    juce::juce_events)
+    juce::juce_events
+    juce::juce_audio_processors) # obglié car on a des slider attachment de APVTS
 
 ########### SHAREDCODE ##########
 #################################
@@ -166,9 +206,9 @@ add_library(SharedCode INTERFACE)
 include(SharedCodeDefaults) # Enable fast math, C++20 and a few other target defaults
 
 #file(GLOB_RECURSE SourceFiles CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/source/*.h")
-#target_include_directories(SharedCode PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/source")
 #target_sources(SharedCode PRIVATE ${SourceFiles})
 #target_compile_features(SharedCode PUBLIC cxx_std_20) 
+target_include_directories(SharedCode INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
 # This is where you can set preprocessor definitions for JUCE and your plugin
 target_compile_definitions(SharedCode INTERFACE
@@ -190,20 +230,23 @@ target_link_libraries(SharedCode INTERFACE
     Gui
     
     juce::juce_audio_processors
+    juce::juce_audio_devices
+    juce::juce_audio_utils  
 
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
     juce::juce_recommended_warning_flags)
 
-########## PLUGIN SOURCES ##########
-####################################
-
-target_sources(${PROJECT_NAME} PRIVATE
+target_sources(SharedCode INTERFACE
     "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginEditor.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginEditor.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginProcessor.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginProcessor.h"
-)
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginProcessor.h")
+
+########## PLUGIN SOURCES ##########
+####################################
+
+#target_sources(${PROJECT_NAME} PRIVATE
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
@@ -212,7 +255,8 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     BUILDING_GUI_APP=0)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    SharedCode)
+    SharedCode
+    Gui)
     #BinaryDataAssets
     #melatonin_inspector)
 
@@ -232,15 +276,15 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 # target_include_directories(${PROJECT_GUI_APP_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
 target_sources(${PROJECT_GUI_APP_NAME} PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/GuiAppEditor.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/GuiAppEditor.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/GuiAppProcessor.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/GuiAppProcessor.h")
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/gui_app/GuiMain.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/gui_app/GuiAppEditor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/gui_app/GuiAppEditor.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/gui_app/GuiAppProcessor.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/gui_app/GuiAppProcessor.h") # need EngineState and UIState
 
 target_compile_features(${PROJECT_GUI_APP_NAME} PRIVATE cxx_std_20)
 
 target_link_libraries(${PROJECT_GUI_APP_NAME} PRIVATE
-    # Core
     Gui
     BinaryDataAssets
 
@@ -256,17 +300,11 @@ target_compile_definitions(${PROJECT_GUI_APP_NAME} PRIVATE
 ############# PCH ##############
 ################################
 
-#target_precompile_headers(Core PRIVATE
-#    "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/source/framework/pch/pch_plugin.h>")
-
-#target_precompile_headers(Gui PRIVATE
-#    "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/source/framework/pch/pch_gui.h>")
-
-#target_precompile_headers(${PROJECT_NAME} PRIVATE
+#target_precompile_headers(${PROJECT_NAME} PRIVATE 
 #    "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/source/framework/pch/pch_plugin.h>")
 
 #target_precompile_headers(${PROJECT_GUI_APP_NAME} PRIVATE
-#       "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/source/framework/pch/pch_gui.h>")
+#    "$<$<COMPILE_LANGUAGE:CXX>:${CMAKE_CURRENT_SOURCE_DIR}/source/framework/pch/pch_gui.h>")
 
 ############ OPTIONAL  ############
 ###################################

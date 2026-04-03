@@ -1,7 +1,13 @@
 #include "VoiceManager.h"
+#include "../framework/bridge/GrainVisualBuffer.h"
 #include "../utils/math/Lerp.h"
 #include "../utils/struct/ParameterSnapshot.h"
 #include "../utils/struct/SmoothedParameters.h"
+#include "GrainEnvelope.h"
+#include "GrainPool.h"
+#include "PositionModulator.h"
+
+#include <juce_core/juce_core.h>
 
 namespace particules
 {

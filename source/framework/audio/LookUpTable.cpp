@@ -1,5 +1,7 @@
 #include "LookUpTable.h"
 
+#include "../../utils/math/Lerp.h"
+
 namespace particules
 {
     LookUpTable::LookUpTable() : table{} {}

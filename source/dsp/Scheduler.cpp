@@ -1,4 +1,5 @@
 #include "Scheduler.h"
+#include "../utils/struct/ParameterSnapshot.h"
 
 namespace particules
 {

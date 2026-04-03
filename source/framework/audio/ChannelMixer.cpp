@@ -1,11 +1,6 @@
 #include "ChannelMixer.h"
 
-//AudioBuffer ChannelMixer::downmix(const AudioBuffer& input, const int outputNumChannels) { return AudioBuffer(); }
-//void ChannelMixer::computeMixMatrix(int inputChannels, int outputChannels, float* matrix, int maxChannels) noexcept {}
-//void ChannelMixer::applyMix(
-//    const AudioBuffer& input, AudioBuffer& output, const float* matrix, int inputChannels, int outputChannels) noexcept
-//{
-//}
+#include <juce_audio_basics/juce_audio_basics.h>
 
 namespace particules
 {
@@ -20,7 +15,7 @@ namespace particules
         if(inputChannels == targetChannels)
             return inputBuffer;
 
-        juce::AudioBuffer<float> result(targetChannels, numSamples);
+        AudioBuffer result(targetChannels, numSamples);
 
         // Mono to Stereo
         if(inputChannels == 1 && targetChannels == 2)

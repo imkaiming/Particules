@@ -1,14 +1,14 @@
 #include "GuiAppProcessor.h"
 #include "GuiAppEditor.h"
 
-#include "utils/PluginParams.h"
-#include "utils/struct/ProcessorFacade.h"
+#include "../utils/PluginParams.h"
+#include "../utils/struct/ProcessorFacade.h"
 
 namespace particules
 {
     GuiAppProcessor::GuiAppProcessor()
         : apvts(*this, nullptr, "Parameters", createParameterLayout()), paramsView{engineState}, engineState{}, uiState{},
-          uic{apvts, paramsView, engineState, uiState}, loader{}
+          uic{apvts, paramsView, engineState, uiState}//, loader{}
     {
         uic.facade.loadFile = [&] { DBG("facade load file"); };
     }
@@ -39,6 +39,7 @@ namespace particules
     void GuiAppProcessor::getStateInformation(juce::MemoryBlock& destData) {}
     void GuiAppProcessor::setStateInformation(const void* data, int sizeInBytes) {}
 
+
     //void GuiAppProcessor::initOnAudioLoadedCallback() {
     //    onAudioLoadedCallback =
     //        [&]() {
@@ -59,7 +60,8 @@ namespace particules
 
     //void GuiAppProcessor::loadFile() { loader.loadFile(onAudioLoadedCallback); }
 
-    ValueTreeState::ParameterLayout createParameterLayout()
+    //ValueTreeState::ParameterLayout createParameterLayout() { return ValueTreeState::ParameterLayout(); }
+    ValueTreeState::ParameterLayout GuiAppProcessor::createParameterLayout()
     {
         juce::AudioProcessorValueTreeState::ParameterLayout layout;
 

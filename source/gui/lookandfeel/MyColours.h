@@ -1,6 +1,6 @@
-
 #pragma once
-#include "../framework/Core.h"
+
+#include <juce_graphics/juce_graphics.h>
 
 namespace particules
 {

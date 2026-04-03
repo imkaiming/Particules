@@ -1,9 +1,19 @@
 #pragma once
 
-#include "ChannelMixer.h"
-#include "../Constants.h"
 #include "../Core.h"
-//#include "../Types.h"
+#include "../PluginTypes.h"
+
+#include <juce_audio_basics/juce_audio_basics.h> // audio loaded callback
+#include <juce_audio_formats/juce_audio_formats.h> // audio format manager
+#include <juce_core/juce_core.h> // file
+
+#include "../Constants.h"
+#include "ChannelMixer.h"
+
+namespace juce
+{
+    class FileChooser; // gui basics
+}
 
 namespace particules
 {
@@ -15,7 +25,7 @@ namespace particules
 
         void loadFile(AudioLoadedCallback);
 
-        void loadFile(const juce::String&, AudioLoadedCallback);
+        void loadFile(const str&, AudioLoadedCallback);
 
         void processLoadingFile(juce::File&, AudioLoadedCallback);
 

@@ -18,11 +18,13 @@
 
 #include "../framework/Constants.h"
 #include "../framework/Core.h"
-#include "../utils/struct/ParameterSnapshot.h"
+
+#include <juce_core/juce_core.h>
 
 // Scheduler compute onsets
 namespace particules
 {
+    struct ParameterSnapshot;
     class Scheduler
     {
     public:
@@ -51,6 +53,6 @@ namespace particules
 
         juce::Random random; // parameters to set the interOnset
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Scheduler)
+        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Scheduler)
     };
 }

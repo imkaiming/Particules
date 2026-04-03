@@ -1,7 +1,17 @@
 #pragma once
 
-#include "../../framework/Types.h"
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_core/juce_core.h>
+#include <juce_gui_basics/juce_gui_basics.h>
+
+#include "../../framework/GuiTypes.h"
 #include "../../utils/PluginParams.h"
+
+
+namespace juce
+{
+    class Graphics;
+}
 
 namespace particules
 {
@@ -35,17 +45,17 @@ namespace particules
         juce::Label traversalModeLabel;
         juce::Label traversalFreqLabel;
 
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> emissionSliderAttachment;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> durationSliderAttachment;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> speedSliderAttachment;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainRatioSliderAttachment;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> traversalFreqSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> emissionSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> durationSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> speedSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> sustainRatioSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> traversalFreqSliderAttachment;
 
         juce::ComboBox envelopeModeList;
         juce::ComboBox traversalModeList;
 
-        std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> envelopeModeAttachment;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> traversalModeAttachment;
+        std::unique_ptr<ValueTreeState::ComboBoxAttachment> envelopeModeAttachment;
+        std::unique_ptr<ValueTreeState::ComboBoxAttachment> traversalModeAttachment;
 
         static constexpr const char* grainsEmissionId = grains::emission::id;
         static constexpr const char* grainsEmissionName = grains::emission::name;

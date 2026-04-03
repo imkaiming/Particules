@@ -1,6 +1,8 @@
 #pragma once
 #include "../../utils/struct/EngineSnapshot.h"
 #include "../Core.h"
+//#include <juce_core/juce_core.h>
+
 // own runtime flags
 // audio processor can write
 // plugin editor reads
@@ -36,6 +38,6 @@ namespace particules
         std::atomic<int> numSamples;
         std::atomic<int> numActiveGrains;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EngineState)
+        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EngineState)
     };
 }

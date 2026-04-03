@@ -14,6 +14,8 @@
 #include "PositionModulator.h"
 #include "../utils/math/MathConstants.h"
 
+#include <juce_core/juce_core.h>
+
 namespace particules
 {
     PositionModulator::PositionModulator()

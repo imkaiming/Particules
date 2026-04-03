@@ -1,5 +1,10 @@
 #include "ControlPanel.h"
 
+#include <juce_graphics/juce_graphics.h>
+
+#include "../lookandfeel/MyColours.h"
+#include "../../utils/struct/UIContext.h"
+
 namespace particules
 {
 

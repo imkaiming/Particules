@@ -1,16 +1,20 @@
-
 #pragma once
 
-#include "../../framework/Core.h"
-#include "../../framework/Types.h"
+#include <juce_gui_basics/juce_gui_basics.h>
+#include <juce_core/juce_core.h>
+
+#include "../../framework/GuiTypes.h"
 #include "../lookandfeel/LabelBoxLookAndFeel.h"
+
+namespace juce
+{
+    class Graphics;
+    //class AudioProcessorValueTreeState::SliderAttachment;
+}
 
 namespace particules
 {
-    class ParameterView;
-    class ParticulesAudioProcessor;
     struct UIContext;
-    class LabelBoxLookAndFeel;
     class TitlePanel : public juce::Component
     {
     public:

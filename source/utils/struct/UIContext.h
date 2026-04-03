@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../../framework/Core.h"
-#include "../../framework/Types.h"
+#include "../../framework/GuiTypes.h"
 #include "ProcessorFacade.h"
 
 namespace particules

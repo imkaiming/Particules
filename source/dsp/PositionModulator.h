@@ -52,6 +52,6 @@ namespace particules
         float mPhaseIncrement; // time step per samples
         float mPhaseAccumulator; // position of a bufferSize block samples
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PositionModulator)
+        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PositionModulator)
     };
 }

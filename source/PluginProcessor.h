@@ -1,11 +1,19 @@
 #pragma once
+#include <juce_audio_processors/juce_audio_processors.h>
 
 #include "dsp/GranularEngine.h"
+#include "framework/PluginTypes.h"
 #include "framework/audio/AudioFileLoader.h"
 #include "framework/bridge/GrainVisualBuffer.h"
 #include "framework/bridge/ParameterView.h"
+#include "framework/bridge/EngineState.h"
 #include "framework/bridge/UIState.h"
 #include "utils/struct/UIContext.h"
+
+namespace juce
+{
+    class File;
+}
 
 namespace particules
 {
@@ -46,7 +54,6 @@ namespace particules
         void getStateInformation(juce::MemoryBlock& destData) override;
         void setStateInformation(const void* data, int sizeInBytes) override;
 
-
         // User classes //
 
         ValueTreeState& getValueTreeState() noexcept { return apvts; };
@@ -57,9 +64,7 @@ namespace particules
         const int getNumActiveGrains() const noexcept { return granularEngine.getNumActiveGrains(); };
         const bool isInputBufferLoaded() const noexcept { return granularEngine.isInputBufferLoaded(); };
 
-
     private:
-
         void setInputBuffer(AudioBuffer&) noexcept;
 
         static ValueTreeState::ParameterLayout createParameterLayout();

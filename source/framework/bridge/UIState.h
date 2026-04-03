@@ -1,11 +1,16 @@
 #pragma once
 
-//#include "../../utils/struct/VisualSnapshot.h"
+#include <juce_audio_utils/juce_audio_utils.h> // audio thumbnail
+#include <juce_audio_formats/juce_audio_formats.h> // format manager
+#include <juce_events/juce_events.h> // change broadcaster
+#include <juce_core/juce_core.h> // file
+
 #include "../Core.h"
-#include "../bridge/GrainVisualBuffer.h"
 
 namespace particules
 {
+    struct VisualSnapshot;
+    class GrainVisualBuffer;
     class UIState : public juce::ChangeBroadcaster
     {
     public:
@@ -13,7 +18,7 @@ namespace particules
         ~UIState() = default;
 
         void setSource(const juce::File& f) noexcept;
-        void init(const GrainVisualBuffer* vb) { visualBuffer = vb; }
+        void init(const GrainVisualBuffer* vb) noexcept;
 
         const VisualSnapshot& getSnapshot() const noexcept;
 

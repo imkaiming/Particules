@@ -1,16 +1,15 @@
-
 #pragma once
+
+#include <juce_core/juce_core.h>
+#include <juce_gui_basics/juce_gui_basics.h>
 
 #include "../../framework/Core.h"
 #include "../../framework/bridge/EngineState.h"
-#include "../../utils/struct/UIContext.h"
-
 
 namespace particules
 {
-
-    //struct UIContext;
-    class ParticulesAudioProcessor;
+    class EngineState;
+    struct UIContext;
     class StatusBarPanel : public juce::Component, public juce::Timer
     {
     public:
