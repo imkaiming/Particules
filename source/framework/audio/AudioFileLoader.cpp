@@ -59,8 +59,8 @@ namespace particules
         const double fileDuration = static_cast<double>(reader->lengthInSamples) / reader->sampleRate;
         if(fileDuration >= MAX_DURATION)
         {
-            showErrorWindow("The file duration must not exceed " + (juce::String)MAX_DURATION + " seconds."
-                            + "/nYour file is currently " + juce::String(fileDuration, 2) + " seconds.");
+            showErrorWindow("The file duration must not exceed " + (str)MAX_DURATION + " seconds." + "/nYour file is currently "
+                            + str(fileDuration, 2) + " seconds.");
             return false;
         }
 
@@ -77,13 +77,13 @@ namespace particules
 
         if(file.getSize() > MAX_FILE_SIZE)
         {
-            showErrorWindow("File too large to process (" + juce::String(file.getSize() / 2 * (1024 * 1024)) + " MB estimated)");
+            showErrorWindow("File too large to process (" + str(file.getSize() / 2 * (1024 * 1024)) + " MB estimated)");
             return false;
         }
 
         double ratio = reader->sampleRate / targetSampleRate;
 
-        juce::AudioBuffer<float> tempBuffer(inputNumChannels, numSamples);
+        AudioBuffer tempBuffer(inputNumChannels, numSamples);
         if(!reader->read(&tempBuffer, 0, numSamples, 0, true, true))
         {
             showErrorWindow("Failed to read audio data from the temporary buffer");
@@ -92,7 +92,7 @@ namespace particules
 
         const int resampledSamples = static_cast<int>(numSamples / ratio);
 
-        juce::AudioBuffer<float> resampledBuffer(inputNumChannels, resampledSamples);
+        AudioBuffer resampledBuffer(inputNumChannels, resampledSamples);
 
         juce::LagrangeInterpolator resampler;
 
@@ -129,7 +129,7 @@ namespace particules
 
     juce::AudioFormatManager& AudioFileLoader::getFormatManager() { return formatManager; }
 
-    void AudioFileLoader::showErrorWindow(const juce::String& message)
+    void AudioFileLoader::showErrorWindow(const str& message)
     {
         juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::AlertIconType::WarningIcon, "Error", message, "OK");
     }

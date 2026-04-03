@@ -25,7 +25,7 @@
 #include "GrainPool.h"
 #include "PositionModulator.h"
 #include "Scheduler.h"
-#include "VoiceManager.h"
+#include "GrainProcessor.h"
 
 namespace particules
 {
@@ -65,7 +65,7 @@ namespace particules
         PositionModulator posMod;
         Scheduler scheduler;
         GrainPool pool;
-        VoiceManager voiceManager;
+        GrainProcessor grainProcessor;
 
         juce::dsp::Gain<float> gainProcessor;
 

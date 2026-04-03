@@ -6,10 +6,10 @@
 namespace particules
 {
     GranularEngine::GranularEngine(GrainVisualBuffer& vb, EngineState& es)
-        : scheduler{}, voiceManager{pool, posMod, envLut, vb}, pool{}, posMod{}, refreshRate{60.f}, sampleAccumulator{0},
+        : scheduler{}, grainProcessor{pool, posMod, envLut, vb}, pool{}, posMod{}, refreshRate{60.f}, sampleAccumulator{0},
           threshold{0}, smoothedParams{}, engineState{es}
     {
-        spawnCallback = [this](const ParameterSnapshot& ps) { voiceManager.spawn(ps); };
+        spawnCallback = [this](const ParameterSnapshot& ps) { grainProcessor.spawn(ps); };
     }
 
     // pour 1024 buffer size en 48kHz on a une fenetre de 21ms par appelle de compute.
@@ -46,7 +46,7 @@ namespace particules
         {
             updateSmoothedParameters();
             scheduler.tick(spawnCallback, ps);
-            voiceManager.render(currentSample, outputNumChannels, outputPtrs, inputPtrs, smoothedParams);
+            grainProcessor.render(currentSample, outputNumChannels, outputPtrs, inputPtrs, smoothedParams);
 
             const float env = adsr.getNextSample();
             for(int ch = 0; ch < outputNumChannels; ++ch)
@@ -64,7 +64,7 @@ namespace particules
         while(sampleAccumulator >= threshold) 
         {
             sampleAccumulator -= threshold;
-            voiceManager.writeVisualSnapshot();
+            grainProcessor.writeVisualSnapshot();
             engineState.setNumActiveGrains(pool.getNumActiveGrains());
         }
     }
