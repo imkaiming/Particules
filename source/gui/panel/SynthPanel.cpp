@@ -128,6 +128,5 @@ namespace particules
         meter.setBounds(area.removeFromRight(40).reduced(2));
     }
 
-    // Appelle ça dans un timer ou depuis processBlock via un atomic
-    void SynthPanel::updateMeter(float levelDB) { meter.pushLevel(levelDB); }
+    void SynthPanel::updateMeter(float levelDB) { /* meter.pushLevel(levelDB); */}
 }

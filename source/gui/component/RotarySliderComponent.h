@@ -1,7 +1,7 @@
 #pragma once
 
 #include <juce_core/juce_core.h>
-#include <juce_graphics/juce_graphics.h>
+//#include <juce_graphics/juce_graphics.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
 #include "../lookandfeelv2/Colours.h"
@@ -37,6 +37,17 @@ namespace particules
             setColour(juce::Slider::rotarySliderOutlineColourId, colours::perleBlanc);
 
             getProperties().set("knobStyle", "secondary");
+        }
+    };
+
+    class TertiaryRotarySlider : public juce::Slider
+    {
+    public:
+        TertiaryRotarySlider()
+        {
+            setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+            setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+            getProperties().set("knobStyle", "tertiary");
         }
     };
 }

@@ -16,5 +16,6 @@ namespace particules
         inline const color sliderTrack{0xff2e2f33};
         inline const color accentBlueLt{0xff8583ff};
         inline const color smokyBlack{0xff100c08};
+        inline const color blackest{0xff1a1a1a};
     }
 }

@@ -54,7 +54,7 @@ namespace particules
         return static_cast<TraversalMode>(choice);
     }
 
-    ParameterSnapshot ParameterView::getSnapshot() const noexcept
+    const ParameterSnapshot ParameterView::getSnapshot() const noexcept
     {
         ParameterSnapshot ps;
         EngineSnapshot es = engineState.getSnapshot();

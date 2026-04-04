@@ -24,6 +24,7 @@
 #include <array>
 #include <functional> 
 #include <random>
+#include <vector>
 #include <span>
 #include <cassert> // assert
 #include <atomic>

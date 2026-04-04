@@ -21,7 +21,7 @@ namespace particules
 
         void init(ValueTreeState& apvts);
 
-        ParameterSnapshot getSnapshot() const noexcept;
+        const ParameterSnapshot getSnapshot() const noexcept;
 
     private:
         float getDecibelGain() const noexcept { return output ? output->load(std::memory_order_relaxed) : 0.0f; }

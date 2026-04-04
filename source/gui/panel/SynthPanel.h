@@ -8,7 +8,7 @@
 
 #include "../../utils/PluginParams.h"
 #include "../component/ThumbnailComponent.h"
-#include "../component/VerticalMeter.h"
+#include "../component/VerticalMeterComponent.h"
 
 // the Synth Frame provide UI control that modify the apvts values only
 
@@ -33,7 +33,7 @@ namespace particules
         void updateMeter(float);
 
     private:
-        VerticalMeter meter;
+        VerticalMeterComponent meter;
 
         juce::Slider outputSlider;
         juce::Label outputLabel;

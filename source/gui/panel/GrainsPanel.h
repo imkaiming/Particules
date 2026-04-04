@@ -6,7 +6,7 @@
 
 #include "../../framework/GuiTypes.h"
 #include "../../utils/PluginParams.h"
-#include "../Component/RotarySlider.h"
+#include "../Component/RotarySliderComponent.h"
 
 
 namespace juce
