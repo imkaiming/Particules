@@ -183,7 +183,7 @@ namespace particules
         // 3. FACE DU KNOB
         juce::Colour faceCol(0xFF444444);
         juce::ColourGradient faceGrad(
-            faceCol.brighter(0.1f), cx, cy - innerR * 0.5f, faceCol.darker(0.2f), cx, cy + innerR * 0.5f, false);
+            faceCol.darker(0.2f), cx, cy - innerR * 0.5f, faceCol.brighter(0.03f), cx, cy + innerR * 0.5f, false);
         g.setGradientFill(faceGrad);
         g.fillEllipse(cx - innerR, cy - innerR, innerR * 2, innerR * 2);
 
@@ -196,22 +196,31 @@ namespace particules
         const float sy = cy + std::sin(shadowAngle) * innerR;
 
         juce::ColourGradient falloff(
-            juce::Colours::transparentBlack, lx, ly, juce::Colours::black.withAlpha(0.3f), sx, sy, false);
+            juce::Colours::black.withAlpha(0.2f), lx, ly, juce::Colours::transparentBlack, sx, sy, false);
         g.setGradientFill(falloff);
         g.fillEllipse(cx - innerR, cy - innerR, innerR * 2, innerR * 2);
 
-        // 5. HIGHLIGHT
-        juce::ColourGradient highlight(juce::Colours::white.withAlpha(0.2f), cx + std::cos(lightAngle) * innerR * 0.6f,
-            cy + std::sin(lightAngle) * innerR * 0.6f, juce::Colours::transparentWhite, cx, cy, true);
-        g.setGradientFill(highlight);
-        g.fillEllipse(cx - innerR, cy - innerR, innerR * 2, innerR * 2);
+        //// 5. HIGHLIGHT
+        //juce::ColourGradient highlight(juce::Colours::black.withAlpha(0.1f) ,
+        //    cx + std::cos(lightAngle) * innerR * 0.6f,
+        //    cy + std::sin(lightAngle) * innerR * 0.6f, juce::Colours::transparentBlack, cx, cy, true);
+        //g.setGradientFill(highlight);
+        //g.fillEllipse(cx - innerR, cy - innerR, innerR * 2, innerR * 2);
 
         // 6. INDICATEUR
-        const float lineLen = innerR * 0.6f;
-        const float px = cx + std::sin(angle) * lineLen;
-        const float py = cy - std::cos(angle) * lineLen;
+        const float startR = innerR * 0.33f; // 85% of radius
+        const float endR = innerR * 0.90f; // almost at the edge
+
+        // compute start point
+        const float startx = cx + std::sin(angle) * startR;
+        const float startY = cy - std::cos(angle) * startR;
+
+        // compute end point
+        const float ex = cx + std::sin(angle) * endR;
+        const float ey = cy - std::cos(angle) * endR;
+
         g.setColour(juce::Colours::white.withAlpha(0.9f));
-        g.drawLine(cx, cy, px, py, 2.5f);
+        g.drawLine(startx, startY, ex, ey, 2.f);
     }
 
 }

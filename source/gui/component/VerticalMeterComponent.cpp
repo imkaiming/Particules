@@ -41,15 +41,21 @@ namespace particules
     {
         auto bounds = getLocalBounds().reduced(4);
 
+        // Foot pour le knob
         auto footArea = bounds.removeFromBottom(55);
-        auto meterArea = bounds; 
+        auto meterArea = bounds;
 
         output.setBounds(footArea.withSizeKeepingCentre(42, 42));
 
         channelAreas.clear();
-        int chWidth = meterArea.getWidth() / channels;
+
+        const int channelWidth = 10;
+        const int totalMeterWidth = channels * channelWidth;
+
+        auto meterBounds = meterArea.withSizeKeepingCentre(totalMeterWidth, meterArea.getHeight());
+
         for(int i = 0; i < channels; ++i)
-            channelAreas.add(meterArea.removeFromLeft(chWidth));
+            channelAreas.add(meterBounds.removeFromLeft(channelWidth));
     }
 
     void VerticalMeterComponent::paint(juce::Graphics& g)
