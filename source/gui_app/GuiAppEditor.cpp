@@ -6,7 +6,7 @@
 
 namespace particules
 {
-    GuiAppEditor::GuiAppEditor(GuiAppProcessor& p) : AudioProcessorEditor(&p), mainPanel(p.getUIContext()), globalLookAndFeel()
+    GuiAppEditor::GuiAppEditor(GuiAppProcessor& p) : AudioProcessorEditor(&p), mainPanel(p.getUIContext()), lnf()
     {
         setLookAndFeel(&lnf);
 

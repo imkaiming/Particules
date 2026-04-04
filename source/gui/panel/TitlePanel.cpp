@@ -6,7 +6,7 @@
 #include "../../PluginProcessor.h"
 #include "../../utils/PluginParams.h"
 #include "../../utils/struct/UIContext.h"
-#include "../lookandfeel/MyColours.h"
+#include "../lookandfeelv2/Colours.h"
 #include "BinaryData.h"
 
 namespace particules
@@ -102,6 +102,7 @@ namespace particules
 
     void TitlePanel::paint(juce::Graphics& g)
     {
+        /*
         const juce::Rectangle<float> inner = getLocalBounds().reduced(2).toFloat();
         g.setColour(colours::panel::audioFilePanel);
         g.fillRoundedRectangle(inner, 12.0f);
@@ -110,6 +111,8 @@ namespace particules
 
         g.setColour(colours::panel::contourPanel);
         g.drawRoundedRectangle(inner, 12.0f, lineThickness);
+        */
+        g.fillAll(colours::perleBlanc);
     }
 
     void TitlePanel::resized()

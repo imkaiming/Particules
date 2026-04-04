@@ -6,6 +6,8 @@
 #include "../../framework/Core.h"
 #include "../../utils/struct/UIContext.h"
 
+#include "../Component/VignetteOverlayComponent.h"
+
 #include "AudioFilePanel.h"
 #include "ControlPanel.h"
 #include "StatusBarPanel.h"
@@ -36,6 +38,8 @@ namespace particules
         AudioFilePanel audioFilePanel;
         ControlPanel controlPanel;
         StatusBarPanel statusBarPanel;
+
+        VignetteOverlayComponent vignette;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainPanel)
     };

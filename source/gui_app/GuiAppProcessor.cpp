@@ -2,15 +2,15 @@
 #include "GuiAppEditor.h"
 
 #include "../utils/PluginParams.h"
-#include "../utils/struct/ProcessorFacade.h"
 
 namespace particules
 {
     GuiAppProcessor::GuiAppProcessor()
         : apvts(*this, nullptr, "Parameters", createParameterLayout()), paramsView{engineState}, engineState{}, uiState{},
-          uic{apvts, paramsView, engineState, uiState}//, loader{}
+          uic{apvts, paramsView, engineState, uiState, facade} //, loader{}
     {
-        uic.facade.loadFile = [&] { DBG("facade load file"); };
+        uic.facade.loadFile = [this] { DBG("facade load file"); };
+        uic.facade.loadFilePath = [this](const str& path) { DBG("facade load file path = " + path); };
     }
 
     void GuiAppProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
@@ -38,7 +38,6 @@ namespace particules
     void GuiAppProcessor::changeProgramName(int index, const str& newName) {}
     void GuiAppProcessor::getStateInformation(juce::MemoryBlock& destData) {}
     void GuiAppProcessor::setStateInformation(const void* data, int sizeInBytes) {}
-
 
     //void GuiAppProcessor::initOnAudioLoadedCallback() {
     //    onAudioLoadedCallback =

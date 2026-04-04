@@ -1,6 +1,6 @@
 #include "StatusBarPanel.h"
-#include "../lookandfeel/MyColours.h"
 #include "../../utils/struct/UIContext.h"
+#include "../lookandfeelv2/Colours.h"
 
 namespace particules
 {
@@ -18,6 +18,7 @@ namespace particules
 
     void StatusBarPanel::paint(juce::Graphics& g)
     {
+        /*
         const juce::Rectangle<float> inner = getLocalBounds().reduced(2).toFloat();
         g.setColour(colours::panel::audioFilePanel);
         g.fillRoundedRectangle(inner, 12.0f);
@@ -26,6 +27,10 @@ namespace particules
 
         g.setColour(colours::panel::contourPanel);
         g.drawRoundedRectangle(inner, 12.0f, lineThickness);
+        
+        */
+
+        g.fillAll(colours::grisAnthracite);
     }
 
     void StatusBarPanel::resized()

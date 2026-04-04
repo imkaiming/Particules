@@ -2,8 +2,8 @@
 
 #include <juce_graphics/juce_graphics.h>
 
-#include "../lookandfeel/MyColours.h"
 #include "../../utils/struct/UIContext.h"
+#include "../lookandfeelv2/Colours.h"
 
 namespace particules
 {
@@ -15,8 +15,7 @@ namespace particules
         addAndMakeVisible(&synthPanel);
     }
 
-    void ControlPanel::paint(juce::Graphics& g)
-    {
+    void ControlPanel::paint(juce::Graphics& g) { /*
         const juce::Rectangle<float> inner = getLocalBounds().reduced(2).toFloat();
         //g.setColour(colours::accent::lightgreyAccent);
         g.setColour(colours::panel::controlPanel);
@@ -26,7 +25,9 @@ namespace particules
 
         g.setColour(colours::panel::contourPanel);
         g.drawRoundedRectangle(inner, 12.0f, lineThickness);
-    }
+      */
+
+        g.fillAll(colours::grisAnthracite); }
 
     void ControlPanel::resized()
     {

@@ -20,13 +20,14 @@ namespace particules
     #endif
                   ),
           apvts(*this, nullptr, "Parameters", createParameterLayout()), paramsView{engineState},
-          granularEngine{visualBuffer, engineState}, engineState{}, uiState{}, uic{apvts, paramsView, engineState, uiState},
+          granularEngine{visualBuffer, engineState}, engineState{}, uiState{},
+          uic{apvts, paramsView, engineState, uiState, facade},
           loader{}, debugPresetLoaded{false}
 #endif
     {
         initOnAudioLoadedCallback();
-        uic.facade.loadFile = [&] { loadFile(); };
-        uic.facade.loadFilePath = [&](const str& path) { loadFile(path); };
+        facade.loadFile = [this] { loadFile(); };
+        facade.loadFilePath = [this](const str& path) { loadFile(path); };
     }
 
     ParticulesAudioProcessor::~ParticulesAudioProcessor() {}

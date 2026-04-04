@@ -5,6 +5,7 @@
 
 #include "../../framework/bridge/UIState.h"
 #include "../lookandfeel/MyColours.h"
+#include "../lookandfeelv2/Colours.h"
 #include "../../utils/struct/UIContext.h"
 #include "../../framework/bridge/EngineState.h"
 

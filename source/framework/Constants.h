@@ -21,13 +21,13 @@ namespace particules
     {
         inline constexpr const float grainVisualSize = 8.f;
 
-        inline constexpr const int windowWidthInit = 750; 
-        inline constexpr const int windowWidthMin = 600; 
-        inline constexpr const int windowWidthMax = 900; 
+        inline constexpr const int windowWidthInit = 900; // 750
+        inline constexpr const int windowWidthMin = 900;
+        inline constexpr const int windowWidthMax = 1200; //  900
 
-        inline constexpr const int windowHeightInit = 500; 
-        inline constexpr const int windowHeightMin = 400; 
-        inline constexpr const int windowHeightMax = 600; 
+        inline constexpr const int windowHeightInit = 600; 
+        inline constexpr const int windowHeightMin = 600;
+        inline constexpr const int windowHeightMax = 800; 
     }
 }
 

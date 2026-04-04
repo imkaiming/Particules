@@ -8,8 +8,8 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_core/juce_core.h>
 
-#include "../gui/lookandfeel/GlobalLookAndFeel.h"
-#include "../gui/lookandfeel/LightRotarySliderLNF.h"
+#include "../gui/lookandfeelv2/MainLNF.h"
+//#include "../gui/lookandfeel/LightRotarySliderLNF.h"
 #include "../gui/panel/MainPanel.h"
 
 namespace juce
@@ -29,7 +29,7 @@ namespace particules
         void paint(juce::Graphics&) override;
         void resized() override;
 
-        GlobalLookAndFeel& getCustomLook() { return globalLookAndFeel; };
+        //GlobalLookAndFeel& getCustomLook() { return globalLookAndFeel; };
         const MainPanel& getMainPanel() const noexcept { return mainPanel; };
 
     private:
@@ -42,8 +42,8 @@ namespace particules
         static constexpr const int windowWidthMax = UI::windowWidthMax;
 
         MainPanel mainPanel;
-        GlobalLookAndFeel globalLookAndFeel;
-        LightRotarySliderLNF lnf;
+        MainLNF lnf;
+        //LightRotarySliderLNF lnf;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GuiAppEditor)
     };

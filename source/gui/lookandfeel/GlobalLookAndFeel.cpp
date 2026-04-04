@@ -11,8 +11,6 @@ namespace particules
     {
         metalKnobImage = juce::ImageFileFormat::loadFrom(BinaryData::metal_knob_02_png, BinaryData::metal_knob_02_pngSize);
         metalKnobImage = metalKnobImage.convertedToFormat(juce::Image::ARGB);
-
-        futuraTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::FuturaMedium_cpp, BinaryData::FuturaMedium_cppSize);
     }
 
     void GlobalLookAndFeel::drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
@@ -109,7 +107,7 @@ namespace particules
             g.fillEllipse(cx - radius, cy - radius, radius * 2.0f, radius * 2.0f);
         }
 
-        // 6. DIFFUSE HIGHLIGHT (11h) : OK
+        // 6. DIFFUSE HIGHLIGHT : OK
         {
             const float hx = cx + std::cos(lightAngle) * radius * 0.85f;
             const float hy = cy + std::sin(lightAngle) * radius * 0.85f;

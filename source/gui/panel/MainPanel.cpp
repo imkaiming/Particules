@@ -5,23 +5,27 @@
 
 namespace particules
 {
-    MainPanel::MainPanel(UIContext& uic) : titlePanel{uic}, controlPanel{uic}, audioFilePanel{uic}, statusBarPanel{uic}
+    MainPanel::MainPanel(UIContext& uic)
+        : titlePanel{uic}, controlPanel{uic}, audioFilePanel{uic}, statusBarPanel{uic}, vignette{}
     {
         addAndMakeVisible(&titlePanel);
         addAndMakeVisible(&audioFilePanel);
         addAndMakeVisible(&controlPanel);
         addAndMakeVisible(&statusBarPanel);
+
+        addAndMakeVisible(&vignette); 
+        vignette.setInterceptsMouseClicks(false, false);
     }
 
-    void MainPanel::paint(juce::Graphics& g) { g.fillAll(colours::panel::outerPanel); }
+    void MainPanel::paint(juce::Graphics& g) { /* g.fillAll(colours::panel::outerPanel); */}
 
     void MainPanel::resized()
     {
         float ratio = 0.012f;
         const int padding = juce::roundToInt(std::min(getWidth(), getHeight()) * ratio);
-        juce::Rectangle<int> area = getLocalBounds().reduced(padding);
+        juce::Rectangle<int> area = getLocalBounds(); //.reduced(padding);
 
-        float verticalGap = (float)juce::roundToInt(getHeight() * 0.01f);
+        float verticalGap = (float)juce::roundToInt(getHeight() * 0.00f);
 
         juce::FlexBox fb;
         fb.flexDirection = juce::FlexBox::Direction::column;
@@ -33,6 +37,9 @@ namespace particules
         fb.items.add(juce::FlexItem(statusBarPanel).withFlex(0.0f).withMinHeight(24).withMargin(0));
 
         fb.performLayout(area);
+        vignette.setBounds(getLocalBounds());
+
+
     }
 
 }

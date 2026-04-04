@@ -9,6 +9,8 @@
 #include "framework/bridge/EngineState.h"
 #include "framework/bridge/UIState.h"
 #include "utils/struct/UIContext.h"
+#include "utils/struct/ProcessorFacade.h"
+
 
 namespace juce
 {
@@ -82,6 +84,7 @@ namespace particules
         UIState uiState; // own UI value
         GranularEngine granularEngine;
 
+        ProcessorFacade facade;
         UIContext uic;
 
         AudioFileLoader loader;

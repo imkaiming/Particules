@@ -6,6 +6,8 @@
 #include "../../framework/Core.h"
 #include "../../framework/bridge/EngineState.h"
 
+// TODO RENAME FOOT PANEL
+
 namespace particules
 {
     class EngineState;

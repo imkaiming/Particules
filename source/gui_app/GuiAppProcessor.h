@@ -10,6 +10,7 @@
 #include "../framework/bridge/GrainVisualBuffer.h"
 #include "../framework/bridge/ParameterView.h"
 #include "../framework/bridge/UIState.h"
+#include "../utils/struct/ProcessorFacade.h"
 #include "../utils/struct/UIContext.h"
 
 // just to test GUI separated than the audio DSP
@@ -54,6 +55,8 @@ namespace particules
         EngineState engineState;
         ParameterView paramsView;
         UIState uiState;
+
+        ProcessorFacade facade;
         UIContext uic;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GuiAppProcessor)

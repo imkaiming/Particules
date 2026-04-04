@@ -9,5 +9,5 @@ namespace particules
         ~VoiceManager() = default;
 
     private:
-    }
+    };
 }

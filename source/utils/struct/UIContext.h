@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../framework/GuiTypes.h"
-#include "ProcessorFacade.h"
 
 namespace particules
 {
@@ -9,12 +8,13 @@ namespace particules
     class ParameterView;
     class EngineState;
     class UIState;
+    class ProcessorFacade; 
     struct UIContext
     {
         ValueTreeState& apvts;
         ParameterView& paramsView;
         EngineState& engineState;
         UIState& uiState;
-        ProcessorFacade facade;
+        ProcessorFacade& facade;
     };
 }
