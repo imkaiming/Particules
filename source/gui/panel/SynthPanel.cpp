@@ -2,17 +2,19 @@
 
 #include <juce_graphics/juce_graphics.h>
 
-#include "../lookandfeel/MyColours.h"
 #include "../../utils/struct/UIContext.h"
+#include "../lookandfeel/MyColours.h"
 
 namespace particules
 {
 
-    SynthPanel::SynthPanel(UIContext& uic)
+    SynthPanel::SynthPanel(UIContext& uic) : meter{}
     {
         outputSliderAttachment =
             std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, globalOutputId, outputSlider);
 
+        addAndMakeVisible(&meter);
+        addAndMakeVisible(&outputSlider);
         /*
         positionSliderAttachment =
             std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, globalPositionId, positionSlider);
@@ -35,7 +37,8 @@ namespace particules
         outputLabel.attachToComponent(&outputSlider, false);
         outputLabel.setJustificationType(juce::Justification::centred);
 
-        addAndMakeVisible(&outputSlider);
+
+
         addAndMakeVisible(&outputLabel);
 
         positionSlider.setName("positionSlider");
@@ -121,5 +124,10 @@ namespace particules
 
         mainFlexBox.performLayout(getLocalBounds().toFloat());
         */
+        auto area = getLocalBounds();
+        meter.setBounds(area.removeFromRight(40).reduced(2));
     }
+
+    // Appelle ça dans un timer ou depuis processBlock via un atomic
+    void SynthPanel::updateMeter(float levelDB) { meter.pushLevel(levelDB); }
 }
