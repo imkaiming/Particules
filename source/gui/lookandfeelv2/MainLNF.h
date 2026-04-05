@@ -21,6 +21,9 @@ namespace particules
         void drawRotarySlider(juce::Graphics& g, int x, int y, int w, int h, float sliderPos, float startAngle, float endAngle,
             juce::Slider& slider) override;
 
+        void drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float minSliderPos,
+            float maxSliderPos, const juce::Slider::SliderStyle, juce::Slider& slider) override;
+
         juce::Typeface::Ptr getGeistTypeface() const noexcept { return geistTypeface; }
         juce::Typeface::Ptr getCascadaTypeface() const noexcept { return cascadaTypeface; }
         juce::Typeface::Ptr getFunnelTypeface() const noexcept { return funnelTypeface; }

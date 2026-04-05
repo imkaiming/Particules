@@ -1,38 +1,30 @@
 #include "AudioFilePanel.h"
 
-#include "../../utils/struct/UIContext.h"
-#include "../lookandfeelv2/Colours.h"
-#include "../../utils/struct/ProcessorFacade.h"
 #include "../../framework/GuiTypes.h"
 #include "../../framework/bridge/UIState.h"
+#include "../../utils/struct/ProcessorFacade.h"
+#include "../../utils/struct/UIContext.h"
+#include "../lookandfeelv2/Colours.h"
 
 //#include "BinaryData.h"
 
 namespace particules
 {
-    AudioFilePanel::AudioFilePanel(UIContext& uic) : apvts{uic.apvts}, thumbnailComponent(uic), uiState{uic.uiState}, uic{uic}
+    AudioFilePanel::AudioFilePanel(UIContext& uic)
+        : apvts{uic.apvts}, thumbnailComponent(uic), uiState{uic.uiState}, uic{uic},
+          positionSlider{globalPositionMin, globalPositionMax}, spanSlider{globalSpanMin, globalSpanMax}
     {
         //uiState.addChangeListener(this); // can now send message
 
         positionSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalPositionId, positionSlider);
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalPositionId, positionSlider.getSlider());
         spanSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalSpanId, spanSlider);
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalSpanId, spanSlider.getSlider());
 
-        positionSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
-        positionSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
-        positionSlider.setRange(globalPositionMin, globalPositionMax);
-
-        spanSlider.setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
-        spanSlider.setTextBoxStyle(juce::Slider::NoTextBox, true, 100, 25);
-        spanSlider.setTextBoxIsEditable(true);
-        spanSlider.setRange(globalSpanMin, globalSpanMax);
-
-        positionSlider.onValueChange = [this] { updatePosition(positionSlider.getValue()); };
-        spanSlider.onValueChange = [this] { updateSpan(spanSlider.getValue()); };
-
-        positionSlider.setLookAndFeel(&sliderLookAndFeel);
-        spanSlider.setLookAndFeel(&sliderLookAndFeel);
+        std::function<void()> positionCallback = [this] { updatePosition(positionSlider.getValue()); };
+        positionSlider.setOnValueChange(positionCallback);
+        std::function<void()> spanCallback = [this] { updateSpan(spanSlider.getValue()); };
+        spanSlider.setOnValueChange(spanCallback);
 
         addAndMakeVisible(&positionSlider);
         addAndMakeVisible(&spanSlider);
@@ -47,13 +39,6 @@ namespace particules
 
         //updatePosition(uic.apvts.getRawParameterValue(globalPositionId)->load());
         //updateSpan(uic.apvts.getRawParameterValue(globalSpanId)->load());
-    }
-
-    AudioFilePanel::~AudioFilePanel()
-    {
-        //uiState.removeChangeListener(this);
-        positionSlider.setLookAndFeel(nullptr);
-        spanSlider.setLookAndFeel(nullptr);
     }
 
     void AudioFilePanel::filesDropped(const juce::StringArray& files, int x, int y)

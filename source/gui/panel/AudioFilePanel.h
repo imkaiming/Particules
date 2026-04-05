@@ -7,9 +7,10 @@
 #include "../../utils/PluginParams.h"
 #include "../../framework/GuiTypes.h"
 #include "../component/PositionOverlayComponent.h"
+#include "../component/HorizontalSliderComponent.h"
 #include "../component/SpanOverlayComponent.h"
 #include "../component/ThumbnailComponent.h"
-#include "../lookandfeel/HandleSliderLookAndFeel.h"
+//#include "../lookandfeel/HandleSliderLookAndFeel.h"
 
 
 // the Audio File Frame provide the control to load and play the audio.
@@ -21,7 +22,7 @@ namespace particules
     {
     public:
         AudioFilePanel(UIContext& uic);
-        ~AudioFilePanel();
+        ~AudioFilePanel() = default;
         void paint(juce::Graphics&) override;
         void resized() override;
 
@@ -34,10 +35,13 @@ namespace particules
         UIContext& uic;
         ValueTreeState& apvts;
         ThumbnailComponent thumbnailComponent; // after the file is loaded draw the waveform
-        HandleSliderLookAndFeel sliderLookAndFeel;
+        //HandleSliderLookAndFeel sliderLookAndFeel;
 
-        juce::Slider positionSlider;
-        juce::Slider spanSlider;
+        HorizontalSliderComponent positionSlider;
+        HorizontalSliderComponent spanSlider;
+
+        //juce::Slider positionSlider;
+        //juce::Slider spanSlider;
 
         std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> positionSliderAttachment;
         std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> spanSliderAttachment;
