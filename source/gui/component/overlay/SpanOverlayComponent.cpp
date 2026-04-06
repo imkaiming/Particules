@@ -3,7 +3,7 @@
 #include <juce_graphics/juce_graphics.h>
 
 //#include "../../framework/Core.h"
-#include "../lookandfeel/MyColours.h"
+#include "../../lookandfeel/MyColours.h"
 
 namespace particules
 {

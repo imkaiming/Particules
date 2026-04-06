@@ -27,7 +27,7 @@ namespace particules
         g.drawRoundedRectangle(inner, 12.0f, lineThickness);
       */
 
-        g.fillAll(colours::grisAnthracite); }
+        g.fillAll(coloursv2::deepBlack); }
 
     void ControlPanel::resized()
     {

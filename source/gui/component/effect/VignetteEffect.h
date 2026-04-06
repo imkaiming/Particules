@@ -8,11 +8,11 @@ namespace juce
     class AudioThumbnail;
     class Graphics;
 }
-class VignetteOverlayComponent : public juce::Component
+class VignetteEffect : public juce::Component
 {
 public:
-    VignetteOverlayComponent() = default;
-    ~VignetteOverlayComponent() = default;
+    VignetteEffect() = default;
+    ~VignetteEffect() = default;
 
     void paint(juce::Graphics& g) override
     {
@@ -36,5 +36,5 @@ public:
     }
 
 private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VignetteOverlayComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(VignetteEffect)
 };

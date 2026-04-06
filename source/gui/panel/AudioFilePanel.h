@@ -4,13 +4,12 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../utils/PluginParams.h"
 #include "../../framework/GuiTypes.h"
-#include "../component/PositionOverlayComponent.h"
-#include "../component/HorizontalSliderComponent.h"
-#include "../component/SpanOverlayComponent.h"
+#include "../../utils/PluginParams.h"
 #include "../component/ThumbnailComponent.h"
-//#include "../lookandfeel/HandleSliderLookAndFeel.h"
+#include "../component/overlay/PositionOverlayComponent.h"
+#include "../component/overlay/SpanOverlayComponent.h"
+#include "../component/slider/HorizontalSlider.h"
 
 
 // the Audio File Frame provide the control to load and play the audio.
@@ -37,8 +36,8 @@ namespace particules
         ThumbnailComponent thumbnailComponent; // after the file is loaded draw the waveform
         //HandleSliderLookAndFeel sliderLookAndFeel;
 
-        HorizontalSliderComponent positionSlider;
-        HorizontalSliderComponent spanSlider;
+        HorizontalSlider positionSlider;
+        HorizontalSlider spanSlider;
 
         //juce::Slider positionSlider;
         //juce::Slider spanSlider;

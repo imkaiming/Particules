@@ -9,13 +9,16 @@
 
 namespace particules
 {
-    GrainsPanel::GrainsPanel(UIContext& uic) : apvts{uic.apvts}, paramsView{uic.paramsView}
+    GrainsPanel::GrainsPanel(UIContext& uic)
+        : apvts{uic.apvts}, paramsView{uic.paramsView},
+          emissionSliderAttachment{emissionSlider.attachPrimaryToAPVTS(apvts, grainsEmissionId)},
+          durationSliderAttachment{durationSlider.attachPrimaryToAPVTS(apvts, grainsDurationId)}
     {
-        emissionSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, grainsEmissionId, emissionSlider);
+        //emissionSliderAttachment =
+        //    std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, grainsEmissionId, emissionSlider);
+        //emissionSliderAttachment = emissionSlider.attachPrimaryToAPVTS(apvts, grainsEmissionId);
 
-        durationSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, grainsDurationId, durationSlider);
+        //durationSliderAttachment = durationSlider.attachPrimaryToAPVTS(apvts, grainsDurationId);
 
         speedSliderAttachment =
             std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, grainsSpeedId, speedSlider);
@@ -31,10 +34,9 @@ namespace particules
         //		*apvts, PITCH_ID, pitchSlider);
 
         emissionSlider.setName("emissionSlider");
-        emissionSlider.setTextBoxIsEditable(true);
+        
         emissionSlider.setRange(grainsEmissionMin, grainsEmissionMax);
         emissionSlider.setSkewFactorFromMidPoint(grainsEmissionSkewFactor);
-        //emissionSlider.setTextBoxStyle(juce::Slider::TextBoxBelow);
 
         emissionLabel.setText((const str)grainsEmissionName, juce::dontSendNotification);
         emissionLabel.setJustificationType(juce::Justification::centred);
@@ -42,7 +44,6 @@ namespace particules
         emissionLabel.setFont(juce::Font(13.0f));
 
         durationSlider.setName("durationSlider");
-        durationSlider.setTextBoxIsEditable(true);
         durationSlider.setRange(grainsDurationMin, grainsDurationMax);
         durationSlider.setSkewFactorFromMidPoint(grainsDurationSkewFactor);
 
@@ -52,7 +53,6 @@ namespace particules
         durationLabel.setFont(juce::Font(13.0f));
 
         speedSlider.setName("speedSlider");
-        speedSlider.setTextBoxIsEditable(true);
         speedSlider.setRange(grainsSpeedMin, grainsSpeedMax);
 
         speedLabel.setText((const str)grainsSpeedName, juce::dontSendNotification);
@@ -62,7 +62,6 @@ namespace particules
 
 
         sustainRatioSlider.setName("sustainWidthSlider");
-        sustainRatioSlider.setTextBoxIsEditable(true);
         sustainRatioSlider.setRange(grainsSustainRatioMin, grainsSustainRatioMax);
         sustainRatioSlider.setSkewFactorFromMidPoint(grainsSustainRatioSkewFactor);
 
@@ -72,7 +71,6 @@ namespace particules
         sustainRatioLabel.setFont(juce::Font(13.0f));
 
         traversalFreqSlider.setName("traversalFreqSlider");
-        traversalFreqSlider.setTextBoxIsEditable(true);
         traversalFreqSlider.setRange(grainsTraversalFreqMin, grainsTraversalFreqMax);
         traversalFreqSlider.setSkewFactorFromMidPoint(grainsTraversalFreqSkewFactor);
 
@@ -146,8 +144,83 @@ namespace particules
 
         area.removeFromRight(45);
 
-        auto topRow = area.removeFromTop(area.getHeight() * 0.6f);
-        auto bottomRow = area;
+        auto topRow = area.removeFromTop(area.getHeight() * 0.33f);
+        auto middleRow = area.removeFromTop(area.getHeight() * 0.33f);
+        auto bottomRow = area.removeFromTop(area.getHeight() * 0.33f);
+
+        auto placeKnob = [&](juce::Rectangle<int> bounds, juce::Component& slider, juce::Label& label, bool isPrimary) {
+            auto cell = bounds.reduced(juce::roundToInt(bounds.getWidth() * marginRatio));
+
+            float visualRatio = isPrimary ? 0.70f : 0.55f;
+            int available = juce::jmin(cell.getWidth(), cell.getHeight());
+            int visualSize = juce::jlimit(40, 160, juce::roundToInt(available * visualRatio));
+            int visualRadius = visualSize / 2;
+
+            int textMargin = isPrimary ? juce::roundToInt(visualRadius * 0.9f) : juce::roundToInt(visualRadius * 1.3f);
+            int sliderBounds = visualSize + textMargin * 2;
+            slider.setBounds(cell.withSizeKeepingCentre(sliderBounds, sliderBounds));
+            slider.getProperties().set("visualRadius", visualRadius);
+
+            int maxAllowed = juce::jmin(cell.getWidth(), cell.getHeight());
+            if(sliderBounds > maxAllowed)
+                sliderBounds = maxAllowed;
+
+            slider.setBounds(cell.withSizeKeepingCentre(sliderBounds, sliderBounds));
+            slider.getProperties().set("visualRadius", visualRadius);
+
+            int knobBottomY = cell.getCentreY() + visualRadius;
+            int labelY = knobBottomY + labelOffset;
+            int labelHeight = 18;
+
+            label.setBounds(cell.getX(), labelY, cell.getWidth(), labelHeight);
+            label.setJustificationType(juce::Justification::centred);
+            //label.setFont(juce::Font(13.0f));
+            //label.setFont(juce::Font(juce::jmin(13.0f, visualSize * 0.16f)));
+        };
+
+        int topW = topRow.getWidth() / 2;
+        placeKnob(topRow.removeFromLeft(topW), emissionSlider, emissionLabel, true);
+        placeKnob(topRow, durationSlider, durationLabel, true);
+
+        int midW = middleRow.getWidth() / 3;
+        placeKnob(middleRow.removeFromLeft(midW), speedSlider, speedLabel, false);
+        placeKnob(middleRow.removeFromLeft(midW), sustainRatioSlider, sustainRatioLabel, false);
+        placeKnob(middleRow, traversalFreqSlider, traversalFreqLabel, false);
+
+        int botW = bottomRow.getWidth() / 3;
+    }
+}
+//void GrainsPanel::parameterChanged(const str& parameterID, float newValue)
+//{
+//    if(parameterID == grainsTraversalMode::id)
+//    {
+//        DBG("TRAVERSAL MODE parameter as value : " + (str)apvts.getPlugingrainserAsValue(grainsTraversalMode::id).toString());
+//        DBG("TRAVERSAL MODE new value : " + (str)newValue);
+//        return;
+//    }
+//    if(parameterID == grainsEnvelopeMode::id)
+//    {
+//        DBG("ENVELOPE MODE parameter as value : " + (str)apvts.getPlugingrainserAsValue(grainsEnvelopeMode::id).toString());
+//        DBG("ENVELOPE MODE new value : " + (str)newValue);
+//        return;
+//    }
+//}
+
+
+/*
+void GrainsPanel::resized()
+    {
+        auto area = getLocalBounds();
+
+        const float marginRatio = 0.03f;
+        const float labelGapRatio = 0.12f;
+        const int labelOffset = 5;
+
+        area.removeFromRight(45);
+
+        auto topRow = area.removeFromTop(area.getHeight() * 0.33f);
+        auto middleRow = area.removeFromTop(area.getHeight() * 0.33f);
+        auto bottomRow = area.removeFromTop(area.getHeight() * 0.33f);
 
         auto placeKnob = [&](juce::Rectangle<int> bounds, juce::Slider& slider, juce::Label& label, bool isPrimary) {
             auto cell = bounds.reduced(juce::roundToInt(bounds.getWidth() * marginRatio));
@@ -183,24 +256,11 @@ namespace particules
         placeKnob(topRow.removeFromLeft(topW), emissionSlider, emissionLabel, true);
         placeKnob(topRow, durationSlider, durationLabel, true);
 
-        int botW = bottomRow.getWidth() / 3;
-        placeKnob(bottomRow.removeFromLeft(botW), speedSlider, speedLabel, false);
-        placeKnob(bottomRow.removeFromLeft(botW), sustainRatioSlider, sustainRatioLabel, false);
+        int midW = middleRow.getWidth() / 3;
+        placeKnob(bottomRow.removeFromLeft(midW), speedSlider, speedLabel, false);
+        placeKnob(bottomRow.removeFromLeft(midW), sustainRatioSlider, sustainRatioLabel, false);
         placeKnob(bottomRow, traversalFreqSlider, traversalFreqLabel, false);
+
+        int botW = bottomRow.getWidth() / 3;
     }
-}
-//void GrainsPanel::parameterChanged(const str& parameterID, float newValue)
-//{
-//    if(parameterID == grainsTraversalMode::id)
-//    {
-//        DBG("TRAVERSAL MODE parameter as value : " + (str)apvts.getPlugingrainserAsValue(grainsTraversalMode::id).toString());
-//        DBG("TRAVERSAL MODE new value : " + (str)newValue);
-//        return;
-//    }
-//    if(parameterID == grainsEnvelopeMode::id)
-//    {
-//        DBG("ENVELOPE MODE parameter as value : " + (str)apvts.getPlugingrainserAsValue(grainsEnvelopeMode::id).toString());
-//        DBG("ENVELOPE MODE new value : " + (str)newValue);
-//        return;
-//    }
-//}
+*/

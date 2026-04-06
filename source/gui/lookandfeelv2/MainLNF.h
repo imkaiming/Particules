@@ -11,7 +11,6 @@ namespace juce
 
 namespace particules
 {
-    enum class KnobStyle { Primary, Secondary, Tertiary };
     class MainLNF : public juce::LookAndFeel_V4
     {
     public:
@@ -30,17 +29,27 @@ namespace particules
         juce::Typeface::Ptr getFuturaTypeface() const noexcept { return futuraTypeface; }
 
     private:
+        void drawRotarySliderCenteredText(juce::Graphics& g, juce::Slider& slider, float cx, float cy, float radius);
+
+        void drawPrimaryWithAuxKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
+            float endAngle, float sliderPos, juce::Slider& slider);
+
         void drawPrimaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle, float endAngle,
             float sliderPos, juce::Slider& slider);
+
         void drawSecondaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
             float endAngle, float sliderPos, juce::Slider& slider);
-        void drawTertiaryKnob(
-            juce::Graphics& g, float cx, float cy, float radius, float innerR, float sliderPos, juce::Slider& slider);
 
-        void drawValue(juce::Graphics& g, float cx, float cy, float radius, bool isPrimary, float angle, float valDist,
-            juce::Slider& slider);
-        void drawIndicator(juce::Graphics& g, float cx, float cy, float innerR, float angle, bool isPrimary);
-        void drawKnobBody(juce::Graphics& g, float cx, float cy, float innerR, bool isPrimary, juce::Colour faceCol);
+        void drawTertiaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle, float endAngle,
+            float sliderPos, juce::Slider& slider);
+
+        void drawAuxKnob(juce::Graphics& g, float cx, float cy, float innerR, float startAngle, float endAngle, float sliderPos);
+
+
+        //void drawValue(juce::Graphics& g, float cx, float cy, float radius, bool isPrimary, float angle, float valDist,
+        //    juce::Slider& slider);
+        //void drawIndicator(juce::Graphics& g, float cx, float cy, float innerR, float angle, bool isPrimary);
+        //void drawKnobBody(juce::Graphics& g, float cx, float cy, float innerR, bool isPrimary, juce::Colour faceCol);
 
         juce::Typeface::Ptr geistTypeface;
         juce::Typeface::Ptr funnelTypeface;

@@ -3,7 +3,7 @@
 #include "../../framework/bridge/UIState.h"
 #include "../../utils/struct/UIContext.h"
 #include "../../utils/struct/VisualSnapshot.h"
-#include "../lookandfeel/MyColours.h"
+#include "../lookandfeelv2/Colours.h"
 
 namespace particules
 {

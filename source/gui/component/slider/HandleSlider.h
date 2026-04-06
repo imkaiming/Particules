@@ -10,16 +10,16 @@ namespace juce
 
 namespace particules
 {
-    class HandleSliderComponent : public juce::Slider
+    class HandleSlider : public juce::Slider
     {
     public:
-        HandleSliderComponent();
+        HandleSlider();
 
         void paint(juce::Graphics&) override;
 
         float getNormalized() const { return static_cast<float>(getValue()); }
 
     private:
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(HandleSliderComponent)
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(HandleSlider)
     };
 }

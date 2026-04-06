@@ -2,7 +2,7 @@
 
 #include <juce_graphics/juce_graphics.h>
 
-#include "../lookandfeel/MyColours.h"
+#include "../../lookandfeelv2/Colours.h"
 
 namespace particules
 {
@@ -19,7 +19,7 @@ namespace particules
 
     void PositionOverlayComponent::paint(juce::Graphics& g)
     {
-        g.setColour(colours::cream.withAlpha(0.5f));
+        g.setColour(colours::perleBlanc.withAlpha(0.5f));
         g.drawLine(startPos, 0.f, startPos, static_cast<float>(getHeight()), 2.0f);
     }
 

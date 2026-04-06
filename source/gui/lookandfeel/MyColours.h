@@ -47,12 +47,12 @@ namespace particules
 
         // accent colo
         inline const color green{0xff52b788};
-        inline const color lavender{0xffccccff};
+        //inline const color lavender{0xffccccff};
         inline const color blue{0xff6dd4ff};
         inline const color cream{0xfff6f9e4};
         inline const color red{0xffe5383b};
         inline const color pink{0xffff8fa3};
-        inline const color jungleGreen{0xff2AAA8A};
+        //inline const color jungleGreen{0xff2AAA8A};
         inline const color brightBlue{0xff0096FF};
     }
 }

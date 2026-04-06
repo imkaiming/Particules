@@ -1,17 +1,17 @@
-#include "HandleSliderComponent.h"
+#include "HandleSlider.h"
 
 #include <juce_graphics/juce_graphics.h>
 
 namespace particules
 {
-    HandleSliderComponent::HandleSliderComponent()
+    HandleSlider::HandleSlider()
     {
         setSliderStyle(juce::Slider::LinearHorizontal);
         setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
         setRange(0.0, 1.0);
         setMouseCursor(juce::MouseCursor::LeftRightResizeCursor);
     }
-    void HandleSliderComponent::paint(juce::Graphics& g)
+    void HandleSlider::paint(juce::Graphics& g)
     {
         const float ratio = static_cast<float>((getValue() - getMinimum()) / (getMaximum() - getMinimum()));
         const float cx = ratio * static_cast<float>(getWidth());

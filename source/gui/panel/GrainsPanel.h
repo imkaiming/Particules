@@ -6,7 +6,8 @@
 
 #include "../../framework/GuiTypes.h"
 #include "../../utils/PluginParams.h"
-#include "../Component/RotarySliderComponent.h"
+#include "../Component/slider/RotarySlider.h"
+#include "../Component/slider/PrimaryWithAux.h"
 
 
 namespace juce
@@ -32,8 +33,8 @@ namespace particules
         ValueTreeState& apvts;
         ParameterView& paramsView;
 
-        PrimaryRotarySlider emissionSlider;
-        PrimaryRotarySlider durationSlider;
+        PrimaryWithAux emissionSlider;
+        PrimaryWithAux durationSlider;
         SecondaryRotarySlider speedSlider;
         SecondaryRotarySlider sustainRatioSlider;
         SecondaryRotarySlider traversalFreqSlider;

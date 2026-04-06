@@ -121,7 +121,7 @@ target_link_libraries(Base PRIVATE
     juce::juce_audio_utils) # audio thumbnail
 
 file(GLOB_RECURSE BaseSources CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/struct/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/bridge/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/bridge/*.h") 
 
@@ -144,8 +144,7 @@ file(GLOB_RECURSE CoreSources CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/source/dsp/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/audio/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/audio/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/*.h") # ProcessorFacade demande juce::String donc juce core seulement
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/*.h") # ProcessorFacade demande juce::String donc juce core seulement # TODO mettre dans framework en tant que Commands
 
 #list(FILTER CoreSources EXCLUDE REGEX 
 #    "/bridge/"

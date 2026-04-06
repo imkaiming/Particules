@@ -2,10 +2,5 @@
 
 namespace particules
 {
-    enum class VoiceState {
-        Idle,
-        Active, 
-        Releasing, 
-        Dead
-    };
+    enum class VoiceState { Idle, Active, Releasing, Dead };
 }

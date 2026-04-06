@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../framework/Core.h"
-#include "../../gui/Component/RotarySliderComponent.h"
+#include "../../gui/Component/slider/RotarySlider.h"
 
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>

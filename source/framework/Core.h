@@ -20,9 +20,10 @@
 
 
 #include <cstdint>
-#include <cmath> // std::floor std::clamp
+#include <cmath> // std::floor 
 #include <array>
 #include <functional> 
+#include <algorithm>  // std::clamp
 #include <random>
 #include <vector>
 #include <span>

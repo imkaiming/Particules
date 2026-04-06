@@ -61,7 +61,7 @@ namespace particules
     void VerticalMeterComponent::paint(juce::Graphics& g)
     {
         auto bounds = getLocalBounds().reduced(4);
-        g.setColour(colours::blackest);
+        g.setColour(coloursv2::blackest);
         g.fillRoundedRectangle(bounds.toFloat(), 6.0f);
 
         for(int i = 0; i < channels; ++i)

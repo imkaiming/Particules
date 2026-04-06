@@ -33,8 +33,8 @@ namespace particules
 
         fb.items.add(juce::FlexItem(titlePanel).withFlex(0.0f).withMinHeight(48).withMargin({0, 0, verticalGap, 0}));
         fb.items.add(juce::FlexItem(audioFilePanel).withFlex(0.45f).withMargin({0, 0, verticalGap, 0}));
-        fb.items.add(juce::FlexItem(controlPanel).withFlex(0.40f).withMargin({0, 0, verticalGap, 0}));
-        fb.items.add(juce::FlexItem(statusBarPanel).withFlex(0.0f).withMinHeight(24).withMargin(0));
+        fb.items.add(juce::FlexItem(controlPanel).withFlex(0.55f).withMargin({0, 0, verticalGap, 0}));
+        //fb.items.add(juce::FlexItem(statusBarPanel).withFlex(0.0f).withMinHeight(24).withMargin(0));
 
         fb.performLayout(area);
         vignette.setBounds(getLocalBounds());

@@ -10,10 +10,10 @@ namespace juce
 
 namespace particules
 {
-    class HorizontalSliderComponent : public juce::Component
+    class HorizontalSlider : public juce::Component
     {
     public:
-        HorizontalSliderComponent(float minRange, float maxRange);
+        HorizontalSlider(float minRange, float maxRange);
 
         // Accès au slider pour l'attachment APVTS
         juce::Slider& getSlider() { return slider; }
@@ -32,6 +32,7 @@ namespace particules
         juce::Slider slider;
         float modulatedPos;
         //std::atomic<float> modulatedPos{0.0f};
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(HorizontalSlider)
     };
 
 }
