@@ -11,19 +11,26 @@
 namespace particules
 {
 
-    PrimaryWithAux::PrimaryWithAux()
+    PrimaryWithAux::PrimaryWithAux(const str& name)
     {
-        addAndMakeVisible(primarySlider);
-        addAndMakeVisible(auxSlider);
+        label.setText((const str)name, juce::dontSendNotification);
+        label.setJustificationType(juce::Justification::centred);
+        label.setInterceptsMouseClicks(false, false);
+        label.setColour(juce::Label::textColourId, colours::perleBlanc);
+        label.setFont(juce::Font(13.0f));
 
         primarySlider.getProperties().set("knobStyle", static_cast<int>(RotaryType::primaryWithAux));
-        auxSlider.getProperties().set("knobStyle", static_cast<int>(RotaryType::primaryWithAux));
+        auxSlider.getProperties().set("knobStyle", static_cast<int>(RotaryType::aux));
 
         primarySlider.onValueChange = [this]() { primarySlider.repaint(); };
         auxSlider.onValueChange = [this]() {
             syncAuxDataToPrimary();
             primarySlider.repaint();
         };
+
+        addAndMakeVisible(&primarySlider);
+        addAndMakeVisible(&auxSlider);
+        addAndMakeVisible(&label);
     }
 
     void PrimaryWithAux::updatePrimaryAngle()
@@ -61,14 +68,14 @@ namespace particules
         auto center = bounds.getCentre();
 
         const float minDim = juce::jmin(bounds.getWidth(), bounds.getHeight());
-        const float maxExtentFromCenter = minDim * 0.5f;
+        const float maxExtentFromCenter = minDim * 0.62f;
 
         const float auxSize = juce::jlimit(18.0f, 32.0f, minDim * 0.18f);
 
         const float jitterRadiusMultiplier = 1.07f;
-        const float jitterLineWidthHalf = 1.0f; // Jitter line is 2.0px width
-        const float safetyPadding = 3.0f;
-        const float gapBetweenJitterAndAux = 4.0f; // Nice visual breathing room
+        const float jitterLineWidthHalf = 1.0f;
+        const float safetyPadding = 0.0f;
+        const float gapBetweenJitterAndAux = 4.0f;
 
         const float maxAllowedAuxCenterDistance = maxExtentFromCenter - safetyPadding - (auxSize * 0.5f);
         const float availableRadiusForJitter = maxAllowedAuxCenterDistance - gapBetweenJitterAndAux - (auxSize * 0.5f);
@@ -81,36 +88,39 @@ namespace particules
         const float ay = center.y + std::sin(angleAux) * auxDistance;
         const float primaryBoundsSize = (jitterOuterEdge + 1.0f) * 2.0f;
 
-        primarySlider.setBounds(juce::Rectangle<float>(primaryBoundsSize, primaryBoundsSize).withCentre(center).toNearestInt());
         primarySlider.getProperties().set("visualRadius", primaryVisualRadius);
+        primarySlider.setBounds(
+            juce::Rectangle<float>(primaryBoundsSize, primaryBoundsSize).withCentre(center.toFloat()).toNearestInt());
 
-        auxSlider.setBounds(juce::Rectangle<float>(auxSize, auxSize).withCentre({ax, ay}).toNearestInt());
+        auxSlider.setBounds(
+            juce::Rectangle<float>(auxSize, auxSize).withCentre(juce::Point<float>((float)ax, (float)ay)).toNearestInt());
+
+        const int labelHeight = 18;
+        label.setBounds(0, getHeight() - labelHeight, getWidth(), labelHeight);
 
         syncAuxDataToPrimary();
+        updatePrimaryAngle();
     }
 
     void PrimaryWithAux::syncAuxDataToPrimary()
     {
-        float auxNorm = (float)auxSlider.getValue(); // 0-1
+        float auxNorm = (float)auxSlider.getValue();
         primarySlider.getProperties().set("auxAmount", auxNorm);
     }
 
     void PrimaryWithAux::paint(juce::Graphics& g)
     {
-        g.fillAll(coloursv2::turquoise);
-        // Calculate primary's current angle and pass to aux
-        float startAngle = juce::MathConstants<float>::pi * 1.25f; // Your LnF start angle
-        float endAngle = juce::MathConstants<float>::pi * 2.25f; // Your LnF end angle
-
+        g.fillAll(coloursv2::deepBlack.brighter(0.2f));
+        float startAngle = pi * 1.25f;
+        float endAngle = pi * 2.25f;
         float primaryRange = primarySlider.getMaximum() - primarySlider.getMinimum();
-        float primaryNorm = (primarySlider.getValue() - primarySlider.getMinimum()) / primaryRange;
-        float primaryAngle = startAngle + primaryNorm * (endAngle - startAngle);
 
-        auxSlider.getProperties().set("primaryAngle", primaryAngle);
-
-        // Continue with normal painting (children will paint themselves)
-        // Actually, since we're overriding paint, we need to call base or paint children
-        // Better approach: update in timer or on value change:
+        if(primaryRange > 0.0f)
+        {
+            float primaryNorm = (primarySlider.getValue() - primarySlider.getMinimum()) / primaryRange;
+            float primaryAngle = startAngle + primaryNorm * (endAngle - startAngle);
+            auxSlider.getProperties().set("primaryAngle", primaryAngle);
+        }
     }
 
 }

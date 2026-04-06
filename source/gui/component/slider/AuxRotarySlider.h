@@ -19,7 +19,7 @@ namespace particules
             setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
             setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
             setRange(0.0, 1.0);
-            getProperties().set("knobStyle", static_cast<int>(RotaryType::aux));
+            //getProperties().set("knobStyle", static_cast<int>(RotaryType::aux));
         }
 
     private:

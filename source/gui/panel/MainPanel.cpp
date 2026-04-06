@@ -13,7 +13,7 @@ namespace particules
         addAndMakeVisible(&controlPanel);
         addAndMakeVisible(&statusBarPanel);
 
-        addAndMakeVisible(&vignette); 
+        //addAndMakeVisible(&vignette); 
         vignette.setInterceptsMouseClicks(false, false);
     }
 

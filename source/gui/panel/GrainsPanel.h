@@ -5,10 +5,10 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 
 #include "../../framework/GuiTypes.h"
+#include "../../framework/bridge/EngineState.h"
 #include "../../utils/PluginParams.h"
-#include "../Component/slider/RotarySlider.h"
 #include "../Component/slider/PrimaryWithAux.h"
-
+#include "../Component/slider/RotarySlider.h"
 
 namespace juce
 {
@@ -22,7 +22,7 @@ namespace particules
     class GrainsPanel : public juce::Component //, public juce::AudioProcessorValueTreeState::Listener
     {
     public:
-        GrainsPanel(UIContext&);
+        GrainsPanel(UIContext& uic);
         ~GrainsPanel() = default;
 
         void paint(juce::Graphics&) override;
@@ -30,8 +30,12 @@ namespace particules
 
     private:
         //void parameterChanged(const juce::String& parameterID, float newValue) override;
-        ValueTreeState& apvts;
-        ParameterView& paramsView;
+        void linkButtonClicked();
+        void setLinkButtonImage();
+
+        //ValueTreeState& apvts;
+        //ParameterView& paramsView;
+        EngineState& engineState;
 
         PrimaryWithAux emissionSlider;
         PrimaryWithAux durationSlider;
@@ -39,8 +43,10 @@ namespace particules
         SecondaryRotarySlider sustainRatioSlider;
         SecondaryRotarySlider traversalFreqSlider;
 
-        juce::Label emissionLabel;
-        juce::Label durationLabel;
+        juce::DrawableButton linkBtn;
+        //juce::DrawableButton linkInBtn;
+        //juce::DrawableButton linkOffBtn;
+
         juce::Label speedLabel;
         juce::Label sustainRatioLabel;
         juce::Label envModeLabel;

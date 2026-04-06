@@ -159,6 +159,7 @@ namespace particules
     void MainLNF::drawAuxKnob(
         juce::Graphics& g, float cx, float cy, float innerR, float startAngle, float endAngle, float sliderPos)
     {
+        /*
         // 1. Aux outline
         g.setColour(colours::grisMoyen.withAlpha(0.4f));
         g.drawEllipse(cx - innerR, cy - innerR, innerR * 2, innerR * 2, 1.0f);
@@ -178,6 +179,27 @@ namespace particules
         float dotX = cx + std::cos(auxAngle) * (innerR - 1.5f);
         float dotY = cy + std::sin(auxAngle) * (innerR - 1.5f);
         g.fillEllipse(dotX - 1.0f, dotY - 1.0f, 2.0f, 2.0f);
+        */
+        // CONTOUR
+        float border = 2.0f;
+        g.setColour(juce::Colour(0xFF222222));
+        g.fillEllipse(cx - innerR - border, cy - innerR - border, innerR * 2 + border * 2, innerR * 2 + border * 2);
+
+        // 6. INDICATEUR
+        const float startR = innerR * 0.33f;
+        const float endR = innerR * 0.90f;
+
+        // start point
+        const float angle = -pi * 0.5f + sliderPos * (pi * 1.5f);
+        const float startx = cx + std::sin(angle) * startR;
+        const float startY = cy - std::cos(angle) * startR;
+
+        // compute end point
+        const float ex = cx + std::sin(angle) * endR;
+        const float ey = cy - std::cos(angle) * endR;
+
+        g.setColour(juce::Colours::white.withAlpha(0.9f));
+        g.drawLine(startx, startY, ex, ey, 2.f);
     }
 
     void MainLNF::drawPrimaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
@@ -339,9 +361,9 @@ namespace particules
             valueStr = text;
         }
 
-        const float valueFontSize = radius * 0.35f;
-        const float unitFontSize = radius * 0.20f;
-        const float spacing = radius * 0.08f;
+        const float valueFontSize = radius * 0.4f;
+        const float unitFontSize = radius * 0.25f;
+        const float spacing = radius * 0.05f;
 
         g.setColour(slider.findColour(juce::Slider::textBoxTextColourId));
 
@@ -402,7 +424,6 @@ namespace particules
 
         g.setColour(colours::perleBlanc);
         g.fillEllipse(handle);
-
     }
 }
 

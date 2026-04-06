@@ -21,7 +21,7 @@ namespace particules
     class PrimaryWithAux : public juce::Component
     {
     public:
-        PrimaryWithAux();
+        PrimaryWithAux(const str& name);
 
         void setRange(float min, float max) noexcept;
         void updatePrimaryAngle();
@@ -38,6 +38,7 @@ namespace particules
 
         PrimaryRotarySlider primarySlider;
         AuxRotarySlider auxSlider;
+        juce::Label label;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PrimaryWithAux)
     };

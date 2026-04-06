@@ -27,7 +27,7 @@ namespace particules
         g.drawRoundedRectangle(inner, 12.0f, lineThickness);
       */
 
-        g.fillAll(coloursv2::deepBlack); }
+        g.fillAll(coloursv2::deepBlack.brighter(0.01f)); }
 
     void ControlPanel::resized()
     {
@@ -44,7 +44,7 @@ namespace particules
         fb.justifyContent = juce::FlexBox::JustifyContent::spaceBetween;
 
         fb.items.add(juce::FlexItem(grainsPanel).withFlex(1.0f).withMargin(0));
-        fb.items.add(juce::FlexItem(adsrPanel).withFlex(1.0f).withMargin({0, gap * 0.5f, 0, gap * 0.5f}));
+        fb.items.add(juce::FlexItem(adsrPanel).withFlex(1.0f).withMargin({0, gap * 0.2f, 0, gap * 0.2f}));
         fb.items.add(juce::FlexItem(synthPanel).withFlex(1.0f).withMargin(0));
 
         fb.performLayout(area);

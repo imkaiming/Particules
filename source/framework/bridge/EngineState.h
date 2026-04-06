@@ -22,6 +22,7 @@ namespace particules
         void setNumSamples(int s) noexcept { numSamples.store(s, std::memory_order_relaxed); }
         void setSampleRate(double sr) noexcept { sampleRate.store(sr, std::memory_order_relaxed); }
         void setNumActiveGrains(int g) noexcept { numActiveGrains.store(g, std::memory_order_relaxed); }
+        void setLink(bool b) noexcept { isLinked.store(b, std::memory_order_relaxed); }
 
         //bool getIsPlaying() const noexcept { return isPlaying.load(std::memory_order_relaxed); }
         bool getIsGrainsEmpty() const noexcept { return isGrainsEmpty.load(std::memory_order_relaxed); }
@@ -29,6 +30,7 @@ namespace particules
         int getNumSamples() const noexcept { return numSamples.load(std::memory_order_relaxed); }
         double getSampleRate() const noexcept { return sampleRate.load(std::memory_order_relaxed); }
         int getNumActiveGrains() const noexcept { return numActiveGrains.load(std::memory_order_relaxed); }
+        int getIsLinked() const noexcept { return isLinked.load(std::memory_order_relaxed); }
 
     private:
         //std::atomic<bool> isPlaying;
@@ -37,6 +39,7 @@ namespace particules
         std::atomic<int> numChannels;
         std::atomic<int> numSamples;
         std::atomic<int> numActiveGrains;
+        std::atomic<bool> isLinked;
 
         //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EngineState)
     };
