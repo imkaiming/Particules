@@ -17,15 +17,21 @@ namespace juce
 
 namespace particules
 {
-
+    class EngineState;
     class PrimaryWithAux : public juce::Component
     {
     public:
-        PrimaryWithAux(const str& name);
+        PrimaryWithAux(const str& name, EngineState& es);
 
         void setRange(float min, float max) noexcept;
         void updatePrimaryAngle();
         void setSkewFactorFromMidPoint(float skew) noexcept;
+
+        void setOnPrimaryValueChanged(ValueCallback callback) { onValueChanged = std::move(callback); }
+        void setPrimaryValue(double value, juce::NotificationType notify = juce::dontSendNotification);
+        double getPrimaryValue() const noexcept { return primarySlider.getValue(); }
+        double getPrimaryMinimum() const noexcept { return primarySlider.getMinimum(); }
+        double getPrimaryMaximum() const noexcept { return primarySlider.getMaximum(); }
 
         std::unique_ptr<ValueTreeState::SliderAttachment> attachPrimaryToAPVTS(ValueTreeState&, const str&) noexcept;
         std::unique_ptr<ValueTreeState::SliderAttachment> attachAuxToAPVTS(ValueTreeState&, const str&) noexcept;
@@ -33,9 +39,12 @@ namespace particules
         void resized() override;
         void paint(juce::Graphics& g) override;
 
+
     private:
         void syncAuxDataToPrimary();
 
+        EngineState& engineState;
+        ValueCallback onValueChanged;
         PrimaryRotarySlider primarySlider;
         AuxRotarySlider auxSlider;
         juce::Label label;

@@ -41,6 +41,5 @@ namespace particules
         std::atomic<int> numActiveGrains;
         std::atomic<bool> isLinked;
 
-        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EngineState)
     };
 }

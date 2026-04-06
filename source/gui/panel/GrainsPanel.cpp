@@ -11,19 +11,32 @@
 namespace particules
 {
     GrainsPanel::GrainsPanel(UIContext& uic)
-        : /*{uic.apvts},  paramsView{uic.paramsView}, */ engineState{uic.engineState}, emissionSlider(grainsEmissionName),
-          durationSlider(grainsDurationName),
+        : /*{uic.apvts},  paramsView{uic.paramsView}, */ engineState{uic.engineState},
+          emissionSlider(grainsEmissionName, engineState), durationSlider(grainsDurationName, engineState),
           emissionSliderAttachment{emissionSlider.attachPrimaryToAPVTS(uic.apvts, grainsEmissionId)},
           durationSliderAttachment{durationSlider.attachPrimaryToAPVTS(uic.apvts, grainsDurationId)},
           linkBtn{(const str) "linkBtn", juce::DrawableButton::ButtonStyle::ImageFitted}
     {
         setLinkButtonImage();
-        //emissionSliderAttachment =
-        //    std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, grainsEmissionId, emissionSlider);
-        //emissionSliderAttachment = emissionSlider.attachPrimaryToAPVTS(apvts, grainsEmissionId);
 
-        //durationSliderAttachment = durationSlider.attachPrimaryToAPVTS(apvts, grainsDurationId);
         linkBtn.onClick = [this]() { linkButtonClicked(); };
+
+        emissionSlider.setOnPrimaryValueChanged([this](double emissionVal) {
+            if(!engineState.getIsLinked())
+                return;
+
+            double durationVal = 1.0 / emissionVal;
+            durationVal = juce::jlimit(durationSlider.getPrimaryMinimum(), durationSlider.getPrimaryMaximum(), durationVal);
+            durationSlider.setPrimaryValue(durationVal, juce::dontSendNotification);
+        });
+
+        durationSlider.setOnPrimaryValueChanged([this](double durationVal) {
+            if(!engineState.getIsLinked())
+                return;
+            double emissionVal = 1.0 / durationVal;
+            emissionVal = juce::jlimit(emissionSlider.getPrimaryMinimum(), emissionSlider.getPrimaryMaximum(), emissionVal);
+            emissionSlider.setPrimaryValue(emissionVal, juce::dontSendNotification);
+        });
 
         emissionSlider.setRange(grainsEmissionMin, grainsEmissionMax);
         emissionSlider.setSkewFactorFromMidPoint(grainsEmissionSkewFactor);
@@ -137,6 +150,11 @@ namespace particules
             linkBtn.setImages(juce::Drawable::createFromImageData(BinaryData::link_in_svg, BinaryData::link_in_svgSize).get(),
                 juce::Drawable::createFromImageData(BinaryData::link_in_svg, BinaryData::link_in_svgSize).get(), nullptr, nullptr,
                 nullptr, nullptr, nullptr, nullptr);
+
+            double emissionVal = emissionSlider.getPrimaryValue();
+            double durationVal = 1.0 / emissionVal;
+            durationVal = juce::jlimit(durationSlider.getPrimaryMinimum(), durationSlider.getPrimaryMaximum(), durationVal);
+            durationSlider.setPrimaryValue(durationVal, juce::dontSendNotification);
         }
     }
 
@@ -154,7 +172,7 @@ namespace particules
         const int linkBtnWidth = (area.getWidth() - topColWidth * 2) * 0.25;
         const int totalWidth = topColWidth * 2 + linkBtnWidth;
         auto group = topRow.withSizeKeepingCentre(totalWidth, topRow.getHeight());
-        
+
         auto left = group.removeFromLeft(topColWidth);
         auto link = group.removeFromLeft(linkBtnWidth);
         auto right = group.removeFromLeft(topColWidth);

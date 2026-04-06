@@ -1,7 +1,7 @@
 #pragma once
 
 #include <juce_core/juce_core.h>
-//#include <juce_audio_processors/juce_audio_processors.h>
+#include "Core.h"
 
 namespace juce
 {
@@ -10,6 +10,7 @@ namespace juce
 
 namespace particules
 {
+    using ValueCallback = std::function<void(double)>;
     using ValueTreeState = juce::AudioProcessorValueTreeState; // juce::juce_audio_processors
     using str = juce::String; // juce::juce_core
 }

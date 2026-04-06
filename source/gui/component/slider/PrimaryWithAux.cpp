@@ -3,15 +3,17 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
+#include "../../../framework/bridge/EngineState.h"
 #include "../../../utils/math/MathConstants.h"
 #include "../../lookandfeelv2/Colours.h"
+
 #include "AuxRotarySlider.h"
 #include "RotarySlider.h"
 
 namespace particules
 {
 
-    PrimaryWithAux::PrimaryWithAux(const str& name)
+    PrimaryWithAux::PrimaryWithAux(const str& name, EngineState& es) : engineState{es}
     {
         label.setText((const str)name, juce::dontSendNotification);
         label.setJustificationType(juce::Justification::centred);
@@ -22,7 +24,16 @@ namespace particules
         primarySlider.getProperties().set("knobStyle", static_cast<int>(RotaryType::primaryWithAux));
         auxSlider.getProperties().set("knobStyle", static_cast<int>(RotaryType::aux));
 
-        primarySlider.onValueChange = [this]() { primarySlider.repaint(); };
+        primarySlider.onValueChange = [this]() {
+            updatePrimaryAngle();
+            primarySlider.repaint();
+
+            // If linked, notify the sibling (GrainsPanel will set this callback)
+            if(engineState.getIsLinked() && onValueChanged)
+            {
+                onValueChanged(primarySlider.getValue());
+            }
+        };
         auxSlider.onValueChange = [this]() {
             syncAuxDataToPrimary();
             primarySlider.repaint();
@@ -31,6 +42,16 @@ namespace particules
         addAndMakeVisible(&primarySlider);
         addAndMakeVisible(&auxSlider);
         addAndMakeVisible(&label);
+    }
+
+    void PrimaryWithAux::setPrimaryValue(double value, juce::NotificationType notify)
+    {
+        primarySlider.setValue(value, notify);
+        if(notify == juce::dontSendNotification)
+        {
+            updatePrimaryAngle(); 
+            primarySlider.repaint();
+        }
     }
 
     void PrimaryWithAux::updatePrimaryAngle()
