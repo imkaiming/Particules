@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Constants.h"
+#include "../PluginParams.h"
 
 // return normalized phase value based on the freq / sampleRate
 
@@ -20,7 +20,7 @@ namespace particules
         float getPhase() const noexcept;
 
     private:
-        static constexpr int SIZE = maxLutSize;
+        static constexpr int SIZE = params::maxLutSize;
 
         void setIncrement() ;
         double sampleRate = 0.0;

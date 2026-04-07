@@ -13,11 +13,11 @@ namespace particules
 
     void GrainEnvelope::initTableData()
     {
-        hannLUT.populate(particules::initHann);
-        linearLUT.populate(particules::initLinear);
-        sqrtLUT.populate(particules::initSqrt);
-        gaussianLUT.populate(particules::initGaussian);
-        expLUT.populate(particules::initExp);
+        hannLUT.populate(dsp::initHann);
+        linearLUT.populate(dsp::initLinear);
+        sqrtLUT.populate(dsp::initSqrt);
+        gaussianLUT.populate(dsp::initGaussian);
+        expLUT.populate(dsp::initExp);
     }
 
     void GrainEnvelope::initTablePtr()

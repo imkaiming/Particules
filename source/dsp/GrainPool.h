@@ -1,6 +1,6 @@
 
 #pragma once
-#include "../framework/Constants.h"
+#include "../framework/PluginParams.h"
 #include "../framework/Core.h"
 #include "Grain.h"
 
@@ -25,7 +25,7 @@ namespace particules
         bool isEmpty() const noexcept { return nextFree == 0; }
 
     private:
-        static constexpr int SIZE = global::maxGrains;
+        static constexpr int SIZE = params::maxGrains;
 
         std::array<Grain, SIZE> grains;
         std::array<int, SIZE> freeIndices; // unordered stack of indexes. The most recently freed grain (also cache friendly)

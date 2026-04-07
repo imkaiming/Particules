@@ -1,7 +1,7 @@
 #include "GuiAppProcessor.h"
 #include "GuiAppEditor.h"
 
-#include "../utils/PluginParams.h"
+#include "../framework/PluginParams.h"
 
 namespace particules
 {
@@ -66,79 +66,79 @@ namespace particules
 
         // ADSR //
         layout.add(std::make_unique<juce::AudioParameterFloat>(
-            adsr::attack::id, adsr::attack::name, juce::NormalisableRange<float>(adsr::attack::min, adsr::attack::max, 0.01f),
-            adsr::attack::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
+            params::attack::id, params::attack::name, juce::NormalisableRange<float>(params::attack::min, params::attack::max, 0.01f),
+            params::attack::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
             [](float v, int) { return juce::String(v, 1) + "s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(
-            adsr::decay::id, adsr::decay::name, juce::NormalisableRange<float>(adsr::decay::min, adsr::decay::max, 0.01f),
-            adsr::decay::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
+            params::decay::id, params::decay::name, juce::NormalisableRange<float>(params::decay::min, params::decay::max, 0.01f),
+            params::decay::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
             [](float v, int) { return juce::String(v, 1) + "s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(
-            adsr::sustain::id, adsr::sustain::name, juce::NormalisableRange<float>(adsr::sustain::min, adsr::sustain::max, 0.01f),
-            adsr::sustain::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
+            params::sustain::id, params::sustain::name, juce::NormalisableRange<float>(params::sustain::min, params::sustain::max, 0.01f),
+            params::sustain::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
             [](float v, int) { return juce::String(v, 1) + "s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(
-            adsr::release::id, adsr::release::name, juce::NormalisableRange<float>(adsr::release::min, adsr::release::max, 0.01f),
-            adsr::release::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
+            params::release::id, params::release::name, juce::NormalisableRange<float>(params::release::min, params::release::max, 0.01f),
+            params::release::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
             [](float v, int) { return juce::String(v, 1) + "s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
         // GLOBAL //
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(
-            global::output::id, global::output::name,
-            juce::NormalisableRange<float>(global::output::min, global::output::max, 0.01f), global::output::init,
+            params::output::id, params::output::name,
+            juce::NormalisableRange<float>(params::output::min, params::output::max, 0.01f), params::output::init,
             juce::String(" dB"), juce::AudioProcessorParameter::genericParameter,
             [](float v, int) { return juce::String(v, 2) + " dB"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(
-            grains::emission::id, grains::emission::name,
-            juce::NormalisableRange<float>(grains::emission::min, grains::emission::max, 0.001f), grains::emission::init,
+            params::emission::id, params::emission::name,
+            juce::NormalisableRange<float>(params::emission::min, params::emission::max, 0.001f), params::emission::init,
             juce::String(" g/s"), juce::AudioProcessorParameter::genericParameter,
             [](float v, int) { return juce::String(v, 2) + " g/s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(
-            grains::duration::id, grains::duration::name,
-            juce::NormalisableRange<float>(grains::duration::min, grains::duration::max, 0.001f), grains::duration::init,
+            params::duration::id, params::duration::name,
+            juce::NormalisableRange<float>(params::duration::min, params::duration::max, 0.001f), params::duration::init,
             juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
             [](float v, int) { return juce::String(v, 2) + " s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(grains::speed::id, grains::speed::name,
-            juce::NormalisableRange<float>(grains::speed::min, grains::speed::max, 0.001f), grains::speed::init));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(params::speed::id, params::speed::name,
+            juce::NormalisableRange<float>(params::speed::min, params::speed::max, 0.001f), params::speed::init));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(global::position::id, global::position::name,
-            juce::NormalisableRange<float>(global::position::min, global::position::max, 0.001f), global::position::init));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(params::position::id, params::position::name,
+            juce::NormalisableRange<float>(params::position::min, params::position::max, 0.001f), params::position::init));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(global::span::id, global::span::name,
-            juce::NormalisableRange<float>(global::span::min, global::span::max, 0.001f), global::span::init));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(params::span::id, params::span::name,
+            juce::NormalisableRange<float>(params::span::min, params::span::max, 0.001f), params::span::init));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(grains::sustainRatio::id, grains::sustainRatio::name,
-            juce::NormalisableRange<float>(grains::sustainRatio::min, grains::sustainRatio::max, 0.01f),
-            grains::sustainRatio::init));
+        layout.add(std::make_unique<juce::AudioParameterFloat>(params::sustainRatio::id, params::sustainRatio::name,
+            juce::NormalisableRange<float>(params::sustainRatio::min, params::sustainRatio::max, 0.01f),
+            params::sustainRatio::init));
 
         // ENVELOPE MODE //
         const juce::StringArray choicesEnvModeNames(
-            grains::envelopeMode::envModeNames.data(), (int)grains::envelopeMode::envModeNames.size());
+            params::envelopeMode::envModeNames.data(), (int)params::envelopeMode::envModeNames.size());
 
         layout.add(std::make_unique<juce::AudioParameterChoice>(
-            grains::envelopeMode::id, grains::envelopeMode::name, choicesEnvModeNames, 1));
+            params::envelopeMode::id, params::envelopeMode::name, choicesEnvModeNames, 1));
 
         // TRAVERSAL MODE //
 
         const juce::StringArray choicesTraversalModeNames(
-            grains::traversalMode::traversalModeNames.data(), (int)grains::traversalMode::traversalModeNames.size());
+            params::traversalMode::traversalModeNames.data(), (int)params::traversalMode::traversalModeNames.size());
 
         layout.add(std::make_unique<juce::AudioParameterChoice>(
-            grains::traversalMode::id, grains::traversalMode::name, choicesTraversalModeNames, 1));
+            params::traversalMode::id, params::traversalMode::name, choicesTraversalModeNames, 1));
 
         // TRAVERSAL FREQ //
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(
-            grains::traversalFreq::id, grains::traversalFreq::name,
-            juce::NormalisableRange<float>(grains::traversalFreq::min, grains::traversalFreq::max, 0.01f),
-            grains::traversalFreq::init, juce::String(" Hz"), juce::AudioProcessorParameter::genericParameter,
+            params::traversalFreq::id, params::traversalFreq::name,
+            juce::NormalisableRange<float>(params::traversalFreq::min, params::traversalFreq::max, 0.01f),
+            params::traversalFreq::init, juce::String(" Hz"), juce::AudioProcessorParameter::genericParameter,
             [](float v, int) { return juce::String(v, 2) + " Hz"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
         // ajouter pan, direction

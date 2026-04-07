@@ -5,7 +5,7 @@
 #include <juce_graphics/juce_graphics.h> // juce::Colour
 #include <juce_gui_basics/juce_gui_basics.h> // juce::Component
 
-#include "../../framework/Constants.h"
+#include "../../framework/PluginParams.h"
 
 /**
 * On a besoin de la valeur de la position du grain dans le buffer pour montrer sa position sur l'axe x.
@@ -38,8 +38,8 @@ namespace particules
         void setNumSamples(int);
 
     private:
-        static constexpr int MAXGRAINS = static_cast<int>(global::maxGrains);
-        static constexpr float GSIZE = UI::grainVisualSize;
+        static constexpr int MAXGRAINS = static_cast<int>(params::maxGrains);
+        static constexpr float GSIZE = gui::grainVisualSize;
         static constexpr float GCENTER = GSIZE / 2.f;
         void timerCallback() override;
 

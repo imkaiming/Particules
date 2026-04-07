@@ -7,7 +7,7 @@
 #include <juce_audio_formats/juce_audio_formats.h> // audio format manager
 #include <juce_core/juce_core.h> // file
 
-#include "../Constants.h"
+#include "../PluginParams.h"
 #include "ChannelMixer.h"
 
 namespace juce
@@ -38,8 +38,8 @@ namespace particules
         void setCurrentFile(juce::File& f) noexcept { currentFile = f; };
 
     private:
-        static constexpr int MAX_FILE_SIZE = maxFileSize;
-        static constexpr double MAX_DURATION = maxFileDuration;
+        static constexpr int MAX_FILE_SIZE = params::maxFileSize;
+        static constexpr double MAX_DURATION = params::maxFileDuration;
         void showErrorWindow(const juce::String&);
 
         double sampleRate;

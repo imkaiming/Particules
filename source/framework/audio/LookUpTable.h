@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Constants.h"
+#include "../PluginParams.h"
 #include "../Core.h"
 
 namespace particules
@@ -20,7 +20,7 @@ namespace particules
         }
 
     private: // make this protected if you want to specialized the LUT
-        static constexpr int SIZE = maxLutSize;
+        static constexpr int SIZE = params::maxLutSize;
         std::array<float, SIZE> table;
 
         //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(LookUpTable)

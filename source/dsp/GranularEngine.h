@@ -17,7 +17,7 @@
 #include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_dsp/juce_dsp.h>
 
-#include "../framework/Constants.h"
+#include "../framework/PluginParams.h"
 #include "../framework/PluginTypes.h"
 #include "../utils/AtomicSharedPtr.h"
 #include "../utils/struct/SmoothedParameters.h"
@@ -52,7 +52,7 @@ namespace particules
         void updateSmoothedParameters() noexcept;
         void setTargetSmoothedValue(const ParameterSnapshot&) noexcept;
 
-        static constexpr uint8_t mMaxEvent = maxSpawnsPerBlock;
+        static constexpr uint8_t mMaxEvent = params::maxSpawnsPerBlock;
 
         AtomicSharedPtr<const AudioBuffer> inputBufferPtr; // should be downmixed
         std::function<void(const ParameterSnapshot& ps)> spawnCallback;

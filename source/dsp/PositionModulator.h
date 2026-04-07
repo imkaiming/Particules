@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../framework/Constants.h"
+#include "../framework/PluginParams.h"
 #include "../framework/audio/LookUpTable.h"
 #include "../framework/audio/PhaseGenerator.h"
 #include "../utils/enum/TraversalMode.h"
@@ -25,7 +25,7 @@ namespace particules
         const float getPhase();
 
     private:
-        static constexpr int SIZE = maxLutSize;
+        static constexpr int SIZE = params::maxLutSize;
         static constexpr int MODCOUNT = 4;
 
         // init tables

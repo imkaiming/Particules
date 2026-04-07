@@ -128,7 +128,7 @@ file(GLOB_RECURSE BaseSources CONFIGURE_DEPENDS
 
 target_sources(Base PUBLIC 
     ${BaseSources}
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/Constants.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/PluginParams.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/Core.h")
 
 ############# CORE LIB #############

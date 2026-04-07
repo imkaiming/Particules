@@ -1,7 +1,6 @@
 #include "../source/dsp/Grain.h"
 #include "../source/dsp/GrainPool.h"
-#include "../source/utils/PluginParams.h"
-#include "../source/framework/Constants.h"
+#include "../source/framework/PluginParams.h"
 #include "../source/utils/struct/GrainHandle.h"
 #include <catch2/catch_test_macros.hpp>
 
@@ -9,7 +8,7 @@
 namespace particulesTest
 {
     using namespace particules;
-    static constexpr int MAX_GRAINS = global::maxGrains;
+    static constexpr int MAX_GRAINS = params::maxGrains;
 
     struct GrainPoolFixture
     {

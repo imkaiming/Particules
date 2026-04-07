@@ -1,13 +1,35 @@
 #pragma once
 #include "../framework/Core.h"
-#include "enum/EnvelopeMode.h"
+#include "../utils/enum/EnvelopeMode.h"
 
 // init parameters for the plugin
 
 namespace particules
 {
-    namespace adsr
+    namespace gui
     {
+        inline constexpr const float grainVisualSize = 8.f;
+
+        inline constexpr const int windowWidthInit = 900; // 750
+        inline constexpr const int windowWidthMin = 900;
+        inline constexpr const int windowWidthMax = 1200; //  900
+
+        inline constexpr const int windowHeightInit = 600;
+        inline constexpr const int windowHeightMin = 600;
+        inline constexpr const int windowHeightMax = 800;
+    }
+
+    namespace params
+    {
+
+        inline constexpr int maxMidiVoice = 16;
+        inline constexpr int maxSpawnsPerBlock = 16;
+        inline constexpr double maxFileDuration = 600.0; // 10 min
+        inline constexpr int maxFileSize = 2 * 512ULL * 1024 * 1024; // 512MB limits ULL -> Unsigned Long Long
+        inline constexpr int maxLutSize = 2048;
+        inline constexpr int maxGrains = 500;
+        inline constexpr float maxDuration = 10.0f; // seconds
+
         namespace attack
         {
             inline constexpr const char* id = "ATTACK";
@@ -16,6 +38,7 @@ namespace particules
             inline constexpr const float max = 10.f;
             inline constexpr const float init = 1.f;
         }
+
         namespace decay
         {
             inline constexpr const char* id = "DECAY";
@@ -41,23 +64,12 @@ namespace particules
             inline constexpr const float init = 1.f;
         }
 
-    }
-    namespace global
-    {
         namespace play
         {
             inline constexpr const char* id = "PLAY";
             inline constexpr const char* name = "Play";
             inline constexpr bool init = false;
         }
-        //namespace mix
-        //{
-        //    inline constexpr const char* id = "MIX";
-        //    inline constexpr const char* name = "Mix";
-        //    inline constexpr float min = 0.0f;
-        //    inline constexpr float max = 100.f;
-        //    inline constexpr float init = 100.f;
-        //}
         namespace position
         {
             inline constexpr const char* id = "POSITION";
@@ -82,9 +94,7 @@ namespace particules
             inline constexpr float max = 0.0f;
             inline constexpr float init = -6.0f;
         }
-    }
-    namespace grains
-    {
+
         namespace emission
         {
             inline constexpr const char* id = "EMISSION"; // grain emissions per sec
@@ -99,7 +109,7 @@ namespace particules
             inline constexpr const char* id = "DURATION"; // length of emitted grains in sec
             inline constexpr const char* name = "Duration";
             inline constexpr float min = 0.02f; // 0.002s for every emitted grains (1/ 0.002 = 500)
-            inline constexpr float max = 10.0f;  // 10 sec for every emitted grains (1/ 10 = 0.1)
+            inline constexpr float max = 10.0f; // 10 sec for every emitted grains (1/ 10 = 0.1)
             inline constexpr float init = 1.0f;
             inline constexpr float skewFactor = 1.0f;
         }
@@ -126,7 +136,8 @@ namespace particules
             inline constexpr const char* id = "ENVMODE";
             inline constexpr const char* name = "Envelope Mode";
             inline constexpr const int init = 0;
-            inline constexpr std::array<const char*, static_cast<int>(EnvelopeMode::Count)> envModeNames = {"Hann", "Linear", "Sqrt", "Gaussian", "Exponential"};
+            inline constexpr std::array<const char*, static_cast<int>(EnvelopeMode::Count)> envModeNames = {
+                "Hann", "Linear", "Sqrt", "Gaussian", "Exponential"};
 
         }
 

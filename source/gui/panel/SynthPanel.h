@@ -5,8 +5,7 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 
 #include "../../framework/GuiTypes.h"
-
-#include "../../utils/PluginParams.h"
+#include "../../framework/PluginParams.h"
 #include "../component/ThumbnailComponent.h"
 #include "../component/VerticalMeterComponent.h"
 
@@ -41,10 +40,10 @@ namespace particules
         std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> outputSliderAttachment;
 
         // constants
-        static constexpr const char* globalOutputId = global::output::id;
-        static constexpr const char* globalOutputName = global::output::name;
-        static constexpr const float globalOutputMin = global::output::min;
-        static constexpr const float globalOutputMax = global::output::max;
+        static constexpr const char* globalOutputId = params::output::id;
+        static constexpr const char* globalOutputName = params::output::name;
+        static constexpr const float globalOutputMin = params::output::min;
+        static constexpr const float globalOutputMax = params::output::max;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SynthPanel)
     };

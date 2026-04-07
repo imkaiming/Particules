@@ -5,7 +5,7 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 
 #include "../../framework/GuiTypes.h"
-#include "../../utils/PluginParams.h"
+#include "../../framework/PluginParams.h"
 #include "../component/ThumbnailComponent.h"
 #include "../component/overlay/PositionOverlayComponent.h"
 #include "../component/overlay/SpanOverlayComponent.h"
@@ -53,15 +53,15 @@ namespace particules
         SpanOverlayComponent spanOverlay;
         SpanOverlayComponent overflowOverlay; // when the selection is higher than the width it wrapped back. it add flexibility
 
-        static constexpr const char* globalPositionId = global::position::id;
-        static constexpr const char* globalPositionName = global::position::name;
-        static constexpr const float globalPositionMin = global::position::min;
-        static constexpr const float globalPositionMax = global::position::max;
+        static constexpr const char* globalPositionId = params::position::id;
+        static constexpr const char* globalPositionName = params::position::name;
+        static constexpr const float globalPositionMin = params::position::min;
+        static constexpr const float globalPositionMax = params::position::max;
 
-        static constexpr const char* globalSpanId = global::span::id;
-        static constexpr const char* globalSpanName = global::span::name;
-        static constexpr const float globalSpanMin = global::span::min;
-        static constexpr const float globalSpanMax = global::span::max;
+        static constexpr const char* globalSpanId = params::span::id;
+        static constexpr const char* globalSpanName = params::span::name;
+        static constexpr const float globalSpanMin = params::span::min;
+        static constexpr const float globalSpanMax = params::span::max;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFilePanel)
     };

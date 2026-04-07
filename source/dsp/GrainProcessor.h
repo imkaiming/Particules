@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../framework/Constants.h"
+#include "../framework/PluginParams.h"
 #include "../framework/Core.h"
 #include "../utils/struct/GrainHandle.h"
 
@@ -34,7 +34,7 @@ namespace particules
     private:
         void removeVoice(const int index);
 
-        static constexpr int SIZE = global ::maxGrains;
+        static constexpr int SIZE = params ::maxGrains;
 
         GrainEnvelope& envLut;
         PositionModulator& posMod;

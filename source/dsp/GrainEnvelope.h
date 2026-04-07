@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../framework/Constants.h"
+#include "../framework/PluginParams.h"
 #include "../framework/Core.h"
 #include "../framework/audio/LookUpTable.h"
 #include "../utils/enum/EnvelopeMode.h"
@@ -24,7 +24,7 @@ namespace particules
         void setEnvelopeMode(EnvelopeMode m) noexcept { envMode = m; }
 
     private:
-        static constexpr int SIZE = maxLutSize;
+        static constexpr int SIZE = params::maxLutSize;
 
         void initTableData();
         void initTablePtr();

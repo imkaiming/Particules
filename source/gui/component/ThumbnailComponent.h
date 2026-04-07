@@ -7,8 +7,7 @@
 #include "GrainVisualComponent.h"
 
 #include "../../framework/Core.h"
-
-#include "../../utils/PluginParams.h"
+#include "../../framework/PluginParams.h"
 
 namespace juce
 {
@@ -35,8 +34,8 @@ namespace particules
         void setCallbackOnThumbnailReady(std::function<void()>);
 
     private:
-        static constexpr const char* globalPositionId = global::position::id;
-        static constexpr const char* globalSpanId = global::span::id;
+        static constexpr const char* globalPositionId = params::position::id;
+        static constexpr const char* globalSpanId = params::span::id;
 
         void paint(juce::Graphics&) override;
         void resized() override;

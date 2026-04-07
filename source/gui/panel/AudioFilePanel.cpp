@@ -45,7 +45,7 @@ namespace particules
     {
         //paramsView.setIsPlaying(false);
         //audioProcessor.release();
-        juce::RangedAudioParameter* playParameter = apvts.getParameter(global::play::id);
+        juce::RangedAudioParameter* playParameter = apvts.getParameter(params::play::id);
         playParameter->setValueNotifyingHost(0.f);
 
         for(str file : files)

@@ -101,11 +101,11 @@ int main()
 
     particules::LookUpTable hannLUT, linearLUT, sqrtLUT, gaussianLUT, expLUT;
 
-    hannLUT.populate(particules::initHann);
-    linearLUT.populate(particules::initLinear);
-    sqrtLUT.populate(particules::initSqrt);
-    gaussianLUT.populate(particules::initGaussian);
-    expLUT.populate(particules::initExp);
+    hannLUT.populate(particules::dsp::initHann);
+    linearLUT.populate(particules::dsp::initLinear);
+    sqrtLUT.populate(particules::dsp::initSqrt);
+    gaussianLUT.populate(particules::dsp::initGaussian);
+    expLUT.populate(particules::dsp::initExp);
 
     saveSVGFile("env_hann.svg", generateSVGPath(hannLUT, config), "Hann Envelope", config);
     saveSVGFile("env_linear.svg", generateSVGPath(linearLUT, config), "Linear (Triangle) Envelope", config);

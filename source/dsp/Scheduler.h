@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "../framework/Constants.h"
+#include "../framework/PluginParams.h"
 #include "../framework/Core.h"
 
 #include <juce_core/juce_core.h>
@@ -37,7 +37,7 @@ namespace particules
         //void tick(int, std::function<void(int, const ParameterSnapshot&)>, const ParameterSnapshot&);
 
     private:
-        static constexpr int SIZE = maxSpawnsPerBlock;
+        static constexpr int SIZE = params::maxSpawnsPerBlock;
 
         void reset();
         //const double getInterOnSet(float, double) const noexcept;
