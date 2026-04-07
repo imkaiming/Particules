@@ -20,6 +20,7 @@ namespace particules
             setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
             setRange(0.0, 1.0);
             //getProperties().set("knobStyle", static_cast<int>(RotaryType::aux));
+            setRepaintsOnMouseActivity(true);
         }
 
     private:

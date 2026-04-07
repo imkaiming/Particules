@@ -80,7 +80,7 @@ namespace particules
         g.setColour(colours::panel::contourPanel);
         g.drawRoundedRectangle(inner, 12.0f, lineThickness);
         */
-        g.fillAll(colours::perleBlanc);
+        g.fillAll(coloursv2::deepBlack.brighter(0.04f));
     }
     /*
     void AudioFilePanel::resized()

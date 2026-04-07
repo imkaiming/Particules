@@ -1,20 +1,22 @@
 #pragma once
 
-#include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_core/juce_core.h>
+#include <juce_gui_basics/juce_gui_basics.h>
 
 #include "../../framework/GuiTypes.h"
+#include "../component/button/IconButton.h"
 #include "../lookandfeel/LabelBoxLookAndFeel.h"
 
 namespace juce
 {
     class Graphics;
-    //class AudioProcessorValueTreeState::SliderAttachment;
 }
 
 namespace particules
 {
     struct UIContext;
+    struct ProcessorFacade;
+    class EngineState;
     class TitlePanel : public juce::Component
     {
     public:
@@ -28,20 +30,18 @@ namespace particules
         static constexpr const char* fileNameBoxPlaceHolder = "audio_file_03.wav";
 
         UIContext& uic;
-        std::function<void(const str&)> loadFileCallback;
 
-        juce::Label titleLabel;
+        juce::Label titleLabel, fileNameBox;
         juce::TextButton loadBtn;
-        juce::Label fileNameBox;
 
-        juce::DrawableButton pauseBtn;
-        juce::DrawableButton playBtn;
+        ProcessorFacade& facade;
+        EngineState& engineState;
+
+        IconButton playBtn;
+        std::unique_ptr<juce::Drawable> playIcon, pauseIcon;
 
         LabelBoxLookAndFeel lookAndFeel;
         juce::Component leftArea, loadArea, fileArea, rightArea, btnArea;
-
-        void setPlayButtonImage();
-        void setPauseButtonImage();
 
         void pauseButtonClicked();
         void playButtonClicked();

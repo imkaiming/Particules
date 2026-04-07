@@ -12,5 +12,7 @@ namespace particules
     {
         std::function<void()> loadFile;
         std::function<void(const juce::String& path)> loadFilePath;
+        std::function<void()> play;
+        std::function<void()> stop;
     };
 }

@@ -5,10 +5,10 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 
 #include "../../framework/GuiTypes.h"
-#include "../../framework/bridge/EngineState.h"
 #include "../../utils/PluginParams.h"
 #include "../Component/slider/PrimaryWithAux.h"
 #include "../Component/slider/RotarySlider.h"
+#include "../Component/button/IconButton.h"
 
 namespace juce
 {
@@ -18,7 +18,7 @@ namespace juce
 namespace particules
 {
     struct UIContext;
-    class ParameterView;
+    class EngineState;
     class GrainsPanel : public juce::Component //, public juce::AudioProcessorValueTreeState::Listener
     {
     public:
@@ -33,8 +33,6 @@ namespace particules
         void linkButtonClicked();
         void setLinkButtonImage();
 
-        //ValueTreeState& apvts;
-        //ParameterView& paramsView;
         EngineState& engineState;
 
         PrimaryWithAux emissionSlider;
@@ -43,9 +41,8 @@ namespace particules
         SecondaryRotarySlider sustainRatioSlider;
         SecondaryRotarySlider traversalFreqSlider;
 
-        juce::DrawableButton linkBtn;
-        //juce::DrawableButton linkInBtn;
-        //juce::DrawableButton linkOffBtn;
+        IconButton linkBtn;
+        std::unique_ptr<juce::Drawable> linkInIcon, linkOffIcon;
 
         juce::Label speedLabel;
         juce::Label sustainRatioLabel;

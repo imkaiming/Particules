@@ -3,6 +3,8 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_graphics/juce_graphics.h>
 
+#include "../../framework/bridge/EngineState.h"
+#include "../../utils/UIHelpers.h"
 #include "../../utils/struct/UIContext.h"
 #include "../lookandfeel/MyColours.h"
 #include "../lookandfeelv2/Colours.h"
@@ -11,13 +13,15 @@
 namespace particules
 {
     GrainsPanel::GrainsPanel(UIContext& uic)
-        : /*{uic.apvts},  paramsView{uic.paramsView}, */ engineState{uic.engineState},
-          emissionSlider(grainsEmissionName, engineState), durationSlider(grainsDurationName, engineState),
+        : engineState{uic.engineState}, emissionSlider(grainsEmissionName, engineState),
+          durationSlider(grainsDurationName, engineState),
           emissionSliderAttachment{emissionSlider.attachPrimaryToAPVTS(uic.apvts, grainsEmissionId)},
-          durationSliderAttachment{durationSlider.attachPrimaryToAPVTS(uic.apvts, grainsDurationId)},
-          linkBtn{(const str) "linkBtn", juce::DrawableButton::ButtonStyle::ImageFitted}
+          durationSliderAttachment{durationSlider.attachPrimaryToAPVTS(uic.apvts, grainsDurationId)}, linkBtn{"linkBtn"}
     {
-        setLinkButtonImage();
+        linkInIcon = UIHelpers::loadSVG(BinaryData::link_in_svg, BinaryData::link_in_svgSize, juce::Colours::white);
+        linkOffIcon = UIHelpers::loadSVG(BinaryData::link_off_svg, BinaryData::link_off_svgSize, juce::Colours::white);
+
+        linkBtn.setIcon(linkOffIcon.get());
 
         linkBtn.onClick = [this]() { linkButtonClicked(); };
 
@@ -140,16 +144,12 @@ namespace particules
         if(engineState.getIsLinked())
         {
             engineState.setLink(false);
-            linkBtn.setImages(juce::Drawable::createFromImageData(BinaryData::link_off_svg, BinaryData::link_off_svgSize).get(),
-                juce::Drawable::createFromImageData(BinaryData::link_off_svg, BinaryData::link_off_svgSize).get(), nullptr,
-                nullptr, nullptr, nullptr, nullptr, nullptr);
+            linkBtn.setIcon(linkOffIcon.get());
         }
         else
         {
             engineState.setLink(true);
-            linkBtn.setImages(juce::Drawable::createFromImageData(BinaryData::link_in_svg, BinaryData::link_in_svgSize).get(),
-                juce::Drawable::createFromImageData(BinaryData::link_in_svg, BinaryData::link_in_svgSize).get(), nullptr, nullptr,
-                nullptr, nullptr, nullptr, nullptr);
+            linkBtn.setIcon(linkInIcon.get());
 
             double emissionVal = emissionSlider.getPrimaryValue();
             double durationVal = 1.0 / emissionVal;
@@ -171,15 +171,17 @@ namespace particules
         const int topColWidth = juce::jmin(topRow.getWidth() / 2, rowHeight) + 5;
         const int linkBtnWidth = (area.getWidth() - topColWidth * 2) * 0.25;
         const int totalWidth = topColWidth * 2 + linkBtnWidth;
-        auto group = topRow.withSizeKeepingCentre(totalWidth, topRow.getHeight());
 
-        auto left = group.removeFromLeft(topColWidth);
-        auto link = group.removeFromLeft(linkBtnWidth);
-        auto right = group.removeFromLeft(topColWidth);
+        juce::Rectangle<int> group = topRow.withSizeKeepingCentre(totalWidth, topRow.getHeight());
 
-        emissionSlider.setBounds(left);
-        linkBtn.setBounds(link);
-        durationSlider.setBounds(right);
+        juce::Rectangle<int> leftArea = group.removeFromLeft(topColWidth);
+        juce::Rectangle<int> linkArea = group.removeFromLeft(linkBtnWidth);
+        juce::Rectangle<int> rightArea = group.removeFromLeft(topColWidth);
+
+        emissionSlider.setBounds(leftArea);
+        const int btnSize = juce::jmin(linkArea.getWidth(), 25);
+        linkBtn.setBounds(linkArea.withSizeKeepingCentre(btnSize, btnSize));
+        durationSlider.setBounds(rightArea);
 
         const int midColWidth = middleRow.getWidth() / 3;
         speedSlider.setBounds(middleRow.removeFromLeft(midColWidth));

@@ -1,8 +1,7 @@
 #pragma once
 
 #include <juce_graphics/juce_graphics.h>
-
-using color = juce::Colour;
+#include "../../framework/GuiTypes.h"
 
 namespace particules
 {

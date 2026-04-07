@@ -37,6 +37,9 @@ namespace particules
 
         int knobStyle = slider.getProperties().getWithDefault("knobStyle", static_cast<int>(RotaryType::primary));
 
+        //color drawColour = isHovered ? coloursv2::blackest.brighter(0.05f) : coloursv2::blackest;
+        //g.setColour(drawColour);
+
         g.setColour(coloursv2::blackest);
         g.fillEllipse(cx - innerR, cy - innerR, innerR * 2, innerR * 2);
 
@@ -44,27 +47,27 @@ namespace particules
         {
             case static_cast<int>(RotaryType::primary):
                 drawPrimaryKnob(g, cx, cy, radius, innerR, startAngle, endAngle, sliderPos, slider);
-                return;
+                break;
 
             case static_cast<int>(RotaryType::secondary):
                 drawSecondaryKnob(g, cx, cy, radius, innerR, startAngle, endAngle, sliderPos, slider);
-                return;
+                break;
 
             case static_cast<int>(RotaryType::tertiary):
                 drawTertiaryKnob(g, cx, cy, visualRadius * 0.7f, visualRadius * 0.62f, startAngle, endAngle, sliderPos, slider);
-                return;
+                break;
 
             case static_cast<int>(RotaryType::aux):
             {
                 const float primaryAngle = slider.getProperties().getWithDefault("primaryAngle", startAngle);
                 const float primaryArcRadius = slider.getProperties().getWithDefault("primaryArcRadius", radius * 0.9f);
                 drawAuxKnob(g, cx, cy, innerR, startAngle, endAngle, sliderPos);
-                return;
+                break;
             }
 
             case static_cast<int>(RotaryType::primaryWithAux):
                 drawPrimaryWithAuxKnob(g, cx, cy, radius, innerR, startAngle, endAngle, sliderPos, slider);
-                return;
+                break;
         }
     }
 
@@ -337,6 +340,8 @@ namespace particules
 
     void MainLNF::drawRotarySliderCenteredText(juce::Graphics& g, juce::Slider& slider, float cx, float cy, float radius)
     {
+        const bool isHovered = slider.isMouseOverOrDragging();
+
         juce::String text = slider.getTextFromValue(slider.getValue());
         juce::String valueStr, unitStr;
 
@@ -365,7 +370,8 @@ namespace particules
         const float unitFontSize = radius * 0.25f;
         const float spacing = radius * 0.05f;
 
-        g.setColour(slider.findColour(juce::Slider::textBoxTextColourId));
+        g.setColour(isHovered ? slider.findColour(juce::Slider::textBoxTextColourId)
+                              : slider.findColour(juce::Slider::textBoxTextColourId).withAlpha(0.7f));
 
         if(unitStr.isNotEmpty())
         {

@@ -2,25 +2,27 @@
 
 #include <juce_graphics/juce_graphics.h>
 
-
-#include "../../PluginProcessor.h"
+#include "../../framework/bridge/EngineState.h"
 #include "../../utils/PluginParams.h"
+#include "../../utils/struct/ProcessorFacade.h"
 #include "../../utils/struct/UIContext.h"
+#include "../../utils/UIHelpers.h"
 #include "../lookandfeelv2/Colours.h"
+
 #include "BinaryData.h"
 
 namespace particules
 {
 
     TitlePanel::TitlePanel(UIContext& uic)
-        : playBtn((const str) "playBtn", juce::DrawableButton::ButtonStyle::ImageFitted),
-          pauseBtn((const str) "pauseBtn", juce::DrawableButton::ButtonStyle::ImageFitted), uic{uic},
-          loadFileCallback{uic.facade.loadFilePath}
+        : playBtn{(const str) "playBtn"}, uic{uic}, facade{uic.facade}, engineState{uic.engineState}
     {
-        setPauseButtonImage();
-        setPlayButtonImage();
+        playIcon = UIHelpers::loadSVG(BinaryData::play_svg, BinaryData::play_svgSize, juce::Colours::white);
+        pauseIcon = UIHelpers::loadSVG(BinaryData::pause_svg, BinaryData::pause_svgSize, juce::Colours::white);
 
-        pauseBtn.onClick = [this]() { pauseButtonClicked(); };
+        playBtn.setIcon(playIcon.get());
+        addAndMakeVisible(playBtn);
+
         playBtn.onClick = [this]() { playButtonClicked(); };
         loadBtn.onClick = [this]() { loadSampleButtonClicked(); };
 
@@ -55,49 +57,30 @@ namespace particules
 
         rightArea.addAndMakeVisible(btnArea);
         btnArea.addAndMakeVisible(playBtn);
-        btnArea.addAndMakeVisible(pauseBtn);
     }
 
     TitlePanel::~TitlePanel() { fileNameBox.setLookAndFeel(nullptr); }
 
-    void TitlePanel::pauseButtonClicked()
-    {
-        juce::RangedAudioParameter* playParameter = uic.apvts.getParameter(global::play::id);
-        playParameter->setValueNotifyingHost(0.f);
-        // TODO : simulate the end of a midi noteOn() C3 and proceed to the release
-        // also reset the grain pool state and the grain visual buffer at the complete stop
-    }
-
     void TitlePanel::playButtonClicked()
     {
-        juce::RangedAudioParameter* playParameter = uic.apvts.getParameter(global::play::id);
-        playParameter->setValueNotifyingHost(1.f);
-        // TODO : simulate the start of a midi noteOn() C3
-        // uic.facade.play();
-    }
-
-    void TitlePanel::setPlayButtonImage()
-    {
-        playBtn.setImages(juce::Drawable::createFromImageData(BinaryData::Play_svg, BinaryData::Play_svgSize).get(),
-            juce::Drawable::createFromImageData(BinaryData::Play_Fill_svg, BinaryData::Play_Fill_svgSize).get(), nullptr, nullptr,
-            nullptr, nullptr, nullptr, nullptr);
-    }
-
-    void TitlePanel::setPauseButtonImage()
-    {
-        pauseBtn.setImages(juce::Drawable::createFromImageData(BinaryData::Pause_svg, BinaryData::Pause_svgSize).get(),
-            juce::Drawable::createFromImageData(BinaryData::Pause_Fill_svg, BinaryData::Pause_Fill_svgSize).get(), nullptr,
-            nullptr, nullptr, nullptr, nullptr, nullptr);
+        if(engineState.getIsPlaying())
+        {
+            //facade.stop();
+            playBtn.setIcon(playIcon.get());
+            engineState.setIsPlaing(false);
+        }
+        else
+        {
+            //facade.play();
+            playBtn.setIcon(pauseIcon.get());
+            engineState.setIsPlaing(true);
+        }
     }
 
     void TitlePanel::loadSampleButtonClicked()
     {
-        // trigger the midi onNoteOff()
-        //paramsView.setIsPlaying(false);
-
-        juce::RangedAudioParameter* playParameter = uic.apvts.getParameter(global::play::id);
-        playParameter->setValueNotifyingHost(0.f);
-        uic.facade.loadFile();
+        facade.stop();
+        facade.loadFile();
     }
 
     void TitlePanel::paint(juce::Graphics& g)
@@ -112,7 +95,7 @@ namespace particules
         g.setColour(colours::panel::contourPanel);
         g.drawRoundedRectangle(inner, 12.0f, lineThickness);
         */
-        g.fillAll(colours::perleBlanc);
+        g.fillAll(coloursv2::deepBlack.brighter(0.04f));
     }
 
     void TitlePanel::resized()
@@ -202,7 +185,7 @@ namespace particules
         const float gap = 8.0f;
 
         btnFb.items.add(juce::FlexItem(playBtn).withWidth(btnSize).withHeight(btnSize).withMargin({0, gap * 0.5f, 0, 0}));
-        btnFb.items.add(juce::FlexItem(pauseBtn).withWidth(btnSize).withHeight(btnSize).withMargin({0, 0, 0, gap * 0.5f}));
+        //btnFb.items.add(juce::FlexItem(pauseBtn).withWidth(btnSize).withHeight(btnSize).withMargin({0, 0, 0, gap * 0.5f}));
 
         btnFb.performLayout(btnArea.getLocalBounds());
     }

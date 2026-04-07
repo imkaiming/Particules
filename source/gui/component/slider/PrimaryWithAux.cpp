@@ -42,6 +42,7 @@ namespace particules
         addAndMakeVisible(&primarySlider);
         addAndMakeVisible(&auxSlider);
         addAndMakeVisible(&label);
+
     }
 
     void PrimaryWithAux::setPrimaryValue(double value, juce::NotificationType notify)

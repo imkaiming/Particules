@@ -23,6 +23,7 @@ namespace particules
         void setSampleRate(double sr) noexcept { sampleRate.store(sr, std::memory_order_relaxed); }
         void setNumActiveGrains(int g) noexcept { numActiveGrains.store(g, std::memory_order_relaxed); }
         void setLink(bool b) noexcept { isLinked.store(b, std::memory_order_relaxed); }
+        void setIsPlaing(bool b) noexcept { isPlaying.store(b, std::memory_order_relaxed); }
 
         //bool getIsPlaying() const noexcept { return isPlaying.load(std::memory_order_relaxed); }
         bool getIsGrainsEmpty() const noexcept { return isGrainsEmpty.load(std::memory_order_relaxed); }
@@ -31,9 +32,10 @@ namespace particules
         double getSampleRate() const noexcept { return sampleRate.load(std::memory_order_relaxed); }
         int getNumActiveGrains() const noexcept { return numActiveGrains.load(std::memory_order_relaxed); }
         int getIsLinked() const noexcept { return isLinked.load(std::memory_order_relaxed); }
+        int getIsPlaying() const noexcept { return isPlaying.load(std::memory_order_relaxed); }
 
     private:
-        //std::atomic<bool> isPlaying;
+        std::atomic<bool> isPlaying;
         std::atomic<bool> isGrainsEmpty;
         std::atomic<double> sampleRate;
         std::atomic<int> numChannels;

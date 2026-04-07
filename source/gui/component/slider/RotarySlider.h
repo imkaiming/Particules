@@ -22,6 +22,8 @@ namespace particules
             setColour(juce::Slider::rotarySliderOutlineColourId, colours::grisAnthracite);
 
             getProperties().set("knobStyle", static_cast<int>(RotaryType::primary));
+            setRepaintsOnMouseActivity(true);
+
         }
 
     private:
@@ -40,6 +42,8 @@ namespace particules
             setColour(juce::Slider::rotarySliderOutlineColourId, colours::perleBlanc);
 
             getProperties().set("knobStyle", static_cast<int>(RotaryType::secondary));
+            setRepaintsOnMouseActivity(true);
+
         }
 
     private:
