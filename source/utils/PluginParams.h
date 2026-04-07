@@ -1,5 +1,6 @@
 #pragma once
 #include "../framework/Core.h"
+#include "enum/EnvelopeMode.h"
 
 // init parameters for the plugin
 
@@ -125,8 +126,7 @@ namespace particules
             inline constexpr const char* id = "ENVMODE";
             inline constexpr const char* name = "Envelope Mode";
             inline constexpr const int init = 0;
-            inline constexpr std::array<const char*, 7> envModeNames = {
-                "Hann", "Triangular", "Blackman", "BlackmanHarris", "Gaussian", "Exponential", "SmoothedStep"};
+            inline constexpr std::array<const char*, static_cast<int>(EnvelopeMode::Count)> envModeNames = {"Hann", "Linear", "Sqrt", "Gaussian", "Exponential"};
 
         }
 

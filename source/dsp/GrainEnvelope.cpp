@@ -1,8 +1,6 @@
 #include "GrainEnvelope.h"
 
-//#include "../utils/math/Lerp.h"
-#include "../utils/math/MathConstants.h"
-//#include "../framework/audio/PhaseGenerator.h"
+#include "../utils/math/EnvelopeMath.h"
 
 
 namespace particules
@@ -15,23 +13,23 @@ namespace particules
 
     void GrainEnvelope::initTableData()
     {
-        hannLUT.populate(GrainEnvelope::initHann);
-        gaussianLUT.populate(GrainEnvelope::initGaussian);
-        blackmanLUT.populate(GrainEnvelope::initBlackman);
-        blackmanHarrisLUT.populate(GrainEnvelope::initBlackmanHarris);
-        triangleLUT.populate(GrainEnvelope::initTriangle);
-        expLUT.populate(GrainEnvelope::initExp);
-        smoothedLUT.populate(GrainEnvelope::initSmoothed);
+        hannLUT.populate(particules::initHann);
+        linearLUT.populate(particules::initLinear);
+        sqrtLUT.populate(particules::initSqrt);
+        gaussianLUT.populate(particules::initGaussian);
+        expLUT.populate(particules::initExp);
     }
+
     void GrainEnvelope::initTablePtr()
     {
         tables[static_cast<int>(EnvelopeMode::Hann)] = &hannLUT;
+        tables[static_cast<int>(EnvelopeMode::Linear)] = &linearLUT;
+        tables[static_cast<int>(EnvelopeMode::Sqrt)] = &sqrtLUT;
         tables[static_cast<int>(EnvelopeMode::Gaussian)] = &gaussianLUT;
-        tables[static_cast<int>(EnvelopeMode::Triangle)] = &triangleLUT;
         tables[static_cast<int>(EnvelopeMode::Exp)] = &expLUT;
-        tables[static_cast<int>(EnvelopeMode::Blackman)] = &blackmanLUT;
-        tables[static_cast<int>(EnvelopeMode::BlackmanHarris)] = &blackmanHarrisLUT;
-        tables[static_cast<int>(EnvelopeMode::Smoothed)] = &smoothedLUT;
+        //tables[static_cast<int>(EnvelopeMode::Blackman)] = &blackmanLUT;
+        //tables[static_cast<int>(EnvelopeMode::BlackmanHarris)] = &blackmanHarrisLUT;
+        //tables[static_cast<int>(EnvelopeMode::Smoothed)] = &smoothedLUT;
 
     }
 
@@ -41,7 +39,7 @@ namespace particules
         assert(table != nullptr);
         return table->getValue(phase);
     }
-
+    /*
     void GrainEnvelope::initHann(std::span<float> table) noexcept
     {
         const float p = twoPi / static_cast<float>(SIZE - 1);
@@ -68,7 +66,7 @@ namespace particules
 
     }
 
-    void GrainEnvelope::initTriangle(std::span<float> table) noexcept
+    void GrainEnvelope::initLinear(std::span<float> table) noexcept
     {
         const float center = 0.5f * static_cast<float>(SIZE - 1.f);
         const float invCenter = 1.f / center;
@@ -96,9 +94,22 @@ namespace particules
 
         table[0] = 0.f;
         table[SIZE - 1] = 0.f;
-
     }
 
+    void GrainEnvelope::initSqrt(std::span<float> table) noexcept
+    {
+        const float inv = 1.f / (SIZE - 1);
+        for(size_t i = 0; i < SIZE; ++i)
+        {
+            float x = static_cast<float>(i) * inv;
+            table[i] = std::sqrt(x);
+
+            // Option B : quarter sine
+            // table[i] = std::sin(x * 1.570796f);
+        }
+    }*/
+
+    /*
     void GrainEnvelope::initSmoothed(std::span<float> table) noexcept
     {
         const float inv = 1.f / static_cast<float>(SIZE - 1);
@@ -152,6 +163,7 @@ namespace particules
         table[SIZE - 1] = 0.f;
 
     }
+    */
 }
 
 

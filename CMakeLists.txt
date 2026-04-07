@@ -68,6 +68,7 @@ list(FILTER ResourcesFiles EXCLUDE REGEX "/\\.DS_Store$")
 juce_add_binary_data(BinaryDataAssets SOURCES ${ResourcesFiles})
 set_target_properties(BinaryDataAssets PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
+
 ############# PLUGIN TARGET #############
 #########################################
 
@@ -295,6 +296,27 @@ target_link_libraries(${PROJECT_GUI_APP_NAME} PRIVATE
 target_compile_definitions(${PROJECT_GUI_APP_NAME} PRIVATE
     BUILDING_PLUGIN_APP=0
     BUILDING_GUI_APP=1)
+
+
+############## BUILD TOOLS ##############
+#########################################
+
+option(BUILD_TOOLS "Build visualization tools" ON)
+
+if(BUILD_TOOLS)
+    add_executable(drawEnvelopeSVG "${CMAKE_CURRENT_SOURCE_DIR}/source/tools/DrawEnvelopeSVG.cpp")
+    target_link_libraries(drawEnvelopeSVG PRIVATE Core)
+    file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/resources/envelopes")
+    #set_target_properties(drawEnvelopeSVG PROPERTIES)
+    #RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/resources/envSvg"
+    add_custom_command(TARGET drawEnvelopeSVG POST_BUILD
+        COMMAND $<TARGET_FILE:drawEnvelopeSVG>
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/resources/envelopes"
+        COMMENT "Generating SVG envelopes in resources...")
+    set_target_properties(drawEnvelopeSVG PROPERTIES
+        VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/resources/envelopes"
+    )
+endif()
 
 ############# PCH ##############
 ################################
