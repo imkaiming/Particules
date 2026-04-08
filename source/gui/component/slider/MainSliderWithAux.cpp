@@ -1,4 +1,4 @@
-#include "PrimaryWithAux.h"
+#include "MainSliderWithAux.h"
 
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
@@ -13,7 +13,7 @@
 namespace particules
 {
 
-    PrimaryWithAux::PrimaryWithAux(const str& name, EngineState& es) : engineState{es}
+    MainSliderWithAux::MainSliderWithAux(const str& name, EngineState& es, RotaryType type) : engineState{es}
     {
         label.setText((const str)name, juce::dontSendNotification);
         label.setJustificationType(juce::Justification::centred);
@@ -21,70 +21,85 @@ namespace particules
         label.setColour(juce::Label::textColourId, colours::perleBlanc);
         label.setFont(juce::Font(13.0f));
 
-        primarySlider.getProperties().set("knobStyle", static_cast<int>(RotaryType::primaryWithAux));
+        mainSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
+        mainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+
+        if(type == RotaryType::primaryWithAux)
+        {
+            setColour(juce::Slider::rotarySliderFillColourId, colours::violetBleu);
+            setColour(juce::Slider::rotarySliderOutlineColourId, colours::perleBlanc);
+        }
+        else if(type == RotaryType::secondaryWithAux)
+        {
+            setColour(juce::Slider::rotarySliderFillColourId, colours::violetBleu);
+            setColour(juce::Slider::rotarySliderOutlineColourId, colours::perleBlanc);
+        }
+
+        setRepaintsOnMouseActivity(true);
+        mainSlider.getProperties().set("knobStyle", static_cast<int>(type));
         auxSlider.getProperties().set("knobStyle", static_cast<int>(RotaryType::aux));
 
-        primarySlider.onValueChange = [this]() {
+        mainSlider.onValueChange = [this]() {
             updatePrimaryAngle();
-            primarySlider.repaint();
+            mainSlider.repaint();
 
             // If linked, notify the sibling (GrainsPanel will set this callback)
             if(engineState.getIsLinked() && onValueChanged)
             {
-                onValueChanged(primarySlider.getValue());
+                onValueChanged(mainSlider.getValue());
             }
         };
+
         auxSlider.onValueChange = [this]() {
             syncAuxDataToPrimary();
-            primarySlider.repaint();
+            mainSlider.repaint();
         };
 
-        addAndMakeVisible(&primarySlider);
+        addAndMakeVisible(&mainSlider);
         addAndMakeVisible(&auxSlider);
         addAndMakeVisible(&label);
-
     }
 
-    void PrimaryWithAux::setPrimaryValue(double value, juce::NotificationType notify)
+    void MainSliderWithAux::setPrimaryValue(double value, juce::NotificationType notify)
     {
-        primarySlider.setValue(value, notify);
+        mainSlider.setValue(value, notify);
         if(notify == juce::dontSendNotification)
         {
-            updatePrimaryAngle(); 
-            primarySlider.repaint();
+            updatePrimaryAngle();
+            mainSlider.repaint();
         }
     }
 
-    void PrimaryWithAux::updatePrimaryAngle()
+    void MainSliderWithAux::updatePrimaryAngle()
     {
         const float startAngle = pi * 1.25f;
         const float endAngle = pi * 2.25f;
 
-        float range = primarySlider.getMaximum() - primarySlider.getMinimum();
-        float norm = (primarySlider.getValue() - primarySlider.getMinimum()) / range;
+        float range = mainSlider.getMaximum() - mainSlider.getMinimum();
+        float norm = (mainSlider.getValue() - mainSlider.getMinimum()) / range;
         float angle = startAngle + norm * (endAngle - startAngle);
 
         auxSlider.getProperties().set("primaryAngle", angle);
         auxSlider.repaint();
     }
 
-    void PrimaryWithAux::setRange(float min, float max) noexcept { primarySlider.setRange(min, max); }
+    void MainSliderWithAux::setRange(float min, float max) noexcept { mainSlider.setRange(min, max); }
 
-    void PrimaryWithAux::setSkewFactorFromMidPoint(float skew) noexcept { primarySlider.setSkewFactorFromMidPoint(skew); }
+    void MainSliderWithAux::setSkewFactorFromMidPoint(float skew) noexcept { mainSlider.setSkewFactorFromMidPoint(skew); }
 
-    std::unique_ptr<ValueTreeState::SliderAttachment> PrimaryWithAux::attachPrimaryToAPVTS(
+    std::unique_ptr<ValueTreeState::SliderAttachment> MainSliderWithAux::attachPrimaryToAPVTS(
         ValueTreeState& apvts, const str& id) noexcept
     {
-        return std::make_unique<ValueTreeState::SliderAttachment>(apvts, id, primarySlider);
+        return std::make_unique<ValueTreeState::SliderAttachment>(apvts, id, mainSlider);
     }
 
-    std::unique_ptr<ValueTreeState::SliderAttachment> PrimaryWithAux::attachAuxToAPVTS(
+    std::unique_ptr<ValueTreeState::SliderAttachment> MainSliderWithAux::attachAuxToAPVTS(
         ValueTreeState& apvts, const str& id) noexcept
     {
         return std::make_unique<ValueTreeState::SliderAttachment>(apvts, id, auxSlider);
     }
 
-    void PrimaryWithAux::resized()
+    void MainSliderWithAux::resized()
     {
         auto bounds = getLocalBounds().toFloat();
         auto center = bounds.getCentre();
@@ -96,7 +111,7 @@ namespace particules
 
         const float jitterRadiusMultiplier = 1.07f;
         const float jitterLineWidthHalf = 1.0f;
-        const float safetyPadding = 0.0f;
+        const float safetyPadding = 3.0f;
         const float gapBetweenJitterAndAux = 4.0f;
 
         const float maxAllowedAuxCenterDistance = maxExtentFromCenter - safetyPadding - (auxSize * 0.5f);
@@ -110,8 +125,8 @@ namespace particules
         const float ay = center.y + std::sin(angleAux) * auxDistance;
         const float primaryBoundsSize = (jitterOuterEdge + 1.0f) * 2.0f;
 
-        primarySlider.getProperties().set("visualRadius", primaryVisualRadius);
-        primarySlider.setBounds(
+        mainSlider.getProperties().set("visualRadius", primaryVisualRadius);
+        mainSlider.setBounds(
             juce::Rectangle<float>(primaryBoundsSize, primaryBoundsSize).withCentre(center.toFloat()).toNearestInt());
 
         auxSlider.setBounds(
@@ -124,22 +139,22 @@ namespace particules
         updatePrimaryAngle();
     }
 
-    void PrimaryWithAux::syncAuxDataToPrimary()
+    void MainSliderWithAux::syncAuxDataToPrimary()
     {
         float auxNorm = (float)auxSlider.getValue();
-        primarySlider.getProperties().set("auxAmount", auxNorm);
+        mainSlider.getProperties().set("auxAmount", auxNorm);
     }
 
-    void PrimaryWithAux::paint(juce::Graphics& g)
+    void MainSliderWithAux::paint(juce::Graphics& g)
     {
-        g.fillAll(coloursv2::deepBlack.brighter(0.2f));
+        g.fillAll(coloursv2::deepBlack.brighter(0.03f));
         float startAngle = pi * 1.25f;
         float endAngle = pi * 2.25f;
-        float primaryRange = primarySlider.getMaximum() - primarySlider.getMinimum();
+        float primaryRange = mainSlider.getMaximum() - mainSlider.getMinimum();
 
         if(primaryRange > 0.0f)
         {
-            float primaryNorm = (primarySlider.getValue() - primarySlider.getMinimum()) / primaryRange;
+            float primaryNorm = (mainSlider.getValue() - mainSlider.getMinimum()) / primaryRange;
             float primaryAngle = startAngle + primaryNorm * (endAngle - startAngle);
             auxSlider.getProperties().set("primaryAngle", primaryAngle);
         }

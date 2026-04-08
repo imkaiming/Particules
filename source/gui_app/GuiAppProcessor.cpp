@@ -13,16 +13,16 @@ namespace particules
         uic.facade.loadFilePath = [this](const str& path) { DBG("facade load file path = " + path); };
     }
 
-    void GuiAppProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
+    void GuiAppProcessor::prepareToPlay(double sampleRate, int /* samplesPerBlock */)
     {
-        const int numChannels = getTotalNumOutputChannels();
+        //const int numChannels = getTotalNumOutputChannels();
         paramsView.init(apvts);
         engineState.setSampleRate(sampleRate);
         uiState.init(&visualBuffer);
         //loader.init(sampleRate, numChannels);
     }
     void GuiAppProcessor::releaseResources() {}
-    bool GuiAppProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const { return false; }
+    bool GuiAppProcessor::isBusesLayoutSupported(const BusesLayout& /* layouts */) const { return false; }
     void GuiAppProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) { buffer.clear(); }
     juce::AudioProcessorEditor* GuiAppProcessor::createEditor() { return new GuiAppEditor(*this); }
     bool GuiAppProcessor::hasEditor() const { return false; }
@@ -33,11 +33,11 @@ namespace particules
     double GuiAppProcessor::getTailLengthSeconds() const { return 0.0; }
     int GuiAppProcessor::getNumPrograms() { return 1; }
     int GuiAppProcessor::getCurrentProgram() { return 0; }
-    void GuiAppProcessor::setCurrentProgram(int index) {}
-    const str GuiAppProcessor::getProgramName(int index) { return {}; }
-    void GuiAppProcessor::changeProgramName(int index, const str& newName) {}
-    void GuiAppProcessor::getStateInformation(juce::MemoryBlock& destData) {}
-    void GuiAppProcessor::setStateInformation(const void* data, int sizeInBytes) {}
+    void GuiAppProcessor::setCurrentProgram(int /* index */) {}
+    const str GuiAppProcessor::getProgramName(int /* index */) { return {}; }
+    void GuiAppProcessor::changeProgramName(int /* index*/, const str& /* newName */) {}
+    void GuiAppProcessor::getStateInformation(juce::MemoryBlock& /* destData */) {}
+    void GuiAppProcessor::setStateInformation(const void* /*data*/, int /*sizeInBytes*/) {}
 
     //void GuiAppProcessor::initOnAudioLoadedCallback() {
     //    onAudioLoadedCallback =
@@ -66,8 +66,9 @@ namespace particules
 
         // ADSR //
         layout.add(std::make_unique<juce::AudioParameterFloat>(
-            params::attack::id, params::attack::name, juce::NormalisableRange<float>(params::attack::min, params::attack::max, 0.01f),
-            params::attack::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
+            params::attack::id, params::attack::name,
+            juce::NormalisableRange<float>(params::attack::min, params::attack::max, 0.01f), params::attack::init,
+            juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
             [](float v, int) { return juce::String(v, 1) + "s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(
@@ -76,13 +77,15 @@ namespace particules
             [](float v, int) { return juce::String(v, 1) + "s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(
-            params::sustain::id, params::sustain::name, juce::NormalisableRange<float>(params::sustain::min, params::sustain::max, 0.01f),
-            params::sustain::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
+            params::sustain::id, params::sustain::name,
+            juce::NormalisableRange<float>(params::sustain::min, params::sustain::max, 0.01f), params::sustain::init,
+            juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
             [](float v, int) { return juce::String(v, 1) + "s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(
-            params::release::id, params::release::name, juce::NormalisableRange<float>(params::release::min, params::release::max, 0.01f),
-            params::release::init, juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
+            params::release::id, params::release::name,
+            juce::NormalisableRange<float>(params::release::min, params::release::max, 0.01f), params::release::init,
+            juce::String(" s"), juce::AudioProcessorParameter::genericParameter,
             [](float v, int) { return juce::String(v, 1) + "s"; }, [](const juce::String& s) { return s.getFloatValue(); }));
 
         // GLOBAL //

@@ -13,11 +13,20 @@
 namespace particules
 {
     GrainsPanel::GrainsPanel(UIContext& uic)
-        : engineState{uic.engineState}, emissionSlider(grainsEmissionName, engineState),
-          durationSlider(grainsDurationName, engineState),
-          emissionSliderAttachment{emissionSlider.attachPrimaryToAPVTS(uic.apvts, grainsEmissionId)},
-          durationSliderAttachment{durationSlider.attachPrimaryToAPVTS(uic.apvts, grainsDurationId)}, linkBtn{"linkBtn"}
+        : engineState{uic.engineState}, emissionSlider(params::emission::name, engineState, RotaryType::primaryWithAux),
+          durationSlider(params::duration::name, engineState, RotaryType::primaryWithAux),
+          speedSlider(params::speed::name, engineState, RotaryType::secondaryWithAux),
+          sustainRatioSlider(params::sustainRatio::name, engineState, RotaryType::secondaryWithAux),
+          traversalFreqSlider(params::traversalFreq::name, engineState, RotaryType::secondaryWithAux),
+          emissionSliderAttachment{emissionSlider.attachPrimaryToAPVTS(uic.apvts, params::emission::id)},
+          durationSliderAttachment{durationSlider.attachPrimaryToAPVTS(uic.apvts, params::duration::id)}, linkBtn{"linkBtn"},
+          speedSliderAttachment{speedSlider.attachPrimaryToAPVTS(uic.apvts, params::speed::id)},
+          sustainRatioSliderAttachment{sustainRatioSlider.attachPrimaryToAPVTS(uic.apvts, params::sustainRatio::id)},
+          traversalFreqSliderAttachment{traversalFreqSlider.attachPrimaryToAPVTS(uic.apvts, params::traversalFreq::id)},
+          envelopeModeButton{uic.apvts, params::envelopeMode::id, params::sustainRatio::id}
     {
+        // top row //
+
         linkInIcon = UIHelpers::loadSVG(BinaryData::link_in_svg, BinaryData::link_in_svgSize, juce::Colours::white);
         linkOffIcon = UIHelpers::loadSVG(BinaryData::link_off_svg, BinaryData::link_off_svgSize, juce::Colours::white);
 
@@ -42,84 +51,98 @@ namespace particules
             emissionSlider.setPrimaryValue(emissionVal, juce::dontSendNotification);
         });
 
-        emissionSlider.setRange(grainsEmissionMin, grainsEmissionMax);
-        emissionSlider.setSkewFactorFromMidPoint(grainsEmissionSkewFactor);
+        emissionSlider.setRange(params::emission::min, params::emission::max);
+        emissionSlider.setSkewFactorFromMidPoint(params::emission::skewFactor);
 
-        durationSlider.setRange(grainsDurationMin, grainsDurationMax);
-        durationSlider.setSkewFactorFromMidPoint(grainsDurationSkewFactor);
+        durationSlider.setRange(params::duration::min, params::duration::max);
+        durationSlider.setSkewFactorFromMidPoint(params::duration::skewFactor);
 
-        speedSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, grainsSpeedId, speedSlider);
+        addAndMakeVisible(&linkBtn);
+        addAndMakeVisible(&emissionSlider);
+        addAndMakeVisible(&durationSlider);
 
-        sustainRatioSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-            uic.apvts, grainsSustainRatioId, sustainRatioSlider);
+        // mid row //
 
-        traversalFreqSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-            uic.apvts, grainsTraversalFreqId, traversalFreqSlider);
+        //speedSliderAttachment =
+        //    std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, params::speed::id, speedSlider);
+
+        //sustainRatioSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        //    uic.apvts, params::sustainRatio::id, sustainRatioSlider);
+
+        //traversalFreqSliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        //    uic.apvts, params::traversalFreq::id, traversalFreqSlider);
 
         //pitchSliderAttachment =
         //	std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         //		*apvts, PITCH_ID, pitchSlider);
 
-        speedSlider.setName("speedSlider");
-        speedSlider.setRange(grainsSpeedMin, grainsSpeedMax);
+        //speedSlider.setName("speedSlider");
+        speedSlider.setRange(params::speed::min, params::speed::max);
 
-        speedLabel.setText((const str)grainsSpeedName, juce::dontSendNotification);
-        speedLabel.setJustificationType(juce::Justification::centred);
-        speedLabel.setColour(juce::Label::textColourId, colours::perleBlanc);
-        speedLabel.setFont(juce::Font(13.0f));
+        //speedLabel.setText((const str)params::speed::name, juce::dontSendNotification);
+        //speedLabel.setJustificationType(juce::Justification::centred);
+        //speedLabel.setColour(juce::Label::textColourId, colours::perleBlanc);
+        //speedLabel.setFont(juce::Font(13.0f));
 
         sustainRatioSlider.setName("sustainWidthSlider");
-        sustainRatioSlider.setRange(grainsSustainRatioMin, grainsSustainRatioMax);
-        sustainRatioSlider.setSkewFactorFromMidPoint(grainsSustainRatioSkewFactor);
+        sustainRatioSlider.setRange(params::sustainRatio::min, params::sustainRatio::max);
+        sustainRatioSlider.setSkewFactorFromMidPoint(params::sustainRatio::skewFactor);
 
-        sustainRatioLabel.setText((const str)grainsSustainRatioName, juce::dontSendNotification);
-        sustainRatioLabel.setJustificationType(juce::Justification::centred);
-        sustainRatioLabel.setColour(juce::Label::textColourId, colours::perleBlanc);
-        sustainRatioLabel.setFont(juce::Font(13.0f));
+        //sustainRatioLabel.setText((const str)params::sustainRatio::name, juce::dontSendNotification);
+        //sustainRatioLabel.setJustificationType(juce::Justification::centred);
+        //sustainRatioLabel.setColour(juce::Label::textColourId, colours::perleBlanc);
+        //sustainRatioLabel.setFont(juce::Font(13.0f));
 
         traversalFreqSlider.setName("traversalFreqSlider");
-        traversalFreqSlider.setRange(grainsTraversalFreqMin, grainsTraversalFreqMax);
-        traversalFreqSlider.setSkewFactorFromMidPoint(grainsTraversalFreqSkewFactor);
+        traversalFreqSlider.setRange(params::traversalFreq::min, params::traversalFreq::max);
+        traversalFreqSlider.setSkewFactorFromMidPoint((params::traversalFreq::skewFactor));
 
-        traversalFreqLabel.setText((const str)grainsTraversalFreqName, juce::dontSendNotification);
-        traversalFreqLabel.setColour(juce::Label::textColourId, colours::perleBlanc);
-        traversalFreqLabel.setFont(juce::Font(13.0f));
+        //traversalFreqLabel.setText((const str)params::traversalFreq::name, juce::dontSendNotification);
+        //traversalFreqLabel.setColour(juce::Label::textColourId, colours::perleBlanc);
+        //traversalFreqLabel.setFont(juce::Font(13.0f));
 
-        traversalFreqLabel.setJustificationType(juce::Justification::centred);
-
-        addAndMakeVisible(&linkBtn);
-        addAndMakeVisible(&emissionSlider);
-        addAndMakeVisible(&durationSlider);
+        //traversalFreqLabel.setJustificationType(juce::Justification::centred);
         addAndMakeVisible(&speedSlider);
         addAndMakeVisible(&sustainRatioSlider);
         addAndMakeVisible(&traversalFreqSlider);
 
-        addAndMakeVisible(&speedLabel);
-        addAndMakeVisible(&sustainRatioLabel);
-        addAndMakeVisible(&traversalFreqLabel);
+        //addAndMakeVisible(&speedLabel);
+        //addAndMakeVisible(&sustainRatioLabel);
+        //addAndMakeVisible(&traversalFreqLabel);
 
+        // bottom row
+
+        envModeLabel.setText(params::envelopeMode::name, juce::dontSendNotification);
+        envModeLabel.setJustificationType(juce::Justification::centred);
+        envModeLabel.setColour(juce::Label::textColourId, colours::perleBlanc);
+        envModeLabel.setFont(juce::Font(13.0f));
+        envModeLabel.setInterceptsMouseClicks(false, false);
+
+        addAndMakeVisible(&envModeLabel);
+        addAndMakeVisible(&envelopeModeButton);
+
+        //addAndMakeVisible(&envModeLabel);
         //ComboBoxPlugingrainserAttachment(RangedAudioPlugingrainser& parameter, ComboBox& combo,
         //	UndoManager* undoManager = nullptr);
 
-        envelopeModeList.addItemList(uic.apvts.getParameter(grainsEnvelopeModeId)->getAllValueStrings(), 1);
+        //envelopeModeList.addItemList(uic.apvts.getParameter(grainsEnvelopeModeId)->getAllValueStrings(), 1);
 
-        envelopeModeList.setSelectedId(1, juce::dontSendNotification);
+        //envelopeModeList.setSelectedId(1, juce::dontSendNotification);
 
-        envelopeModeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
-            uic.apvts, grainsEnvelopeModeId, envelopeModeList);
+        //envelopeModeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
+        //uic.apvts, grainsEnvelopeModeId, envelopeModeList);
 
-        traversalModeList.addItemList(uic.apvts.getParameter(grainsTraversalModeId)->getAllValueStrings(), 1);
+        traversalModeList.addItemList(uic.apvts.getParameter(params::traversalMode::id)->getAllValueStrings(), 1);
         traversalModeList.setSelectedId(1, juce::dontSendNotification);
 
         traversalModeAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(
-            uic.apvts, grainsTraversalModeId, traversalModeList);
+            uic.apvts, params::traversalMode::id, traversalModeList);
 
-        envModeLabel.setText((const str)grainsEnvelopeModeName, juce::dontSendNotification);
-        envModeLabel.attachToComponent(&envelopeModeList, false);
-        envModeLabel.setJustificationType(juce::Justification::centred);
+        //envModeLabel.setText((const str)grainsEnvelopeModeName, juce::dontSendNotification);
+        //envModeLabel.attachToComponent(&envelopeModeList, false);
+        //envModeLabel.setJustificationType(juce::Justification::centred);
 
-        traversalModeLabel.setText((const str)grainsTraversalModeName, juce::dontSendNotification);
+        traversalModeLabel.setText((const str)params::traversalMode::name, juce::dontSendNotification);
         traversalModeLabel.attachToComponent(&traversalModeList, false);
         traversalModeLabel.setJustificationType(juce::Justification::centred);
 
@@ -162,33 +185,41 @@ namespace particules
 
     void GrainsPanel::resized()
     {
-        auto area = getLocalBounds();
+        juce::Rectangle<int> area = getLocalBounds();
 
         const int rowHeight = area.getHeight() / 3;
-        auto topRow = area.removeFromTop(rowHeight);
-        auto middleRow = area.removeFromTop(rowHeight);
+        juce::Rectangle<int> topRow = area.removeFromTop(rowHeight);
+        juce::Rectangle<int> middleRow = area.removeFromTop(rowHeight);
+        juce::Rectangle<int> botRow = area.removeFromTop(rowHeight);
+
+        // top row
 
         const int topColWidth = juce::jmin(topRow.getWidth() / 2, rowHeight) + 5;
         const int linkBtnWidth = (area.getWidth() - topColWidth * 2) * 0.25;
-        const int totalWidth = topColWidth * 2 + linkBtnWidth;
+        const int totalTopRowWidth = topColWidth * 2 + linkBtnWidth;
 
-        juce::Rectangle<int> group = topRow.withSizeKeepingCentre(totalWidth, topRow.getHeight());
+        juce::Rectangle<int> topGroup = topRow.withSizeKeepingCentre(totalTopRowWidth, topRow.getHeight());
+        juce::Rectangle<int> topLeftArea = topGroup.removeFromLeft(topColWidth);
+        juce::Rectangle<int> topLinkArea = topGroup.removeFromLeft(linkBtnWidth);
+        juce::Rectangle<int> topRightArea = topGroup.removeFromLeft(topColWidth);
 
-        juce::Rectangle<int> leftArea = group.removeFromLeft(topColWidth);
-        juce::Rectangle<int> linkArea = group.removeFromLeft(linkBtnWidth);
-        juce::Rectangle<int> rightArea = group.removeFromLeft(topColWidth);
+        const int btnSize = juce::jmin(topLinkArea.getWidth(), 25);
 
-        emissionSlider.setBounds(leftArea);
-        const int btnSize = juce::jmin(linkArea.getWidth(), 25);
-        linkBtn.setBounds(linkArea.withSizeKeepingCentre(btnSize, btnSize));
-        durationSlider.setBounds(rightArea);
+        emissionSlider.setBounds(topLeftArea);
+        linkBtn.setBounds(topLinkArea.withSizeKeepingCentre(btnSize, btnSize));
+        durationSlider.setBounds(topRightArea);
 
-        const int midColWidth = middleRow.getWidth() / 3;
+        // mid row
+
+        const int midColWidth = middleRow.getWidth() / 3 ;
         speedSlider.setBounds(middleRow.removeFromLeft(midColWidth));
         sustainRatioSlider.setBounds(middleRow.removeFromLeft(midColWidth));
         traversalFreqSlider.setBounds(middleRow);
 
-        // Bottom row: available in 'area' variable for future components
+        // bottom row
+        const int botColWidth = botRow.getWidth() / 2;
+        envModeLabel.setBounds(botRow.removeFromLeft(botColWidth));
+        envelopeModeButton.setBounds(botRow.removeFromLeft(botColWidth));
     }
 }
 //void GrainsPanel::parameterChanged(const str& parameterID, float newValue)

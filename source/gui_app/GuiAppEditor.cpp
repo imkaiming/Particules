@@ -23,7 +23,7 @@ namespace particules
 
     GuiAppEditor::~GuiAppEditor() { setLookAndFeel(nullptr); }
 
-    void GuiAppEditor::paint(juce::Graphics& g) {}
+    void GuiAppEditor::paint(juce::Graphics& /*g*/) {}
 
     void GuiAppEditor::resized() { mainPanel.setBounds(getLocalBounds()); }
 }

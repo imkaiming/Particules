@@ -15,7 +15,7 @@ public:
     const juce::String getApplicationVersion() override { return "0.1.0"; }
     bool moreThanOneInstanceAllowed() override { return true; }
 
-    void initialise(const juce::String& commandLine) override
+    void initialise(const juce::String& /*commandLine*/) override
     {
         mainWindow = std::make_unique<MainWindow>("GUI", new particules::GuiAppEditor(processor));
     }

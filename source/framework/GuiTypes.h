@@ -6,6 +6,7 @@
 namespace juce
 {
     class AudioProcessorValueTreeState;
+    class Colour;
 }
 
 namespace particules

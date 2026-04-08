@@ -36,22 +36,22 @@ namespace particules
                 label.getJustificationType(), 1);
         }
 
-        static juce::String smartEllipsizeFilename(const juce::String& fullPath, const juce::Font& font, float maxWidth)
+        static str smartEllipsizeFilename(const str& fullPath, const juce::Font& font, float maxWidth)
         {
             if(fullPath.isEmpty() || maxWidth <= 0.0f)
                 return {};
 
             const bool looksLikePath = fullPath.containsChar('/') || fullPath.containsChar('\\');
-            const juce::String fileName = looksLikePath ? juce::File(fullPath).getFileName() : fullPath;
+            const str fileName = looksLikePath ? juce::File(fullPath).getFileName() : fullPath;
 
             if(font.getStringWidthFloat(fileName) <= maxWidth)
                 return fileName;
 
             const int dot = fileName.lastIndexOfChar('.');
-            const juce::String base = dot > 0 ? fileName.substring(0, dot) : fileName;
-            const juce::String ext = dot > 0 ? fileName.substring(dot) : juce::String{};
+            const str base = dot > 0 ? fileName.substring(0, dot) : fileName;
+            const str ext = dot > 0 ? fileName.substring(dot) : str{};
 
-            const juce::String ellipsis = "...";
+            const str ellipsis = "...";
             const float extWidth = font.getStringWidthFloat(ellipsis + ext);
 
             if(extWidth >= maxWidth)

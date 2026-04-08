@@ -2,5 +2,5 @@
 
 namespace particules
 {
-    enum class RotaryType { primary, secondary, tertiary, aux, primaryWithAux };
+    enum class RotaryType { primary, secondary, tertiary, aux, primaryWithAux, secondaryWithAux };
 }

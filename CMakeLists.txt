@@ -301,7 +301,7 @@ target_compile_definitions(${PROJECT_GUI_APP_NAME} PRIVATE
 ############## BUILD TOOLS ##############
 #########################################
 
-option(BUILD_TOOLS "Build visualization tools" ON)
+option(BUILD_TOOLS "Build visualization tools" OFF)
 
 if(BUILD_TOOLS)
     add_executable(drawEnvelopeSVG "${CMAKE_CURRENT_SOURCE_DIR}/source/tools/DrawEnvelopeSVG.cpp")

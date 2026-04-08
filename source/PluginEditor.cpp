@@ -31,7 +31,7 @@ namespace particules
 
     ParticulesAudioProcessorEditor::~ParticulesAudioProcessorEditor() { setLookAndFeel(nullptr); }
 
-    void ParticulesAudioProcessorEditor::paint(juce::Graphics& g) { /* g.fillAll(colours::black); */ }
+    void ParticulesAudioProcessorEditor::paint(juce::Graphics& /*g*/) { /* g.fillAll(colours::black); */ }
 
     void ParticulesAudioProcessorEditor::resized() { mainPanel.setBounds(getLocalBounds()); }
 }

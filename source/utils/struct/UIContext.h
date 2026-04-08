@@ -8,7 +8,7 @@ namespace particules
     class ParameterView;
     class EngineState;
     class UIState;
-    class ProcessorFacade; 
+    struct ProcessorFacade; 
     struct UIContext
     {
         ValueTreeState& apvts;

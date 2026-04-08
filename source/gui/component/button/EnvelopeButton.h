@@ -1,36 +1,37 @@
 #pragma once
 
+#include "../../../framework/GuiTypes.h"
+#include "../../../framework/PluginParams.h"
+#include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_core/juce_core.h>
+#include <juce_graphics/juce_graphics.h>
 #include <juce_gui_basics/juce_gui_basics.h>
-
-#include "../../../framework/audio/LookUpTable.h"
 
 namespace particules
 {
 
-    class EnvelopeButton : juce::Component
+    class EnvelopeButton : public juce::Component, private ValueTreeState::Listener
     {
     public:
-        EnvelopeButton();
-        ~EnvelopeButton();
+        EnvelopeButton(ValueTreeState&, const str&, const str&);
+        ~EnvelopeButton() override;
+
+        void paint(juce::Graphics& g) override;
+        void mouseDown(const juce::MouseEvent& e) override;
 
     private:
 
-        juce::Image createEnvelopeIcon(const particules::LookUpTable& lut, int width, int height)
-        {
-            juce::Image img(juce::Image::ARGB, width, height, true);
-            juce::Graphics g(img);
+        void parameterChanged(const str& parameterID, float newValue) override;
+        juce::Image createMenuIcon(int modeIndex, float currentSustain);
 
-            juce::Path p;
-            // ... (Boucle for pour lire la LUT et créer le Path, comme pour le paint())
+        ValueTreeState& apvts;
+        str envModeId;
+        str sustainId;
 
-            g.setColour(juce::Colours::white);
-            g.strokePath(p, juce::PathStrokeType(1.5f));
 
-            return img;
-        }
+        juce::RangedAudioParameter* envParam;
+        juce::RangedAudioParameter* sustainParam;
 
-        juce::Image hannEnv, linEnv, sqrtEnv, gaussEnv, expEnv;
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EnvelopeButton)
     };
 }

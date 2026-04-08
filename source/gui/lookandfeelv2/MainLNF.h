@@ -34,6 +34,9 @@ namespace particules
         void drawPrimaryWithAuxKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
             float endAngle, float sliderPos, juce::Slider& slider);
 
+        void drawSecondaryWithAuxKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
+            float endAngle, float sliderPos, juce::Slider& slider);
+
         void drawPrimaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle, float endAngle,
             float sliderPos, juce::Slider& slider);
 
@@ -45,6 +48,22 @@ namespace particules
 
         void drawAuxKnob(juce::Graphics& g, float cx, float cy, float innerR, float startAngle, float endAngle, float sliderPos);
 
+        void drawJitterArc(juce::Graphics& g, float cx, float cy, float baseArcRadius, float startAngle, float endAngle,
+            float primaryAngle, float jitterAmount, float baseLineWidth);
+
+        void drawArcGlow(juce::Graphics& g, const juce::Path& path, juce::Colour color, float baseWidth, int steps = 8,
+            float spreadMultiplier = 12.0f, float alphaBase = 0.09f);
+
+        // helpers
+
+        juce::Path createArcPath(float cx, float cy, float radius, float startAngle, float endAngle);
+
+        void drawBackgroundArc(
+            juce::Graphics& g, float cx, float cy, float radius, float startAngle, float endAngle, float alpha = 0.15f);
+
+        void drawContour(juce::Graphics& g, float cx, float cy, float radius, juce::Colour color, float thickness = 1.5f);
+
+        void fillKnobFace(juce::Graphics& g, float cx, float cy, float radius);
 
         //void drawValue(juce::Graphics& g, float cx, float cy, float radius, bool isPrimary, float angle, float valDist,
         //    juce::Slider& slider);

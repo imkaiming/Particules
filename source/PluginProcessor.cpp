@@ -21,8 +21,7 @@ namespace particules
                   ),
           apvts(*this, nullptr, "Parameters", createParameterLayout()), paramsView{engineState},
           granularEngine{visualBuffer, engineState}, engineState{}, uiState{},
-          uic{apvts, paramsView, engineState, uiState, facade},
-          loader{}, debugPresetLoaded{false}
+          uic{apvts, paramsView, engineState, uiState, facade}, loader{}, debugPresetLoaded{false}
 #endif
     {
         initOnAudioLoadedCallback();
@@ -71,11 +70,11 @@ namespace particules
 
     int ParticulesAudioProcessor::getCurrentProgram() { return 0; }
 
-    void ParticulesAudioProcessor::setCurrentProgram(int index) {}
+    void ParticulesAudioProcessor::setCurrentProgram(int /*index*/ ) {}
 
-    const juce::String ParticulesAudioProcessor::getProgramName(int index) { return {}; }
+    const juce::String ParticulesAudioProcessor::getProgramName(int /*index*/ ) { return {}; }
 
-    void ParticulesAudioProcessor::changeProgramName(int index, const juce::String& newName) {}
+    void ParticulesAudioProcessor::changeProgramName(int /* index */, const str& /* newName */) {}
 
     void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     {

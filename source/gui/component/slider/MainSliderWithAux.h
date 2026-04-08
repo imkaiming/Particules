@@ -9,7 +9,6 @@
 #include "../../lookandfeelv2/Colours.h"
 #include "AuxRotarySlider.h"
 #include "RotarySlider.h"
-
 namespace juce
 {
     class Graphics;
@@ -18,10 +17,10 @@ namespace juce
 namespace particules
 {
     class EngineState;
-    class PrimaryWithAux : public juce::Component
+    class MainSliderWithAux : public juce::Component
     {
     public:
-        PrimaryWithAux(const str& name, EngineState& es);
+        MainSliderWithAux(const str& name, EngineState& es, RotaryType type);
 
         void setRange(float min, float max) noexcept;
         void updatePrimaryAngle();
@@ -29,9 +28,9 @@ namespace particules
 
         void setOnPrimaryValueChanged(ValueCallback callback) { onValueChanged = std::move(callback); }
         void setPrimaryValue(double value, juce::NotificationType notify = juce::dontSendNotification);
-        double getPrimaryValue() const noexcept { return primarySlider.getValue(); }
-        double getPrimaryMinimum() const noexcept { return primarySlider.getMinimum(); }
-        double getPrimaryMaximum() const noexcept { return primarySlider.getMaximum(); }
+        double getPrimaryValue() const noexcept { return mainSlider.getValue(); }
+        double getPrimaryMinimum() const noexcept { return mainSlider.getMinimum(); }
+        double getPrimaryMaximum() const noexcept { return mainSlider.getMaximum(); }
 
         std::unique_ptr<ValueTreeState::SliderAttachment> attachPrimaryToAPVTS(ValueTreeState&, const str&) noexcept;
         std::unique_ptr<ValueTreeState::SliderAttachment> attachAuxToAPVTS(ValueTreeState&, const str&) noexcept;
@@ -39,17 +38,16 @@ namespace particules
         void resized() override;
         void paint(juce::Graphics& g) override;
 
-
     private:
         void syncAuxDataToPrimary();
 
         EngineState& engineState;
         ValueCallback onValueChanged;
-        PrimaryRotarySlider primarySlider;
+        juce::Slider mainSlider;
         AuxRotarySlider auxSlider;
         juce::Label label;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PrimaryWithAux)
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainSliderWithAux)
     };
 
 }
