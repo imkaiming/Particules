@@ -110,20 +110,28 @@ namespace particules
 
         const float auxSize = juce::jlimit(18.0f, 32.0f, minDim * 0.18f);
 
-        const float jitterRadiusMultiplier = 1.07f;
-        const float jitterLineWidthHalf = 1.0f;
+        // constants
+        const float jitterOuterMultiplier = 1.10f; // 1.07f
+        const float auxGap = 4.0f;
         const float safetyPadding = 3.0f;
-        const float gapBetweenJitterAndAux = 4.0f;
+        const float jitterLineWidthHalf = 1.0f;
 
-        const float maxAllowedAuxCenterDistance = maxExtentFromCenter - safetyPadding - (auxSize * 0.5f);
-        const float availableRadiusForJitter = maxAllowedAuxCenterDistance - gapBetweenJitterAndAux - (auxSize * 0.5f);
+        // reserve space
+        const float maxAuxCenterDist = maxExtentFromCenter - safetyPadding - (auxSize * 0.5f);
+        const float availableForJitter = maxAuxCenterDist - auxGap - (auxSize * 0.5f);
+
+        // visual radius
         const float primaryVisualRadius =
-            juce::jmax(1.0f, (availableRadiusForJitter - jitterLineWidthHalf) / jitterRadiusMultiplier);
-        const float jitterOuterEdge = (primaryVisualRadius * jitterRadiusMultiplier) + jitterLineWidthHalf;
-        const float auxDistance = jitterOuterEdge + gapBetweenJitterAndAux + (auxSize * 0.5f);
+            juce::jmax(1.0f, (availableForJitter - jitterLineWidthHalf) / jitterOuterMultiplier);
+        const float jitterOuterEdge = (primaryVisualRadius * jitterOuterMultiplier) + jitterLineWidthHalf;
+        
+        // position
+        const float auxDistance = jitterOuterEdge + auxGap + (auxSize * 0.5f);
         const float angleAux = -pi / 5.0f;
         const float ax = center.x + std::cos(angleAux) * auxDistance;
         const float ay = center.y + std::sin(angleAux) * auxDistance;
+
+        // bounds
         const float primaryBoundsSize = (jitterOuterEdge + 1.0f) * 2.0f;
 
         mainSlider.getProperties().set("visualRadius", primaryVisualRadius);

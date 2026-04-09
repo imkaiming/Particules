@@ -74,7 +74,7 @@ namespace particules
             juce::Colour color, float thickness) const;
 
         void drawBorderArc(juce::Graphics& g, float cx, float cy, float radius, float startAngle, float endAngle,
-            float alpha = 0.15f, float thickness = 2.f) const;
+            float alpha = 0.2f, float thickness = 2.f) const;
 
         //==============================================================================
         // Low-level Geometry Helpers

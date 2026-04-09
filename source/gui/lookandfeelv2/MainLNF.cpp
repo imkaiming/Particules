@@ -7,13 +7,12 @@
 
 namespace particules
 {
-    // ────────────────────────────────────────────────────────────────────────
-    //  STATIC HELPERS (Keeps the header clean)
-    // ────────────────────────────────────────────────────────────────────────
+    //==============================================================================
+    //  STATIC HELPER
     namespace
     {
         void drawLineIndicator(juce::Graphics& g, float cx, float cy, float innerR, float sliderPos, float angleOffset,
-            juce::Colour color, float thickness) 
+            juce::Colour color, float thickness)
         {
             const float angle = angleOffset + sliderPos * (pi * 1.5f);
             const float startR = innerR * 0.33f;
@@ -38,9 +37,8 @@ namespace particules
         valueFont = juce::Font(geistTypeface).withHeight(13.0f);
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    //  DISPATCHER
-    // ────────────────────────────────────────────────────────────────────────
+    //==============================================================================
+    // DISPATCHER
     void MainLNF::drawRotarySlider(
         juce::Graphics& g, int x, int y, int w, int h, float sliderPos, float startAngle, float endAngle, juce::Slider& slider)
     {
@@ -76,9 +74,8 @@ namespace particules
         }
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    //  KNOB RECIPES (Clean Assembly)
-    // ────────────────────────────────────────────────────────────────────────
+    //==============================================================================
+    //  SINGLE KNOB
     void MainLNF::drawPrimaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
         float endAngle, float sliderPos, juce::Slider& slider) const
     {
@@ -94,69 +91,6 @@ namespace particules
 
         drawContour(g, cx, cy, innerR, colours::smokyBlack.brighter(0.20f));
         drawRotarySliderCenteredText(g, slider, cx, cy, radius);
-    }
-
-    void MainLNF::drawPrimaryWithAuxKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
-        float endAngle, float sliderPos, juce::Slider& slider) const
-    {
-        const float thickness = radius * 0.03f;
-        const float arcRadius = radius - thickness * 0.5f;
-        const float angle = startAngle + sliderPos * (endAngle - startAngle);
-
-        drawBorderArc(g, cx, cy, arcRadius, startAngle, endAngle, 0.15f, thickness);
-
-        const float jitterAmount = slider.getProperties().getWithDefault("auxAmount", 0.0f);
-        if(jitterAmount > 0.001f)
-            drawJitterArc(g, cx, cy, arcRadius, startAngle, endAngle, angle, jitterAmount, thickness);
-
-        juce::Path arcVal = createArcPath(cx, cy, arcRadius, startAngle, angle);
-        drawArcGlow(g, arcVal, coloursv2::cyan, radius * 0.05f, 8, 12.0f, 0.1f);
-        drawColoredArc(g, cx, cy, arcRadius, startAngle, angle, coloursv2::cyan, thickness);
-
-        drawContour(g, cx, cy, innerR, colours::smokyBlack.brighter(0.20f));
-        drawRotarySliderCenteredText(g, slider, cx, cy, radius);
-    }
-
-    void MainLNF::drawSecondaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
-        float endAngle, float sliderPos, juce::Slider& slider) const
-    {
-        const float angle = startAngle + sliderPos * (endAngle - startAngle);
-        const float thickness = radius * 0.03f;
-
-        juce::Path arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
-        drawArcGlow(g, arcVal, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
-        drawColoredArc(g, cx, cy, innerR, startAngle, angle, colours::violetBleu, thickness);
-
-        drawRotarySliderCenteredText(g, slider, cx, cy, radius);
-    }
-
-    void MainLNF::drawSecondaryWithAuxKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
-        float endAngle, float sliderPos, juce::Slider& slider) const
-    {
-        //radius *= 0.9f;
-        //innerR *= 0.9f;
-        const float thickness = radius * 0.01f;
-        const float arcRadius = radius - (thickness) * 0.5f;
-        const float angle = startAngle + sliderPos * (endAngle - startAngle);
-
-        drawBorderArc(g, cx, cy, arcRadius, startAngle, endAngle, thickness);
-
-        const float jitterAmount = slider.getProperties().getWithDefault("auxAmount", 0.0f);
-        if(jitterAmount > 0.001f)
-            drawJitterArc(g, cx, cy, innerR, startAngle, endAngle, angle, jitterAmount, 1.5f);
-
-        juce::Path arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
-        drawArcGlow(g, arcVal, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
-        drawColoredArc(g, cx, cy, innerR, startAngle, angle, colours::violetBleu, 1.5f);
-
-        drawRotarySliderCenteredText(g, slider, cx, cy, radius);
-    }
-
-    void MainLNF::drawAuxKnob(
-        juce::Graphics& g, float cx, float cy, float innerR, float startAngle, float endAngle, float sliderPos) const
-    {
-        drawContour(g, cx, cy, innerR, colours::grisMoyen.withAlpha(0.8f), innerR * 0.03f);
-        drawLineIndicator(g, cx, cy, innerR, sliderPos, -pi * 0.75f, juce::Colours::white.withAlpha(0.9f), innerR * 0.03f);
     }
 
     void MainLNF::drawTertiaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
@@ -184,6 +118,71 @@ namespace particules
         drawLineIndicator(g, cx, cy, innerR, sliderPos, -pi * 0.5f, juce::Colours::white.withAlpha(0.9f), 2.0f);
     }
 
+    void MainLNF::drawSecondaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
+        float endAngle, float sliderPos, juce::Slider& slider) const
+    {
+        const float angle = startAngle + sliderPos * (endAngle - startAngle);
+        const float thickness = radius * 0.03f;
+
+        juce::Path arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
+        drawArcGlow(g, arcVal, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
+        drawColoredArc(g, cx, cy, innerR, startAngle, angle, colours::violetBleu, thickness);
+
+        drawRotarySliderCenteredText(g, slider, cx, cy, radius);
+    }
+
+    //==============================================================================
+    // KNOBS + AUX
+    void MainLNF::drawPrimaryWithAuxKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
+        float endAngle, float sliderPos, juce::Slider& slider) const
+    {
+        const float thickness = radius * 0.03f;
+        const float arcRadius = radius - thickness * 0.5f;
+        const float angle = startAngle + sliderPos * (endAngle - startAngle);
+
+        drawBorderArc(g, cx, cy, arcRadius, startAngle, endAngle);
+
+        const float jitterAmount = slider.getProperties().getWithDefault("auxAmount", 0.0f);
+        if(jitterAmount > 0.001f)
+            drawJitterArc(g, cx, cy, arcRadius, startAngle, endAngle, angle, jitterAmount, thickness);
+
+        juce::Path arcVal = createArcPath(cx, cy, arcRadius, startAngle, angle);
+        drawArcGlow(g, arcVal, coloursv2::cyan, radius * 0.05f, 8, 12.0f, 0.1f);
+        drawColoredArc(g, cx, cy, arcRadius, startAngle, angle, coloursv2::cyan, thickness);
+
+        drawContour(
+            g, cx, cy, innerR, colours::grisMoyen.withAlpha(0.8f) /* colours::smokyBlack.brighter(0.20f)*/, innerR * 0.03f);
+        drawRotarySliderCenteredText(g, slider, cx, cy, radius);
+    }
+
+    void MainLNF::drawSecondaryWithAuxKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
+        float endAngle, float sliderPos, juce::Slider& slider) const
+    {
+        const float thickness = radius * 0.01f;
+        const float arcRadius = radius - (thickness) * 0.5f;
+        const float angle = startAngle + sliderPos * (endAngle - startAngle);
+
+        drawBorderArc(g, cx, cy, arcRadius, startAngle, endAngle);
+
+        const float jitterAmount = slider.getProperties().getWithDefault("auxAmount", 0.0f);
+        if(jitterAmount > 0.001f)
+            drawJitterArc(g, cx, cy, innerR, startAngle, endAngle, angle, jitterAmount, 1.5f);
+
+        juce::Path arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
+        drawArcGlow(g, arcVal, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
+        drawColoredArc(g, cx, cy, innerR, startAngle, angle, colours::violetBleu, 1.5f);
+
+        drawRotarySliderCenteredText(g, slider, cx, cy, radius);
+    }
+
+    void MainLNF::drawAuxKnob(
+        juce::Graphics& g, float cx, float cy, float innerR, float startAngle, float endAngle, float sliderPos) const
+    {
+        drawContour(g, cx, cy, innerR, colours::grisMoyen.withAlpha(0.8f), innerR * 0.15f);
+        drawLineIndicator(g, cx, cy, innerR, sliderPos, -pi * 0.75f,
+            coloursv2::perleBlanc /* juce::Colours::white.withAlpha(0.9f) */, innerR * 0.15f);
+    }
+
     void MainLNF::drawJitterArc(juce::Graphics& g, float cx, float cy, float baseArcRadius, float startAngle, float endAngle,
         float primaryAngle, float jitterAmount, float baseLineWidth) const
     {
@@ -195,7 +194,7 @@ namespace particules
         if(jitterEnd <= jitterStart)
             return;
 
-        const float jitterArcRadius = baseArcRadius * 1.12f;
+        const float jitterArcRadius = baseArcRadius * 1.125f;
 
         juce::Path jitterArc = createArcPath(cx, cy, jitterArcRadius, jitterStart, jitterEnd);
 
@@ -203,11 +202,9 @@ namespace particules
         drawColoredArc(g, cx, cy, jitterArcRadius, jitterStart, jitterEnd, coloursv2::yellow, baseLineWidth * 1.2f);
     }
 
-
-    // ────────────────────────────────────────────────────────────────────────
-    //  UI COMPONENT DRAWING
-    // ────────────────────────────────────────────────────────────────────────
-    void MainLNF::drawRotarySliderCenteredText(juce::Graphics& g, juce::Slider& slider, float cx, float cy, float radius) const 
+    //==============================================================================
+    //  DRAWING
+    void MainLNF::drawRotarySliderCenteredText(juce::Graphics& g, juce::Slider& slider, float cx, float cy, float radius) const
     {
         const bool isHovered = slider.isMouseOverOrDragging();
         juce::String text = slider.getTextFromValue(slider.getValue());
@@ -264,7 +261,7 @@ namespace particules
     }
 
     void MainLNF::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float /*minPos*/,
-        float /*maxPos*/, const juce::Slider::SliderStyle style, juce::Slider& /*slider*/) 
+        float /*maxPos*/, const juce::Slider::SliderStyle style, juce::Slider& /*slider*/)
     {
         if(style != juce::Slider::LinearHorizontal)
             return;
@@ -289,9 +286,6 @@ namespace particules
         g.fillEllipse(slideX - handleRadius, cy - handleRadius, handleSize, handleSize);
     }
 
-    // ────────────────────────────────────────────────────────────────────────
-    //  CORE DRAWING PRIMITIVES
-    // ────────────────────────────────────────────────────────────────────────
     juce::Path MainLNF::createArcPath(float cx, float cy, float radius, float startAngle, float endAngle) const
     {
         juce::Path path;
@@ -335,9 +329,9 @@ namespace particules
         drawColoredArc(g, cx, cy, radius, startAngle, endAngle, colours::grisMoyen.withAlpha(alpha), thickness);
     }
 
-    void MainLNF::drawContour(juce::Graphics& g, float cx, float cy, float radius, juce::Colour color, float thickness) const
+    void MainLNF::drawContour(juce::Graphics& g, float cx, float cy, float radius, color c, float thickness) const
     {
-        g.setColour(color);
+        g.setColour(c);
         g.drawEllipse(cx - radius, cy - radius, radius * 2.0f, radius * 2.0f, thickness);
     }
 
