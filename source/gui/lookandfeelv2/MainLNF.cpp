@@ -1,6 +1,5 @@
 #include "MainLNF.h"
 
-#include "../../framework/GuiTypes.h"
 #include "../../utils/enum/RotaryType.h"
 #include "../../utils/math/MathConstants.h"
 #include "BinaryData.h"
@@ -8,10 +7,26 @@
 
 namespace particules
 {
+    // ────────────────────────────────────────────────────────────────────────
+    //  STATIC HELPERS (Keeps the header clean)
+    // ────────────────────────────────────────────────────────────────────────
+    namespace
+    {
+        void drawLineIndicator(juce::Graphics& g, float cx, float cy, float innerR, float sliderPos, float angleOffset,
+            juce::Colour color, float thickness) 
+        {
+            const float angle = angleOffset + sliderPos * (pi * 1.5f);
+            const float startR = innerR * 0.33f;
+            const float endR = innerR * 0.90f;
+
+            g.setColour(color);
+            g.drawLine(cx + std::sin(angle) * startR, cy - std::cos(angle) * startR, cx + std::sin(angle) * endR,
+                cy - std::cos(angle) * endR, thickness);
+        }
+    }
+
     MainLNF::MainLNF()
     {
-        // 1. Charger le Typeface depuis le binaire (ex: Geist-Medium.ttf)
-        // Note : Le nom dans BinaryData correspond au nom du fichier avec des underscores
         geistTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::GeistLight_ttf, BinaryData::GeistLight_ttfSize);
         cascadaTypeface =
             juce::Typeface::createSystemTypefaceFor(BinaryData::CascadiaMonoLight_otf, BinaryData::CascadiaMonoLight_otfSize);
@@ -20,271 +35,186 @@ namespace particules
         futuraTypeface = juce::Typeface::createSystemTypefaceFor(
             BinaryData::futura_medium_condensed_bt_ttf, BinaryData::futura_medium_condensed_bt_ttfSize);
 
-        // 2. Initialiser la Font avec ce Typeface
         valueFont = juce::Font(geistTypeface).withHeight(13.0f);
     }
 
+    // ────────────────────────────────────────────────────────────────────────
+    //  DISPATCHER
+    // ────────────────────────────────────────────────────────────────────────
     void MainLNF::drawRotarySlider(
         juce::Graphics& g, int x, int y, int w, int h, float sliderPos, float startAngle, float endAngle, juce::Slider& slider)
     {
         const float cx = x + w * 0.5f;
         const float cy = y + h * 0.5f;
-        float visualRadius = slider.getProperties().getWithDefault("visualRadius", juce::jmin(w, h) * 0.4f);
-        const float radius = visualRadius;
+        const float visualRadius = slider.getProperties().getWithDefault("visualRadius", juce::jmin(w, h) * 0.5f);
+        const float radius = visualRadius - 3.f;
         const float innerR = radius * 0.88f;
 
         g.setFont(valueFont);
-        const int knobStyle = slider.getProperties().getWithDefault("knobStyle", static_cast<int>(RotaryType::primary));
+        const int knobStyle = slider.getProperties().getWithDefault("RotaryType", static_cast<int>(RotaryType::primary));
 
         switch(knobStyle)
         {
             case static_cast<int>(RotaryType::primary):
                 drawPrimaryKnob(g, cx, cy, radius, innerR, startAngle, endAngle, sliderPos, slider);
                 break;
-
             case static_cast<int>(RotaryType::secondary):
                 drawSecondaryKnob(g, cx, cy, radius, innerR, startAngle, endAngle, sliderPos, slider);
                 break;
-
             case static_cast<int>(RotaryType::tertiary):
                 drawTertiaryKnob(g, cx, cy, visualRadius * 0.7f, visualRadius * 0.62f, startAngle, endAngle, sliderPos, slider);
                 break;
-
             case static_cast<int>(RotaryType::aux):
                 drawAuxKnob(g, cx, cy, innerR, startAngle, endAngle, sliderPos);
                 break;
-
             case static_cast<int>(RotaryType::primaryWithAux):
                 drawPrimaryWithAuxKnob(g, cx, cy, radius, innerR, startAngle, endAngle, sliderPos, slider);
                 break;
-
             case static_cast<int>(RotaryType::secondaryWithAux):
                 drawSecondaryWithAuxKnob(g, cx, cy, radius, innerR, startAngle, endAngle, sliderPos, slider);
                 break;
         }
     }
 
-    void MainLNF::drawSecondaryWithAuxKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
-        float endAngle, float sliderPos, juce::Slider& slider)
+    // ────────────────────────────────────────────────────────────────────────
+    //  KNOB RECIPES (Clean Assembly)
+    // ────────────────────────────────────────────────────────────────────────
+    void MainLNF::drawPrimaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
+        float endAngle, float sliderPos, juce::Slider& slider) const
     {
-        radius *= 0.95f;
-        innerR *= 0.95f;
-
-        const float baseLineWidth = radius * 0.03f;
-        const float baseArcRadius = radius - baseLineWidth * 0.5f;
-        // BACKGROUND
-        g.setColour(coloursv2::blackest);
-        g.fillEllipse(cx - innerR, cy - innerR, innerR * 2.0f, innerR * 2.0f);
-
-        // Background arc
-        drawBackgroundArc(g, cx, cy, baseArcRadius, startAngle, endAngle, 0.1f);
-
+        const float thickness = radius * 0.03f;
+        const float arcRadius = radius - thickness * 0.5f;
         const float angle = startAngle + sliderPos * (endAngle - startAngle);
 
-        // 2. JITTER ARC using the helper
-        float jitterAmount = slider.getProperties().getWithDefault("auxAmount", 0.0f);
-        if(jitterAmount > 0.001f)
-        {
-            float jitterArcRadius = innerR;
-            drawJitterArc(g, cx, cy, jitterArcRadius, startAngle, endAngle, angle, jitterAmount, 1.5f);
-        }
+        drawBorderArc(g, cx, cy, arcRadius, startAngle, endAngle);
 
-        // 1. SECONDARY VALUE ARC
-        auto arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
+        juce::Path arcVal = createArcPath(cx, cy, arcRadius, startAngle, angle);
+        drawArcGlow(g, arcVal, colours::violetBleu, thickness);
+        drawColoredArc(g, cx, cy, arcRadius, startAngle, angle, colours::violetBleu, thickness);
 
-        // Glow for secondary
-        const float valueLineWidth = radius * 0.05f;
-        drawArcGlow(g, arcVal, colours::violetBleu, valueLineWidth, 8, 12.0f, 0.1f);
-
-        // Core arc
-        g.setColour(colours::violetBleu);
-        g.strokePath(arcVal, juce::PathStrokeType(1.5f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
-
-        // 3. TEXT
-        drawRotarySliderCenteredText(g, slider, cx, cy, radius);
-    }
-
-    void MainLNF::drawPrimaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
-        float endAngle, float sliderPos, juce::Slider& slider)
-    {
-        const float valueLineWidth = radius * 0.05f;
-        const float arcRadius = radius - valueLineWidth * 0.5f;
-        const float primaryAngle = startAngle + sliderPos * (endAngle - startAngle);
-
-        // BACKGROUND
-        g.setColour(coloursv2::blackest);
-        g.fillEllipse(cx - innerR, cy - innerR, innerR * 2.0f, innerR * 2.0f);
-
-        // Background arc
-        drawBackgroundArc(g, cx, cy, arcRadius, startAngle, endAngle);
-
-        // Value arc with glow
-        auto arcVal = createArcPath(cx, cy, arcRadius, startAngle, primaryAngle);
-        drawArcGlow(g, arcVal, colours::violetBleu, valueLineWidth);
-
-        g.setColour(colours::violetBleu);
-        g.strokePath(arcVal, juce::PathStrokeType(valueLineWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
-
-        // Contour
         drawContour(g, cx, cy, innerR, colours::smokyBlack.brighter(0.20f));
-
-        // Text
         drawRotarySliderCenteredText(g, slider, cx, cy, radius);
     }
 
     void MainLNF::drawPrimaryWithAuxKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
-        float endAngle, float sliderPos, juce::Slider& slider)
+        float endAngle, float sliderPos, juce::Slider& slider) const
     {
-        // First draw the standard primary knob (background arc, value arc, contour, text)
-        // Note: We use slightly different line width for the base arc in this variant
-        const float baseLineWidth = radius * 0.03f;
-        const float baseArcRadius = radius - baseLineWidth * 0.5f;
-        const float primaryAngle = startAngle + sliderPos * (endAngle - startAngle);
+        const float thickness = radius * 0.03f;
+        const float arcRadius = radius - thickness * 0.5f;
+        const float angle = startAngle + sliderPos * (endAngle - startAngle);
 
-        // BACKGROUND
-        g.setColour(coloursv2::blackest);
-        g.fillEllipse(cx - innerR, cy - innerR, innerR * 2.0f, innerR * 2.0f);
+        drawBorderArc(g, cx, cy, arcRadius, startAngle, endAngle, 0.15f, thickness);
 
-        // Background arc
-        drawBackgroundArc(g, cx, cy, baseArcRadius, startAngle, endAngle, 0.1f);
-
-        // Jitter arc
         const float jitterAmount = slider.getProperties().getWithDefault("auxAmount", 0.0f);
         if(jitterAmount > 0.001f)
-        {
-            drawJitterArc(g, cx, cy, baseArcRadius, startAngle, endAngle, primaryAngle, jitterAmount, baseLineWidth);
-        }
+            drawJitterArc(g, cx, cy, arcRadius, startAngle, endAngle, angle, jitterAmount, thickness);
 
-        // Primary value arc with glow (thinner line)
-        juce::Path arcVal = createArcPath(cx, cy, baseArcRadius, startAngle, primaryAngle);
-        drawArcGlow(g, arcVal, colours::violetBleu, baseLineWidth);
+        juce::Path arcVal = createArcPath(cx, cy, arcRadius, startAngle, angle);
+        drawArcGlow(g, arcVal, coloursv2::cyan, radius * 0.05f, 8, 12.0f, 0.1f);
+        drawColoredArc(g, cx, cy, arcRadius, startAngle, angle, coloursv2::cyan, thickness);
 
-        g.setColour(coloursv2::cyan);
-        g.strokePath(arcVal, juce::PathStrokeType(baseLineWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
-
-        // Contour and text (same as standard primary)
         drawContour(g, cx, cy, innerR, colours::smokyBlack.brighter(0.20f));
         drawRotarySliderCenteredText(g, slider, cx, cy, radius);
     }
 
+    void MainLNF::drawSecondaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
+        float endAngle, float sliderPos, juce::Slider& slider) const
+    {
+        const float angle = startAngle + sliderPos * (endAngle - startAngle);
+        const float thickness = radius * 0.03f;
+
+        juce::Path arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
+        drawArcGlow(g, arcVal, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
+        drawColoredArc(g, cx, cy, innerR, startAngle, angle, colours::violetBleu, thickness);
+
+        drawRotarySliderCenteredText(g, slider, cx, cy, radius);
+    }
+
+    void MainLNF::drawSecondaryWithAuxKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
+        float endAngle, float sliderPos, juce::Slider& slider) const
+    {
+        //radius *= 0.9f;
+        //innerR *= 0.9f;
+        const float thickness = radius * 0.01f;
+        const float arcRadius = radius - (thickness) * 0.5f;
+        const float angle = startAngle + sliderPos * (endAngle - startAngle);
+
+        drawBorderArc(g, cx, cy, arcRadius, startAngle, endAngle, thickness);
+
+        const float jitterAmount = slider.getProperties().getWithDefault("auxAmount", 0.0f);
+        if(jitterAmount > 0.001f)
+            drawJitterArc(g, cx, cy, innerR, startAngle, endAngle, angle, jitterAmount, 1.5f);
+
+        juce::Path arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
+        drawArcGlow(g, arcVal, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
+        drawColoredArc(g, cx, cy, innerR, startAngle, angle, colours::violetBleu, 1.5f);
+
+        drawRotarySliderCenteredText(g, slider, cx, cy, radius);
+    }
+
+    void MainLNF::drawAuxKnob(
+        juce::Graphics& g, float cx, float cy, float innerR, float startAngle, float endAngle, float sliderPos) const
+    {
+        drawContour(g, cx, cy, innerR, colours::grisMoyen.withAlpha(0.8f), innerR * 0.03f);
+        drawLineIndicator(g, cx, cy, innerR, sliderPos, -pi * 0.75f, juce::Colours::white.withAlpha(0.9f), innerR * 0.03f);
+    }
+
+    void MainLNF::drawTertiaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
+        float endAngle, float sliderPos, juce::Slider& slider) const
+    {
+        const float shadowOffset = innerR * 0.15f;
+        const float border = 2.0f;
+
+        g.setColour(juce::Colours::black.withAlpha(0.3f));
+        g.fillEllipse(cx - innerR + shadowOffset, cy - innerR + shadowOffset * 1.5f, innerR * 2.0f, innerR * 2.0f);
+
+        g.setColour(juce::Colour(0xFF222222));
+        g.fillEllipse(cx - innerR - border, cy - innerR - border, innerR * 2.0f + border * 2.0f, innerR * 2.0f + border * 2.0f);
+
+        fillKnobFace(g, cx, cy, innerR);
+
+        const float lightAngle = -pi * 0.75f;
+        const float shadowAngle = lightAngle + pi;
+        juce::ColourGradient falloff(juce::Colours::black.withAlpha(0.2f), cx + std::cos(lightAngle) * innerR,
+            cy + std::sin(lightAngle) * innerR, juce::Colours::transparentBlack, cx + std::cos(shadowAngle) * innerR,
+            cy + std::sin(shadowAngle) * innerR, false);
+        g.setGradientFill(falloff);
+        g.fillEllipse(cx - innerR, cy - innerR, innerR * 2.0f, innerR * 2.0f);
+
+        drawLineIndicator(g, cx, cy, innerR, sliderPos, -pi * 0.5f, juce::Colours::white.withAlpha(0.9f), 2.0f);
+    }
+
     void MainLNF::drawJitterArc(juce::Graphics& g, float cx, float cy, float baseArcRadius, float startAngle, float endAngle,
-        float primaryAngle, float jitterAmount, float baseLineWidth)
+        float primaryAngle, float jitterAmount, float baseLineWidth) const
     {
         const float totalRange = endAngle - startAngle;
-        const float maxSpread = totalRange * 0.5f;
-        const float currentSpread = jitterAmount * maxSpread;
+        const float currentSpread = jitterAmount * totalRange * 0.5f;
         const float jitterStart = juce::jmax(startAngle, primaryAngle - currentSpread);
         const float jitterEnd = juce::jmin(endAngle, primaryAngle + currentSpread);
 
         if(jitterEnd <= jitterStart)
             return;
 
-        const float jitterArcRadius = baseArcRadius * 2.0f - (baseArcRadius * 0.88f);
+        const float jitterArcRadius = baseArcRadius * 1.12f;
+
         juce::Path jitterArc = createArcPath(cx, cy, jitterArcRadius, jitterStart, jitterEnd);
 
-        // Jitter glow
-        drawArcGlow(g, jitterArc, coloursv2::yellow, baseLineWidth * 1.2f, 8, 10.0f, 0.05f);
-
-        // Jitter core
-        const float alpha = 0.5f + (jitterAmount * 0.3f);
-        g.setColour(coloursv2::yellow.withAlpha(alpha));
-        g.strokePath(
-            jitterArc, juce::PathStrokeType(baseLineWidth * 1.2f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+        drawArcGlow(g, jitterArc, coloursv2::yellow, baseLineWidth, 8, 7.5f, 0.05f);
+        drawColoredArc(g, cx, cy, jitterArcRadius, jitterStart, jitterEnd, coloursv2::yellow, baseLineWidth * 1.2f);
     }
 
-    void MainLNF::drawSecondaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
-        float endAngle, float sliderPos, juce::Slider& slider)
-    {
-        const float angle = startAngle + sliderPos * (endAngle - startAngle);
-        juce::Path arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
 
-        // Glow for secondary
-        const float valueLineWidth = radius * 0.05f;
-        drawArcGlow(g, arcVal, colours::violetBleu, valueLineWidth, 8, 12.0f, 0.1f);
-
-        g.setColour(colours::violetBleu);
-        g.strokePath(arcVal, juce::PathStrokeType(1.5f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
-
-        drawRotarySliderCenteredText(g, slider, cx, cy, radius);
-    }
-
-    void MainLNF::drawAuxKnob(
-        juce::Graphics& g, float cx, float cy, float innerR, float startAngle, float endAngle, float sliderPos)
-    {
-        // BACKGROUND
-        g.setColour(coloursv2::blackest);
-        g.fillEllipse(cx - innerR, cy - innerR, innerR * 2.0f, innerR * 2.0f);
-
-        // Border/background
-        float border = 2.0f;
-        g.setColour(juce::Colour(0xFF222222));
-        g.fillEllipse(cx - innerR - border, cy - innerR - border, innerR * 2.0f + border * 2.0f, innerR * 2.0f + border * 2.0f);
-
-        // Indicator line
-        const float angle = -pi * 0.5f + sliderPos * (pi * 1.5f);
-        const float startR = innerR * 0.33f;
-        const float endR = innerR * 0.90f;
-
-        const float startX = cx + std::sin(angle) * startR;
-        const float startY = cy - std::cos(angle) * startR;
-        const float endX = cx + std::sin(angle) * endR;
-        const float endY = cy - std::cos(angle) * endR;
-
-        g.setColour(juce::Colours::white.withAlpha(0.9f));
-        g.drawLine(startX, startY, endX, endY, 2.0f);
-    }
-
-    void MainLNF::drawTertiaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
-        float endAngle, float sliderPos, juce::Slider& slider)
-    {
-        // Shadow
-        const float shadowOffset = innerR * 0.15f;
-        g.setColour(juce::Colours::black.withAlpha(0.3f));
-        g.fillEllipse(cx - innerR + shadowOffset, cy - innerR + shadowOffset * 1.5f, innerR * 2.0f, innerR * 2.0f);
-
-        // Border
-        float border = 2.0f;
-        g.setColour(juce::Colour(0xFF222222));
-        g.fillEllipse(cx - innerR - border, cy - innerR - border, innerR * 2.0f + border * 2.0f, innerR * 2.0f + border * 2.0f);
-
-        // Face
-        fillKnobFace(g, cx, cy, innerR);
-
-        // Edge falloff gradient
-        const float lightAngle = -pi * 0.75f;
-        const float shadowAngle = lightAngle + pi;
-        const float lx = cx + std::cos(lightAngle) * innerR;
-        const float ly = cy + std::sin(lightAngle) * innerR;
-        const float sx = cx + std::cos(shadowAngle) * innerR;
-        const float sy = cy + std::sin(shadowAngle) * innerR;
-
-        juce::ColourGradient falloff(
-            juce::Colours::black.withAlpha(0.2f), lx, ly, juce::Colours::transparentBlack, sx, sy, false);
-        g.setGradientFill(falloff);
-        g.fillEllipse(cx - innerR, cy - innerR, innerR * 2.0f, innerR * 2.0f);
-
-        // Indicator (same math as drawAuxKnob)
-        const float angle = -pi * 0.5f + sliderPos * (pi * 1.5f);
-        const float startR = innerR * 0.33f;
-        const float endR = innerR * 0.90f;
-
-        const float startX = cx + std::sin(angle) * startR;
-        const float startY = cy - std::cos(angle) * startR;
-        const float endX = cx + std::sin(angle) * endR;
-        const float endY = cy - std::cos(angle) * endR;
-
-        g.setColour(juce::Colours::white.withAlpha(0.9f));
-        g.drawLine(startX, startY, endX, endY, 2.0f);
-    }
-
-    void MainLNF::drawRotarySliderCenteredText(juce::Graphics& g, juce::Slider& slider, float cx, float cy, float radius)
+    // ────────────────────────────────────────────────────────────────────────
+    //  UI COMPONENT DRAWING
+    // ────────────────────────────────────────────────────────────────────────
+    void MainLNF::drawRotarySliderCenteredText(juce::Graphics& g, juce::Slider& slider, float cx, float cy, float radius) const 
     {
         const bool isHovered = slider.isMouseOverOrDragging();
         juce::String text = slider.getTextFromValue(slider.getValue());
 
-        // Split value and unit
         juce::String valueStr, unitStr;
         int splitIdx = -1;
+
         for(int i = 0; i < text.length(); ++i)
         {
             juce::juce_wchar c = text[i];
@@ -333,8 +263,8 @@ namespace particules
         }
     }
 
-    void MainLNF::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float minSliderPos,
-        float maxSliderPos, const juce::Slider::SliderStyle style, juce::Slider& slider)
+    void MainLNF::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float /*minPos*/,
+        float /*maxPos*/, const juce::Slider::SliderStyle style, juce::Slider& /*slider*/) 
     {
         if(style != juce::Slider::LinearHorizontal)
             return;
@@ -353,51 +283,67 @@ namespace particules
 
         const float minX = bounds.getX() + handleRadius;
         const float maxX = bounds.getRight() - handleRadius;
-        const float cx = juce::jlimit(minX, maxX, sliderPos);
+        const float slideX = juce::jlimit(minX, maxX, sliderPos);
 
-        g.setColour(colours::perleBlanc);
-        g.fillEllipse(cx - handleRadius, cy - handleRadius, handleSize, handleSize);
+        g.setColour(coloursv2::perleBlanc);
+        g.fillEllipse(slideX - handleRadius, cy - handleRadius, handleSize, handleSize);
     }
 
-    // Helpers
-    juce::Path MainLNF::createArcPath(float cx, float cy, float radius, float startAngle, float endAngle)
+    // ────────────────────────────────────────────────────────────────────────
+    //  CORE DRAWING PRIMITIVES
+    // ────────────────────────────────────────────────────────────────────────
+    juce::Path MainLNF::createArcPath(float cx, float cy, float radius, float startAngle, float endAngle) const
     {
         juce::Path path;
         path.addArc(cx - radius, cy - radius, radius * 2.0f, radius * 2.0f, startAngle, endAngle, true);
         return path;
     }
 
-    void MainLNF::drawArcGlow(juce::Graphics& g, const juce::Path& path, juce::Colour color, float baseWidth, int steps,
-        float spreadMultiplier, float alphaBase)
+    void MainLNF::drawColoredArc(juce::Graphics& g, float cx, float cy, float radius, float startAngle, float endAngle,
+        juce::Colour color, float thickness) const
+    {
+        if(std::abs(endAngle - startAngle) < 0.001f)
+            return;
+        juce::Path p = createArcPath(cx, cy, radius, startAngle, endAngle);
+        g.setColour(color);
+        g.strokePath(p, juce::PathStrokeType(thickness, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+    }
+
+    void MainLNF::drawArcGlow(juce::Graphics& g, const juce::Path& path, color c, float baseWidth, int steps,
+        float spreadMultiplier, float alphaBase) const
     {
         const float glowSpread = baseWidth * spreadMultiplier;
         for(int i = steps; i > 0; --i)
         {
-            float t = static_cast<float>(i) / steps;
-            float currentWidth = baseWidth + (glowSpread * t);
-            float alpha = alphaBase * std::pow(1.0f - t, 2.0f);
-            g.setColour(color.withAlpha(alpha));
+            const float t = static_cast<float>(i) / steps;
+            const float currentWidth = baseWidth + (glowSpread * t);
+            const float alpha = alphaBase * std::pow(1.0f - t, 2.0f);
+            g.setColour(c.withAlpha(alpha));
             g.strokePath(path, juce::PathStrokeType(currentWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
         }
     }
 
-    void MainLNF::drawBackgroundArc(
-        juce::Graphics& g, float cx, float cy, float radius, float startAngle, float endAngle, float alpha)
+    void MainLNF::drawFillBackground(juce::Graphics& g, float cx, float cy, float innerR, color col) const
     {
-        juce::Path path = createArcPath(cx, cy, radius, startAngle, endAngle);
-        g.setColour(colours::grisMoyen.withAlpha(alpha));
-        g.strokePath(path, juce::PathStrokeType(1.5f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+        g.setColour(col);
+        g.fillEllipse(cx - innerR, cy - innerR, innerR * 2.0f * 2.0f, innerR * 2.0f);
     }
 
-    void MainLNF::drawContour(juce::Graphics& g, float cx, float cy, float radius, juce::Colour color, float thickness)
+    void MainLNF::drawBorderArc(
+        juce::Graphics& g, float cx, float cy, float radius, float startAngle, float endAngle, float alpha, float thickness) const
+    {
+        drawColoredArc(g, cx, cy, radius, startAngle, endAngle, colours::grisMoyen.withAlpha(alpha), thickness);
+    }
+
+    void MainLNF::drawContour(juce::Graphics& g, float cx, float cy, float radius, juce::Colour color, float thickness) const
     {
         g.setColour(color);
         g.drawEllipse(cx - radius, cy - radius, radius * 2.0f, radius * 2.0f, thickness);
     }
 
-    void MainLNF::fillKnobFace(juce::Graphics& g, float cx, float cy, float radius)
+    void MainLNF::fillKnobFace(juce::Graphics& g, float cx, float cy, float radius) const
     {
-        juce::Colour faceCol(0xFF444444);
+        juce::Colour faceCol(0xff444444);
         juce::ColourGradient faceGrad(
             faceCol.darker(0.2f), cx, cy - radius * 0.5f, faceCol.brighter(0.03f), cx, cy + radius * 0.5f, false);
         g.setGradientFill(faceGrad);

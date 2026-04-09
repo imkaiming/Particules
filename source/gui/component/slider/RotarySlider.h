@@ -21,7 +21,7 @@ namespace particules
             setColour(juce::Slider::rotarySliderFillColourId, colours::violetBleu);
             setColour(juce::Slider::rotarySliderOutlineColourId, colours::grisAnthracite);
 
-            getProperties().set("knobStyle", static_cast<int>(RotaryType::primary));
+            getProperties().set("RotaryType", static_cast<int>(RotaryType::primary));
             setRepaintsOnMouseActivity(true);
 
         }
@@ -39,9 +39,9 @@ namespace particules
             setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 
             setColour(juce::Slider::rotarySliderFillColourId, colours::violetBleu);
-            setColour(juce::Slider::rotarySliderOutlineColourId, colours::perleBlanc);
+            setColour(juce::Slider::rotarySliderOutlineColourId, coloursv2::perleBlanc);
 
-            getProperties().set("knobStyle", static_cast<int>(RotaryType::secondary));
+            getProperties().set("RotaryType", static_cast<int>(RotaryType::secondary));
             setRepaintsOnMouseActivity(true);
 
         }
@@ -57,7 +57,7 @@ namespace particules
         {
             setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
             setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
-            getProperties().set("knobStyle", static_cast<int>(RotaryType::tertiary));
+            getProperties().set("RotaryType", static_cast<int>(RotaryType::tertiary));
         }
 
     private:

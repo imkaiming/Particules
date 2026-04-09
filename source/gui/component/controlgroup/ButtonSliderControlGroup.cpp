@@ -11,7 +11,7 @@ namespace particules
 
     void ButtonSliderControlGroup::paint(juce::Graphics& g)
     {
-        g.setColour(colours::perleBlanc);
+        g.setColour(coloursv2::perleBlanc);
         g.drawRoundedRectangle(getLocalBounds().toFloat(), 10.f, 1.0f);
 
         const int labelWidth = getWidth() / 8.f;

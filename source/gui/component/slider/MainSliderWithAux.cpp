@@ -18,7 +18,7 @@ namespace particules
         label.setText((const str)name, juce::dontSendNotification);
         label.setJustificationType(juce::Justification::centred);
         label.setInterceptsMouseClicks(false, false);
-        label.setColour(juce::Label::textColourId, colours::perleBlanc);
+        label.setColour(juce::Label::textColourId, coloursv2::perleBlanc);
         label.setFont(juce::Font(13.0f));
 
         mainSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
@@ -27,17 +27,17 @@ namespace particules
         if(type == RotaryType::primaryWithAux)
         {
             setColour(juce::Slider::rotarySliderFillColourId, coloursv2::cyan);
-            setColour(juce::Slider::rotarySliderOutlineColourId, colours::perleBlanc);
+            setColour(juce::Slider::rotarySliderOutlineColourId, coloursv2::perleBlanc);
         }
         else if(type == RotaryType::secondaryWithAux)
         {
             setColour(juce::Slider::rotarySliderFillColourId, colours::violetBleu);
-            setColour(juce::Slider::rotarySliderOutlineColourId, colours::perleBlanc);
+            setColour(juce::Slider::rotarySliderOutlineColourId, coloursv2::perleBlanc);
         }
 
         setRepaintsOnMouseActivity(true);
-        mainSlider.getProperties().set("knobStyle", static_cast<int>(type));
-        auxSlider.getProperties().set("knobStyle", static_cast<int>(RotaryType::aux));
+        mainSlider.getProperties().set("RotaryType", static_cast<int>(type));
+        auxSlider.getProperties().set("RotaryType", static_cast<int>(RotaryType::aux));
 
         mainSlider.onValueChange = [this]() {
             updatePrimaryAngle();

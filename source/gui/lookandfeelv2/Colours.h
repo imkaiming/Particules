@@ -14,16 +14,15 @@ namespace particules
         inline const color emerald{0xff89d07d};
         inline const color midGrey{0xffb5b3b3};
         inline const color turquoise{0xff51a8a4};
-        inline const color goldenYellow{0xfff2e81f};
         inline const color cyan{0xff00ffff};
         inline const color yellow{0xffffff00};
+        inline const color perleBlanc{0xffefefef};
     }
 
     namespace colours
     {
         inline const color violetBleu{0xff6563ff};
         inline const color grisAnthracite{0xff2e2f33};
-        inline const color perleBlanc{0xffefefef};
         inline const color grisMoyen{0xffa0a0a0};
         inline const color sliderTrack{0xff2e2f33};
         inline const color accentBleu{0xff8583ff};
