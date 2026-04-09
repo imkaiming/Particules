@@ -21,7 +21,7 @@ namespace particules
             BinaryData::futura_medium_condensed_bt_ttf, BinaryData::futura_medium_condensed_bt_ttfSize);
 
         // 2. Initialiser la Font avec ce Typeface
-        valueFont = juce::Font(geistTypeface).withHeight(14.0f);
+        valueFont = juce::Font(geistTypeface).withHeight(13.0f);
     }
 
     void MainLNF::drawRotarySlider(
@@ -34,7 +34,7 @@ namespace particules
         const float innerR = radius * 0.88f;
 
         g.setFont(valueFont);
-        int knobStyle = slider.getProperties().getWithDefault("knobStyle", static_cast<int>(RotaryType::primary));
+        const int knobStyle = slider.getProperties().getWithDefault("knobStyle", static_cast<int>(RotaryType::primary));
 
         switch(knobStyle)
         {
@@ -70,9 +70,14 @@ namespace particules
         radius *= 0.95f;
         innerR *= 0.95f;
 
+        const float baseLineWidth = radius * 0.03f;
+        const float baseArcRadius = radius - baseLineWidth * 0.5f;
         // BACKGROUND
         g.setColour(coloursv2::blackest);
         g.fillEllipse(cx - innerR, cy - innerR, innerR * 2.0f, innerR * 2.0f);
+
+        // Background arc
+        drawBackgroundArc(g, cx, cy, baseArcRadius, startAngle, endAngle, 0.1f);
 
         const float angle = startAngle + sliderPos * (endAngle - startAngle);
 
@@ -144,17 +149,17 @@ namespace particules
         drawBackgroundArc(g, cx, cy, baseArcRadius, startAngle, endAngle, 0.1f);
 
         // Jitter arc
-        float jitterAmount = slider.getProperties().getWithDefault("auxAmount", 0.0f);
+        const float jitterAmount = slider.getProperties().getWithDefault("auxAmount", 0.0f);
         if(jitterAmount > 0.001f)
         {
             drawJitterArc(g, cx, cy, baseArcRadius, startAngle, endAngle, primaryAngle, jitterAmount, baseLineWidth);
         }
 
         // Primary value arc with glow (thinner line)
-        auto arcVal = createArcPath(cx, cy, baseArcRadius, startAngle, primaryAngle);
+        juce::Path arcVal = createArcPath(cx, cy, baseArcRadius, startAngle, primaryAngle);
         drawArcGlow(g, arcVal, colours::violetBleu, baseLineWidth);
 
-        g.setColour(colours::violetBleu);
+        g.setColour(coloursv2::cyan);
         g.strokePath(arcVal, juce::PathStrokeType(baseLineWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 
         // Contour and text (same as standard primary)
@@ -165,25 +170,24 @@ namespace particules
     void MainLNF::drawJitterArc(juce::Graphics& g, float cx, float cy, float baseArcRadius, float startAngle, float endAngle,
         float primaryAngle, float jitterAmount, float baseLineWidth)
     {
-        float totalRange = endAngle - startAngle;
-        float maxSpread = totalRange * 0.5f;
-        float currentSpread = jitterAmount * maxSpread;
-
-        float jitterStart = juce::jmax(startAngle, primaryAngle - currentSpread);
-        float jitterEnd = juce::jmin(endAngle, primaryAngle + currentSpread);
+        const float totalRange = endAngle - startAngle;
+        const float maxSpread = totalRange * 0.5f;
+        const float currentSpread = jitterAmount * maxSpread;
+        const float jitterStart = juce::jmax(startAngle, primaryAngle - currentSpread);
+        const float jitterEnd = juce::jmin(endAngle, primaryAngle + currentSpread);
 
         if(jitterEnd <= jitterStart)
             return;
 
-        float jitterArcRadius = baseArcRadius * 2.0f - (baseArcRadius * 0.88f);
-        auto jitterArc = createArcPath(cx, cy, jitterArcRadius, jitterStart, jitterEnd);
+        const float jitterArcRadius = baseArcRadius * 2.0f - (baseArcRadius * 0.88f);
+        juce::Path jitterArc = createArcPath(cx, cy, jitterArcRadius, jitterStart, jitterEnd);
 
         // Jitter glow
-        drawArcGlow(g, jitterArc, coloursv2::goldenYellow, baseLineWidth * 1.2f, 8, 10.0f, 0.05f);
+        drawArcGlow(g, jitterArc, coloursv2::yellow, baseLineWidth * 1.2f, 8, 10.0f, 0.05f);
 
         // Jitter core
-        float alpha = 0.5f + (jitterAmount * 0.3f);
-        g.setColour(coloursv2::goldenYellow.withAlpha(alpha));
+        const float alpha = 0.5f + (jitterAmount * 0.3f);
+        g.setColour(coloursv2::yellow.withAlpha(alpha));
         g.strokePath(
             jitterArc, juce::PathStrokeType(baseLineWidth * 1.2f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
     }
@@ -192,7 +196,7 @@ namespace particules
         float endAngle, float sliderPos, juce::Slider& slider)
     {
         const float angle = startAngle + sliderPos * (endAngle - startAngle);
-        auto arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
+        juce::Path arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
 
         // Glow for secondary
         const float valueLineWidth = radius * 0.05f;

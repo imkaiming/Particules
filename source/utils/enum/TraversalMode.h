@@ -2,5 +2,5 @@
 
 namespace particules
 {
-    enum class TraversalMode { Sine, Triangle, Square, Random, None };
+    enum class TraversalMode { Sine, Triangle, Square, Random, None, Count };
 }

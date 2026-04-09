@@ -13,7 +13,7 @@
 namespace particules
 {
 
-    MainSliderWithAux::MainSliderWithAux(const str& name, EngineState& es, RotaryType type) : engineState{es}
+    MainSliderWithAux::MainSliderWithAux(EngineState& es, RotaryType type, const str& name) : engineState{es}
     {
         label.setText((const str)name, juce::dontSendNotification);
         label.setJustificationType(juce::Justification::centred);
@@ -26,7 +26,7 @@ namespace particules
 
         if(type == RotaryType::primaryWithAux)
         {
-            setColour(juce::Slider::rotarySliderFillColourId, colours::violetBleu);
+            setColour(juce::Slider::rotarySliderFillColourId, coloursv2::cyan);
             setColour(juce::Slider::rotarySliderOutlineColourId, colours::perleBlanc);
         }
         else if(type == RotaryType::secondaryWithAux)
@@ -43,7 +43,6 @@ namespace particules
             updatePrimaryAngle();
             mainSlider.repaint();
 
-            // If linked, notify the sibling (GrainsPanel will set this callback)
             if(engineState.getIsLinked() && onValueChanged)
             {
                 onValueChanged(mainSlider.getValue());
@@ -57,7 +56,9 @@ namespace particules
 
         addAndMakeVisible(&mainSlider);
         addAndMakeVisible(&auxSlider);
-        addAndMakeVisible(&label);
+
+        if(name != "")
+            addAndMakeVisible(&label);
     }
 
     void MainSliderWithAux::setPrimaryValue(double value, juce::NotificationType notify)
@@ -75,9 +76,9 @@ namespace particules
         const float startAngle = pi * 1.25f;
         const float endAngle = pi * 2.25f;
 
-        float range = mainSlider.getMaximum() - mainSlider.getMinimum();
-        float norm = (mainSlider.getValue() - mainSlider.getMinimum()) / range;
-        float angle = startAngle + norm * (endAngle - startAngle);
+        const float range = mainSlider.getMaximum() - mainSlider.getMinimum();
+        const float norm = (mainSlider.getValue() - mainSlider.getMinimum()) / range;
+        const float angle = startAngle + norm * (endAngle - startAngle);
 
         auxSlider.getProperties().set("primaryAngle", angle);
         auxSlider.repaint();
@@ -101,8 +102,8 @@ namespace particules
 
     void MainSliderWithAux::resized()
     {
-        auto bounds = getLocalBounds().toFloat();
-        auto center = bounds.getCentre();
+        juce::Rectangle<float> bounds = getLocalBounds().toFloat();
+        juce::Point<float> center = bounds.getCentre();
 
         const float minDim = juce::jmin(bounds.getWidth(), bounds.getHeight());
         const float maxExtentFromCenter = minDim * 0.62f;
@@ -130,10 +131,14 @@ namespace particules
             juce::Rectangle<float>(primaryBoundsSize, primaryBoundsSize).withCentre(center.toFloat()).toNearestInt());
 
         auxSlider.setBounds(
-            juce::Rectangle<float>(auxSize, auxSize).withCentre(juce::Point<float>((float)ax, (float)ay)).toNearestInt());
+            juce::Rectangle<float>(auxSize, auxSize).withCentre(
+            juce::Point<float>(static_cast<float>(ax), static_cast<float>(ay))).toNearestInt());
 
-        const int labelHeight = 18;
-        label.setBounds(0, getHeight() - labelHeight, getWidth(), labelHeight);
+        if(label.getText() != "")
+        {
+            const int labelHeight = 20;
+            label.setBounds(0, getHeight() - labelHeight, getWidth(), labelHeight);
+        }
 
         syncAuxDataToPrimary();
         updatePrimaryAngle();
@@ -141,21 +146,22 @@ namespace particules
 
     void MainSliderWithAux::syncAuxDataToPrimary()
     {
-        float auxNorm = (float)auxSlider.getValue();
+        const float auxNorm = static_cast<float>(auxSlider.getValue());
         mainSlider.getProperties().set("auxAmount", auxNorm);
     }
 
     void MainSliderWithAux::paint(juce::Graphics& g)
     {
-        g.fillAll(coloursv2::deepBlack.brighter(0.03f));
-        float startAngle = pi * 1.25f;
-        float endAngle = pi * 2.25f;
-        float primaryRange = mainSlider.getMaximum() - mainSlider.getMinimum();
+        g.fillAll(coloursv2::deepBlack.brighter(0.0f));
+
+        const float startAngle = pi * 1.25f;
+        const float endAngle = pi * 2.25f;
+        const float primaryRange = mainSlider.getMaximum() - mainSlider.getMinimum();
 
         if(primaryRange > 0.0f)
         {
-            float primaryNorm = (mainSlider.getValue() - mainSlider.getMinimum()) / primaryRange;
-            float primaryAngle = startAngle + primaryNorm * (endAngle - startAngle);
+            const float primaryNorm = (mainSlider.getValue() - mainSlider.getMinimum()) / primaryRange;
+            const float primaryAngle = startAngle + primaryNorm * (endAngle - startAngle);
             auxSlider.getProperties().set("primaryAngle", primaryAngle);
         }
     }

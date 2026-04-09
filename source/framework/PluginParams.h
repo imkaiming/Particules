@@ -1,6 +1,7 @@
 #pragma once
 #include "../framework/Core.h"
 #include "../utils/enum/EnvelopeMode.h"
+#include "../utils/enum/TraversalMode.h"
 
 // init parameters for the plugin
 
@@ -146,8 +147,8 @@ namespace particules
             inline constexpr const char* id = "SUSTAINRATIO";
             inline constexpr const char* name = "SustainRatio";
             inline constexpr float min = 0.f;
-            inline constexpr float max = 0.9f;
-            inline constexpr float init = 0.5f;
+            inline constexpr float max = 0.95f;
+            inline constexpr float init = 0.0f;
             inline constexpr float skewFactor = 0.5f;
         }
 
@@ -156,7 +157,8 @@ namespace particules
             inline constexpr const char* id = "TRAVERSALMODE";
             inline constexpr const char* name = "Traversal Mode";
             inline constexpr int init = 0;
-            inline constexpr std::array<const char*, 5> traversalModeNames = {"Sine", "Triangle", "Square", "Random", "None"};
+            inline constexpr std::array<const char*, static_cast<int>(TraversalMode::Count)> traversalModeNames = {
+                "Sine", "Triangle", "Square", "Random", "None"};
             //#define TRAVERSALMODE_6 "Saw Tooth"
             //#define TRAVERSALMODE_7 "Reverse Saw Tooth"
         }
@@ -166,7 +168,7 @@ namespace particules
             inline constexpr const char* id = "TRAVERSALFREQ";
             inline constexpr const char* name = "Traversal Frequency";
             inline constexpr float min = 0.01f; // low
-            inline constexpr float max = 50.f; // high
+            inline constexpr float max = 10.f; // high
             inline constexpr float init = 1.0f;
             inline constexpr float skewFactor = 1.0f;
         }

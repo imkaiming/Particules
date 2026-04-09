@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../framework/PluginParams.h"
+#include "Map.h"
 #include "MathConstants.h"
 
 namespace particules
@@ -83,46 +84,92 @@ namespace particules
     {
         inline float evaluateWindow(EnvelopeMode mode, float phase) noexcept
         {
+            phase = (phase < 0.0f) ? 0.0f : ((phase > 1.0f) ? 1.0f : phase);
+
             switch(mode)
             {
                 case EnvelopeMode::Hann:
                     return 0.5f - 0.5f * std::cos(twoPi * phase);
+
+                case EnvelopeMode::Linear:
+                    return 1.0f - std::abs(2.0f * phase - 1.0f);
+
                 case EnvelopeMode::Sqrt:
-                    return std::sqrt(1.f - std::abs(2.f * phase - 1.f));
-                // ... autres modes
+                    return std::sqrt(1.0f - std::abs(2.0f * phase - 1.0f));
+
+                case EnvelopeMode::Gaussian:
+                {
+                    if(phase <= 0.0f || phase >= 1.0f)
+                        return 0.0f;
+                    const float x = (2.0f * phase - 1.0f) / 0.18f;
+                    return std::exp(-0.5f * x * x);
+                }
+
+                case EnvelopeMode::Exp:
+                {
+                    if(phase <= 0.0f || phase >= 1.0f)
+                        return 0.0f;
+                    const float x = std::abs(2.0f * phase - 1.0f);
+                    return std::exp(-6.0f * x);
+                }
+
                 default:
-                    return 0.f;
+                    return 0.0f;
             }
         }
 
-        // Fonction qui simule le comportement exact de ton GrainProcessor
         inline float evaluateEnvelopeWithPlateau(EnvelopeMode mode, float phase, float sustainRatio) noexcept
         {
-            // Si pas de plateau, on évalue la fenêtre normalement
             if(sustainRatio <= 0.0f)
                 return evaluateWindow(mode, phase);
 
-            // Calcul des proportions (ex: sustainRatio = 0.5 signifie 50% de plateau)
-            // L'attaque et le release se partagent le reste du temps
             const float slopeTime = (1.0f - sustainRatio) * 0.5f;
 
             if(phase < slopeTime)
             {
-                // Phase d'attaque : on remappe la phase de [0, slopeTime] vers [0, 0.5]
                 float mappedPhase = (phase / slopeTime) * 0.5f;
                 return evaluateWindow(mode, mappedPhase);
             }
             else if(phase > (1.0f - slopeTime))
             {
-                // Phase de release : on remappe la phase de [1-slopeTime, 1] vers [0.5, 1.0]
                 float mappedPhase = 0.5f + ((phase - (1.0f - slopeTime)) / slopeTime) * 0.5f;
                 return evaluateWindow(mode, mappedPhase);
             }
-            else
+
+            return 1.0f;
+        }
+
+        inline float evaluateTraversalCurve(TraversalMode mode, float phase, float frequencyHz) noexcept
+        {
+            if(mode == TraversalMode::None)
+                return 0.5f;
+
+            //const float visualPeriods = map(frequencyHz, 0.01f, 20.0f, 1.0f, 8.0f);
+            const float p = std::fmod(phase * frequencyHz, 1.0f);
+            float bipolarVal = 0.0f;
+
+            switch(mode)
             {
-                // Plateau
-                return 1.0f;
+                case TraversalMode::Sine:
+                    bipolarVal = std::sin(twoPi * p);
+                    break;
+
+                case TraversalMode::Triangle:
+                    bipolarVal = 2.0f * std::abs(2.0f * std::fmod(p + 0.75f, 1.0f) - 1.0f) - 1.0f;
+                    break;
+
+                case TraversalMode::Square:
+                    bipolarVal = (p < 0.5f) ? 1.0f : -1.0f;
+                    break;
+
+                case TraversalMode::Random: // fake random
+                    const float step = std::floor(phase * frequencyHz * 4.0f);
+                    bipolarVal = std::fmod(std::sin(step * 12.9898f) * 43758.5453f, 2.0f) * 0.5f;
+                    break;
             }
+
+            return 0.5f + (bipolarVal * 0.5f);
         }
     }
+
 }

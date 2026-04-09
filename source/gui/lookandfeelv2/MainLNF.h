@@ -28,6 +28,8 @@ namespace particules
         juce::Typeface::Ptr getFunnelTypeface() const noexcept { return funnelTypeface; }
         juce::Typeface::Ptr getFuturaTypeface() const noexcept { return futuraTypeface; }
 
+        juce::Font getFont() { return valueFont; }
+
     private:
         void drawRotarySliderCenteredText(juce::Graphics& g, juce::Slider& slider, float cx, float cy, float radius);
 

@@ -15,6 +15,8 @@ namespace particules
         inline const color midGrey{0xffb5b3b3};
         inline const color turquoise{0xff51a8a4};
         inline const color goldenYellow{0xfff2e81f};
+        inline const color cyan{0xff00ffff};
+        inline const color yellow{0xffffff00};
     }
 
     namespace colours

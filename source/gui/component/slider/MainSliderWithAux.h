@@ -9,6 +9,7 @@
 #include "../../lookandfeelv2/Colours.h"
 #include "AuxRotarySlider.h"
 #include "RotarySlider.h"
+
 namespace juce
 {
     class Graphics;
@@ -20,7 +21,7 @@ namespace particules
     class MainSliderWithAux : public juce::Component
     {
     public:
-        MainSliderWithAux(const str& name, EngineState& es, RotaryType type);
+        MainSliderWithAux(EngineState& es, RotaryType type, const str& name = "");
 
         void setRange(float min, float max) noexcept;
         void updatePrimaryAngle();
@@ -28,6 +29,7 @@ namespace particules
 
         void setOnPrimaryValueChanged(ValueCallback callback) { onValueChanged = std::move(callback); }
         void setPrimaryValue(double value, juce::NotificationType notify = juce::dontSendNotification);
+
         double getPrimaryValue() const noexcept { return mainSlider.getValue(); }
         double getPrimaryMinimum() const noexcept { return mainSlider.getMinimum(); }
         double getPrimaryMaximum() const noexcept { return mainSlider.getMaximum(); }
