@@ -7,10 +7,7 @@
 #include "../../framework/GuiTypes.h"
 #include "../../framework/PluginParams.h"
 #include "../component/ThumbnailComponent.h"
-#include "../component/overlay/PositionOverlayComponent.h"
-#include "../component/overlay/SpanOverlayComponent.h"
-#include "../component/slider/HorizontalSlider.h"
-
+#include "../component/overlay/WaveformOverlay.h"
 
 // the Audio File Frame provide the control to load and play the audio.
 namespace particules
@@ -34,24 +31,19 @@ namespace particules
         UIContext& uic;
         ValueTreeState& apvts;
         ThumbnailComponent thumbnailComponent; // after the file is loaded draw the waveform
-        //HandleSliderLookAndFeel sliderLookAndFeel;
-
-        HorizontalSlider positionSlider;
-        HorizontalSlider spanSlider;
 
         //juce::Slider positionSlider;
         //juce::Slider spanSlider;
 
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> positionSliderAttachment;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> spanSliderAttachment;
+        //std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> positionSliderAttachment;
+        //std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> spanSliderAttachment;
 
-        void updateOverflow(float value);
-        void updatePosition(float value); // update the position marker when changing the file position slider value
-        void updateSpan(float value);
+        //void updateOverflow(float value);
+        //void updatePosition(float value); // update the position marker when changing the file position slider value
+        //void updateSpan(float value);
 
-        PositionOverlayComponent positionOverlay;
-        SpanOverlayComponent spanOverlay;
-        SpanOverlayComponent overflowOverlay; // when the selection is higher than the width it wrapped back. it add flexibility
+        std::unique_ptr<WaveformOverlay> waveformOverlay;
+
 
         static constexpr const char* globalPositionId = params::position::id;
         static constexpr const char* globalPositionName = params::position::name;

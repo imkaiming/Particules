@@ -21,7 +21,7 @@ namespace particules
     class MainSliderWithAux : public juce::Component
     {
     public:
-        MainSliderWithAux(EngineState& es, RotaryType type, const str& name = "");
+        MainSliderWithAux(EngineState& es, RotaryType type, ValueTreeState& apvts, const str& name = "", const str& id = "");
 
         void setRange(float min, float max) noexcept;
         void updatePrimaryAngle();
@@ -39,10 +39,13 @@ namespace particules
 
         void resized() override;
         void paint(juce::Graphics& g) override;
+        void lookAndFeelChanged() override;
 
     private:
         void syncAuxDataToPrimary();
 
+        str parameterID;
+        ValueTreeState& apvts;
         EngineState& engineState;
         ValueCallback onValueChanged;
         juce::Slider mainSlider;

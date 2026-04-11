@@ -24,57 +24,23 @@ namespace particules
           uic{apvts, paramsView, engineState, uiState, facade}, loader{}, debugPresetLoaded{false}
 #endif
     {
-        initOnAudioLoadedCallback();
+        onAudioLoadedCallback = [this](AudioBuffer& buffer) {
+            setInputBuffer(buffer);
+            const juce::File& f = getCurrentFile();
+            if(f.existsAsFile())
+            {
+                engineState.setNumSamples(buffer.getNumSamples());
+                engineState.setNumChannels(buffer.getNumChannels());
+                uiState.setNumSamples(buffer.getNumSamples());
+                uiState.setSource(f);
+            }
+        };
+
         facade.loadFile = [this] { loadFile(); };
         facade.loadFilePath = [this](const str& path) { loadFile(path); };
     }
 
     ParticulesAudioProcessor::~ParticulesAudioProcessor() {}
-
-    const juce::String ParticulesAudioProcessor::getName() const { return JucePlugin_Name; }
-
-    bool ParticulesAudioProcessor::acceptsMidi() const
-    {
-#if JucePlugin_WantsMidiInput
-        return true;
-#else
-        return false;
-#endif
-    }
-
-    bool ParticulesAudioProcessor::producesMidi() const
-    {
-#if JucePlugin_ProducesMidiOutput
-        return true;
-#else
-        return false;
-#endif
-    }
-
-    bool ParticulesAudioProcessor::isMidiEffect() const
-    {
-#if JucePlugin_IsMidiEffect
-        return true;
-#else
-        return false;
-#endif
-    }
-
-    double ParticulesAudioProcessor::getTailLengthSeconds() const { return 0.0; }
-
-    int ParticulesAudioProcessor::getNumPrograms()
-    {
-        return 1; // NB: some hosts don't cope very well if you tell them there are 0 programs,
-        // so this should be at least 1, even if you're not really implementing programs.
-    }
-
-    int ParticulesAudioProcessor::getCurrentProgram() { return 0; }
-
-    void ParticulesAudioProcessor::setCurrentProgram(int /*index*/ ) {}
-
-    const juce::String ParticulesAudioProcessor::getProgramName(int /*index*/ ) { return {}; }
-
-    void ParticulesAudioProcessor::changeProgramName(int /* index */, const str& /* newName */) {}
 
     void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     {
@@ -88,32 +54,6 @@ namespace particules
     }
 
     void ParticulesAudioProcessor::releaseResources() {}
-
-#ifndef JucePlugin_PreferredChannelConfigurations
-    bool ParticulesAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
-    {
-    #if JucePlugin_IsMidiEffect
-        juce::ignoreUnused(layouts);
-        return true;
-    #else
-        // This is the place where you check if the layout is supported.
-        // In this template code we only support mono or stereo.
-        // Some plugin hosts, such as certain GarageBand versions, will only
-        // load plugins that support stereo bus layouts.
-        if(layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-            && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
-            return false;
-
-        // This checks if the input layout matches the output layout
-        #if !JucePlugin_IsSynth
-        if(layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
-            return false;
-        #endif
-
-        return true;
-    #endif
-    }
-#endif
 
     void ParticulesAudioProcessor::processBlock(AudioBuffer& buffer, juce::MidiBuffer& midiMessages)
     {
@@ -132,17 +72,6 @@ namespace particules
 
         if(ps.play)
             granularEngine.process(buffer, bufferSize, outputPtrs, outputNumChannels, ps);
-    }
-
-    bool ParticulesAudioProcessor::hasEditor() const
-    {
-        return true; // (change this to false if you choose to not supply an editor)
-    }
-
-    juce::AudioProcessorEditor* ParticulesAudioProcessor::createEditor()
-    {
-        ParticulesAudioProcessorEditor* editor = new ParticulesAudioProcessorEditor(*this);
-        return editor;
     }
 
     void ParticulesAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
@@ -203,13 +132,34 @@ namespace particules
 
             apvts.replaceState(vt);
         }
-
-        //juce::Logger::outputDebugString("apvts mix : " + (juce::String)apvts.getRawParameterValue(MIX_ID)->load());
-        //juce::Logger::outputDebugString("apvts gain : " + (juce::String)apvts.getRawParameterValue(GAIN_ID)->load());
-        //juce::Logger::outputDebugString("apvts dens : " + (juce::String)apvts.getRawParameterValue(EMISSION_ID)->load());
-        //juce::Logger::outputDebugString("apvts dur : " + (juce::String)apvts.getRawParameterValue(DURATION_ID)->load());
-        //juce::Logger::outputDebugString("apvts pitch : " + (juce::String)apvts.getRawParameterValue(PITCH_ID)->load());
     }
+
+    void ParticulesAudioProcessor::setInputBuffer(AudioBuffer& buffer) noexcept
+    {
+        DBG("SET INPUT BUFFER");
+        const int inputChannels = buffer.getNumChannels();
+        const int numSamples = buffer.getNumSamples();
+
+        engineState.setNumChannels(inputChannels);
+        engineState.setNumSamples(numSamples);
+
+        // adding a guard sample to the input buffer to make it safe to interpolate the buffer's read position
+        AudioBuffer tempBuffer(inputChannels, numSamples + 1);
+
+        for(int ch = 0; ch < inputChannels; ch++)
+        {
+            juce::FloatVectorOperations::copy(tempBuffer.getWritePointer(ch), buffer.getReadPointer(ch), numSamples);
+            tempBuffer.getWritePointer(ch)[numSamples] = tempBuffer.getReadPointer(ch)[0];
+        }
+
+        std::shared_ptr<const AudioBuffer> safeBufferPtr = std::make_shared<const AudioBuffer>(std::move(tempBuffer));
+
+        granularEngine.setInputBuffer(std::move(safeBufferPtr));
+    }
+
+    void ParticulesAudioProcessor::loadFile(const str& path) { loader.loadFile(path, onAudioLoadedCallback); }
+
+    void ParticulesAudioProcessor::loadFile() { loader.loadFile(onAudioLoadedCallback); }
 
     ValueTreeState::ParameterLayout ParticulesAudioProcessor::createParameterLayout()
     {
@@ -263,21 +213,32 @@ namespace particules
                 .withStringFromValueFunction([](float v, int) { return str(v, 2) + " dB"; })
                 .withValueFromStringFunction([](const juce::String& s) { return s.getFloatValue(); })));
 
+        juce::NormalisableRange<float> emissionRange{params::emission::min, params::emission::max, 0.001f};
+        emissionRange.setSkewForCentre(params::emission::skewFactor);
+
         layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{params::emission::id, 1}, params::emission::name,
-            juce::NormalisableRange<float>(params::emission::min, params::emission::max, 0.001f), params::emission::init,
+            emissionRange, params::emission::init,
             juce::AudioParameterFloatAttributes{}
                 .withLabel("g/s")
                 .withCategory(juce::AudioProcessorParameter::genericParameter)
-                .withStringFromValueFunction([](float v, int) { return str(v, 2) + " g/s"; })
-                .withValueFromStringFunction([](const juce::String& s) { return s.getFloatValue(); })));
+                .withStringFromValueFunction([](float v, int) { return str(v, v > 1 ? 2 : 3) + " g/s"; })
+                .withValueFromStringFunction([](const str& s) { return s.getFloatValue(); })));
+
+        juce::NormalisableRange<float> durationRange{params::duration::min, params::duration::max, 0.001f};
+        durationRange.setSkewForCentre(params::duration::skewFactor);
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{params::duration::id, 1}, params::duration::name,
-            juce::NormalisableRange<float>(params::duration::min, params::duration::max, 0.001f), params::duration::init,
+            durationRange, params::duration::init,
             juce::AudioParameterFloatAttributes{}
                 .withLabel("s")
                 .withCategory(juce::AudioProcessorParameter::genericParameter)
-                .withStringFromValueFunction([](float v, int) { return str(v, 2) + " s"; })
-                .withValueFromStringFunction([](const juce::String& s) { return s.getFloatValue(); })));
+                .withStringFromValueFunction([](float v, int) {
+                    if(v >= 1.0f)
+                        return str(v, 2) + " s";
+
+                    return str(v * 1000.0f, 1) + " ms";
+                })
+                .withValueFromStringFunction([](const str& s) { return s.getFloatValue(); })));
 
         layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{params::speed::id, 1}, params::speed::name,
             juce::NormalisableRange<float>(params::speed::min, params::speed::max, 0.001f), params::speed::init));
@@ -288,10 +249,12 @@ namespace particules
         layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{params::span::id, 1}, params::span::name,
             juce::NormalisableRange<float>(params::span::min, params::span::max, 0.001f), params::span::init));
 
+        juce::NormalisableRange<float> envelopeRatioRange{params::sustainRatio::min, params::sustainRatio::max, 0.01f};
+        envelopeRatioRange.setSkewForCentre(params::sustainRatio::skewFactor);
+
         layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{params::sustainRatio::id, 1},
-            params::sustainRatio::name,
-            juce::NormalisableRange<float>(params::sustainRatio::min, params::sustainRatio::max, 0.01f),
-            params::sustainRatio::init));
+            params::sustainRatio::name, envelopeRatioRange, params::sustainRatio::init,
+            juce::AudioParameterFloatAttributes{}.withCategory(juce::AudioProcessorParameter::genericParameter)));
 
         // ENVELOPE MODE //
 
@@ -311,64 +274,22 @@ namespace particules
 
         // TRAVERSAL FREQ //
 
+        juce::NormalisableRange<float> traversalFreqRange{params::traversalFreq::min, params::traversalFreq::max, 0.01f};
+        traversalFreqRange.setSkewForCentre(params::traversalFreq::skewFactor);
+
         layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{params::traversalFreq::id, 1},
-            params::traversalFreq::name,
-            juce::NormalisableRange<float>(params::traversalFreq::min, params::traversalFreq::max, 0.01f),
-            params::traversalFreq::init,
+            params::traversalFreq::name, traversalFreqRange, params::traversalFreq::init,
             juce::AudioParameterFloatAttributes{}
                 .withLabel("Hz")
                 .withCategory(juce::AudioProcessorParameter::genericParameter)
                 .withStringFromValueFunction([](float v, int) { return str(v, 2) + " Hz"; })
-                .withValueFromStringFunction([](const juce::String& s) { return s.getFloatValue(); })));
+                .withValueFromStringFunction([](const str& s) { return s.getFloatValue(); })));
 
         // ajouter pan, direction
         // randomEMISSION, randomDuration, randomPan, randomDirection, randomPitch
 
         return layout;
     }
-
-    void ParticulesAudioProcessor::setInputBuffer(AudioBuffer& buffer) noexcept
-    {
-        DBG("SET INPUT BUFFER");
-        const int inputChannels = buffer.getNumChannels();
-        const int numSamples = buffer.getNumSamples();
-
-        engineState.setNumChannels(inputChannels);
-        engineState.setNumSamples(numSamples);
-
-        // adding a guard sample to the input buffer to make it safe to interpolate the buffer's read position
-        AudioBuffer tempBuffer(inputChannels, numSamples + 1);
-
-        for(int ch = 0; ch < inputChannels; ch++)
-        {
-            juce::FloatVectorOperations::copy(tempBuffer.getWritePointer(ch), buffer.getReadPointer(ch), numSamples);
-            tempBuffer.getWritePointer(ch)[numSamples] = tempBuffer.getReadPointer(ch)[0];
-        }
-
-        std::shared_ptr<const AudioBuffer> safeBufferPtr = std::make_shared<const AudioBuffer>(std::move(tempBuffer));
-
-        granularEngine.setInputBuffer(std::move(safeBufferPtr));
-    }
-
-    void ParticulesAudioProcessor::initOnAudioLoadedCallback()
-    {
-        onAudioLoadedCallback = [this](AudioBuffer& buffer) {
-            setInputBuffer(buffer);
-            const juce::File& f = getCurrentFile();
-            if(f.existsAsFile())
-            {
-                engineState.setNumSamples(buffer.getNumSamples());
-                engineState.setNumChannels(buffer.getNumChannels());
-                uiState.setNumSamples(buffer.getNumSamples());
-                uiState.setSource(f);
-                //uiState.setFileLoaded(true);
-            }
-        };
-    }
-
-    void ParticulesAudioProcessor::loadFile(const str& path) { loader.loadFile(path, onAudioLoadedCallback); }
-
-    void ParticulesAudioProcessor::loadFile() { loader.loadFile(onAudioLoadedCallback); }
 
     void ParticulesAudioProcessor::loadDebugPreset()
     {
@@ -442,6 +363,88 @@ namespace particules
         //apvts.getParameter(Param::TraversalFreq::id)->;
 
         debugPresetLoaded = true;
+    }
+
+    juce::AudioProcessorEditor* ParticulesAudioProcessor::createEditor()
+    {
+        ParticulesAudioProcessorEditor* editor = new ParticulesAudioProcessorEditor(*this);
+        return editor;
+    }
+
+    const juce::String ParticulesAudioProcessor::getName() const { return JucePlugin_Name; }
+
+#ifndef JucePlugin_PreferredChannelConfigurations
+    bool ParticulesAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
+    {
+    #if JucePlugin_IsMidiEffect
+        juce::ignoreUnused(layouts);
+        return true;
+    #else
+        // This is the place where you check if the layout is supported.
+        // In this template code we only support mono or stereo.
+        // Some plugin hosts, such as certain GarageBand versions, will only
+        // load plugins that support stereo bus layouts.
+        if(layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
+            && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
+            return false;
+
+        // This checks if the input layout matches the output layout
+        #if !JucePlugin_IsSynth
+        if(layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
+            return false;
+        #endif
+
+        return true;
+    #endif
+    }
+#endif
+
+    bool ParticulesAudioProcessor::acceptsMidi() const
+    {
+#if JucePlugin_WantsMidiInput
+        return true;
+#else
+        return false;
+#endif
+    }
+
+    bool ParticulesAudioProcessor::producesMidi() const
+    {
+#if JucePlugin_ProducesMidiOutput
+        return true;
+#else
+        return false;
+#endif
+    }
+
+    bool ParticulesAudioProcessor::isMidiEffect() const
+    {
+#if JucePlugin_IsMidiEffect
+        return true;
+#else
+        return false;
+#endif
+    }
+
+    double ParticulesAudioProcessor::getTailLengthSeconds() const { return 0.0; }
+
+    int ParticulesAudioProcessor::getNumPrograms()
+    {
+        return 1; // NB: some hosts don't cope very well if you tell them there are 0 programs,
+        // so this should be at least 1, even if you're not really implementing programs.
+    }
+
+    int ParticulesAudioProcessor::getCurrentProgram() { return 0; }
+
+    void ParticulesAudioProcessor::setCurrentProgram(int /*index*/) {}
+
+    const juce::String ParticulesAudioProcessor::getProgramName(int /*index*/) { return {}; }
+
+    void ParticulesAudioProcessor::changeProgramName(int /* index */, const str& /* newName */) {}
+
+    bool ParticulesAudioProcessor::hasEditor() const
+    {
+        return true; // (change this to false if you choose to not supply an editor)
     }
 
 }

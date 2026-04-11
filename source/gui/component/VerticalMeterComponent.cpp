@@ -39,11 +39,11 @@ namespace particules
 
     void VerticalMeterComponent::resized()
     {
-        auto bounds = getLocalBounds().reduced(4);
+        juce::Rectangle<int> bounds = getLocalBounds().reduced(4);
 
         // Foot pour le knob
-        auto footArea = bounds.removeFromBottom(55);
-        auto meterArea = bounds;
+        juce::Rectangle<int> footArea = bounds.removeFromBottom(55);
+        juce::Rectangle<int> meterArea = bounds;
 
         output.setBounds(footArea.withSizeKeepingCentre(42, 42));
 
@@ -52,7 +52,7 @@ namespace particules
         const int channelWidth = 10;
         const int totalMeterWidth = channels * channelWidth;
 
-        auto meterBounds = meterArea.withSizeKeepingCentre(totalMeterWidth, meterArea.getHeight());
+        juce::Rectangle<int> meterBounds = meterArea.withSizeKeepingCentre(totalMeterWidth, meterArea.getHeight());
 
         for(int i = 0; i < channels; ++i)
             channelAreas.add(meterBounds.removeFromLeft(channelWidth));

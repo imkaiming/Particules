@@ -9,6 +9,8 @@ namespace particules
     void DrawButtonMenu::paint(juce::Graphics& g)
     {
         const bool isHover = isMouseOver();
+        const float w = juce::jmin(buttonBounds.getWidth(), buttonBounds.getHeight());
+        auto drawArea = buttonBounds.reduced(w / 4.f);
 
         g.setColour(isHover ? juce::Colour(0xff1e1e1e).brighter(0.05f) : juce::Colour(0xff1e1e1e));
         g.fillRoundedRectangle(buttonBounds, 5.0f);
@@ -16,7 +18,7 @@ namespace particules
         g.setColour(isHover ? juce::Colours::white.withAlpha(0.5f) : coloursv2::midGrey);
         g.drawRoundedRectangle(buttonBounds, 10.0f, 1.0f);
 
-        juce::Path curve = createCurvePath(buttonBounds);
+        juce::Path curve = createCurvePath(drawArea);
 
         g.setColour(curveColour);
         g.strokePath(curve, juce::PathStrokeType(2.0f, juce::PathStrokeType::mitered, juce::PathStrokeType::rounded));

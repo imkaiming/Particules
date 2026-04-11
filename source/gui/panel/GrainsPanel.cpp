@@ -14,11 +14,10 @@ namespace particules
 {
     GrainsPanel::GrainsPanel(UIContext& uic)
         : engineState{uic.engineState}, linkBtn{"linkBtn"},
-          emissionSlider{engineState, RotaryType::primaryWithAux, params::emission::name},
-          durationSlider{engineState, RotaryType::primaryWithAux, params::duration::name},
-          emissionSliderAttachment{emissionSlider.attachPrimaryToAPVTS(uic.apvts, params::emission::id)},
-          durationSliderAttachment{durationSlider.attachPrimaryToAPVTS(uic.apvts, params::duration::id)},
-          envelopeControlGroup{uic}, traversalControlGroup{uic}
+          emissionSlider{engineState, RotaryType::primaryWithAux, uic.apvts, params::emission::name, params::emission::id},
+          durationSlider{engineState, RotaryType::primaryWithAux, uic.apvts, params::duration::name, params::duration::id},
+          envelopeControlGroup{uic},
+          traversalControlGroup{uic}
     /* speedSlider{engineState, RotaryType::secondaryWithAux, params::speed::name},*/
     /* sustainRatioSlider{params::sustainRatio::name, engineState, RotaryType::secondaryWithAux},*/
     /* traversalFreqSlider{params::traversalFreq::name, engineState, RotaryType::secondaryWithAux},*/
@@ -57,9 +56,15 @@ namespace particules
         durationSlider.setRange(params::duration::min, params::duration::max);
         durationSlider.setSkewFactorFromMidPoint(params::duration::skewFactor);
 
+        // attaching after setting the range
+        emissionSliderAttachment = emissionSlider.attachPrimaryToAPVTS(uic.apvts, params::emission::id);
+        durationSliderAttachment = durationSlider.attachPrimaryToAPVTS(uic.apvts, params::duration::id);
+
         addAndMakeVisible(&linkBtn);
         addAndMakeVisible(&emissionSlider);
         addAndMakeVisible(&durationSlider);
+
+
 
         /*
 
@@ -145,7 +150,6 @@ namespace particules
 
         const int totalTopRowWidth = topColWidth * 2 + linkBtnWidth;
 
-
         topRow = getLocalBounds().removeFromTop(rowHeight);
         juce::Rectangle<int> topGroup = topRow.withSizeKeepingCentre(totalTopRowWidth, topRow.getHeight());
         juce::Rectangle<int> topLeftArea = topGroup.removeFromLeft(topColWidth);
@@ -153,7 +157,6 @@ namespace particules
 
         const int btnSize = juce::jmin(topLinkArea.getWidth(), 25);
         linkBtn.setBounds(topLinkArea.withSizeKeepingCentre(btnSize, btnSize));
-
 
         // bottom row
         const int botColWidth = area.getWidth() / 2;

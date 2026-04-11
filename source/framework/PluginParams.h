@@ -142,6 +142,7 @@ namespace particules
 
         }
 
+        // TO DO RENAME IT ENVELOPE RATIO
         namespace sustainRatio
         {
             inline constexpr const char* id = "SUSTAINRATIO";
@@ -149,7 +150,7 @@ namespace particules
             inline constexpr float min = 0.f;
             inline constexpr float max = 0.95f;
             inline constexpr float init = 0.0f;
-            inline constexpr float skewFactor = 0.5f;
+            inline constexpr float skewFactor = 0.25f;
         }
 
         namespace traversalMode

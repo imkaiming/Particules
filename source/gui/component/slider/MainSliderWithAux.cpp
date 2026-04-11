@@ -7,19 +7,20 @@
 #include "../../../utils/math/MathConstants.h"
 #include "../../lookandfeelv2/Colours.h"
 
+#include "../../lookandfeelv2/MainLNF.h"
 #include "AuxRotarySlider.h"
 #include "RotarySlider.h"
 
 namespace particules
 {
 
-    MainSliderWithAux::MainSliderWithAux(EngineState& es, RotaryType type, const str& name) : engineState{es}
+    MainSliderWithAux::MainSliderWithAux(EngineState& es, RotaryType type, ValueTreeState& apvts, const str& name, const str& id)
+        : engineState{es}, parameterID{id}, apvts{apvts}
     {
-        label.setText((const str)name, juce::dontSendNotification);
+        label.setText(name, juce::dontSendNotification);
         label.setJustificationType(juce::Justification::centred);
         label.setInterceptsMouseClicks(false, false);
-        label.setColour(juce::Label::textColourId, coloursv2::perleBlanc);
-        label.setFont(juce::Font(13.0f));
+        label.setColour(juce::Label::textColourId, juce::Colours::white);
 
         mainSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
         mainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -61,6 +62,12 @@ namespace particules
             addAndMakeVisible(&label);
     }
 
+    void MainSliderWithAux::lookAndFeelChanged()
+    {
+        if(MainLNF* lnf = dynamic_cast<MainLNF*>(&getLookAndFeel()))
+            label.setFont(juce::Font(lnf->getGeistTypeface()).withHeight(14.0f).withExtraKerningFactor(0.2f));
+    }
+
     void MainSliderWithAux::setPrimaryValue(double value, juce::NotificationType notify)
     {
         mainSlider.setValue(value, notify);
@@ -76,12 +83,23 @@ namespace particules
         const float startAngle = pi * 1.25f;
         const float endAngle = pi * 2.25f;
 
-        const float range = mainSlider.getMaximum() - mainSlider.getMinimum();
-        const float norm = (mainSlider.getValue() - mainSlider.getMinimum()) / range;
-        const float angle = startAngle + norm * (endAngle - startAngle);
-
-        auxSlider.getProperties().set("primaryAngle", angle);
-        auxSlider.repaint();
+        if(parameterID == "")
+        {
+            const float range = mainSlider.getMaximum() - mainSlider.getMinimum();
+            const float norm = (mainSlider.getValue() - mainSlider.getMinimum()) / range;
+            const float angle = startAngle + norm * (endAngle - startAngle);
+            auxSlider.getProperties().set("primaryAngle", angle);
+            auxSlider.repaint();
+        }
+        else
+        {
+            juce::NormalisableRange<float> range = apvts.getParameterRange(parameterID);
+            float value = mainSlider.getValue();
+            float proportion = range.convertTo0to1(value);
+            float angle = startAngle + proportion * (endAngle - startAngle);
+            auxSlider.getProperties().set("primaryAngle", angle);
+            auxSlider.repaint();
+        }
     }
 
     void MainSliderWithAux::setRange(float min, float max) noexcept { mainSlider.setRange(min, max); }
@@ -89,9 +107,9 @@ namespace particules
     void MainSliderWithAux::setSkewFactorFromMidPoint(float skew) noexcept { mainSlider.setSkewFactorFromMidPoint(skew); }
 
     std::unique_ptr<ValueTreeState::SliderAttachment> MainSliderWithAux::attachPrimaryToAPVTS(
-        ValueTreeState& apvts, const str& id) noexcept
+        ValueTreeState& a, const str& id) noexcept
     {
-        return std::make_unique<ValueTreeState::SliderAttachment>(apvts, id, mainSlider);
+        return std::make_unique<ValueTreeState::SliderAttachment>(a, id, mainSlider);
     }
 
     std::unique_ptr<ValueTreeState::SliderAttachment> MainSliderWithAux::attachAuxToAPVTS(
@@ -121,10 +139,9 @@ namespace particules
         const float availableForJitter = maxAuxCenterDist - auxGap - (auxSize * 0.5f);
 
         // visual radius
-        const float primaryVisualRadius =
-            juce::jmax(1.0f, (availableForJitter - jitterLineWidthHalf) / jitterOuterMultiplier);
+        const float primaryVisualRadius = juce::jmax(1.0f, (availableForJitter - jitterLineWidthHalf) / jitterOuterMultiplier);
         const float jitterOuterEdge = (primaryVisualRadius * jitterOuterMultiplier) + jitterLineWidthHalf;
-        
+
         // position
         const float auxDistance = jitterOuterEdge + auxGap + (auxSize * 0.5f);
         const float angleAux = -pi / 5.0f;
@@ -138,13 +155,13 @@ namespace particules
         mainSlider.setBounds(
             juce::Rectangle<float>(primaryBoundsSize, primaryBoundsSize).withCentre(center.toFloat()).toNearestInt());
 
-        auxSlider.setBounds(
-            juce::Rectangle<float>(auxSize, auxSize).withCentre(
-            juce::Point<float>(static_cast<float>(ax), static_cast<float>(ay))).toNearestInt());
+        auxSlider.setBounds(juce::Rectangle<float>(auxSize, auxSize)
+                .withCentre(juce::Point<float>(static_cast<float>(ax), static_cast<float>(ay)))
+                .toNearestInt());
 
         if(label.getText() != "")
         {
-            const int labelHeight = 20;
+            const int labelHeight = (bounds.getHeight() - jitterOuterEdge) * 0.4f - safetyPadding;
             label.setBounds(0, getHeight() - labelHeight, getWidth(), labelHeight);
         }
 

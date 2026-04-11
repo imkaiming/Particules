@@ -8,7 +8,7 @@
 #include "PluginProcessor.h"
 #include "gui/panel/MainPanel.h"
 #include "gui/lookandfeel/GlobalLookAndFeel.h"
-#include "gui/lookandfeel/LightRotarySliderLNF.h"
+#include "gui/lookandfeelv2/MainLNF.h"
 
 #include "melatonin_inspector/melatonin_inspector.h"
 
@@ -35,10 +35,10 @@ namespace particules
         static constexpr const int windowWidthMin = gui::windowWidthMin;
         static constexpr const int windowWidthMax = gui::windowWidthMax;
 
+        MainLNF lnf;
         ParticulesAudioProcessor& pluginProcessor;
         MainPanel mainPanel;
         GlobalLookAndFeel globalLookAndFeel;
-        LightRotarySliderLNF lnf;
 #if ENABLE_MELATONINE_INSPECTOR
         melatonin::Inspector inspector{*this};
 #endif

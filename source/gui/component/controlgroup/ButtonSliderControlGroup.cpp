@@ -4,26 +4,31 @@
 namespace particules
 {
     ButtonSliderControlGroup::ButtonSliderControlGroup(UIContext& uic, const str& n)
-        : uic{uic}, name{n}, slider{uic.engineState, RotaryType::secondaryWithAux}
+        : uic{uic}, name{n}, slider{uic.engineState, RotaryType::secondaryWithAux, uic.apvts, "", ""}
     {
         addAndMakeVisible(&slider);
     }
 
     void ButtonSliderControlGroup::paint(juce::Graphics& g)
     {
+        MainLNF* lnf = dynamic_cast<MainLNF*>(&getLookAndFeel());
+        assert(lnf != nullptr);
+
         g.setColour(coloursv2::perleBlanc);
         g.drawRoundedRectangle(getLocalBounds().toFloat(), 10.f, 1.0f);
 
         const int labelWidth = getWidth() / 8.f;
         juce::Rectangle<float> labelArea = getLocalBounds().removeFromLeft(labelWidth).toFloat();
 
-        //g.setColour(colours::perleBlanc);
-        g.setFont(dynamic_cast<MainLNF*>(&getLookAndFeel())->getFont().withExtraKerningFactor(0.2f));
+        g.setColour(juce::Colours::white);
+        g.setFont(juce::Font(lnf->getGeistTypeface()).withHeight(14.0f).withExtraKerningFactor(0.2f));
+        //g.setFont(dynamic_cast<MainLNF*>(&getLookAndFeel())->getFont().withExtraKerningFactor(0.2f));
 
         g.saveState();
         g.addTransform(juce::AffineTransform::rotation(-halfPi, labelArea.getCentreX(), labelArea.getCentreY()));
         juce::Rectangle<float> verticalTextRect(
             labelArea.getCentreX() - (getHeight() / 2.0f), labelArea.getCentreY() - labelWidth / 2, (float)getHeight(), 25.0f);
+
         g.drawText(name, verticalTextRect, juce::Justification::centred);
         g.restoreState();
     }

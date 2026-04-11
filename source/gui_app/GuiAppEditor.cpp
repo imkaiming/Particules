@@ -8,7 +8,8 @@ namespace particules
 {
     GuiAppEditor::GuiAppEditor(GuiAppProcessor& p) : AudioProcessorEditor(&p), mainPanel(p.getUIContext()), lnf()
     {
-        setLookAndFeel(&lnf);
+        juce::LookAndFeel::setDefaultLookAndFeel(&lnf);
+        //setLookAndFeel(&lnf);
 
         setResizable(true, true);
         setResizeLimits(windowWidthMin, windowHeightMin, windowWidthMax, windowHeightMax);
@@ -21,7 +22,7 @@ namespace particules
         addAndMakeVisible(&mainPanel);
     }
 
-    GuiAppEditor::~GuiAppEditor() { setLookAndFeel(nullptr); }
+    GuiAppEditor::~GuiAppEditor() { juce::LookAndFeel::setDefaultLookAndFeel(nullptr); }
 
     void GuiAppEditor::paint(juce::Graphics& /*g*/) {}
 

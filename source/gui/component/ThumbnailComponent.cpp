@@ -99,7 +99,6 @@ namespace particules
             repaint();
             if(audioThumbnail.isFullyLoaded())
             {
-                //juce::Logger::outputDebugString("FINI DE PEINTURER CALLBACK");
                 // TODO INSERT AUDIO FILE FRAME CALLBACK IF YOU WANT
                 // TO ENABLE PLAY BTN ONLY AFTER THE WAVEFORM IS SET
 

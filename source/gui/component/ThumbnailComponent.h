@@ -45,17 +45,14 @@ namespace particules
         void paintGrid(juce::Graphics&);
 
         void changeListenerCallback(juce::ChangeBroadcaster*) override; // to change the waveform when changing the audio
-        //void parameterChanged(const juce::String& parameterID, float newValue) override;
 
         EngineState& engineState;
         UIState& uiState;
-        //ValueTreeState& apvts;
-
+        GrainVisualComponent grainVisualComponent;
         juce::AudioThumbnail& audioThumbnail;
 
-        std::function<void()> onThumbnailReady;
-
-        GrainVisualComponent grainVisualComponent;
+        std::function<void()> onThumbnailReady; // Callback from the AudioFilePanel to activate function after the thumbnail has fully loaded
+        //void parameterChanged(const juce::String& parameterID, float newValue) override;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ThumbnailComponent)
     };

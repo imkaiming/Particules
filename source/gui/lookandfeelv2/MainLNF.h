@@ -32,12 +32,13 @@ namespace particules
 
         //==============================================================================
         // Typeface & Font Accessors
-        [[nodiscard]] juce::Typeface::Ptr getGeistTypeface() const noexcept { return geistTypeface; }
-        [[nodiscard]] juce::Typeface::Ptr getCascadaTypeface() const noexcept { return cascadaTypeface; }
+        [[nodiscard]] juce::Typeface::Ptr getGeistTypeface() const noexcept { return geistTypeFace; }
         [[nodiscard]] juce::Typeface::Ptr getFunnelTypeface() const noexcept { return funnelTypeface; }
-        [[nodiscard]] juce::Typeface::Ptr getFuturaTypeface() const noexcept { return futuraTypeface; }
 
         [[nodiscard]] juce::Font getFont() const noexcept { return valueFont; }
+
+        juce::Font getLabelFont(juce::Label&) override { return juce::Font(14.0f); }
+
 
     private:
         //==============================================================================
@@ -88,10 +89,8 @@ namespace particules
 
         //==============================================================================
         // Resources
-        juce::Typeface::Ptr geistTypeface;
+        juce::Typeface::Ptr geistTypeFace;
         juce::Typeface::Ptr funnelTypeface;
-        juce::Typeface::Ptr cascadaTypeface;
-        juce::Typeface::Ptr futuraTypeface;
 
         juce::Font valueFont;
 

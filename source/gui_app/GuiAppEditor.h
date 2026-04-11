@@ -29,7 +29,6 @@ namespace particules
         void paint(juce::Graphics&) override;
         void resized() override;
 
-        //GlobalLookAndFeel& getCustomLook() { return globalLookAndFeel; };
         const MainPanel& getMainPanel() const noexcept { return mainPanel; };
 
     private:
@@ -41,9 +40,8 @@ namespace particules
         static constexpr const int windowWidthMin = gui::windowWidthMin;
         static constexpr const int windowWidthMax = gui::windowWidthMax;
 
-        MainPanel mainPanel;
         MainLNF lnf;
-        //LightRotarySliderLNF lnf;
+        MainPanel mainPanel;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GuiAppEditor)
     };

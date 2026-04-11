@@ -26,15 +26,15 @@ namespace particules
 
     MainLNF::MainLNF()
     {
-        geistTypeface = juce::Typeface::createSystemTypefaceFor(BinaryData::GeistLight_ttf, BinaryData::GeistLight_ttfSize);
-        cascadaTypeface =
-            juce::Typeface::createSystemTypefaceFor(BinaryData::CascadiaMonoLight_otf, BinaryData::CascadiaMonoLight_otfSize);
-        funnelTypeface =
-            juce::Typeface::createSystemTypefaceFor(BinaryData::FunnelDisplayLight_ttf, BinaryData::FunnelDisplayLight_ttfSize);
-        futuraTypeface = juce::Typeface::createSystemTypefaceFor(
-            BinaryData::futura_medium_condensed_bt_ttf, BinaryData::futura_medium_condensed_bt_ttfSize);
+        geistTypeFace = juce::Typeface::createSystemTypefaceFor(juce::Span<const std::byte>(
+            reinterpret_cast<const std::byte*>(BinaryData::GeistLight_ttf), BinaryData::GeistLight_ttfSize));
 
-        valueFont = juce::Font(geistTypeface).withHeight(13.0f);
+        funnelTypeface = juce::Typeface::createSystemTypefaceFor(juce::Span<const std::byte>(
+            reinterpret_cast<const std::byte*>(BinaryData::FunnelDisplayLight_ttf), BinaryData::FunnelDisplayLight_ttfSize));
+
+        setDefaultSansSerifTypeface(funnelTypeface);
+
+        //valueFont = juce::Font(funnelTypeface).withHeight(14.0f);
     }
 
     //==============================================================================
@@ -115,7 +115,7 @@ namespace particules
         g.setGradientFill(falloff);
         g.fillEllipse(cx - innerR, cy - innerR, innerR * 2.0f, innerR * 2.0f);
 
-        drawLineIndicator(g, cx, cy, innerR, sliderPos, -pi * 0.5f, juce::Colours::white.withAlpha(0.9f), 2.0f);
+        drawLineIndicator(g, cx, cy, innerR, sliderPos, -pi * 0.75f, juce::Colours::white.withAlpha(0.9f), 2.0f);
     }
 
     void MainLNF::drawSecondaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
@@ -236,8 +236,8 @@ namespace particules
         const float unitFontSize = radius * 0.25f;
         const float spacing = radius * 0.05f;
 
-        auto textColor = isHovered ? slider.findColour(juce::Slider::textBoxTextColourId)
-                                   : slider.findColour(juce::Slider::textBoxTextColourId).withAlpha(0.7f);
+        color textColor = isHovered ? slider.findColour(juce::Slider::textBoxTextColourId)
+                                    : slider.findColour(juce::Slider::textBoxTextColourId).withAlpha(0.7f);
         g.setColour(textColor);
 
         if(unitStr.isNotEmpty())

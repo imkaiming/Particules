@@ -6,39 +6,47 @@
 #include "../../utils/struct/UIContext.h"
 #include "../lookandfeelv2/Colours.h"
 
-//#include "BinaryData.h"
-
 namespace particules
 {
-    AudioFilePanel::AudioFilePanel(UIContext& uic)
-        : apvts{uic.apvts}, thumbnailComponent(uic), uiState{uic.uiState}, uic{uic},
-          positionSlider{globalPositionMin, globalPositionMax}, spanSlider{globalSpanMin, globalSpanMax}
+    AudioFilePanel::AudioFilePanel(UIContext& uic) : apvts{uic.apvts}, thumbnailComponent{uic}, uiState{uic.uiState}, uic{uic}
     {
         //uiState.addChangeListener(this); // can now send message
 
-        positionSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalPositionId, positionSlider.getSlider());
-        spanSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, globalSpanId, spanSlider.getSlider());
+        //positionSlider.setRange(params::position::min, params::position::max);
+        //spanSlider.setRange(params::span::min, params::span::max);
 
-        std::function<void()> positionCallback = [this] { updatePosition(positionSlider.getValue()); };
-        positionSlider.setOnValueChange(positionCallback);
-        std::function<void()> spanCallback = [this] { updateSpan(spanSlider.getValue()); };
-        spanSlider.setOnValueChange(spanCallback);
+        //positionSliderAttachment = std::make_unique<ValueTreeState::SliderAttachment>(apvts, globalPositionId, positionSlider);
+        //spanSliderAttachment = std::make_unique<ValueTreeState::SliderAttachment>(apvts, globalSpanId, spanSlider);
 
-        addAndMakeVisible(&positionSlider);
-        addAndMakeVisible(&spanSlider);
+        //positionSlider.onValueChange = [this] { updatePosition(positionSlider.getValue()); };
+        //spanSlider.onValueChange = [this] { updateSpan(spanSlider.getValue()); };
+
+        //addAndMakeVisible(&positionSlider);
+        //addAndMakeVisible(&spanSlider);
+
+        waveformOverlay = std::make_unique<WaveformOverlay>(apvts, params::position::id, params::span::id);
+
+        std::function<void()> onThumbnailReady = [this]() {
+            waveformOverlay->setAudioLoaded(true);
+            // set the audio is ready true ; activer le play button
+        };
+
+        thumbnailComponent.setCallbackOnThumbnailReady(onThumbnailReady);
+
         addAndMakeVisible(&thumbnailComponent);
-        addAndMakeVisible(&spanOverlay);
-        addAndMakeVisible(&positionOverlay);
-        addAndMakeVisible(&overflowOverlay);
+        addAndMakeVisible(*waveformOverlay);
 
-        spanOverlay.toFront(false);
-        positionOverlay.toFront(false);
-        overflowOverlay.toFront(false);
+        //addAndMakeVisible(&spanOverlay);
+        //addAndMakeVisible(&positionOverlay);
+        //addAndMakeVisible(&overflowOverlay);
+
+        //spanOverlay.toFront(false);
+        //positionOverlay.toFront(false);
+        //overflowOverlay.toFront(false);
 
         //updatePosition(uic.apvts.getRawParameterValue(globalPositionId)->load());
         //updateSpan(uic.apvts.getRawParameterValue(globalSpanId)->load());
+        waveformOverlay->setAudioLoaded(true);
     }
 
     void AudioFilePanel::filesDropped(const juce::StringArray& files, int x, int y)
@@ -69,19 +77,77 @@ namespace particules
         return false;
     }
 
-    void AudioFilePanel::paint(juce::Graphics& g)
+    void AudioFilePanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::deepBlack.brighter(0.05f)); }
+
+    void AudioFilePanel::resized()
     {
-        /* const juce::Rectangle<float> inner = getLocalBounds().reduced(2).toFloat();
-        g.setColour(colours::panel::audioFilePanel);
-        g.fillRoundedRectangle(inner, 12.0f);
+        juce::Rectangle<int> bounds = getLocalBounds();
 
-        const float lineThickness = 2.0f;
+        const int padY = 2;
+        const int padX = 8;
 
-        g.setColour(colours::panel::contourPanel);
-        g.drawRoundedRectangle(inner, 12.0f, lineThickness);
-        */
-        g.fillAll(coloursv2::deepBlack.brighter(0.04f));
+        //bounds = bounds.reduced(0, padY);
+
+        const int totalH = bounds.getHeight();
+
+        const int sliderH = (int)(totalH * 0.10f);
+        const int thumbH = (int)(totalH * 0.80f);
+
+        juce::Rectangle<int> topSliderArea = bounds.removeFromTop(sliderH);
+        juce::Rectangle<int> thumbArea = bounds.removeFromTop(thumbH);
+        juce::Rectangle<int> bottomSliderArea = bounds;
+
+        //spanSlider.setBounds(topSliderArea);
+        //positionSlider.setBounds(bottomSliderArea);
+
+        juce::Rectangle<int> thumbReduced = thumbArea.reduced(padX, 0);
+        thumbnailComponent.setBounds(thumbReduced);
+        waveformOverlay->setBounds(thumbReduced);
+        //spanOverlay.setBounds(thumbReduced);
+        //positionOverlay.setBounds(thumbReduced);
+        //overflowOverlay.setBounds(thumbReduced);
+
+        //updatePosition(positionSlider.getValue());
+        //updateSpan(spanSlider.getValue());
     }
+    //void AudioFilePanel::updatePosition(float position)
+    //{
+        //const float width = (float)positionOverlay.getWidth();
+
+        //const float startPx = position * width;
+        //const float spanPx = spanSlider.getValue() * width;
+        //const float endPx = startPx + spanPx;
+
+        //positionOverlay.setPosition(startPx);
+        //spanOverlay.setPosition(startPx);
+
+        //const float overflowPx = juce::jmax(0.0f, endPx - width);
+        //updateOverflow(overflowPx);
+
+        //positionOverlay.repaint();
+        //spanOverlay.repaint();
+        //overflowOverlay.repaint();
+    }
+
+    //void AudioFilePanel::updateSpan(float span)
+    //{
+        //const float width = (float)positionOverlay.getWidth();
+
+        //const float startPx = positionSlider.getValue() * width;
+        //const float spanPx = span * width;
+        //const float endPx = startPx + spanPx;
+
+        //spanOverlay.setSpan(spanPx);
+
+        //const float overflowPx = juce::jmax(0.0f, endPx - width);
+        //updateOverflow(overflowPx);
+
+        //spanOverlay.repaint();
+        //overflowOverlay.repaint();
+    //}
+
+    //void AudioFilePanel::updateOverflow(float value) { /*overflowOverlay.setSpan(value);*/ }
+
     /*
     void AudioFilePanel::resized()
     {
@@ -109,38 +175,6 @@ namespace particules
     }
     */
 
-    void AudioFilePanel::resized()
-    {
-        auto bounds = getLocalBounds();
-
-        const int padY = 2;
-        const int padX = 8;
-
-        //bounds = bounds.reduced(0, padY);
-
-        const int totalH = bounds.getHeight();
-
-        const int sliderH = (int)(totalH * 0.10f);
-        const int thumbH = (int)(totalH * 0.80f);
-
-        auto topSliderArea = bounds.removeFromTop(sliderH);
-        auto thumbArea = bounds.removeFromTop(thumbH);
-        auto bottomSliderArea = bounds;
-
-        spanSlider.setBounds(topSliderArea);
-        positionSlider.setBounds(bottomSliderArea);
-
-        auto thumbReduced = thumbArea.reduced(padX, 0);
-        thumbnailComponent.setBounds(thumbReduced);
-
-        spanOverlay.setBounds(thumbReduced);
-        positionOverlay.setBounds(thumbReduced);
-        overflowOverlay.setBounds(thumbReduced);
-
-        updatePosition(positionSlider.getValue());
-        updateSpan(spanSlider.getValue());
-    }
-
     // TODO : Remove the change listener callback after MIDI implementation
     //void AudioFilePanel::changeListenerCallback(juce::ChangeBroadcaster* source)
     //{
@@ -152,45 +186,7 @@ namespace particules
     //    }
     //}
 
-    void AudioFilePanel::updatePosition(float position)
-    {
-        const float width = (float)positionOverlay.getWidth();
-
-        const float startPx = position * width;
-        const float spanPx = spanSlider.getValue() * width;
-        const float endPx = startPx + spanPx;
-
-        positionOverlay.setPosition(startPx);
-        spanOverlay.setPosition(startPx);
-
-        const float overflowPx = juce::jmax(0.0f, endPx - width);
-        updateOverflow(overflowPx);
-
-        positionOverlay.repaint();
-        spanOverlay.repaint();
-        overflowOverlay.repaint();
-    }
-
-    void AudioFilePanel::updateSpan(float span)
-    {
-        const float width = (float)positionOverlay.getWidth();
-
-        const float startPx = positionSlider.getValue() * width;
-        const float spanPx = span * width;
-        const float endPx = startPx + spanPx;
-
-        spanOverlay.setSpan(spanPx);
-
-        const float overflowPx = juce::jmax(0.0f, endPx - width);
-        updateOverflow(overflowPx);
-
-        spanOverlay.repaint();
-        overflowOverlay.repaint();
-    }
-
-    void AudioFilePanel::updateOverflow(float value) { overflowOverlay.setSpan(value); }
-
-}
+//}
 
 /*
  

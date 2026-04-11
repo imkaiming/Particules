@@ -51,7 +51,7 @@ namespace particules
         int getCurrentProgram() override;
         void setCurrentProgram(int index) override;
         const juce::String getProgramName(int index) override;
-        void changeProgramName(int index, const juce::String& newName) override;
+        void changeProgramName(int index, const str& newName) override;
 
         void getStateInformation(juce::MemoryBlock& destData) override;
         void setStateInformation(const void* data, int sizeInBytes) override;
@@ -73,7 +73,6 @@ namespace particules
         void loadDebugPreset();
         void loadFile(const str& path);
         void loadFile();
-        void initOnAudioLoadedCallback();
 
         bool debugPresetLoaded = false;
 
@@ -88,7 +87,12 @@ namespace particules
         UIContext uic;
 
         AudioFileLoader loader;
-        AudioLoadedCallback onAudioLoadedCallback;
+
+        // is called after the audio file loader has successfully 
+        // load a sample to init all the audio related component
+        // engine state and uistate are updated and uistate will
+        // broadcast the message to the UI component
+        AudioLoadedCallback onAudioLoadedCallback; 
 
         //std::function<void(std::shared_ptr<const AudioBuffer>)> setInputBufferCallback;
         //juce::UndoManager undoManager;
