@@ -23,9 +23,9 @@ namespace particules
     public:
         MainSliderWithAux(EngineState& es, RotaryType type, ValueTreeState& apvts, const str& name = "", const str& id = "");
 
-        void setRange(float min, float max) noexcept;
         void updatePrimaryAngle();
-        void setSkewFactorFromMidPoint(float skew) noexcept;
+        //void setRange(float min, float max) noexcept;
+        //void setSkewFactorFromMidPoint(float skew) noexcept;
 
         void setOnPrimaryValueChanged(ValueCallback callback) { onValueChanged = std::move(callback); }
         void setPrimaryValue(double value, juce::NotificationType notify = juce::dontSendNotification);

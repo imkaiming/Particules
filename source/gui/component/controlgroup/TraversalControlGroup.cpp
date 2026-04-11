@@ -7,8 +7,8 @@ namespace particules
         : ButtonSliderControlGroup{uic, (str) "Traversal"},
           buttonMenu{uic.apvts, params::traversalMode::id, params::traversalFreq::id}
     {
-        setupSlider(
-            params::traversalFreq::id, params::traversalFreq::min, params::traversalFreq::max, params::traversalFreq::skewFactor);
+        setupSlider(params::traversalFreq::id);
+        //, params::traversalFreq::min, params::traversalFreq::max, params::traversalFreq::skewFactor);
         addAndMakeVisible(&buttonMenu);
     }
 }

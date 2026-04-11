@@ -17,7 +17,7 @@ namespace particules
         void resized() override;
 
     protected:
-        void setupSlider(const str& paramId, float min, float max, float skewFactor);
+        void setupSlider(const str& paramId); //, float min, float max, float skewFactor);
 
         str name;
         UIContext& uic;

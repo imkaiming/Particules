@@ -50,11 +50,11 @@ namespace particules
             emissionSlider.setPrimaryValue(emissionVal, juce::dontSendNotification);
         });
 
-        emissionSlider.setRange(params::emission::min, params::emission::max);
-        emissionSlider.setSkewFactorFromMidPoint(params::emission::skewFactor);
+        //emissionSlider.setRange(params::emission::min, params::emission::max);
+        //emissionSlider.setSkewFactorFromMidPoint(params::emission::skewFactor);
 
-        durationSlider.setRange(params::duration::min, params::duration::max);
-        durationSlider.setSkewFactorFromMidPoint(params::duration::skewFactor);
+        //durationSlider.setRange(params::duration::min, params::duration::max);
+        //durationSlider.setSkewFactorFromMidPoint(params::duration::skewFactor);
 
         // attaching after setting the range
         emissionSliderAttachment = emissionSlider.attachPrimaryToAPVTS(uic.apvts, params::emission::id);

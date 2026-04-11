@@ -49,10 +49,10 @@ namespace particules
         slider.setBounds(bounds);
     }
 
-    void ButtonSliderControlGroup::setupSlider(const str& paramId, float min, float max, float skewFactor)
+    void ButtonSliderControlGroup::setupSlider(const str& paramId) //, float min, float max, float skewFactor)
     {
-        slider.setRange(min, max);
-        slider.setSkewFactorFromMidPoint(skewFactor);
+        //slider.setRange(min, max);
+        //slider.setSkewFactorFromMidPoint(skewFactor);
         attachment = slider.attachPrimaryToAPVTS(uic.apvts, paramId);
     }
 }
