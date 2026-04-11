@@ -24,8 +24,8 @@ namespace particules
         void setNumActiveGrains(int g) noexcept { numActiveGrains.store(g, std::memory_order_relaxed); }
         void setLink(bool b) noexcept { isLinked.store(b, std::memory_order_relaxed); }
         void setIsPlaing(bool b) noexcept { isPlaying.store(b, std::memory_order_relaxed); }
+        //void setIsAudioLoaded(bool b) noexcept { isAudioLoaded.store(b, std::memory_order_relaxed); }
 
-        //bool getIsPlaying() const noexcept { return isPlaying.load(std::memory_order_relaxed); }
         bool getIsGrainsEmpty() const noexcept { return isGrainsEmpty.load(std::memory_order_relaxed); }
         int getNumChannels() const noexcept { return numChannels.load(std::memory_order_relaxed); }
         int getNumSamples() const noexcept { return numSamples.load(std::memory_order_relaxed); }
@@ -33,9 +33,11 @@ namespace particules
         int getNumActiveGrains() const noexcept { return numActiveGrains.load(std::memory_order_relaxed); }
         int getIsLinked() const noexcept { return isLinked.load(std::memory_order_relaxed); }
         int getIsPlaying() const noexcept { return isPlaying.load(std::memory_order_relaxed); }
+        //int getIsAudioLoaded() const noexcept { return isAudioLoaded.load(std::memory_order_relaxed); }
 
     private:
         std::atomic<bool> isPlaying;
+        //std::atomic<bool> isAudioLoaded;
         std::atomic<bool> isGrainsEmpty;
         std::atomic<double> sampleRate;
         std::atomic<int> numChannels;
