@@ -187,12 +187,28 @@ namespace particules
         float primaryAngle, float jitterAmount, float baseLineWidth) const
     {
         const float totalRange = endAngle - startAngle;
-        const float currentSpread = jitterAmount * totalRange * 0.5f;
-        const float jitterStart = juce::jmax(startAngle, primaryAngle - currentSpread);
-        const float jitterEnd = juce::jmin(endAngle, primaryAngle + currentSpread);
+        const float maxSpread = totalRange * 0.5f;
+        const float currentSpread = jitterAmount * maxSpread;
 
-        if(jitterEnd <= jitterStart)
+        if(currentSpread < 0.00001f)
             return;
+
+        // shifting the center so the arc never gets clipped 
+        float jitterCenter = primaryAngle;
+
+        if(primaryAngle - currentSpread < startAngle)
+        {
+            // Too close to start
+            jitterCenter = startAngle + currentSpread;
+        }
+        else if(primaryAngle + currentSpread > endAngle)
+        {
+            // Too close to end
+            jitterCenter = endAngle - currentSpread;
+        }
+
+        const float jitterStart = jitterCenter - currentSpread;
+        const float jitterEnd = jitterCenter + currentSpread;
 
         const float jitterArcRadius = baseArcRadius * 1.125f;
 

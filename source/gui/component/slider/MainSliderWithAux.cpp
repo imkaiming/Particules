@@ -102,10 +102,6 @@ namespace particules
         }
     }
 
-    //void MainSliderWithAux::setRange(float min, float max) noexcept { mainSlider.setRange(min, max); }
-
-    //void MainSliderWithAux::setSkewFactorFromMidPoint(float skew) noexcept { mainSlider.setSkewFactorFromMidPoint(skew); }
-
     std::unique_ptr<ValueTreeState::SliderAttachment> MainSliderWithAux::attachPrimaryToAPVTS(
         ValueTreeState& a, const str& id) noexcept
     {
@@ -179,16 +175,6 @@ namespace particules
     {
         g.fillAll(coloursv2::deepBlack.brighter(0.0f));
 
-        //const float startAngle = pi * 1.25f;
-        //const float endAngle = pi * 2.25f;
-        //const float primaryRange = mainSlider.getMaximum() - mainSlider.getMinimum();
-
-        //if(primaryRange > 0.0f)
-        //{
-        //    const float primaryNorm = (mainSlider.getValue() - mainSlider.getMinimum()) / primaryRange;
-        //    const float primaryAngle = startAngle + primaryNorm * (endAngle - startAngle);
-        //    auxSlider.getProperties().set("primaryAngle", primaryAngle);
-        //}
     }
 
 }
