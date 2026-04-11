@@ -111,11 +111,11 @@ namespace particules
         layout.add(std::make_unique<juce::AudioParameterFloat>(params::span::id, params::span::name,
             juce::NormalisableRange<float>(params::span::min, params::span::max, 0.001f), params::span::init));
 
-        juce::NormalisableRange<float> envelopeRatioRange{params::sustainRatio::min, params::sustainRatio::max, 0.01f};
-        envelopeRatioRange.setSkewForCentre(params::sustainRatio::skewFactor);
+        juce::NormalisableRange<float> envelopeRatioRange{params::envelopeRatio::min, params::envelopeRatio::max, 0.01f};
+        envelopeRatioRange.setSkewForCentre(params::envelopeRatio::skewFactor);
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{params::sustainRatio::id, 1},
-            params::sustainRatio::name, envelopeRatioRange, params::sustainRatio::init,
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{params::envelopeRatio::id, 1},
+            params::envelopeRatio::name, envelopeRatioRange, params::envelopeRatio::init,
             juce::AudioParameterFloatAttributes{}.withCategory(juce::AudioProcessorParameter::genericParameter)));
 
         // ENVELOPE MODE //

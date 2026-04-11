@@ -20,15 +20,15 @@ namespace particules
         void parameterChanged(const str& parameterID, float newValue) override;
         EnvelopeMode getCurrentMode() const { return cachedMode; }
         int getCurrentModeIndex() const { return static_cast<int>(cachedMode); }
-        float getCurrentSustain() const { return cachedSustain; }
+        float getCurrentSustain() const { return cachedEnvelopeRatio; }
 
         EnvelopeMode cachedMode;
-        float cachedSustain;
+        float cachedEnvelopeRatio;
         ValueTreeState& apvts;
         str envelopeModeId;
-        str sustainRatioId;
+        str envelopeRatioId;
         juce::RangedAudioParameter* envelopeModeParam;
-        juce::RangedAudioParameter* sustainParam;
+        juce::RangedAudioParameter* envelopeRatioParam;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EnvelopeButtonMenu)
     };

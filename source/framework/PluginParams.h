@@ -143,10 +143,10 @@ namespace particules
         }
 
         // TO DO RENAME IT ENVELOPE RATIO
-        namespace sustainRatio
+        namespace envelopeRatio
         {
-            inline constexpr const char* id = "SUSTAINRATIO";
-            inline constexpr const char* name = "SustainRatio";
+            inline constexpr const char* id = "ENVELOPERATIO";
+            inline constexpr const char* name = "Envelope Ratio";
             inline constexpr float min = 0.f;
             inline constexpr float max = 0.95f;
             inline constexpr float init = 0.0f;

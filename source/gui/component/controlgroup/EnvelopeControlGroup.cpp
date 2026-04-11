@@ -5,10 +5,10 @@ namespace particules
 {
     EnvelopeControlGroup::EnvelopeControlGroup(UIContext& uic)
         : ButtonSliderControlGroup{uic, (str) "Envelope"},
-          buttonMenu{uic.apvts, params::envelopeMode::id, params::sustainRatio::id}
+          buttonMenu{uic.apvts, params::envelopeMode::id, params::envelopeRatio::id}
     {
         setupSlider(
-            params::sustainRatio::id, params::sustainRatio::min, params::sustainRatio::max, params::sustainRatio::skewFactor);
+            params::envelopeRatio::id, params::envelopeRatio::min, params::envelopeRatio::max, params::envelopeRatio::skewFactor);
         addAndMakeVisible(&buttonMenu);
     }
 }

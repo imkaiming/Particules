@@ -249,11 +249,11 @@ namespace particules
         layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{params::span::id, 1}, params::span::name,
             juce::NormalisableRange<float>(params::span::min, params::span::max, 0.001f), params::span::init));
 
-        juce::NormalisableRange<float> envelopeRatioRange{params::sustainRatio::min, params::sustainRatio::max, 0.01f};
-        envelopeRatioRange.setSkewForCentre(params::sustainRatio::skewFactor);
+        juce::NormalisableRange<float> envelopeRatioRange{params::envelopeRatio::min, params::envelopeRatio::max, 0.01f};
+        envelopeRatioRange.setSkewForCentre(params::envelopeRatio::skewFactor);
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{params::sustainRatio::id, 1},
-            params::sustainRatio::name, envelopeRatioRange, params::sustainRatio::init,
+        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{params::envelopeRatio::id, 1},
+            params::envelopeRatio::name, envelopeRatioRange, params::envelopeRatio::init,
             juce::AudioParameterFloatAttributes{}.withCategory(juce::AudioProcessorParameter::genericParameter)));
 
         // ENVELOPE MODE //
@@ -337,7 +337,7 @@ namespace particules
         juce::NormalisableRange<float> TraversalFreqRange(params::traversalFreq::min, params::traversalFreq::max);
         const float normalizedTraversalFreq = TraversalFreqRange.convertTo0to1(1.f);
 
-        juce::NormalisableRange<float> SustainRatioRange(params::sustainRatio::min, params::sustainRatio::max);
+        juce::NormalisableRange<float> SustainRatioRange(params::envelopeRatio::min, params::envelopeRatio::max);
         const float normalizedSustainRatio = SustainRatioRange.convertTo0to1(0.5f);
 
         //apvts.getParameter(params::mix::id)->setValueNotifyingHost(1.f); // MIX100%
@@ -348,7 +348,7 @@ namespace particules
         apvts.getParameter(params::position::id)->setValueNotifyingHost(normalizedPosition);
         apvts.getParameter(params::span::id)->setValueNotifyingHost(normalizedSpan);
         apvts.getParameter(params::traversalFreq::id)->setValueNotifyingHost(normalizedTraversalFreq);
-        apvts.getParameter(params::sustainRatio::id)->setValueNotifyingHost(normalizedSustainRatio);
+        apvts.getParameter(params::envelopeRatio::id)->setValueNotifyingHost(normalizedSustainRatio);
         apvts.getParameter(params::envelopeMode::id)->setValueNotifyingHost(0.f);
         apvts.getParameter(params::traversalMode::id)->setValueNotifyingHost(0.f);
 

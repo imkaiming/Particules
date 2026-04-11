@@ -36,7 +36,7 @@ namespace particules
         const float getPhase() const noexcept;
 
     private:
-        //void setEnvelopeData(const float sustainRatio) noexcept;
+        //void setEnvelopeData(const float envelopeRatio) noexcept;
 
         // Time related parameters
         int elapsedSamples; // le compteur interne du grain

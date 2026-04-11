@@ -21,7 +21,7 @@ namespace particules
         position = apvts.getRawParameterValue(params::position::id);
         span = apvts.getRawParameterValue(params::span::id);
         envMode = apvts.getRawParameterValue(params::envelopeMode::id);
-        sustainRatio = apvts.getRawParameterValue(params::sustainRatio::id);
+        sustainRatio = apvts.getRawParameterValue(params::envelopeRatio::id);
         traversalMode = apvts.getRawParameterValue(params::traversalMode::id);
         traversalFreq = apvts.getRawParameterValue(params::traversalFreq::id);
     }

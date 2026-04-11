@@ -7,20 +7,20 @@ namespace particules
 {
     // change the init value with the apvts get state restore in the plugin processor
     EnvelopeButtonMenu::EnvelopeButtonMenu(ValueTreeState& state, const str& envModeParamId, const str& sustainParamId)
-        : apvts(state), envelopeModeId(envModeParamId), sustainRatioId(sustainParamId), cachedMode{params::envelopeMode::init},
-          cachedSustain{params::sustainRatio::init}
+        : apvts(state), envelopeModeId(envModeParamId), envelopeRatioId(sustainParamId), cachedMode{params::envelopeMode::init},
+          cachedEnvelopeRatio{params::envelopeRatio::init}
     {
         envelopeModeParam = apvts.getParameter(envelopeModeId);
-        sustainParam = apvts.getParameter(sustainRatioId);
+        envelopeRatioParam = apvts.getParameter(envelopeRatioId);
 
         apvts.addParameterListener(envelopeModeId, this);
-        apvts.addParameterListener(sustainRatioId, this);
+        apvts.addParameterListener(envelopeRatioId, this);
     }
 
     EnvelopeButtonMenu::~EnvelopeButtonMenu()
     {
         apvts.removeParameterListener(envelopeModeId, this);
-        apvts.removeParameterListener(sustainRatioId, this);
+        apvts.removeParameterListener(envelopeRatioId, this);
     }
 
     void EnvelopeButtonMenu::parameterChanged(const str& parameterID, float newValue)
@@ -30,9 +30,9 @@ namespace particules
             cachedMode = static_cast<EnvelopeMode>(juce::jlimit(
                 0, (int)EnvelopeMode::Count - 1, (int)(newValue * (envelopeModeParam->getAllValueStrings().size() - 1))));
         }
-        else if(parameterID == sustainRatioId)
+        else if(parameterID == envelopeRatioId)
         {
-            cachedSustain = sustainParam->convertFrom0to1(newValue);
+            cachedEnvelopeRatio = envelopeRatioParam->convertFrom0to1(newValue);
         }
 
         juce::MessageManager::callAsync([this]() { repaint(); });
