@@ -5,7 +5,6 @@
 
 #include "../../framework/GuiTypes.h"
 #include "../component/button/IconButton.h"
-#include "../lookandfeel/LabelBoxLookAndFeel.h"
 
 namespace juce
 {
@@ -27,30 +26,29 @@ namespace particules
         void resized() override;
 
     private:
-        static constexpr const char* fileNameBoxPlaceHolder = "audio_file_03.wav";
+        //static constexpr const char* fileNameBoxPlaceHolder = "audio_file_03.wav";
 
         UIContext& uic;
 
-        juce::Label titleLabel, fileNameBox;
-        juce::TextButton loadBtn;
+        juce::Label titleLabel;//, fileNameBox;
 
         ProcessorFacade& facade;
         EngineState& engineState;
 
+        IconButton loadBtn;
         IconButton playBtn;
-        std::unique_ptr<juce::Drawable> playIcon, pauseIcon;
+        std::unique_ptr<juce::Drawable> playIcon, pauseIcon, loadIcon;
 
-        LabelBoxLookAndFeel lookAndFeel;
-        juce::Component leftArea, loadArea, fileArea, rightArea, btnArea;
+        //LabelBoxLookAndFeel lookAndFeel;
 
         void pauseButtonClicked();
         void playButtonClicked();
         void loadSampleButtonClicked();
 
-        void layoutLeft();
-        void layoutLoad();
-        void layoutFile();
-        void layoutRight();
+        //void layoutLeft();
+        //void layoutLoad();
+        //void layoutFile();
+        //void layoutRight();
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TitlePanel)
     };

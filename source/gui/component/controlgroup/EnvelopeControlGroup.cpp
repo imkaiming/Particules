@@ -1,5 +1,6 @@
 #include "EnvelopeControlGroup.h"
 #include "../../../framework/PluginParams.h"
+#include "../../lookandfeelv2/Colours.h"
 
 namespace particules
 {
@@ -8,7 +9,6 @@ namespace particules
           buttonMenu{uic.apvts, params::envelopeMode::id, params::envelopeRatio::id}
     {
         setupSlider(params::envelopeRatio::id);
-        //, params::envelopeRatio::min, params::envelopeRatio::max, params::envelopeRatio::skewFactor);
         addAndMakeVisible(&buttonMenu);
     }
 }

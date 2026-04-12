@@ -19,12 +19,15 @@ namespace particules
 
     void IconButton::paintButton(juce::Graphics& g, bool isHovered, bool isPressed)
     {
-        auto bounds = getLocalBounds().toFloat();
+        juce::Rectangle<float> bounds = getLocalBounds().toFloat();
 
-        float alpha = isPressed ? 0.8f : (isHovered ? 1.0f : 0.6f);
+        const float alpha = isPressed ? 0.8f : (isHovered ? 1.0f : 0.6f);
+        const float padding = getWidth() * 0.25f;
 
-        g.setColour(juce::Colours::black.withAlpha(0.2f));
+        g.setColour(coloursv2::lightBlack);
         g.fillRoundedRectangle(bounds, 6.0f);
+        g.setColour(coloursv2::blackest);
+        g.drawRoundedRectangle(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), 12.0f, getWidth() * 0.05f);
 
         if(currentIcon != nullptr)
         {

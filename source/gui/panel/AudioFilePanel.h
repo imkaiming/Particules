@@ -32,16 +32,7 @@ namespace particules
         ValueTreeState& apvts;
         ThumbnailComponent thumbnailComponent; // after the file is loaded draw the waveform
 
-        //juce::Slider positionSlider;
-        //juce::Slider spanSlider;
-
-        //std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> positionSliderAttachment;
-        //std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> spanSliderAttachment;
-
-        //void updateOverflow(float value);
-        //void updatePosition(float value); // update the position marker when changing the file position slider value
-        //void updateSpan(float value);
-
+     
         std::unique_ptr<WaveformOverlay> waveformOverlay;
 
 

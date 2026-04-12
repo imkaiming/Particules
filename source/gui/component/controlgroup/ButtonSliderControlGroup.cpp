@@ -15,7 +15,7 @@ namespace particules
         assert(lnf != nullptr);
 
         g.setColour(coloursv2::perleBlanc);
-        g.drawRoundedRectangle(getLocalBounds().toFloat(), 10.f, 1.0f);
+        //g.drawRoundedRectangle(getLocalBounds().toFloat(), 10.f, 1.0f);
 
         const int labelWidth = getWidth() / 8.f;
         juce::Rectangle<float> labelArea = getLocalBounds().removeFromLeft(labelWidth).toFloat();
@@ -23,6 +23,8 @@ namespace particules
         g.setColour(juce::Colours::white);
         g.setFont(juce::Font(lnf->getGeistTypeface()).withHeight(14.0f).withExtraKerningFactor(0.2f));
         //g.setFont(dynamic_cast<MainLNF*>(&getLookAndFeel())->getFont().withExtraKerningFactor(0.2f));
+
+        //getButton().repaint();
 
         g.saveState();
         g.addTransform(juce::AffineTransform::rotation(-halfPi, labelArea.getCentreX(), labelArea.getCentreY()));
@@ -40,7 +42,7 @@ namespace particules
         const int labelWidth = getWidth() / 8.f;
         bounds.removeFromLeft(labelWidth);
         bounds.removeFromRight(labelWidth);
-        //bounds.reduce(5, 5);
+
         juce::Rectangle<int> topArea = bounds.removeFromTop(bounds.getHeight() * 0.5f);
 
         const int buttonPadding = getWidth() / 16.f;
@@ -49,10 +51,8 @@ namespace particules
         slider.setBounds(bounds);
     }
 
-    void ButtonSliderControlGroup::setupSlider(const str& paramId) //, float min, float max, float skewFactor)
+    void ButtonSliderControlGroup::setupSlider(const str& paramId)
     {
-        //slider.setRange(min, max);
-        //slider.setSkewFactorFromMidPoint(skewFactor);
         attachment = slider.attachPrimaryToAPVTS(uic.apvts, paramId);
     }
 }

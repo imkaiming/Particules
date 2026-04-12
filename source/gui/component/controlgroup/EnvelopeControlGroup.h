@@ -2,6 +2,11 @@
 #include "../button/EnvelopeButtonMenu.h"
 #include "ButtonSliderControlGroup.h"
 
+namespace juce
+{
+    class Graphics;
+}
+
 namespace particules
 {
     class EnvelopeControlGroup : public ButtonSliderControlGroup

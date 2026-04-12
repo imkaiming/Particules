@@ -1,9 +1,9 @@
 #pragma once
 
-
+#include "../../framework/GuiTypes.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_core/juce_core.h>
-#include <juce_gui_basics/juce_gui_basics.h>
+//#include <juce_gui_basics/juce_gui_basics.h>
 
 namespace juce
 {
@@ -35,10 +35,10 @@ namespace particules
         juce::Label sustainLabel;
         juce::Label releaseLabel;
 
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attackSliderAttachment;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> decaySliderAttachment;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sustainSliderAttachment;
-        std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> releaseSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> attackSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> decaySliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> sustainSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> releaseSliderAttachment;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ADSRPanel)
     };

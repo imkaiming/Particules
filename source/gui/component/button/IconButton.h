@@ -22,7 +22,6 @@ namespace particules
 
     private:
         juce::Drawable* currentIcon = nullptr;
-        float padding = 6.0f;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(IconButton)
     };

@@ -4,7 +4,7 @@ namespace particules
 {
     DrawButtonMenu::DrawButtonMenu() { setRepaintsOnMouseActivity(true); }
 
-    void DrawButtonMenu::resized() { buttonBounds = getLocalBounds().toFloat(); }
+    void DrawButtonMenu::resized() { buttonBounds = getLocalBounds().toFloat().reduced(5.f); }
 
     void DrawButtonMenu::paint(juce::Graphics& g)
     {
@@ -12,11 +12,11 @@ namespace particules
         const float w = juce::jmin(buttonBounds.getWidth(), buttonBounds.getHeight());
         auto drawArea = buttonBounds.reduced(w / 4.f);
 
-        g.setColour(isHover ? juce::Colour(0xff1e1e1e).brighter(0.05f) : juce::Colour(0xff1e1e1e));
-        g.fillRoundedRectangle(buttonBounds, 5.0f);
+        g.setColour(isHover ? coloursv2::deepBlack.brighter(0.02f) : coloursv2::deepBlack);
+        g.fillRoundedRectangle(buttonBounds, 6.0f);
 
-        g.setColour(isHover ? juce::Colours::white.withAlpha(0.5f) : coloursv2::midGrey);
-        g.drawRoundedRectangle(buttonBounds, 10.0f, 1.0f);
+        //g.setColour(isHover ? juce::Colours::white.withAlpha(0.5f) : coloursv2::midGrey);
+        //g.drawRoundedRectangle(buttonBounds, 10.0f, 1.0f);
 
         juce::Path curve = createCurvePath(drawArea);
 

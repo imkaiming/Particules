@@ -328,8 +328,8 @@ namespace particules
             const float t = static_cast<float>(i) / steps;
             const float currentWidth = baseWidth + (glowSpread * t);
             const float alpha = alphaBase * std::pow(1.0f - t, 2.0f);
-            g.setColour(c.withAlpha(alpha));
-            g.strokePath(path, juce::PathStrokeType(currentWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+            //g.setColour(c.withAlpha(alpha));
+            //g.strokePath(path, juce::PathStrokeType(currentWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
         }
     }
 

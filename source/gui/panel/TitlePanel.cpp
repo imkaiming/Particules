@@ -15,51 +15,42 @@ namespace particules
 {
 
     TitlePanel::TitlePanel(UIContext& uic)
-        : playBtn{(const str) "playBtn"}, uic{uic}, facade{uic.facade}, engineState{uic.engineState}
+        : playBtn{(const str) "playBtn"}, loadBtn{(const str) "loadBtn"}, uic{uic}, facade{uic.facade},
+          engineState{uic.engineState}
     {
         playIcon = UIHelpers::loadSVG(BinaryData::play_svg, BinaryData::play_svgSize, juce::Colours::white);
         pauseIcon = UIHelpers::loadSVG(BinaryData::pause_svg, BinaryData::pause_svgSize, juce::Colours::white);
+        loadIcon = UIHelpers::loadSVG(BinaryData::add_folder_svg, BinaryData::add_folder_svgSize, juce::Colours::white);
 
         playBtn.setIcon(playIcon.get());
-        addAndMakeVisible(playBtn);
+        loadBtn.setIcon(loadIcon.get());
 
         playBtn.onClick = [this]() { playButtonClicked(); };
         loadBtn.onClick = [this]() { loadSampleButtonClicked(); };
 
-        titleLabel.setText("Particules", juce::dontSendNotification);
+        titleLabel.setText("PARTICULES", juce::dontSendNotification);
         titleLabel.setJustificationType(juce::Justification::centred);
-        titleLabel.setColour(juce::Label::textColourId, juce::Colours::white);
+        titleLabel.setColour(juce::Label::textColourId, coloursv2::perleBlanc);
         titleLabel.setFont(juce::Font(18.0f));
         titleLabel.setSize(100, static_cast<int>(titleLabel.getFont().getHeight()));
 
-        loadBtn.setButtonText("Load Sample");
-        loadBtn.setEnabled(true);
-        loadBtn.setColour(juce::Label::textColourId, juce::Colours::white);
+        addAndMakeVisible(playBtn);
+        addAndMakeVisible(loadBtn);
+        addAndMakeVisible(titleLabel);
 
-        fileNameBox.setJustificationType(juce::Justification::centred);
-        fileNameBox.setColour(juce::Label::textColourId, juce::Colours::white);
-        fileNameBox.setMinimumHorizontalScale(1.0f);
-        fileNameBox.setText(fileNameBoxPlaceHolder, juce::dontSendNotification);
-        fileNameBox.setLookAndFeel(&lookAndFeel);
+        //loadBtn.setButtonText("Load Sample");
+        //loadBtn.setEnabled(true);
+        //loadBtn.setColour(juce::Label::textColourId, juce::Colours::white);
 
-        addAndMakeVisible(leftArea);
+        //fileNameBox.setJustificationType(juce::Justification::centred);
+        //fileNameBox.setColour(juce::Label::textColourId, juce::Colours::white);
+        //fileNameBox.setMinimumHorizontalScale(1.0f);
+        //fileNameBox.setText(fileNameBoxPlaceHolder, juce::dontSendNotification);
+        //fileNameBox.setLookAndFeel(&lookAndFeel);
 
-        addAndMakeVisible(loadArea);
-        addAndMakeVisible(fileArea);
-
-        addAndMakeVisible(rightArea);
-        addAndMakeVisible(btnArea);
-
-        leftArea.addAndMakeVisible(titleLabel);
-
-        loadArea.addAndMakeVisible(loadBtn);
-        fileArea.addAndMakeVisible(fileNameBox);
-
-        rightArea.addAndMakeVisible(btnArea);
-        btnArea.addAndMakeVisible(playBtn);
     }
 
-    TitlePanel::~TitlePanel() { fileNameBox.setLookAndFeel(nullptr); }
+    TitlePanel::~TitlePanel() {}
 
     void TitlePanel::playButtonClicked()
     {
@@ -83,110 +74,104 @@ namespace particules
         facade.loadFile();
     }
 
-    void TitlePanel::paint(juce::Graphics& g)
-    {
-        /*
-        const juce::Rectangle<float> inner = getLocalBounds().reduced(2).toFloat();
-        g.setColour(colours::panel::audioFilePanel);
-        g.fillRoundedRectangle(inner, 12.0f);
-
-        const float lineThickness = 2.0f;
-
-        g.setColour(colours::panel::contourPanel);
-        g.drawRoundedRectangle(inner, 12.0f, lineThickness);
-        */
-        g.fillAll(coloursv2::deepBlack.brighter(0.04f));
-    }
+    void TitlePanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::deepBlack.brighter(0.1f)); }
 
     void TitlePanel::resized()
     {
         juce::Rectangle<int> area = getLocalBounds();
+        const int quarter = getWidth() / 8.f;
 
-        juce::FlexBox fb;
-        fb.flexDirection = juce::FlexBox::Direction::row;
-        fb.alignItems = juce::FlexBox::AlignItems::stretch;
 
-        fb.items.add(juce::FlexItem(leftArea).withFlex(1.0f));
-        fb.items.add(juce::FlexItem(loadArea).withFlex(1.0f));
-        fb.items.add(juce::FlexItem(fileArea).withFlex(1.0f));
-        fb.items.add(juce::FlexItem(rightArea).withFlex(1.0f));
+        juce::Rectangle<int> titleArea= area.removeFromLeft(quarter);
+        area.removeFromLeft(quarter * 5.f);
+        juce::Rectangle<int> loadArea = area.removeFromLeft(quarter);
+        juce::Rectangle<int> playArea = area.removeFromLeft(quarter);
 
-        fb.performLayout(area);
+        const int btnHeight = getHeight() * 0.666f;
+        titleLabel.setBounds(titleArea);
+        loadBtn.setBounds(loadArea.withSizeKeepingCentre(btnHeight, btnHeight));
+        playBtn.setBounds(playArea.withSizeKeepingCentre(btnHeight, btnHeight));
 
-        layoutLeft();
-        layoutLoad();
-        layoutFile();
-        layoutRight();
 
-        fileNameBox.repaint();
+        //juce::FlexBox fb;
+        //fb.flexDirection = juce::FlexBox::Direction::row;
+        //fb.alignItems = juce::FlexBox::AlignItems::stretch;
+
+        //fb.items.add(juce::FlexItem(titleLabel).withFlex(1.0f));
+        //fb.items.add(juce::FlexItem(loadBtn).withFlex(1.0f));
+        //fb.items.add(juce::FlexItem(playBtn).withFlex(1.0f));
+
+        //fb.performLayout(area);
+
+        //fileNameBox.repaint();
     }
 
-    void TitlePanel::layoutLeft()
-    {
-        juce::Rectangle<int> area = leftArea.getLocalBounds().reduced(4, 0);
+    //void TitlePanel::layoutLeft()
+    //{
+    //    juce::Rectangle<int> area = leftArea.getLocalBounds().reduced(4, 0);
 
-        juce::FlexBox fb;
-        fb.flexDirection = juce::FlexBox::Direction::row;
-        fb.justifyContent = juce::FlexBox::JustifyContent::center;
-        fb.alignItems = juce::FlexBox::AlignItems::center;
+    //    juce::FlexBox fb;
+    //    fb.flexDirection = juce::FlexBox::Direction::row;
+    //    fb.justifyContent = juce::FlexBox::JustifyContent::center;
+    //    fb.alignItems = juce::FlexBox::AlignItems::center;
 
-        fb.items.add(juce::FlexItem(titleLabel).withFlex(0.0f).withHeight(20.f).withWidth(100.f));
-        fb.performLayout(area);
-    }
+    //    fb.items.add(juce::FlexItem(titleLabel).withFlex(1.0f).withHeight(20.f));
+    //    fb.performLayout(area);
+    //}
 
-    void TitlePanel::layoutLoad()
-    {
-        juce::Rectangle<int> area = loadArea.getLocalBounds().reduced(4, 0);
+    //void TitlePanel::layoutLoad()
+    //{
+    //    juce::Rectangle<int> area = loadArea.getLocalBounds().reduced(4, 0);
 
-        juce::FlexBox fb;
-        fb.flexDirection = juce::FlexBox::Direction::row;
-        fb.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
-        fb.alignItems = juce::FlexBox::AlignItems::center;
+    //    juce::FlexBox fb;
+    //    fb.flexDirection = juce::FlexBox::Direction::row;
+    //    fb.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
+    //    fb.alignItems = juce::FlexBox::AlignItems::center;
 
-        fb.items.add(juce::FlexItem(loadBtn).withWidth(90.f).withHeight(25.f));
-        fb.performLayout(area);
-    }
+    //    fb.items.add(juce::FlexItem(loadBtn).withWidth(90.f).withHeight(25.f));
+    //    fb.performLayout(area);
+    //}
 
-    void TitlePanel::layoutFile()
-    {
-        juce::Rectangle<int> area = fileArea.getLocalBounds().reduced(4, 0);
+    //void TitlePanel::layoutFile()
+    //{
+    //    juce::Rectangle<int> area = fileArea.getLocalBounds().reduced(4, 0);
 
-        juce::FlexBox fb;
-        fb.flexDirection = juce::FlexBox::Direction::row;
-        fb.justifyContent = juce::FlexBox::JustifyContent::flexStart;
-        fb.alignItems = juce::FlexBox::AlignItems::center;
+    //    juce::FlexBox fb;
+    //    fb.flexDirection = juce::FlexBox::Direction::row;
+    //    fb.justifyContent = juce::FlexBox::JustifyContent::flexStart;
+    //    fb.alignItems = juce::FlexBox::AlignItems::center;
 
-        fb.items.add(juce::FlexItem(fileNameBox).withFlex(1.0f).withHeight(25.f));
-        fb.performLayout(area);
+    //    //fb.items.add(juce::FlexItem(fileNameBox).withFlex(1.0f).withHeight(25.f));
+    //    fb.performLayout(area);
 
-        fileNameBox.repaint();
-    }
+    //    //fileNameBox.repaint();
+    //}
 
-    void TitlePanel::layoutRight()
-    {
-        juce::Rectangle<int> area = rightArea.getLocalBounds();
+    //void TitlePanel::layoutRight()
+    //{
+    //    juce::Rectangle<int> area = rightArea.getLocalBounds();
 
-        juce::FlexBox fb;
-        fb.flexDirection = juce::FlexBox::Direction::row;
-        fb.alignItems = juce::FlexBox::AlignItems::stretch;
+    //    juce::FlexBox fb;
+    //    fb.flexDirection = juce::FlexBox::Direction::row;
+    //    fb.alignItems = juce::FlexBox::AlignItems::stretch;
 
-        fb.items.add(juce::FlexItem().withFlex(1.0f));
-        fb.items.add(juce::FlexItem(btnArea).withFlex(1.0f));
+    //    fb.items.add(juce::FlexItem().withFlex(1.0f));
+    //    fb.items.add(juce::FlexItem(btnArea).withFlex(1.0f));
 
-        fb.performLayout(area);
+    //    fb.performLayout(area);
 
-        // Centre les boutons dans btnArea
-        juce::FlexBox btnFb;
-        btnFb.flexDirection = juce::FlexBox::Direction::row;
-        btnFb.justifyContent = juce::FlexBox::JustifyContent::center;
-        btnFb.alignItems = juce::FlexBox::AlignItems::center;
+    //    // Centre les boutons dans btnArea
+    //    juce::FlexBox btnFb;
+    //    btnFb.flexDirection = juce::FlexBox::Direction::row;
+    //    btnFb.justifyContent = juce::FlexBox::JustifyContent::center;
+    //    btnFb.alignItems = juce::FlexBox::AlignItems::center;
 
-        const float btnSize = 25.0f;
-        const float gap = 8.0f;
+    //    const float btnSize = 25.0f;
+    //    const float gap = 8.0f;
 
-        btnFb.items.add(juce::FlexItem(playBtn).withWidth(btnSize).withHeight(btnSize).withMargin({0, gap * 0.5f, 0, 0}));
-        //btnFb.items.add(juce::FlexItem(pauseBtn).withWidth(btnSize).withHeight(btnSize).withMargin({0, 0, 0, gap * 0.5f}));
+    //    btnFb.items.add(juce::FlexItem(playBtn).withWidth(btnSize).withHeight(btnSize).withMargin({0, gap * 0.5f, 0, 0}));
+    //    //btnFb.items.add(juce::FlexItem(pauseBtn).withWidth(btnSize).withHeight(btnSize).withMargin({0, 0, 0, gap * 0.5f}));
 
-        btnFb.performLayout(btnArea.getLocalBounds());
-    }
+    //    btnFb.performLayout(btnArea.getLocalBounds());
+    //}
 }
