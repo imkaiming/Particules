@@ -4,8 +4,8 @@
 //#include <juce_graphics/juce_graphics.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../lookandfeelv2/Colours.h"
 #include "../../../utils/enum/RotaryType.h"
+#include "../../lookandfeelv2/Colours.h"
 
 namespace particules
 {
@@ -23,7 +23,6 @@ namespace particules
 
             getProperties().set("RotaryType", static_cast<int>(RotaryType::primary));
             setRepaintsOnMouseActivity(true);
-
         }
 
     private:
@@ -43,7 +42,6 @@ namespace particules
 
             getProperties().set("RotaryType", static_cast<int>(RotaryType::secondary));
             setRepaintsOnMouseActivity(true);
-
         }
 
     private:
@@ -58,6 +56,8 @@ namespace particules
             setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
             setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
             getProperties().set("RotaryType", static_cast<int>(RotaryType::tertiary));
+
+            onValueChange = [this]() { DBG("SLIDER VAL = " + (str)getValue()); };
         }
 
     private:

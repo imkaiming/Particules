@@ -249,7 +249,7 @@ namespace particules
         }
 
         const float valueFontSize = radius * 0.4f;
-        const float unitFontSize = radius * 0.25f;
+        const float unitFontSize = radius * 0.3f;
         const float spacing = radius * 0.05f;
 
         color textColor = isHovered ? slider.findColour(juce::Slider::textBoxTextColourId)

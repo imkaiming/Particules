@@ -16,6 +16,25 @@
 // just to test GUI separated than the audio DSP
 namespace particules
 {
+    inline std::unique_ptr<juce::AudioParameterFloat> createSkewedWithOffset(const juce::ParameterID& id,
+        const str& name, float min, float max, float skew, float init,
+        std::function<str(float, int)> stringFromValueFunc,
+        std::function<float(const str&)> valueFromStringFunc)
+    {
+        //const float internalMax = max - min;
+        //const float internalSkewCentre = skew - min;
+        //const float internalInit = init - min;
+
+        juce::NormalisableRange<float> range{min, max};
+        range.setSkewForCentre(skew);
+
+        return std::make_unique<juce::AudioParameterFloat>(id, name, range, init,
+            juce::AudioParameterFloatAttributes{}
+                .withCategory(juce::AudioProcessorParameter::genericParameter)
+                .withStringFromValueFunction(stringFromValueFunc)
+                .withValueFromStringFunction(valueFromStringFunc));
+    }
+
     class GuiAppProcessor : public juce::AudioProcessor
     {
     public:
@@ -61,4 +80,5 @@ namespace particules
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GuiAppProcessor)
     };
+
 }

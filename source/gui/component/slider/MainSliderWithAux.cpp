@@ -42,6 +42,7 @@ namespace particules
 
         mainSlider.onValueChange = [this]() {
             updatePrimaryAngle();
+            DBG(" SLIDER = " + (str)mainSlider.getValue());
             mainSlider.repaint();
 
             if(engineState.getIsLinked() && onValueChanged)
@@ -171,10 +172,6 @@ namespace particules
         mainSlider.getProperties().set("auxAmount", auxNorm);
     }
 
-    void MainSliderWithAux::paint(juce::Graphics& g)
-    {
-        g.fillAll(coloursv2::deepBlack.brighter(0.0f));
-
-    }
+    void MainSliderWithAux::paint(juce::Graphics& g) { g.fillAll(coloursv2::deepBlack.brighter(0.0f)); }
 
 }

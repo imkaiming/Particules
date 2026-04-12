@@ -19,6 +19,20 @@ namespace juce
 
 namespace particules
 {
+    inline std::unique_ptr<juce::AudioParameterFloat> createSkewedWithOffset(const juce::ParameterID& id, const str& name,
+        float min, float max, float skew, float init, std::function<str(float, int)> stringFromValueFunc,
+        std::function<float(const str&)> valueFromStringFunc)
+    {
+        juce::NormalisableRange<float> range{min, max};
+        range.setSkewForCentre(skew);
+
+        return std::make_unique<juce::AudioParameterFloat>(id, name, range, init,
+            juce::AudioParameterFloatAttributes{}
+                .withCategory(juce::AudioProcessorParameter::genericParameter)
+                .withStringFromValueFunction(stringFromValueFunc)
+                .withValueFromStringFunction(valueFromStringFunc));
+    }
+
     class GranularEngine;
     class ParticulesAudioProcessor : public juce::AudioProcessor
 #if JucePlugin_Enable_ARA

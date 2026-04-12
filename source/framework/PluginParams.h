@@ -92,8 +92,9 @@ namespace particules
             inline constexpr const char* id = "OUTPUT";
             inline constexpr const char* name = "Output";
             inline constexpr float min = -96.0f;
-            inline constexpr float max = 0.0f;
-            inline constexpr float init = -6.0f;
+            inline constexpr float max = 12.0f;
+            inline constexpr float init = -3.0f;
+            inline constexpr float skewFactor = 0.0f;
         }
 
         namespace emission

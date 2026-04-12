@@ -167,6 +167,19 @@ namespace particules
         if(newState != currentHover)
         {
             currentHover = newState;
+            switch(newState)
+            {
+                case HoverState::Position:
+                case HoverState::Edge:
+                    setMouseCursor(juce::MouseCursor::LeftRightResizeCursor);
+                    break;
+                case HoverState::Body:
+                    setMouseCursor(juce::MouseCursor::DraggingHandCursor); 
+                    break;
+                default:
+                    setMouseCursor(juce::MouseCursor::NormalCursor);
+                    break;
+            }
             repaint();
         }
     }

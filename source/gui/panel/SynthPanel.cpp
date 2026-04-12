@@ -11,7 +11,7 @@ namespace particules
     SynthPanel::SynthPanel(UIContext& uic) : meter{}
     {
         outputSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, globalOutputId, outputSlider);
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, params::output::id, outputSlider);
 
         addAndMakeVisible(&meter);
         addAndMakeVisible(&outputSlider);
@@ -124,8 +124,8 @@ namespace particules
 
         mainFlexBox.performLayout(getLocalBounds().toFloat());
         */
-        auto area = getLocalBounds();
-        meter.setBounds(area.removeFromRight(40).reduced(2));
+        juce::Rectangle<int> area = getLocalBounds();
+        meter.setBounds(area.removeFromRight(35));
     }
 
     void SynthPanel::updateMeter(float levelDB) { /* meter.pushLevel(levelDB); */}

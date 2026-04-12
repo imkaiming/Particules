@@ -170,6 +170,7 @@ namespace particules
         layout.add(std::make_unique<juce::AudioParameterBool>(params::play::id, params::play::name, params::play::init));
 
         // ADSR //
+
         layout.add(std::make_unique<juce::AudioParameterFloat>(
             params::attack::id, params::attack::name,
             juce::NormalisableRange<float>(params::attack::min, params::attack::max, 0.01f), params::attack::init, str(" s"),
@@ -203,33 +204,25 @@ namespace particules
 
         // EMISSION //
 
-        juce::NormalisableRange<float> emissionRange{params::emission::min, params::emission::max}; //, 0.001f};
-        emissionRange.setSkewForCentre(params::emission::skewFactor);
-
-        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{params::emission::id, 1}, params::emission::name,
-            emissionRange, params::emission::init,
-            juce::AudioParameterFloatAttributes{}
-                .withCategory(juce::AudioProcessorParameter::genericParameter)
-                .withStringFromValueFunction([](float v, int) { return str(v, v > 1 ? 2 : 3) + " g/s"; })
-                .withValueFromStringFunction([](const str& s) { return s.getFloatValue(); })));
+        layout.add(createSkewedWithOffset(
+            params::emission::id, params::emission::name, params::emission::min, params::emission::max,
+            params::emission::skewFactor, params::emission::init,
+            [](float v, int) -> str { return str(v, (v > 1.f ? 2 : (v > 0.101f ? 3 : 4))) + " g/s"; },
+            [](const str& s) -> float { return s.getFloatValue(); }));
 
         // DURATION //
 
-        juce::NormalisableRange<float> durationRange{params::duration::min, params::duration::max}; //, 0.001f};
-        durationRange.setSkewForCentre(params::duration::skewFactor);
-
-        layout.add(std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{params::duration::id, 1}, params::duration::name,
-            durationRange, params::duration::init,
-            juce::AudioParameterFloatAttributes{}
-                .withCategory(juce::AudioProcessorParameter::genericParameter)
-                .withStringFromValueFunction([](float v, int) {
-                    if(v >= 1.0f)
-                        return str(v, 2) + " s";
-                    if(v >= 0.1f)
-                        return str(v * 1000.0f, 1) + " ms";
-                    return str(v * 1000.0f, 2) + " ms";
-                })
-                .withValueFromStringFunction([](const str& s) { return s.getFloatValue(); })));
+        layout.add(createSkewedWithOffset(
+            params::duration::id, params::duration::name, params::duration::min, params::duration::max,
+            params::duration::skewFactor, params::duration::init,
+            [](float v, int) -> str {
+                if(v > 1.0f)
+                    return str(v, 2) + " s";
+                if(v >= 0.2f)
+                    return str(v * 1000.0f, 1) + " ms";
+                return str(v * 1000.0f, 2) + " ms";
+            },
+            [](const str& s) -> float { return s.getFloatValue(); }));
 
         // SPEED //
 
