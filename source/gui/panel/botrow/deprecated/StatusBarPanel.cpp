@@ -1,6 +1,6 @@
 #include "StatusBarPanel.h"
-#include "../../utils/struct/UIContext.h"
-#include "../lookandfeelv2/Colours.h"
+#include "../../../../utils/struct/UIContext.h"
+#include "../../../lookandfeelv2/Colours.h"
 
 namespace particules
 {

@@ -4,12 +4,12 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../framework/GuiTypes.h"
-#include "../../framework/PluginParams.h"
-#include "../component/button/IconButton.h"
-#include "../component/controlgroup/EnvelopeControlGroup.h"
-#include "../component/controlgroup/TraversalControlGroup.h"
-#include "../component/slider/MainSliderWithAux.h"
+#include "../../../../framework/GuiTypes.h"
+#include "../../../../framework/PluginParams.h"
+#include "../../../component/button/IconButton.h"
+#include "../../../component/controlgroup/EnvelopeControlGroup.h"
+#include "../../../component/controlgroup/TraversalControlGroup.h"
+#include "../../../component/slider/MainSliderWithAux.h"
 
 namespace juce
 {
@@ -42,7 +42,6 @@ namespace particules
         //MainSliderWithAux sustainRatioSlider;
         //MainSliderWithAux traversalFreqSlider;
 
-
         IconButton linkBtn;
         std::unique_ptr<juce::Drawable> linkInIcon, linkOffIcon;
         std::unique_ptr<ValueTreeState::SliderAttachment> emissionSliderAttachment;
@@ -53,6 +52,21 @@ namespace particules
 
         EnvelopeControlGroup envelopeControlGroup;
         TraversalControlGroup traversalControlGroup;
+
+        juce::Slider attackSlider;
+        juce::Slider decaySlider;
+        juce::Slider sustainSlider;
+        juce::Slider releaseSlider;
+
+        juce::Label attackLabel;
+        juce::Label decayLabel;
+        juce::Label sustainLabel;
+        juce::Label releaseLabel;
+
+        std::unique_ptr<ValueTreeState::SliderAttachment> attackSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> decaySliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> sustainSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> releaseSliderAttachment;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainsPanel)
     };

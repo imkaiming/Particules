@@ -1,10 +1,10 @@
 #include "AudioFilePanel.h"
 
-#include "../../framework/GuiTypes.h"
-#include "../../framework/bridge/UIState.h"
-#include "../../utils/struct/ProcessorFacade.h"
-#include "../../utils/struct/UIContext.h"
-#include "../lookandfeelv2/Colours.h"
+#include "../../../framework/GuiTypes.h"
+#include "../../../framework/bridge/UIState.h"
+#include "../../../utils/struct/ProcessorFacade.h"
+#include "../../../utils/struct/UIContext.h"
+#include "../../lookandfeelv2/Colours.h"
 
 namespace particules
 {

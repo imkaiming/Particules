@@ -2,12 +2,12 @@
 
 #include <juce_graphics/juce_graphics.h>
 
-#include "../../framework/PluginParams.h"
-#include "../../framework/bridge/EngineState.h"
-#include "../../utils/UIHelpers.h"
-#include "../../utils/struct/ProcessorFacade.h"
-#include "../../utils/struct/UIContext.h"
-#include "../lookandfeelv2/Colours.h"
+#include "../../../framework/PluginParams.h"
+#include "../../../framework/bridge/EngineState.h"
+#include "../../../utils/UIHelpers.h"
+#include "../../../utils/struct/ProcessorFacade.h"
+#include "../../../utils/struct/UIContext.h"
+#include "../../lookandfeelv2/Colours.h"
 
 #include "BinaryData.h"
 

@@ -4,10 +4,10 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../framework/GuiTypes.h"
-#include "../../framework/PluginParams.h"
-#include "../component/ThumbnailComponent.h"
-#include "../component/overlay/WaveformOverlay.h"
+#include "../../../framework/GuiTypes.h"
+#include "../../../framework/PluginParams.h"
+#include "../../component/ThumbnailComponent.h"
+#include "../../component/overlay/WaveformOverlay.h"
 
 // the Audio File Frame provide the control to load and play the audio.
 namespace particules

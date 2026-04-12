@@ -3,8 +3,8 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../framework/GuiTypes.h"
-#include "../component/button/IconButton.h"
+#include "../../../framework/GuiTypes.h"
+#include "../../component/button/IconButton.h"
 
 namespace juce
 {

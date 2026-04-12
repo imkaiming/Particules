@@ -3,11 +3,11 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_graphics/juce_graphics.h>
 
-#include "../../framework/bridge/EngineState.h"
-#include "../../utils/UIHelpers.h"
-#include "../../utils/struct/UIContext.h"
-#include "../lookandfeel/MyColours.h"
-#include "../lookandfeelv2/Colours.h"
+#include "../../../../framework/bridge/EngineState.h"
+#include "../../../../utils/UIHelpers.h"
+#include "../../../../utils/struct/UIContext.h"
+#include "../../../lookandfeel/MyColours.h"
+#include "../../../lookandfeelv2/Colours.h"
 #include "BinaryData.h"
 
 namespace particules
@@ -16,16 +16,13 @@ namespace particules
         : engineState{uic.engineState}, linkBtn{"linkBtn"},
           emissionSlider{engineState, RotaryType::primaryWithAux, uic.apvts, params::emission::name, params::emission::id},
           durationSlider{engineState, RotaryType::primaryWithAux, uic.apvts, params::duration::name, params::duration::id},
-          envelopeControlGroup{uic},
-          traversalControlGroup{uic}
+          envelopeControlGroup{uic}, traversalControlGroup{uic}
     /* speedSlider{engineState, RotaryType::secondaryWithAux, params::speed::name},*/
     /* sustainRatioSlider{params::sustainRatio::name, engineState, RotaryType::secondaryWithAux},*/
     /* traversalFreqSlider{params::traversalFreq::name, engineState, RotaryType::secondaryWithAux},*/
     /*speedSliderAttachment{speedSlider.attachPrimaryToAPVTS(uic.apvts, params::speed::id)},*/
 
     {
-        // top row //
-
         linkInIcon = UIHelpers::loadSVG(BinaryData::link_in_svg, BinaryData::link_in_svgSize, juce::Colours::white);
         linkOffIcon = UIHelpers::loadSVG(BinaryData::link_off_svg, BinaryData::link_off_svgSize, juce::Colours::white);
 
@@ -50,12 +47,6 @@ namespace particules
             emissionSlider.setPrimaryValue(emissionVal, juce::dontSendNotification);
         });
 
-        //emissionSlider.setRange(params::emission::min, params::emission::max);
-        //emissionSlider.setSkewFactorFromMidPoint(params::emission::skewFactor);
-
-        //durationSlider.setRange(params::duration::min, params::duration::max);
-        //durationSlider.setSkewFactorFromMidPoint(params::duration::skewFactor);
-
         // attaching after setting the range
         emissionSliderAttachment = emissionSlider.attachPrimaryToAPVTS(uic.apvts, params::emission::id);
         durationSliderAttachment = durationSlider.attachPrimaryToAPVTS(uic.apvts, params::duration::id);
@@ -63,8 +54,6 @@ namespace particules
         addAndMakeVisible(&linkBtn);
         addAndMakeVisible(&emissionSlider);
         addAndMakeVisible(&durationSlider);
-
-
 
         /*
 
@@ -89,15 +78,32 @@ namespace particules
         addAndMakeVisible(&sustainRatioSlider);
         addAndMakeVisible(&traversalFreqSlider);
 
-        */
-
         // bottom row
 
         addAndMakeVisible(&envelopeControlGroup);
         addAndMakeVisible(&traversalControlGroup);
 
         //apvts.addParameterListener(grainsTraversalModeId, this);
-        //apvts.addParameterListener(grainsEnvelopeModeId, this);
+        //apvts.addParameterListener(grainsEnvelopeModeId, this); */
+
+        attackSliderAttachment =
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, params::attack::id, attackSlider);
+        decaySliderAttachment =
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, params::decay::id, decaySlider);
+        sustainSliderAttachment =
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, params::sustain::id, sustainSlider);
+        releaseSliderAttachment =
+            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, params::release::id, releaseSlider);
+
+        attackSlider.setSliderStyle(juce::Slider::LinearBarVertical);
+        decaySlider.setSliderStyle(juce::Slider::LinearBarVertical);
+        sustainSlider.setSliderStyle(juce::Slider::LinearBarVertical);
+        releaseSlider.setSliderStyle(juce::Slider::LinearBarVertical);
+
+        addAndMakeVisible(&attackSlider);
+        addAndMakeVisible(&decaySlider);
+        addAndMakeVisible(&sustainSlider);
+        addAndMakeVisible(&releaseSlider);
     }
 
     void GrainsPanel::linkButtonClicked() { setLinkButtonImage(); }
@@ -121,7 +127,7 @@ namespace particules
         }
     }
 
-    void GrainsPanel::paint(juce::Graphics& g) {}
+    void GrainsPanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::lightBlack); }
 
     void GrainsPanel::resized()
     {

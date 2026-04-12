@@ -3,8 +3,8 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../framework/Core.h"
-#include "../../framework/bridge/EngineState.h"
+#include "../../../../framework/Core.h"
+#include "../../../../framework/bridge/EngineState.h"
 
 // TODO RENAME FOOT PANEL
 

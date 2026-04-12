@@ -6,12 +6,11 @@
 #include "../../framework/Core.h"
 #include "../../utils/struct/UIContext.h"
 
-#include "../Component/effect/VignetteEffect.h"
+//#include "../Component/effect/VignetteEffect.h"
 
-#include "AudioFilePanel.h"
-#include "ControlPanel.h"
-#include "StatusBarPanel.h"
-#include "TitlePanel.h"
+#include "botrow/TabPanel.h"
+#include "toprow/AudioFilePanel.h"
+#include "toprow/TitlePanel.h"
 
 namespace particules
 {
@@ -27,19 +26,11 @@ namespace particules
         void resized() override;
 
     private:
-        //juce::Rectangle<int> withOuterPadding(const juce::Rectangle<int>& r, float ratio = 0.012f)
-        //{
-        //    int padding = juce::roundToInt(std::min(r.getWidth(), r.getHeight()) * ratio);
-        //    return r.reduced(padding);
-        //}
-
-
         TitlePanel titlePanel;
         AudioFilePanel audioFilePanel;
-        ControlPanel controlPanel;
-        StatusBarPanel statusBarPanel;
+        TabPanel tabPanel;
 
-        VignetteEffect vignette;
+        //VignetteEffect vignette;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainPanel)
     };

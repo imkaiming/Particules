@@ -4,10 +4,10 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../framework/GuiTypes.h"
-#include "../../framework/PluginParams.h"
-#include "../component/ThumbnailComponent.h"
-#include "../component/VerticalMeterComponent.h"
+#include "../../../../framework/GuiTypes.h"
+#include "../../../../framework/PluginParams.h"
+#include "../../../component/ThumbnailComponent.h"
+#include "../../../component/VerticalMeterComponent.h"
 
 // the Synth Frame provide UI control that modify the apvts values only
 
