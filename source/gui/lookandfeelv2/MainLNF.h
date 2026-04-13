@@ -22,26 +22,31 @@ namespace particules
         MainLNF();
         ~MainLNF() override = default;
 
-        //==============================================================================
-        // juce::LookAndFeel_V4 Overrides
         void drawRotarySlider(juce::Graphics& g, int x, int y, int w, int h, float sliderPos, float startAngle, float endAngle,
             juce::Slider& slider) override;
 
         void drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float minSliderPos,
             float maxSliderPos, const juce::Slider::SliderStyle style, juce::Slider& slider) override;
 
-        //==============================================================================
-        // Typeface & Font Accessors
-        [[nodiscard]] juce::Typeface::Ptr getGeistTypeface() const noexcept { return geistTypeFace; }
-        [[nodiscard]] juce::Typeface::Ptr getFunnelTypeface() const noexcept { return funnelTypeface; }
+        void drawButtonBackground(juce::Graphics& g, juce::Button& button, const color& backgroundColour, bool isMouseOverButton,
+            bool isButtonDown) override;
 
-        [[nodiscard]] juce::Font getFont() const noexcept { return valueFont; }
+        void drawButtonText(juce::Graphics& g, juce::TextButton& button, bool isMouseOverButton, bool isButtonDown) override;
 
-        juce::Font getLabelFont(juce::Label&) override { return juce::Font(14.0f); }
+        juce::Font getLabelFont(juce::Label& label) override;
 
+        int getPopupMenuBorderSize() override;
+
+        void getIdealPopupMenuItemSize(
+            const str& text, bool isSeparator, int standardMenuItemHeight, int& idealWidth, int& idealHeight) override;
+
+        void drawPopupMenuBackground(juce::Graphics& g, int width, int height) override;
+
+        void drawPopupMenuItem(juce::Graphics& g, const juce::Rectangle<int>& area, bool isSeparator, bool isActive,
+            bool isHighlighted, bool isTicked, bool hasSubMenu, const str& text, const str& shortcutKeyText,
+            const juce::Drawable* icon, const color* textColour) override;
 
     private:
-        //==============================================================================
         // Internal Knob Drawing Logic
         void drawRotarySliderCenteredText(juce::Graphics& g, juce::Slider& slider, float cx, float cy, float radius) const;
 
@@ -63,34 +68,39 @@ namespace particules
         void drawAuxKnob(
             juce::Graphics& g, float cx, float cy, float innerR, float startAngle, float endAngle, float sliderPos) const;
 
-        //==============================================================================
-        // Visual Primitives & Effects
-        void drawJitterArc(juce::Graphics& g, float cx, float cy, float baseArcRadius, float startAngle, float endAngle,
-            float primaryAngle, float jitterAmount, float baseLineWidth) const;
+        void drawRotaryMenuKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
+            float endAngle, float sliderPos, juce::Slider& slider) const;
 
-        void drawArcGlow(juce::Graphics& g, const juce::Path& path, color c, float baseWidth, int steps = 8,
+        // Visual Effects
+        void drawJitterArc(juce::Graphics& g, float cx, float cy, float baseArcRadius, float startAngle, float endAngle,
+            float primaryAngle, float jitterAmount, float baseLineWidth = 2.f) const;
+
+        void drawArcGlow(juce::Graphics& g, const juce::Path& path, color c, float width, int steps = 8,
             float spreadMultiplier = 12.0f, float alphaBase = 0.1f) const;
 
-        void drawColoredArc(juce::Graphics& g, float cx, float cy, float radius, float startAngle, float endAngle,
-            juce::Colour color, float thickness) const;
+        void drawColoredArc(juce::Graphics& g, float cx, float cy, float radius, float startAngle, float endAngle, color c,
+            float thickness = 2.f) const;
 
         void drawBorderArc(juce::Graphics& g, float cx, float cy, float radius, float startAngle, float endAngle,
             float alpha = 0.2f, float thickness = 2.f) const;
 
-        //==============================================================================
-        // Low-level Geometry Helpers
+        // Geometry Helpers
         [[nodiscard]] juce::Path createArcPath(float cx, float cy, float radius, float startAngle, float endAngle) const;
 
-        void drawContour(juce::Graphics& g, float cx, float cy, float radius, color c, float thickness = 1.5f) const;
+        void drawContour(juce::Graphics& g, float cx, float cy, float radius, color c, float thickness = 2.f) const;
 
         void drawFillBackground(juce::Graphics& g, float cx, float cy, float innerR, color c) const;
 
-        void fillKnobFace(juce::Graphics& g, float cx, float cy, float radius) const;
-
-        //==============================================================================
-        // Resources
-        juce::Typeface::Ptr geistTypeFace;
-        juce::Typeface::Ptr funnelTypeface;
+        // Fonts
+        juce::Typeface::Ptr geistThin;
+        juce::Typeface::Ptr geistExtraLight;
+        juce::Typeface::Ptr geistLight;
+        juce::Typeface::Ptr geistRegular;
+        juce::Typeface::Ptr geistMedium;
+        juce::Typeface::Ptr geistSemiBold;
+        juce::Typeface::Ptr geistBold;
+        juce::Typeface::Ptr geistExtraBold;
+        juce::Typeface::Ptr geistBlack;
 
         juce::Font valueFont;
 

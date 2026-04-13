@@ -1,22 +1,16 @@
 #pragma once
 
 #include "../../../framework/GuiTypes.h"
-
 #include "graintab/GrainsPanel.h"
-
-// TODO include modtab and region tag later
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_core/juce_core.h>
-
-namespace juce
-{
-    class Graphics;
-}
+#include <juce_gui_basics/juce_gui_basics.h>
 
 namespace particules
 {
     struct UIContext;
+
     class TabPanel : public juce::Component
     {
     public:
@@ -27,9 +21,17 @@ namespace particules
         void resized() override;
 
     private:
+        void showTab(int tabIndex);
+
         UIContext& uic;
 
-        juce::TextButton grainTabButton, modTabButton, regionTabButton;
+        juce::TextButton grainTabButton{"GRAINS"};
+        juce::TextButton modTabButton{"TEMP"};
+        juce::TextButton regionTabButton{"TEMP"};
+
+        GrainsPanel grainsPanel;
+        juce::Component modTempPanel;
+        juce::Component regionTempPanel;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TabPanel)
     };

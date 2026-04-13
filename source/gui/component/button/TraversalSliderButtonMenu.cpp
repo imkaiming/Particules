@@ -1,10 +1,11 @@
-#include "TraversalButtonMenu.h"
-#include "../../../utils/math/EnvelopeMath.h"
+#include "TraversalSliderButtonMenu.h"
+#include "../../../utils/math/TraversalMath.h"
 
 namespace particules
 {
-    TraversalButtonMenu::TraversalButtonMenu(ValueTreeState& apvts, const str& traversalModeId, const str& traversalFreqId)
-        : apvts{apvts}, traversalModeId{traversalModeId}, traversalFreqId{traversalFreqId},
+    TraversalSliderButtonMenu::TraversalSliderButtonMenu(
+        ValueTreeState& apvts, const str& traversalModeId, const str& traversalFreqId)
+        : SliderButtonMenu{"Traversal"}, apvts{apvts}, traversalModeId{traversalModeId}, traversalFreqId{traversalFreqId},
           cachedMode{params::traversalMode::init}, cachedFreq{params::traversalFreq::init}
     {
         traversalModeParam = apvts.getParameter(traversalModeId);
@@ -17,22 +18,22 @@ namespace particules
         apvts.addParameterListener(traversalFreqId, this);
     }
 
-    TraversalButtonMenu::~TraversalButtonMenu()
+    TraversalSliderButtonMenu::~TraversalSliderButtonMenu()
     {
         apvts.removeParameterListener(traversalModeId, this);
         apvts.removeParameterListener(traversalFreqId, this);
     }
 
-    juce::Path TraversalButtonMenu::createCurvePath(juce::Rectangle<float> bounds)
+    juce::Path TraversalSliderButtonMenu::createCurvePath(juce::Rectangle<float> bounds)
     {
         TraversalMode mode = getCurrentMode();
         const float range = getCurrentFrequency();
 
         return buildPathFromFunction(
-            bounds, [mode, range](float phase) { return particules::gui::evaluateTraversalCurve(mode, phase, range); });
+            bounds, [mode, range](float phase) { return gui::evaluateTraversal(mode, phase, range); });
     }
 
-    void TraversalButtonMenu::showPopupMenu()
+    void TraversalSliderButtonMenu::showPopupMenu()
     {
         juce::PopupMenu menu;
 
@@ -55,7 +56,7 @@ namespace particules
         });
     }
 
-    juce::Image TraversalButtonMenu::createMenuIcon(int itemIndex)
+    juce::Image TraversalSliderButtonMenu::createMenuIcon(int itemIndex)
     {
         const int imgWidth = 120;
         const int imgHeight = 30;
@@ -68,7 +69,7 @@ namespace particules
 
         juce::Path p = buildPathFromFunction(
             {0, 0, (float)imgWidth, (float)imgHeight},
-            [mode, pureFreq](float phase) { return particules::gui::evaluateTraversalCurve(mode, phase, pureFreq); }, imgWidth);
+            [mode, pureFreq](float phase) { return gui::evaluateTraversal(mode, phase, pureFreq); }, imgWidth);
 
         g.setImageResamplingQuality(juce::Graphics::highResamplingQuality);
         g.setColour(juce::Colours::white);
@@ -77,7 +78,7 @@ namespace particules
         return img;
     }
 
-    void TraversalButtonMenu::parameterChanged(const str& parameterID, float newValue)
+    void TraversalSliderButtonMenu::parameterChanged(const str& parameterID, float newValue)
     {
         if(parameterID == traversalModeId)
         {
@@ -91,5 +92,9 @@ namespace particules
 
         juce::MessageManager::callAsync([this]() { repaint(); });
     }
+
+    float TraversalSliderButtonMenu::getDragValue() const { return traversalFreqParam->getValue(); }
+
+    void TraversalSliderButtonMenu::setDragValue(float newValue) { traversalFreqParam->setValueNotifyingHost(newValue); }
 
 }

@@ -20,11 +20,13 @@ namespace particules
         label.setText(name, juce::dontSendNotification);
         label.setJustificationType(juce::Justification::centred);
         label.setInterceptsMouseClicks(false, false);
-        label.setColour(juce::Label::textColourId, juce::Colours::white);
+        label.setColour(juce::Label::textColourId, coloursv2::white);
+        label.getProperties().set("isName", true);
 
         mainSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
         mainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 
+        //setColour(juce::Slider::textBoxTextColourId, coloursv2::perleBlanc);
         if(type == RotaryType::primaryWithAux)
         {
             setColour(juce::Slider::rotarySliderFillColourId, coloursv2::cyan);
@@ -65,8 +67,8 @@ namespace particules
 
     void MainSliderWithAux::lookAndFeelChanged()
     {
-        if(MainLNF* lnf = dynamic_cast<MainLNF*>(&getLookAndFeel()))
-            label.setFont(juce::Font(lnf->getGeistTypeface()).withHeight(14.0f).withExtraKerningFactor(0.2f));
+        //if(MainLNF* lnf = dynamic_cast<MainLNF*>(&getLookAndFeel()))
+            //label.setFont(juce::Font(lnf->getFunnelTypeface()).withHeight(14.0f).withExtraKerningFactor(0.2f));
     }
 
     void MainSliderWithAux::setPrimaryValue(double value, juce::NotificationType notify)
@@ -172,6 +174,6 @@ namespace particules
         mainSlider.getProperties().set("auxAmount", auxNorm);
     }
 
-    void MainSliderWithAux::paint(juce::Graphics& g) { g.fillAll(coloursv2::deepBlack.brighter(0.0f)); }
+    void MainSliderWithAux::paint(juce::Graphics& g) { /* g.fillAll(coloursv2::deepBlack.brighter(0.0f));*/ }
 
 }

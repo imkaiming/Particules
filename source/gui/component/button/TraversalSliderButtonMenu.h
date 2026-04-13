@@ -3,19 +3,22 @@
 #include "../../../framework/GuiTypes.h"
 #include "../../../framework/PluginParams.h"
 #include "../../../utils/enum/TraversalMode.h"
-#include "DrawButtonMenu.h"
+#include "SliderButtonMenu.h"
 
 namespace particules
 {
-    class TraversalButtonMenu : public DrawButtonMenu, private ValueTreeState::Listener
+    class TraversalSliderButtonMenu : public SliderButtonMenu, private ValueTreeState::Listener
     {
     public:
-        TraversalButtonMenu(ValueTreeState&, const str&, const str&);
-        ~TraversalButtonMenu() override;
+        TraversalSliderButtonMenu(ValueTreeState&, const str&, const str&);
+        ~TraversalSliderButtonMenu() override;
 
         juce::Path createCurvePath(juce::Rectangle<float> bounds) override;
         void showPopupMenu() override;
         juce::Image createMenuIcon(int itemIndex) override;
+
+        float getDragValue() const override;
+        void setDragValue(float newValue) override;
 
     private:
         void parameterChanged(const str&, float) override;
@@ -33,6 +36,6 @@ namespace particules
         juce::RangedAudioParameter* traversalModeParam;
         juce::RangedAudioParameter* traversalFreqParam;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TraversalButtonMenu)
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TraversalSliderButtonMenu)
     };
 }

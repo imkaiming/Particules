@@ -1,12 +1,13 @@
 #pragma once
 
-#include <juce_core/juce_core.h>
+//#include <juce_core/juce_core.h>
 #include "Core.h"
 
 namespace juce
 {
     class AudioProcessorValueTreeState;
     class Colour;
+    class String;
 }
 
 namespace particules

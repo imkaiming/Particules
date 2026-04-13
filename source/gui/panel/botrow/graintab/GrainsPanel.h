@@ -7,8 +7,10 @@
 #include "../../../../framework/GuiTypes.h"
 #include "../../../../framework/PluginParams.h"
 #include "../../../component/button/IconButton.h"
-#include "../../../component/controlgroup/EnvelopeControlGroup.h"
-#include "../../../component/controlgroup/TraversalControlGroup.h"
+#include "../../../component/rotarymenu/EnvelopeRotaryMenu.h"
+#include "../../../component/rotarymenu/TraversalRotaryMenu.h"
+#include "../../../component/menugroup/EnvelopeMenuControl.h"
+#include "../../../component/menugroup/TraversalMenuControl.h"
 #include "../../../component/slider/MainSliderWithAux.h"
 
 namespace juce
@@ -38,20 +40,18 @@ namespace particules
 
         MainSliderWithAux emissionSlider;
         MainSliderWithAux durationSlider;
-        //MainSliderWithAux speedSlider;
-        //MainSliderWithAux sustainRatioSlider;
-        //MainSliderWithAux traversalFreqSlider;
+        MainSliderWithAux speedSlider;
+        MainSliderWithAux panSlider;
 
         IconButton linkBtn;
         std::unique_ptr<juce::Drawable> linkInIcon, linkOffIcon;
         std::unique_ptr<ValueTreeState::SliderAttachment> emissionSliderAttachment;
         std::unique_ptr<ValueTreeState::SliderAttachment> durationSliderAttachment;
         std::unique_ptr<ValueTreeState::SliderAttachment> speedSliderAttachment;
-        std::unique_ptr<ValueTreeState::SliderAttachment> sustainRatioSliderAttachment;
-        std::unique_ptr<ValueTreeState::SliderAttachment> traversalFreqSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> panSliderAttachment;
 
-        EnvelopeControlGroup envelopeControlGroup;
-        TraversalControlGroup traversalControlGroup;
+        EnvelopeRotaryMenu envelopeRotaryMenu;
+        TraversalRotaryMenu traversalRotaryMenu;
 
         juce::Slider attackSlider;
         juce::Slider decaySlider;

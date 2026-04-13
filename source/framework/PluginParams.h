@@ -11,9 +11,9 @@ namespace particules
     {
         inline constexpr const float grainVisualSize = 8.f;
 
-        inline constexpr const int windowWidthInit = 900; // 750
+        inline constexpr const int windowWidthInit = 900; 
         inline constexpr const int windowWidthMin = 900;
-        inline constexpr const int windowWidthMax = 1200; //  900
+        inline constexpr const int windowWidthMax = 1200; 
 
         inline constexpr const int windowHeightInit = 600;
         inline constexpr const int windowHeightMin = 600;
@@ -132,6 +132,15 @@ namespace particules
             inline constexpr float init = 1.f;
             inline constexpr float skewFactor = 1.0f;
         }
+        namespace pan
+        {
+            inline constexpr const char* id = "PAN";
+            inline constexpr const char* name = "Pan";
+            inline constexpr float min = 0.f;
+            inline constexpr float max = 1.f;
+            inline constexpr float init = 0.5f;
+            inline constexpr float skewFactor = 0.5f;
+        }
 
         namespace envelopeMode
         {
@@ -142,8 +151,6 @@ namespace particules
                 "Hann", "Linear", "Sqrt", "Gaussian", "Exponential"};
 
         }
-
-        // TO DO RENAME IT ENVELOPE RATIO
         namespace envelopeRatio
         {
             inline constexpr const char* id = "ENVELOPERATIO";

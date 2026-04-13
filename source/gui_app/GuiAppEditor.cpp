@@ -12,19 +12,20 @@ namespace particules
         //setLookAndFeel(&lnf);
 
         setResizable(true, true);
-        setResizeLimits(windowWidthMin, windowHeightMin, windowWidthMax, windowHeightMax);
+        setResizeLimits(gui::windowWidthMin, gui::windowHeightMin, gui::windowWidthMax, gui::windowHeightMax);
 
         const float ratio = 1.5f; // ratio 3:2
         getConstrainer()->setFixedAspectRatio(ratio);
 
-        setSize(windowWidthInit, windowHeightInit);
+        setSize(gui::windowWidthInit, gui::windowHeightInit);
+
 
         addAndMakeVisible(&mainPanel);
     }
 
     GuiAppEditor::~GuiAppEditor() { juce::LookAndFeel::setDefaultLookAndFeel(nullptr); }
 
-    void GuiAppEditor::paint(juce::Graphics& /*g*/) {}
+    //void GuiAppEditor::paint(juce::Graphics& /*g*/) {}
 
     void GuiAppEditor::resized() { mainPanel.setBounds(getLocalBounds()); }
 }

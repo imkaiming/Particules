@@ -1,4 +1,4 @@
-#include "EnvelopeButtonMenu.h"
+#include "EnvelopeSliderButtonMenu.h"
 #include "../../../utils/enum/EnvelopeMode.h"
 #include "../../../utils/math/EnvelopeMath.h"
 #include "../../lookandfeelv2/Colours.h"
@@ -6,9 +6,10 @@
 namespace particules
 {
     // change the init value with the apvts get state restore in the plugin processor
-    EnvelopeButtonMenu::EnvelopeButtonMenu(ValueTreeState& state, const str& envModeParamId, const str& sustainParamId)
-        : apvts(state), envelopeModeId(envModeParamId), envelopeRatioId(sustainParamId), cachedMode{params::envelopeMode::init},
-          cachedEnvelopeRatio{params::envelopeRatio::init}
+    EnvelopeSliderButtonMenu::EnvelopeSliderButtonMenu(
+        ValueTreeState& state, const str& envModeParamId, const str& envRatioParamId)
+        : SliderButtonMenu{"Envelope"}, apvts(state), envelopeModeId(envModeParamId), envelopeRatioId(envRatioParamId),
+          cachedMode{params::envelopeMode::init}, cachedEnvelopeRatio{params::envelopeRatio::init}
     {
         envelopeModeParam = apvts.getParameter(envelopeModeId);
         envelopeRatioParam = apvts.getParameter(envelopeRatioId);
@@ -17,13 +18,13 @@ namespace particules
         apvts.addParameterListener(envelopeRatioId, this);
     }
 
-    EnvelopeButtonMenu::~EnvelopeButtonMenu()
+    EnvelopeSliderButtonMenu::~EnvelopeSliderButtonMenu()
     {
         apvts.removeParameterListener(envelopeModeId, this);
         apvts.removeParameterListener(envelopeRatioId, this);
     }
 
-    void EnvelopeButtonMenu::parameterChanged(const str& parameterID, float newValue)
+    void EnvelopeSliderButtonMenu::parameterChanged(const str& parameterID, float newValue)
     {
         if(parameterID == envelopeModeId)
         {
@@ -38,16 +39,16 @@ namespace particules
         juce::MessageManager::callAsync([this]() { repaint(); });
     }
 
-    juce::Path EnvelopeButtonMenu::createCurvePath(juce::Rectangle<float> bounds)
+    juce::Path EnvelopeSliderButtonMenu::createCurvePath(juce::Rectangle<float> bounds)
     {
         EnvelopeMode mode = getCurrentMode();
         const float sustain = getCurrentSustain();
 
         return buildPathFromFunction(
-            bounds, [mode, sustain](float phase) { return particules::gui::evaluateEnvelopeWithPlateau(mode, phase, sustain); });
+            bounds, [mode, sustain](float phase) { return gui::evaluateEnvelope(mode, phase, sustain); });
     }
 
-    void EnvelopeButtonMenu::showPopupMenu()
+    void EnvelopeSliderButtonMenu::showPopupMenu()
     {
         juce::PopupMenu menu;
         juce::StringArray options = envelopeModeParam->getAllValueStrings();
@@ -68,7 +69,7 @@ namespace particules
         });
     }
 
-    juce::Image EnvelopeButtonMenu::createMenuIcon(int itemIndex)
+    juce::Image EnvelopeSliderButtonMenu::createMenuIcon(int itemIndex)
     {
         const int w = 200;
         const int h = 40;
@@ -78,12 +79,12 @@ namespace particules
         g.setImageResamplingQuality(juce::Graphics::highResamplingQuality);
 
         auto mode = static_cast<EnvelopeMode>(itemIndex);
-        const float forcedSustain = 0.0f; 
+        const float forcedSustain = 0.0f;
 
         juce::Path p = buildPathFromFunction(
             {5.0f, 5.0f, w - 10.0f, h - 10.0f},
             [mode, forcedSustain](
-                float phase) { return particules::gui::evaluateEnvelopeWithPlateau(mode, phase, forcedSustain); },
+                float phase) { return gui::evaluateEnvelope(mode, phase, forcedSustain); },
             w);
 
         g.setColour(juce::Colours::white);
@@ -91,6 +92,10 @@ namespace particules
 
         return img;
     }
+
+    float EnvelopeSliderButtonMenu::getDragValue() const { return envelopeRatioParam->getValue(); }
+
+    void EnvelopeSliderButtonMenu::setDragValue(float newValue) { envelopeRatioParam->setValueNotifyingHost(newValue); }
 }
 
 /*

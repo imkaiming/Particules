@@ -16,13 +16,14 @@ namespace particules
         : engineState{uic.engineState}, linkBtn{"linkBtn"},
           emissionSlider{engineState, RotaryType::primaryWithAux, uic.apvts, params::emission::name, params::emission::id},
           durationSlider{engineState, RotaryType::primaryWithAux, uic.apvts, params::duration::name, params::duration::id},
-          envelopeControlGroup{uic}, traversalControlGroup{uic}
-    /* speedSlider{engineState, RotaryType::secondaryWithAux, params::speed::name},*/
-    /* sustainRatioSlider{params::sustainRatio::name, engineState, RotaryType::secondaryWithAux},*/
-    /* traversalFreqSlider{params::traversalFreq::name, engineState, RotaryType::secondaryWithAux},*/
-    /*speedSliderAttachment{speedSlider.attachPrimaryToAPVTS(uic.apvts, params::speed::id)},*/
+          envelopeRotaryMenu{
+              uic.apvts, params::envelopeMode::id, params::envelopeRatio::id, "toreplace"}, // will be param::jitter::id
+          traversalRotaryMenu{uic.apvts, params::traversalMode::id, params::traversalFreq::id, "toreplace"},
+          speedSlider{engineState, RotaryType::secondaryWithAux, uic.apvts, params::speed::name, params::speed::id},
+          panSlider{engineState, RotaryType::secondaryWithAux, uic.apvts, params::pan::name, params::pan::id}
 
     {
+        // slider linking feature
         linkInIcon = UIHelpers::loadSVG(BinaryData::link_in_svg, BinaryData::link_in_svgSize, juce::Colours::white);
         linkOffIcon = UIHelpers::loadSVG(BinaryData::link_off_svg, BinaryData::link_off_svgSize, juce::Colours::white);
 
@@ -47,63 +48,53 @@ namespace particules
             emissionSlider.setPrimaryValue(emissionVal, juce::dontSendNotification);
         });
 
-        // attaching after setting the range
         emissionSliderAttachment = emissionSlider.attachPrimaryToAPVTS(uic.apvts, params::emission::id);
         durationSliderAttachment = durationSlider.attachPrimaryToAPVTS(uic.apvts, params::duration::id);
+        speedSliderAttachment = speedSlider.attachPrimaryToAPVTS(uic.apvts, params::speed::id);
+        panSliderAttachment = panSlider.attachPrimaryToAPVTS(uic.apvts, params::pan::id);
 
-        addAndMakeVisible(&linkBtn);
-        addAndMakeVisible(&emissionSlider);
-        addAndMakeVisible(&durationSlider);
-
-        /*
-
-        //speedSliderAttachment =
-        //    std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, params::speed::id, speedSlider);
-
-        speedLabel.setText((const str)params::speed::name, juce::dontSendNotification);
-        speedLabel.setJustificationType(juce::Justification::centred);
-        speedLabel.setColour(juce::Label::textColourId, colours::perleBlanc);
-        speedLabel.setFont(juce::Font(13.0f));
-
-        speedSlider.setRange(params::speed::min, params::speed::max);
-        speedSlider.setSkewFactorFromMidPoint(params::speed::skewFactor);
-
-        sustainRatioSlider.setRange(params::sustainRatio::min, params::sustainRatio::max);
-        sustainRatioSlider.setSkewFactorFromMidPoint(params::sustainRatio::skewFactor);
-
-        traversalFreqSlider.setRange(params::traversalFreq::min, params::traversalFreq::max);
-        traversalFreqSlider.setSkewFactorFromMidPoint((params::traversalFreq::skewFactor));
-
-        addAndMakeVisible(&speedSlider);
-        addAndMakeVisible(&sustainRatioSlider);
-        addAndMakeVisible(&traversalFreqSlider);
-
-        // bottom row
-
-        addAndMakeVisible(&envelopeControlGroup);
-        addAndMakeVisible(&traversalControlGroup);
-
-        //apvts.addParameterListener(grainsTraversalModeId, this);
-        //apvts.addParameterListener(grainsEnvelopeModeId, this); */
-
-        attackSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, params::attack::id, attackSlider);
-        decaySliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, params::decay::id, decaySlider);
+        attackSliderAttachment = std::make_unique<ValueTreeState::SliderAttachment>(uic.apvts, params::attack::id, attackSlider);
+        decaySliderAttachment = std::make_unique<ValueTreeState::SliderAttachment>(uic.apvts, params::decay::id, decaySlider);
         sustainSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, params::sustain::id, sustainSlider);
+            std::make_unique<ValueTreeState::SliderAttachment>(uic.apvts, params::sustain::id, sustainSlider);
         releaseSliderAttachment =
-            std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(uic.apvts, params::release::id, releaseSlider);
+            std::make_unique<ValueTreeState::SliderAttachment>(uic.apvts, params::release::id, releaseSlider);
 
         attackSlider.setSliderStyle(juce::Slider::LinearBarVertical);
         decaySlider.setSliderStyle(juce::Slider::LinearBarVertical);
         sustainSlider.setSliderStyle(juce::Slider::LinearBarVertical);
         releaseSlider.setSliderStyle(juce::Slider::LinearBarVertical);
 
+        attackSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+        decaySlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+        sustainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+        releaseSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
+
+        attackLabel.setText("A", juce::NotificationType::dontSendNotification);
+        decayLabel.setText("D", juce::NotificationType::dontSendNotification);
+        sustainLabel.setText("S", juce::NotificationType::dontSendNotification);
+        releaseLabel.setText("R", juce::NotificationType::dontSendNotification);
+
+        attackLabel.getProperties().set("isValue", true); 
+        decayLabel.getProperties().set("isValue", true);
+        sustainLabel.getProperties().set("isValue", true);
+        releaseLabel.getProperties().set("isValue", true);
+
+        addAndMakeVisible(&linkBtn);
+        addAndMakeVisible(&emissionSlider);
+        addAndMakeVisible(&durationSlider);
         addAndMakeVisible(&attackSlider);
         addAndMakeVisible(&decaySlider);
         addAndMakeVisible(&sustainSlider);
         addAndMakeVisible(&releaseSlider);
+        addAndMakeVisible(&attackLabel);
+        addAndMakeVisible(&decayLabel);
+        addAndMakeVisible(&sustainLabel);
+        addAndMakeVisible(&releaseLabel);
+        addAndMakeVisible(&envelopeRotaryMenu);
+        addAndMakeVisible(&traversalRotaryMenu);
+        addAndMakeVisible(&panSlider);
+        addAndMakeVisible(&speedSlider);
     }
 
     void GrainsPanel::linkButtonClicked() { setLinkButtonImage(); }
@@ -127,119 +118,97 @@ namespace particules
         }
     }
 
-    void GrainsPanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::lightBlack); }
+    void GrainsPanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::deepBlack); /* ou lightBlack*/ }
 
     void GrainsPanel::resized()
     {
         juce::Rectangle<int> area = getLocalBounds();
+        const int margin = juce::jmax(5, area.getWidth() / 50);
+        const int sliderMargin = margin / 2;
+        area.reduced(margin);
 
-        const int rowHeight = area.getHeight() / 3;
-        juce::Rectangle<int> topRow = area.removeFromTop(rowHeight);
+        juce::Rectangle<int> leftCoreArea = area.removeFromLeft(static_cast<int>(area.getWidth() * 0.5f));
+        area.removeFromLeft(margin);
+        juce::Rectangle<int> rightArea = area;
 
-        // top row
+        juce::Rectangle<int> topRow = leftCoreArea.removeFromTop(static_cast<int>(leftCoreArea.getHeight() * 0.5f));
+        juce::Rectangle<int> botRow = leftCoreArea;
 
-        const int labelWidth = getWidth() / 16.f;
-        const int topWidth = topRow.getWidth() / 2;
-        const int topColWidth = juce::jmin(topRow.getWidth() / 2, rowHeight) + 5;
-        const int linkBtnWidth = (area.getWidth() - topColWidth * 2) * 0.25f;
+        int maxSliderHeight = topRow.getHeight();
+        int linkBtnWidth = leftCoreArea.getWidth() / 12;
+        int sliderWidth = leftCoreArea.getWidth() / 2;
 
-        juce::Rectangle<int> leftTopRow = topRow.removeFromLeft(topWidth);
-        juce::Rectangle<int> rigthTopRow = topRow.removeFromLeft(topWidth);
+        juce::Rectangle<int> emissionArea = topRow.removeFromLeft(sliderWidth);
+        juce::Rectangle<int> durationArea = topRow;
 
-        leftTopRow.removeFromLeft(labelWidth);
-        leftTopRow.removeFromRight(labelWidth);
-        emissionSlider.setBounds(leftTopRow);
+        int botHalfWidth = botRow.getWidth() / 2;
+        juce::Rectangle<int> envelopeArea = botRow.removeFromLeft(botHalfWidth);
+        juce::Rectangle<int> traversalArea = botRow;
 
-        rigthTopRow.removeFromLeft(labelWidth);
-        rigthTopRow.removeFromRight(labelWidth);
-        durationSlider.setBounds(rigthTopRow);
+        juce::Rectangle<int> rightTopRow = rightArea.removeFromTop(static_cast<int>(rightArea.getHeight() * 0.5f));
+        juce::Rectangle<int> adsrArea = rightArea;
 
-        const int totalTopRowWidth = topColWidth * 2 + linkBtnWidth;
+        int motionKnobWidth = rightTopRow.getWidth() / 2;
+        juce::Rectangle<int> speedArea = rightTopRow.removeFromLeft(motionKnobWidth);
+        juce::Rectangle<int> panArea = rightTopRow;
 
-        topRow = getLocalBounds().removeFromTop(rowHeight);
-        juce::Rectangle<int> topGroup = topRow.withSizeKeepingCentre(totalTopRowWidth, topRow.getHeight());
-        juce::Rectangle<int> topLeftArea = topGroup.removeFromLeft(topColWidth);
-        juce::Rectangle<int> topLinkArea = topGroup.removeFromLeft(linkBtnWidth);
+        int tightestWidth = juce::jmin(emissionArea.getWidth(), envelopeArea.getWidth(), speedArea.getWidth());
+        int globalSliderSize = juce::jmin(maxSliderHeight, tightestWidth);
 
-        const int btnSize = juce::jmin(topLinkArea.getWidth(), 25);
-        linkBtn.setBounds(topLinkArea.withSizeKeepingCentre(btnSize, btnSize));
+        emissionSlider.setBounds(emissionArea.withSizeKeepingCentre(globalSliderSize, globalSliderSize).reduced(sliderMargin));
+        durationSlider.setBounds(durationArea.withSizeKeepingCentre(globalSliderSize, globalSliderSize).reduced(sliderMargin));
+        envelopeRotaryMenu.setBounds(
+            envelopeArea.withSizeKeepingCentre(globalSliderSize, globalSliderSize).reduced(sliderMargin));
+        traversalRotaryMenu.setBounds(
+            traversalArea.withSizeKeepingCentre(globalSliderSize, globalSliderSize).reduced(sliderMargin));
+        speedSlider.setBounds(speedArea.withSizeKeepingCentre(globalSliderSize, globalSliderSize).reduced(sliderMargin));
+        panSlider.setBounds(panArea.withSizeKeepingCentre(globalSliderSize, globalSliderSize).reduced(sliderMargin));
+        linkBtn.setBounds(emissionArea.getRight() - (linkBtnWidth / 2), emissionArea.getCentreY() - (linkBtnWidth / 2),
+            linkBtnWidth, linkBtnWidth);
 
-        // bottom row
-        const int botColWidth = area.getWidth() / 2;
-        envelopeControlGroup.setBounds(area.removeFromLeft(botColWidth));
-        traversalControlGroup.setBounds(area.removeFromLeft(botColWidth));
+        juce::Rectangle<int> labelsArea = adsrArea.removeFromBottom(adsrArea.getHeight() / 4);
+
+        int numSliders = 8;
+        int slotWidth = adsrArea.getWidth() / numSliders;
+        int barWidth = slotWidth - margin * 2;
+
+        juce::Rectangle<int> attackSlot = adsrArea.removeFromLeft(slotWidth);
+        juce::Rectangle<int> decaySlot = adsrArea.removeFromLeft(slotWidth);
+        juce::Rectangle<int> sustainSlot = adsrArea.removeFromLeft(slotWidth);
+        juce::Rectangle<int> releaseSlot = adsrArea.removeFromLeft(slotWidth);
+
+        attackSlider.setBounds(attackSlot.withSizeKeepingCentre(barWidth, attackSlot.getHeight()));
+        decaySlider.setBounds(decaySlot.withSizeKeepingCentre(barWidth, decaySlot.getHeight()));
+        sustainSlider.setBounds(sustainSlot.withSizeKeepingCentre(barWidth, sustainSlot.getHeight()));
+        releaseSlider.setBounds(releaseSlot.withSizeKeepingCentre(barWidth, releaseSlot.getHeight()));
+
+        juce::Rectangle<int> attackLblSlot = labelsArea.removeFromLeft(slotWidth);
+        juce::Rectangle<int> decayLblSlot = labelsArea.removeFromLeft(slotWidth);
+        juce::Rectangle<int> sustainLblSlot = labelsArea.removeFromLeft(slotWidth);
+        juce::Rectangle<int> releaseLblSlot = labelsArea.removeFromLeft(slotWidth);
+
+        attackLabel.setBounds(attackLblSlot);
+        decayLabel.setBounds(decayLblSlot);
+        sustainLabel.setBounds(sustainLblSlot);
+        releaseLabel.setBounds(releaseLblSlot);
+
+        juce::Justification center = juce::Justification::centred;
+        attackLabel.setJustificationType(center);
+        decayLabel.setJustificationType(center);
+        sustainLabel.setJustificationType(center);
+        releaseLabel.setJustificationType(center);
+
+        juce::Font lblFont = juce::Font(12.0f);
+        juce::Colour lblCol = juce::Colours::white.withAlpha(0.6f);
+
+        //attackLabel.setFont(lblFont);
+        //decayLabel.setFont(lblFont);
+        //sustainLabel.setFont(lblFont);
+        //releaseLabel.setFont(lblFont);
+
+        attackLabel.setColour(juce::Label::textColourId, lblCol);
+        decayLabel.setColour(juce::Label::textColourId, lblCol);
+        sustainLabel.setColour(juce::Label::textColourId, lblCol);
+        releaseLabel.setColour(juce::Label::textColourId, lblCol);
     }
 }
-//void GrainsPanel::parameterChanged(const str& parameterID, float newValue)
-//{
-//    if(parameterID == grainsTraversalMode::id)
-//    {
-//        DBG("TRAVERSAL MODE parameter as value : " + (str)apvts.getPlugingrainserAsValue(grainsTraversalMode::id).toString());
-//        DBG("TRAVERSAL MODE new value : " + (str)newValue);
-//        return;
-//    }
-//    if(parameterID == grainsEnvelopeMode::id)
-//    {
-//        DBG("ENVELOPE MODE parameter as value : " + (str)apvts.getPlugingrainserAsValue(grainsEnvelopeMode::id).toString());
-//        DBG("ENVELOPE MODE new value : " + (str)newValue);
-//        return;
-//    }
-//}
-
-/*
-void GrainsPanel::resized()
-    {
-        auto area = getLocalBounds();
-
-        const float marginRatio = 0.03f;
-        const float labelGapRatio = 0.12f;
-        const int labelOffset = 5;
-
-        area.removeFromRight(45);
-
-        auto topRow = area.removeFromTop(area.getHeight() * 0.33f);
-        auto middleRow = area.removeFromTop(area.getHeight() * 0.33f);
-        auto bottomRow = area.removeFromTop(area.getHeight() * 0.33f);
-
-        auto placeKnob = [&](juce::Rectangle<int> bounds, juce::Slider& slider, juce::Label& label, bool isPrimary) {
-            auto cell = bounds.reduced(juce::roundToInt(bounds.getWidth() * marginRatio));
-
-            float visualRatio = isPrimary ? 0.70f : 0.55f;
-            int available = juce::jmin(cell.getWidth(), cell.getHeight());
-            int visualSize = juce::jlimit(40, 160, juce::roundToInt(available * visualRatio));
-            int visualRadius = visualSize / 2;
-
-            int textMargin = isPrimary ? juce::roundToInt(visualRadius * 0.9f) : juce::roundToInt(visualRadius * 1.3f);
-            int sliderBounds = visualSize + textMargin * 2;
-            slider.setBounds(cell.withSizeKeepingCentre(sliderBounds, sliderBounds));
-            slider.getProperties().set("visualRadius", visualRadius);
-
-            int maxAllowed = juce::jmin(cell.getWidth(), cell.getHeight());
-            if(sliderBounds > maxAllowed)
-                sliderBounds = maxAllowed;
-
-            slider.setBounds(cell.withSizeKeepingCentre(sliderBounds, sliderBounds));
-            slider.getProperties().set("visualRadius", visualRadius);
-
-            int knobBottomY = cell.getCentreY() + visualRadius;
-            int labelY = knobBottomY + labelOffset;
-            int labelHeight = 18;
-
-            label.setBounds(cell.getX(), labelY, cell.getWidth(), labelHeight);
-            label.setJustificationType(juce::Justification::centred);
-            //label.setFont(juce::Font(13.0f));
-            //label.setFont(juce::Font(juce::jmin(13.0f, visualSize * 0.16f)));
-        };
-
-        int topW = topRow.getWidth() / 2;
-        placeKnob(topRow.removeFromLeft(topW), emissionSlider, emissionLabel, true);
-        placeKnob(topRow, durationSlider, durationLabel, true);
-
-        int midW = middleRow.getWidth() / 3;
-        placeKnob(bottomRow.removeFromLeft(midW), speedSlider, speedLabel, false);
-        placeKnob(bottomRow.removeFromLeft(midW), sustainRatioSlider, sustainRatioLabel, false);
-        placeKnob(bottomRow, traversalFreqSlider, traversalFreqLabel, false);
-
-        int botW = bottomRow.getWidth() / 3;
-    }
-*/

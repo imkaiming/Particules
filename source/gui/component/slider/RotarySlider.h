@@ -18,7 +18,7 @@ namespace particules
             setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
             setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 
-            setColour(juce::Slider::rotarySliderFillColourId, colours::violetBleu);
+            setColour(juce::Slider::rotarySliderFillColourId, coloursv2::cyan);
             setColour(juce::Slider::rotarySliderOutlineColourId, colours::grisAnthracite);
 
             getProperties().set("RotaryType", static_cast<int>(RotaryType::primary));

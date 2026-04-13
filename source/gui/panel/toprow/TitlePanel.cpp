@@ -29,25 +29,13 @@ namespace particules
         loadBtn.onClick = [this]() { loadSampleButtonClicked(); };
 
         titleLabel.setText("PARTICULES", juce::dontSendNotification);
+        titleLabel.getProperties().set("isTitle", true);
         titleLabel.setJustificationType(juce::Justification::centred);
-        titleLabel.setColour(juce::Label::textColourId, coloursv2::perleBlanc);
-        titleLabel.setFont(juce::Font(18.0f));
-        titleLabel.setSize(100, static_cast<int>(titleLabel.getFont().getHeight()));
+        titleLabel.setColour(juce::Label::textColourId, coloursv2::deepBlack);
 
         addAndMakeVisible(playBtn);
         addAndMakeVisible(loadBtn);
         addAndMakeVisible(titleLabel);
-
-        //loadBtn.setButtonText("Load Sample");
-        //loadBtn.setEnabled(true);
-        //loadBtn.setColour(juce::Label::textColourId, juce::Colours::white);
-
-        //fileNameBox.setJustificationType(juce::Justification::centred);
-        //fileNameBox.setColour(juce::Label::textColourId, juce::Colours::white);
-        //fileNameBox.setMinimumHorizontalScale(1.0f);
-        //fileNameBox.setText(fileNameBoxPlaceHolder, juce::dontSendNotification);
-        //fileNameBox.setLookAndFeel(&lookAndFeel);
-
     }
 
     TitlePanel::~TitlePanel() {}
@@ -74,15 +62,14 @@ namespace particules
         facade.loadFile();
     }
 
-    void TitlePanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::deepBlack.brighter(0.1f)); }
+    void TitlePanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::perleBlanc); }
 
     void TitlePanel::resized()
     {
         juce::Rectangle<int> area = getLocalBounds();
         const int quarter = getWidth() / 8.f;
 
-
-        juce::Rectangle<int> titleArea= area.removeFromLeft(quarter);
+        juce::Rectangle<int> titleArea = area.removeFromLeft(quarter);
         area.removeFromLeft(quarter * 5.f);
         juce::Rectangle<int> loadArea = area.removeFromLeft(quarter);
         juce::Rectangle<int> playArea = area.removeFromLeft(quarter);
@@ -91,19 +78,6 @@ namespace particules
         titleLabel.setBounds(titleArea);
         loadBtn.setBounds(loadArea.withSizeKeepingCentre(btnHeight, btnHeight));
         playBtn.setBounds(playArea.withSizeKeepingCentre(btnHeight, btnHeight));
-
-
-        //juce::FlexBox fb;
-        //fb.flexDirection = juce::FlexBox::Direction::row;
-        //fb.alignItems = juce::FlexBox::AlignItems::stretch;
-
-        //fb.items.add(juce::FlexItem(titleLabel).withFlex(1.0f));
-        //fb.items.add(juce::FlexItem(loadBtn).withFlex(1.0f));
-        //fb.items.add(juce::FlexItem(playBtn).withFlex(1.0f));
-
-        //fb.performLayout(area);
-
-        //fileNameBox.repaint();
     }
 
     //void TitlePanel::layoutLeft()

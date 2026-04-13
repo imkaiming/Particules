@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../framework/PluginParams.h"
-#include "Map.h"
 #include "MathConstants.h"
 
 namespace particules
@@ -118,7 +117,7 @@ namespace particules
             }
         }
 
-        inline float evaluateEnvelopeWithPlateau(EnvelopeMode mode, float phase, float sustainRatio) noexcept
+        inline float evaluateEnvelope(EnvelopeMode mode, float phase, float sustainRatio) noexcept
         {
             if(sustainRatio <= 0.0f)
                 return evaluateWindow(mode, phase);
@@ -137,38 +136,6 @@ namespace particules
             }
 
             return 1.0f;
-        }
-
-        inline float evaluateTraversalCurve(TraversalMode mode, float phase, float frequencyHz) noexcept
-        {
-            if(mode == TraversalMode::None)
-                return 0.5f;
-
-            //const float visualPeriods = map(frequencyHz, 0.01f, 20.0f, 1.0f, 8.0f);
-            const float p = std::fmod(phase * frequencyHz, 1.0f);
-            float bipolarVal = 0.0f;
-
-            switch(mode)
-            {
-                case TraversalMode::Sine:
-                    bipolarVal = std::sin(twoPi * p);
-                    break;
-
-                case TraversalMode::Triangle:
-                    bipolarVal = 2.0f * std::abs(2.0f * std::fmod(p + 0.75f, 1.0f) - 1.0f) - 1.0f;
-                    break;
-
-                case TraversalMode::Square:
-                    bipolarVal = (p < 0.5f) ? 1.0f : -1.0f;
-                    break;
-
-                case TraversalMode::Random: // fake random
-                    const float step = std::floor(phase * frequencyHz * 4.0f);
-                    bipolarVal = std::fmod(std::sin(step * 12.9898f) * 43758.5453f, 2.0f) * 0.5f;
-                    break;
-            }
-
-            return 0.5f + (bipolarVal * 0.5f);
         }
     }
 

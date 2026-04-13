@@ -2,19 +2,22 @@
 
 #include "../../../framework/GuiTypes.h"
 #include "../../../framework/PluginParams.h"
-#include "DrawButtonMenu.h"
+#include "SliderButtonMenu.h"
 
 namespace particules
 {
-    class EnvelopeButtonMenu : public DrawButtonMenu, private ValueTreeState::Listener
+    class EnvelopeSliderButtonMenu : public SliderButtonMenu, private ValueTreeState::Listener
     {
     public:
-        EnvelopeButtonMenu(ValueTreeState&, const str&, const str&);
-        ~EnvelopeButtonMenu() override;
+        EnvelopeSliderButtonMenu(ValueTreeState&, const str&, const str&);
+        ~EnvelopeSliderButtonMenu() override;
 
         juce::Path createCurvePath(juce::Rectangle<float> bounds) override;
         void showPopupMenu() override;
         juce::Image createMenuIcon(int itemIndex) override;
+
+        float getDragValue() const override;
+        void setDragValue(float newValue) override;
 
     private:
         void parameterChanged(const str& parameterID, float newValue) override;
@@ -30,6 +33,6 @@ namespace particules
         juce::RangedAudioParameter* envelopeModeParam;
         juce::RangedAudioParameter* envelopeRatioParam;
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EnvelopeButtonMenu)
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EnvelopeSliderButtonMenu)
     };
 }

@@ -21,7 +21,7 @@ namespace particules
     {
         const float ratio = 0.012f;
         const int padding = juce::roundToInt(std::min(getWidth(), getHeight()) * ratio);
-        juce::Rectangle<int> area = getLocalBounds(); //.reduced(padding);
+        juce::Rectangle<int> area = getLocalBounds();
 
         juce::FlexBox fb;
         fb.flexDirection = juce::FlexBox::Direction::column;

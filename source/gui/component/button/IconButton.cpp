@@ -24,9 +24,9 @@ namespace particules
         const float alpha = isPressed ? 0.8f : (isHovered ? 1.0f : 0.6f);
         const float padding = getWidth() * 0.25f;
 
-        g.setColour(coloursv2::lightBlack);
+        g.setColour(coloursv2::deepBlack);
         g.fillRoundedRectangle(bounds, 6.0f);
-        g.setColour(coloursv2::blackest);
+        g.setColour(coloursv2::diffuseShadow);
         g.drawRoundedRectangle(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), 12.0f, getWidth() * 0.05f);
 
         if(currentIcon != nullptr)

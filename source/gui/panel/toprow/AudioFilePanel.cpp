@@ -77,7 +77,7 @@ namespace particules
         return false;
     }
 
-    void AudioFilePanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::deepBlack.brighter(0.05f)); }
+    void AudioFilePanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::perleBlanc); }
 
     void AudioFilePanel::resized()
     {

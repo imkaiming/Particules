@@ -26,19 +26,13 @@ namespace particules
         GuiAppEditor(GuiAppProcessor&);
         ~GuiAppEditor() override;
 
-        void paint(juce::Graphics&) override;
+        //void paint(juce::Graphics&) override;
         void resized() override;
 
         const MainPanel& getMainPanel() const noexcept { return mainPanel; };
 
     private:
-        static constexpr const int windowHeightInit = gui::windowHeightInit;
-        static constexpr const int windowHeightMin = gui::windowHeightMin;
-        static constexpr const int windowHeightMax = gui::windowHeightMax;
 
-        static constexpr const int windowWidthInit = gui::windowWidthInit;
-        static constexpr const int windowWidthMin = gui::windowWidthMin;
-        static constexpr const int windowWidthMax = gui::windowWidthMax;
 
         MainLNF lnf;
         MainPanel mainPanel;

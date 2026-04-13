@@ -30,7 +30,7 @@ namespace particules
 
         UIContext& uic;
 
-        juce::Label titleLabel;//, fileNameBox;
+        juce::Label titleLabel;
 
         ProcessorFacade& facade;
         EngineState& engineState;

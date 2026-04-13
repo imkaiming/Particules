@@ -1,7 +1,9 @@
 #include "MainLNF.h"
 
 #include "../../utils/enum/RotaryType.h"
+#include "../../utils/math/EnvelopeMath.h"
 #include "../../utils/math/MathConstants.h"
+#include "../../utils/math/TraversalMath.h"
 #include "BinaryData.h"
 #include "Colours.h"
 
@@ -11,30 +13,62 @@ namespace particules
     //  STATIC HELPER
     namespace
     {
-        void drawLineIndicator(juce::Graphics& g, float cx, float cy, float innerR, float sliderPos, float angleOffset,
-            juce::Colour color, float thickness)
+        void drawLineIndicator(
+            juce::Graphics& g, float cx, float cy, float innerR, float sliderPos, float angleOffset, color c, float thickness)
         {
             const float angle = angleOffset + sliderPos * (pi * 1.5f);
             const float startR = innerR * 0.33f;
             const float endR = innerR * 0.90f;
 
-            g.setColour(color);
+            g.setColour(c);
             g.drawLine(cx + std::sin(angle) * startR, cy - std::cos(angle) * startR, cx + std::sin(angle) * endR,
                 cy - std::cos(angle) * endR, thickness);
+        }
+
+        void splitValueAndUnit(const str& text, str& valueStr, str& unitStr)
+        {
+            int splitIdx = -1;
+            for(int i = 0; i < text.length(); ++i)
+            {
+                juce::juce_wchar c = text[i];
+                if(!juce::CharacterFunctions::isDigit(c) && c != '.' && c != ',' && c != '-' && c != ' ')
+                {
+                    splitIdx = i;
+                    break;
+                }
+            }
+
+            if(splitIdx > 0)
+            {
+                valueStr = text.substring(0, splitIdx).trimEnd();
+                unitStr = text.substring(splitIdx).trimStart();
+            }
+            else
+            {
+                valueStr = text;
+                unitStr = "";
+            }
         }
     }
 
     MainLNF::MainLNF()
     {
-        geistTypeFace = juce::Typeface::createSystemTypefaceFor(juce::Span<const std::byte>(
-            reinterpret_cast<const std::byte*>(BinaryData::GeistLight_ttf), BinaryData::GeistLight_ttfSize));
+        auto loadFont = [](const char* data, int size) {
+            return juce::Typeface::createSystemTypefaceFor(
+                juce::Span<const std::byte>(reinterpret_cast<const std::byte*>(data), size));
+        };
 
-        funnelTypeface = juce::Typeface::createSystemTypefaceFor(juce::Span<const std::byte>(
-            reinterpret_cast<const std::byte*>(BinaryData::FunnelDisplayLight_ttf), BinaryData::FunnelDisplayLight_ttfSize));
+        geistThin = loadFont(BinaryData::GeistThin_ttf, BinaryData::GeistThin_ttfSize);
+        geistExtraLight = loadFont(BinaryData::GeistExtraLight_ttf, BinaryData::GeistExtraLight_ttfSize);
+        geistLight = loadFont(BinaryData::GeistLight_ttf, BinaryData::GeistLight_ttfSize);
+        geistRegular = loadFont(BinaryData::GeistRegular_ttf, BinaryData::GeistRegular_ttfSize);
+        geistMedium = loadFont(BinaryData::GeistMedium_ttf, BinaryData::GeistMedium_ttfSize);
+        geistSemiBold = loadFont(BinaryData::GeistSemiBold_ttf, BinaryData::GeistSemiBold_ttfSize);
+        geistBold = loadFont(BinaryData::GeistBold_ttf, BinaryData::GeistBold_ttfSize);
+        geistExtraBold = loadFont(BinaryData::GeistExtraBold_ttf, BinaryData::GeistExtraBold_ttfSize);
+        geistBlack = loadFont(BinaryData::GeistBlack_ttf, BinaryData::GeistBlack_ttfSize);
 
-        setDefaultSansSerifTypeface(funnelTypeface);
-
-        //valueFont = juce::Font(funnelTypeface).withHeight(14.0f);
+        setDefaultSansSerifTypeface(geistRegular);
     }
 
     //==============================================================================
@@ -71,6 +105,9 @@ namespace particules
             case static_cast<int>(RotaryType::secondaryWithAux):
                 drawSecondaryWithAuxKnob(g, cx, cy, radius, innerR, startAngle, endAngle, sliderPos, slider);
                 break;
+            case static_cast<int>(RotaryType::rotaryMenuWithAux):
+                drawRotaryMenuKnob(g, cx, cy, radius, innerR, startAngle, endAngle, sliderPos, slider);
+                break;
         }
     }
 
@@ -105,7 +142,11 @@ namespace particules
         g.setColour(juce::Colour(0xFF222222));
         g.fillEllipse(cx - innerR - border, cy - innerR - border, innerR * 2.0f + border * 2.0f, innerR * 2.0f + border * 2.0f);
 
-        fillKnobFace(g, cx, cy, innerR);
+        color faceCol = coloursv2::lightBlack;
+        juce::ColourGradient faceGrad(
+            faceCol.darker(0.2f), cx, cy - radius * 0.5f, faceCol.brighter(0.03f), cx, cy + radius * 0.5f, false);
+        g.setGradientFill(faceGrad);
+        g.fillEllipse(cx - radius, cy - radius, radius * 2.0f, radius * 2.0f);
 
         const float lightAngle = -pi * 0.75f;
         const float shadowAngle = lightAngle + pi;
@@ -144,21 +185,21 @@ namespace particules
 
         const float jitterAmount = slider.getProperties().getWithDefault("auxAmount", 0.0f);
         if(jitterAmount > 0.001f)
-            drawJitterArc(g, cx, cy, arcRadius, startAngle, endAngle, angle, jitterAmount, thickness);
+            drawJitterArc(g, cx, cy, arcRadius, startAngle, endAngle, angle, jitterAmount, 2.f);
 
         juce::Path arcVal = createArcPath(cx, cy, arcRadius, startAngle, angle);
-        drawArcGlow(g, arcVal, coloursv2::cyan, radius * 0.05f, 8, 12.0f, 0.1f);
-        drawColoredArc(g, cx, cy, arcRadius, startAngle, angle, coloursv2::cyan, thickness);
+        //drawArcGlow(g, arcVal, coloursv2::cyan, radius * 0.05f, 8, 12.0f, 0.1f);
+        drawColoredArc(g, cx, cy, arcRadius, startAngle, angle, coloursv2::cyan, 2.f);
 
-        drawContour(
-            g, cx, cy, innerR, colours::grisMoyen.withAlpha(0.8f) /* colours::smokyBlack.brighter(0.20f)*/, innerR * 0.03f);
+        //drawContour(
+        //    g, cx, cy, innerR, colours::grisMoyen.withAlpha(0.8f), innerR * 0.03f);
         drawRotarySliderCenteredText(g, slider, cx, cy, radius);
     }
 
     void MainLNF::drawSecondaryWithAuxKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
         float endAngle, float sliderPos, juce::Slider& slider) const
     {
-        const float thickness = radius * 0.01f;
+        const float thickness = radius * 0.03f;
         const float arcRadius = radius - (thickness) * 0.5f;
         const float angle = startAngle + sliderPos * (endAngle - startAngle);
 
@@ -166,13 +207,71 @@ namespace particules
 
         const float jitterAmount = slider.getProperties().getWithDefault("auxAmount", 0.0f);
         if(jitterAmount > 0.001f)
-            drawJitterArc(g, cx, cy, innerR, startAngle, endAngle, angle, jitterAmount, 1.5f);
+            drawJitterArc(g, cx, cy, innerR, startAngle, endAngle, angle, jitterAmount, 2.f);
 
         juce::Path arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
-        drawArcGlow(g, arcVal, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
-        drawColoredArc(g, cx, cy, innerR, startAngle, angle, colours::violetBleu, 1.5f);
+        //drawArcGlow(g, arcVal, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
+        drawColoredArc(g, cx, cy, innerR, startAngle, angle, colours::violetBleu, 2.f);
 
         drawRotarySliderCenteredText(g, slider, cx, cy, radius);
+    }
+
+    void MainLNF::drawRotaryMenuKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
+        float endAngle, float sliderPos, juce::Slider& slider) const
+    {
+        const float thickness = radius * 0.03f;
+        const float arcRadius = radius - thickness * 0.5f;
+        const float angle = startAngle + sliderPos * (endAngle - startAngle);
+
+        drawBorderArc(g, cx, cy, arcRadius, startAngle, endAngle, 0.4f, thickness);
+
+        const float jitterAmount = slider.getProperties().getWithDefault("auxAmount", 0.0f);
+        if(jitterAmount > 0.001f)
+            drawJitterArc(g, cx, cy, arcRadius, startAngle, endAngle, angle, jitterAmount, thickness);
+
+        juce::Path arcVal = createArcPath(cx, cy, arcRadius, startAngle, angle);
+        drawColoredArc(g, cx, cy, arcRadius, startAngle, angle, coloursv2::cyan, thickness);
+
+        juce::String type = slider.getProperties().getWithDefault("menuControlType", "");
+        int mode = slider.getProperties().getWithDefault("currentMode", 0);
+        float realValue = slider.getValue();
+
+        const float curvePadding = innerR * 0.35f;
+        const float curveW = (innerR - curvePadding) * 1.333f;
+        const float curveH = curveW;
+        const float startX = cx - (curveW * 0.5f);
+        const float startY = cy - (curveH * 0.5f);
+
+        juce::Path curve;
+        const int numPoints = 60;
+
+        for(int i = 0; i <= numPoints; ++i)
+        {
+            float phase = static_cast<float>(i) / numPoints;
+            float val = 0.0f;
+
+            if(type == "envelope")
+            {
+                val = gui::evaluateEnvelope(static_cast<EnvelopeMode>(mode), phase, realValue);
+            }
+            else if(type == "traversal")
+            {
+                val = gui::evaluateTraversal(static_cast<TraversalMode>(mode), phase, realValue);
+            }
+
+            val = juce::jlimit(0.0f, 1.0f, val);
+
+            float px = startX + (phase * curveW);
+            float py = startY + curveH * (1.0f - val);
+
+            if(i == 0)
+                curve.startNewSubPath(px, py);
+            else
+                curve.lineTo(px, py);
+        }
+
+        g.setColour(coloursv2::cyan);
+        g.strokePath(curve, juce::PathStrokeType(2.0f, juce::PathStrokeType::mitered, juce::PathStrokeType::rounded));
     }
 
     void MainLNF::drawAuxKnob(
@@ -193,7 +292,7 @@ namespace particules
         if(currentSpread < 0.00001f)
             return;
 
-        // shifting the center so the arc never gets clipped 
+        // shifting the center so the arc never gets clipped
         float jitterCenter = primaryAngle;
 
         if(primaryAngle - currentSpread < startAngle)
@@ -214,8 +313,8 @@ namespace particules
 
         juce::Path jitterArc = createArcPath(cx, cy, jitterArcRadius, jitterStart, jitterEnd);
 
-        drawArcGlow(g, jitterArc, coloursv2::yellow, baseLineWidth, 8, 7.5f, 0.05f);
-        drawColoredArc(g, cx, cy, jitterArcRadius, jitterStart, jitterEnd, coloursv2::yellow, baseLineWidth * 1.2f);
+        //drawArcGlow(g, jitterArc, coloursv2::yellow, baseLineWidth, 8, 7.5f, 0.05f);
+        drawColoredArc(g, cx, cy, jitterArcRadius, jitterStart, jitterEnd, colours::lavender /*, baseLineWidth * 1.2f*/);
     }
 
     //==============================================================================
@@ -223,37 +322,21 @@ namespace particules
     void MainLNF::drawRotarySliderCenteredText(juce::Graphics& g, juce::Slider& slider, float cx, float cy, float radius) const
     {
         const bool isHovered = slider.isMouseOverOrDragging();
-        juce::String text = slider.getTextFromValue(slider.getValue());
+        str text = slider.getTextFromValue(slider.getValue());
 
-        juce::String valueStr, unitStr;
-        int splitIdx = -1;
-
-        for(int i = 0; i < text.length(); ++i)
+        if(text.isEmpty())
         {
-            juce::juce_wchar c = text[i];
-            if(!juce::CharacterFunctions::isDigit(c) && c != '.' && c != ',' && c != '-' && c != ' ')
-            {
-                splitIdx = i;
-                break;
-            }
+            text = juce::String(slider.getValue(), 2); // 2 décimales
         }
 
-        if(splitIdx > 0)
-        {
-            valueStr = text.substring(0, splitIdx).trimEnd();
-            unitStr = text.substring(splitIdx).trimStart();
-        }
-        else
-        {
-            valueStr = text;
-        }
+        str valueStr, unitStr;
+        splitValueAndUnit(text, valueStr, unitStr);
 
-        const float valueFontSize = radius * 0.4f;
-        const float unitFontSize = radius * 0.3f;
+        const float valueFontSize = radius * 0.35f;
+        const float unitFontSize = radius * 0.25f;
         const float spacing = radius * 0.05f;
 
-        color textColor = isHovered ? slider.findColour(juce::Slider::textBoxTextColourId)
-                                    : slider.findColour(juce::Slider::textBoxTextColourId).withAlpha(0.7f);
+        color textColor = isHovered ? coloursv2::white : coloursv2::white.withAlpha(0.85f);
         g.setColour(textColor);
 
         if(unitStr.isNotEmpty())
@@ -261,45 +344,90 @@ namespace particules
             const float totalHeight = valueFontSize + unitFontSize + spacing;
             float yPos = cy - totalHeight * 0.5f;
 
-            g.setFont(valueFontSize);
+            g.setFont(juce::Font(geistRegular).withHeight(valueFontSize));
             g.drawText(valueStr, cx - radius * 0.8f, yPos, radius * 1.6f, valueFontSize, juce::Justification::centred, false);
 
             yPos += valueFontSize + spacing;
-            g.setFont(juce::Font(unitFontSize));
+            g.setFont(juce::Font(geistRegular).withHeight(unitFontSize));
             g.drawText(unitStr, cx - radius * 0.8f, yPos, radius * 1.6f, unitFontSize, juce::Justification::centred, false);
         }
         else
         {
-            g.setFont(valueFontSize);
+            g.setFont(juce::Font(geistRegular).withHeight(valueFontSize));
             g.drawText(valueStr, cx - radius * 0.8f, cy - valueFontSize * 0.5f, radius * 1.6f, valueFontSize,
                 juce::Justification::centred, false);
         }
     }
 
-    void MainLNF::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float /*minPos*/,
-        float /*maxPos*/, const juce::Slider::SliderStyle style, juce::Slider& /*slider*/)
+    void MainLNF::drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float minPos,
+        float maxPos, const juce::Slider::SliderStyle style, juce::Slider& slider)
     {
-        if(style != juce::Slider::LinearHorizontal)
-            return;
+        if(style == juce::Slider::LinearBarVertical || style == juce::Slider::LinearVertical)
+        {
+            juce::Rectangle<float> bounds = juce::Rectangle<int>(x, y, width, height).toFloat();
 
-        auto bounds = juce::Rectangle<float>(x, y, width, height);
-        const float trackHeight = juce::jmax(6.0f, bounds.getHeight() * 0.35f);
-        const float cy = bounds.getCentreY();
-        const float handleSize = trackHeight * 0.8f;
-        const float handleRadius = handleSize * 0.5f;
+            const float barW = juce::jmin(14.0f, bounds.getWidth());
+            juce::Rectangle<float> barBounds = bounds.withSizeKeepingCentre(barW, bounds.getHeight());
+            const float corner = juce::jmin(4.0f, barW * 0.5f);
 
-        juce::Rectangle<float> track(
-            bounds.getX() - handleRadius, cy - trackHeight * 0.5f, bounds.getWidth() + handleRadius * 2.0f, trackHeight);
+            g.setColour(coloursv2::deepBlack);
+            g.fillRoundedRectangle(barBounds, corner);
 
-        g.setColour(coloursv2::blackest);
-        g.fillRoundedRectangle(track, trackHeight * 0.5f);
+            float fillHeight = barBounds.getBottom() - sliderPos;
 
-        const float minX = bounds.getX() + handleRadius;
-        const float maxX = bounds.getRight() - handleRadius;
-        const float slideX = juce::jlimit(minX, maxX, sliderPos);
+            if(fillHeight > 0.1f)
+            {
+                juce::Rectangle<float> fillRect(barBounds.getX(), sliderPos, barW, fillHeight);
+                g.setColour(colours::grisAnthracite);
+                g.fillRect(fillRect);
 
-        g.setColour(coloursv2::perleBlanc);
-        g.fillEllipse(slideX - handleRadius, cy - handleRadius, handleSize, handleSize);
+                g.setColour(coloursv2::perleBlanc);
+                g.fillRect(barBounds.getX(), sliderPos, barW, 2.0f);
+            }
+
+            str text = slider.getTextFromValue(slider.getValue());
+
+            str valueStr, unitStr;
+            splitValueAndUnit(text, valueStr, unitStr);
+
+            const float valueFontSize = 11.0f;
+            const float unitFontSize = 10.0f;
+            const float textCenterY = bounds.getBottom() - 24.0f;
+
+            // drop shadow
+            g.setColour(juce::Colours::black.withAlpha(0.4f));
+            g.setFont(juce::Font(geistBold).withHeight(valueFontSize));
+            g.drawText(valueStr, bounds.getX() + 1.0f, textCenterY - valueFontSize + 1.0f, bounds.getWidth(), valueFontSize,
+                juce::Justification::centred, false);
+
+            // text value
+            g.setColour(coloursv2::perleBlanc);
+            g.drawText(valueStr, bounds.getX(), textCenterY - (valueFontSize / 2.0f), bounds.getWidth(), valueFontSize,
+                juce::Justification::centred, false);
+        }
+        return;
+
+        if(style == juce::Slider::LinearHorizontal)
+        {
+            auto bounds = juce::Rectangle<float>(x, y, width, height);
+            const float trackHeight = juce::jmax(6.0f, bounds.getHeight() * 0.35f);
+            const float cy = bounds.getCentreY();
+            const float handleSize = trackHeight * 0.8f;
+            const float handleRadius = handleSize * 0.5f;
+
+            juce::Rectangle<float> track(
+                bounds.getX() - handleRadius, cy - trackHeight * 0.5f, bounds.getWidth() + handleRadius * 2.0f, trackHeight);
+
+            g.setColour(coloursv2::deepBlack);
+            g.fillRoundedRectangle(track, trackHeight * 0.5f);
+
+            const float minX = bounds.getX() + handleRadius;
+            const float maxX = bounds.getRight() - handleRadius;
+            const float slideX = juce::jlimit(minX, maxX, sliderPos);
+
+            g.setColour(coloursv2::perleBlanc);
+            g.fillEllipse(slideX - handleRadius, cy - handleRadius, handleSize, handleSize);
+        }
     }
 
     juce::Path MainLNF::createArcPath(float cx, float cy, float radius, float startAngle, float endAngle) const
@@ -309,8 +437,8 @@ namespace particules
         return path;
     }
 
-    void MainLNF::drawColoredArc(juce::Graphics& g, float cx, float cy, float radius, float startAngle, float endAngle,
-        juce::Colour color, float thickness) const
+    void MainLNF::drawColoredArc(
+        juce::Graphics& g, float cx, float cy, float radius, float startAngle, float endAngle, color color, float thickness) const
     {
         if(std::abs(endAngle - startAngle) < 0.001f)
             return;
@@ -319,17 +447,17 @@ namespace particules
         g.strokePath(p, juce::PathStrokeType(thickness, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
     }
 
-    void MainLNF::drawArcGlow(juce::Graphics& g, const juce::Path& path, color c, float baseWidth, int steps,
-        float spreadMultiplier, float alphaBase) const
+    void MainLNF::drawArcGlow(
+        juce::Graphics& g, const juce::Path& path, color c, float width, int steps, float spreadMultiplier, float alphaBase) const
     {
-        const float glowSpread = baseWidth * spreadMultiplier;
+        const float glowSpread = width * spreadMultiplier;
         for(int i = steps; i > 0; --i)
         {
             const float t = static_cast<float>(i) / steps;
-            const float currentWidth = baseWidth + (glowSpread * t);
+            const float currentWidth = width + (glowSpread * t);
             const float alpha = alphaBase * std::pow(1.0f - t, 2.0f);
-            //g.setColour(c.withAlpha(alpha));
-            //g.strokePath(path, juce::PathStrokeType(currentWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+            g.setColour(c.withAlpha(alpha));
+            g.strokePath(path, juce::PathStrokeType(currentWidth, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
         }
     }
 
@@ -351,15 +479,150 @@ namespace particules
         g.drawEllipse(cx - radius, cy - radius, radius * 2.0f, radius * 2.0f, thickness);
     }
 
-    void MainLNF::fillKnobFace(juce::Graphics& g, float cx, float cy, float radius) const
+    //==============================================================================
+    // TEXT BUTTONS & TABS
+    void MainLNF::drawButtonBackground(
+        juce::Graphics& g, juce::Button& button, const juce::Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown)
     {
-        juce::Colour faceCol(0xff444444);
-        juce::ColourGradient faceGrad(
-            faceCol.darker(0.2f), cx, cy - radius * 0.5f, faceCol.brighter(0.03f), cx, cy + radius * 0.5f, false);
-        g.setGradientFill(faceGrad);
-        g.fillEllipse(cx - radius, cy - radius, radius * 2.0f, radius * 2.0f);
+        juce::Rectangle<float> bounds = button.getLocalBounds().toFloat();
+        const bool isActive = button.getToggleState();
+
+        if(button.getRadioGroupId() != 0)
+        {
+            juce::Colour bgCol = isActive ? coloursv2::deepBlack : coloursv2::deepBlack.darker(0.2f);
+
+            // Slight hover effect for inactive tabs
+            if(isMouseOverButton && !isActive)
+                bgCol = bgCol.brighter(0.05f);
+
+            g.setColour(bgCol);
+            g.fillRect(bounds);
+
+            if(isActive)
+            {
+                g.setColour(coloursv2::cyan);
+                g.fillRect(bounds.removeFromTop(2.0f));
+            }
+            else
+            {
+                // Shadow line at the bottom of inactive tabs to separate them from the panel
+                //g.setColour(juce::Colours::black.withAlpha(0.4f));
+                //g.fillRect(bounds.removeFromBottom(1.0f));
+
+                // Subtle separator line between inactive tabs
+                //g.setColour(juce::Colours::black.withAlpha(0.2f));
+                //g.fillRect(bounds.removeFromRight(1.0f));
+            }
+        }
+        else
+        {
+            // STANDARD BUTTON STYLE
+            color col = backgroundColour;
+
+            if(isButtonDown)
+                col = col.darker(0.2f);
+            else if(isMouseOverButton)
+                col = col.brighter(0.1f);
+
+            g.setColour(col);
+            g.fillRoundedRectangle(bounds, 4.0f);
+
+            g.setColour(juce::Colours::white.withAlpha(0.2f));
+            g.drawRoundedRectangle(bounds.reduced(0.5f), 4.0f, 1.0f);
+        }
     }
 
+    void MainLNF::drawButtonText(juce::Graphics& g, juce::TextButton& button, bool isMouseOverButton, bool isButtonDown)
+    {
+        g.setFont(valueFont.withHeight(14.0f));
+
+        const bool isActive = button.getToggleState();
+
+        if(button.getRadioGroupId() != 0)
+        {
+            // TAB TEXT STYLE
+            juce::Colour textCol = isActive ? coloursv2::white : coloursv2::white.withAlpha(0.4f);
+
+            if(isMouseOverButton && !isActive)
+                textCol = textCol.withAlpha(0.7f);
+
+            g.setColour(textCol);
+            g.drawText(button.getButtonText(), button.getLocalBounds(), juce::Justification::centred, true);
+        }
+        else
+        {
+            // STANDARD BUTTON TEXT STYLE
+            g.setColour(button.findColour(juce::TextButton::textColourOffId));
+            g.drawText(button.getButtonText(), button.getLocalBounds(), juce::Justification::centred, true);
+        }
+    }
+
+    juce::Font MainLNF::getLabelFont(juce::Label& label)
+    {
+        if(label.getProperties().contains("isTitle"))
+            return juce::Font(geistSemiBold).withHeight(18.0f).withExtraKerningFactor(0.1f);
+
+        if(label.getProperties().contains("isTab"))
+            return juce::Font(geistMedium).withHeight(16.0f).withExtraKerningFactor(0.05f);
+
+        if(label.getProperties().contains("isName"))
+            return juce::Font(geistRegular).withHeight(14.0f).withExtraKerningFactor(0.05f);
+
+        if(label.getProperties().contains("isValue"))
+            return juce::Font(geistLight).withHeight(12.0f);
+
+        return juce::Font(geistRegular).withHeight(13.0f);
+    }
+
+    //==============================================================================
+    // POPUP MENU STYLE
+    int MainLNF::getPopupMenuBorderSize() { return 1; }
+
+    void MainLNF::getIdealPopupMenuItemSize(
+        const str& text, bool isSeparator, int standardMenuItemHeight, int& idealWidth, int& idealHeight)
+    {
+        if(isSeparator)
+        {
+            idealWidth = 50;
+            idealHeight = 5;
+            return;
+        }
+        idealWidth = 60;
+        idealHeight = 40;
+    }
+
+    void MainLNF::drawPopupMenuBackground(juce::Graphics& g, int width, int height)
+    {
+        g.setColour(coloursv2::deepBlack);
+        g.fillRect(0, 0, width, height);
+        g.setColour(coloursv2::deepBlack);
+        g.drawRect(0, 0, width, height, 1);
+    }
+
+    void MainLNF::drawPopupMenuItem(juce::Graphics& g, const juce::Rectangle<int>& area, bool isSeparator, bool isActive,
+        bool isHighlighted, bool isTicked, bool hasSubMenu, const str& text, const str& shortcutKeyText,
+        const juce::Drawable* icon, const juce::Colour* textColour)
+    {
+        if(isSeparator)
+            return;
+
+        // on Hover effect
+        if(isHighlighted && isActive)
+        {
+            g.setColour(coloursv2::lightBlack);
+            g.fillRect(area);
+        }
+
+        if(icon != nullptr)
+            icon->drawWithin(g, area.toFloat(), juce::RectanglePlacement::centred, 1.0f);
+
+        else if(text.isNotEmpty())
+        {
+            g.setColour(isHighlighted ? coloursv2::cyan : coloursv2::perleBlanc);
+            g.setFont(14.0f);
+            g.drawText(text, area.reduced(10, 0), juce::Justification::centredLeft, true);
+        }
+    }
 }
 
 /*
@@ -371,7 +634,7 @@ namespace particules
         KnobStyle style = KnobStyle::Secondary;
         if(slider.getProperties().contains("knobStyle"))
         {
-            juce::String s = slider.getProperties()["knobStyle"].toString();
+            str s = slider.getProperties()["knobStyle"].toString();
             if(s == "primary")
                 style = KnobStyle::Primary;
             else if(s == "tertiary")

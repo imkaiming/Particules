@@ -10,13 +10,14 @@ namespace particules
 
         inline const color lightBlack{0xff171717};
         inline const color deepBlack{0xff111111};
-        inline const color blackest{0xff101010};
+        inline const color diffuseShadow{0xff101010};
         inline const color emerald{0xff89d07d};
         inline const color midGrey{0xffb5b3b3};
         inline const color turquoise{0xff51a8a4};
         inline const color cyan{0xff00ffff};
         inline const color yellow{0xffffff00};
         inline const color perleBlanc{0xffefefef};
+        inline const color white{0xffffffff};
     }
 
     namespace colours

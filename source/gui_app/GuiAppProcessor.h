@@ -16,7 +16,7 @@
 // just to test GUI separated than the audio DSP
 namespace particules
 {
-    inline std::unique_ptr<juce::AudioParameterFloat> createSkewedWithOffset(const juce::ParameterID& id,
+    inline std::unique_ptr<juce::AudioParameterFloat> createNormalizedParameter(const juce::ParameterID& id,
         const str& name, float min, float max, float skew, float init,
         std::function<str(float, int)> stringFromValueFunc,
         std::function<float(const str&)> valueFromStringFunc)

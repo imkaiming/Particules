@@ -204,7 +204,7 @@ namespace particules
 
         // EMISSION //
 
-        layout.add(createSkewedWithOffset(
+        layout.add(createNormalizedParameter(
             params::emission::id, params::emission::name, params::emission::min, params::emission::max,
             params::emission::skewFactor, params::emission::init,
             [](float v, int) -> str { return str(v, (v > 1.f ? 2 : (v > 0.101f ? 3 : 4))) + " g/s"; },
@@ -212,7 +212,7 @@ namespace particules
 
         // DURATION //
 
-        layout.add(createSkewedWithOffset(
+        layout.add(createNormalizedParameter(
             params::duration::id, params::duration::name, params::duration::min, params::duration::max,
             params::duration::skewFactor, params::duration::init,
             [](float v, int) -> str {
@@ -225,9 +225,22 @@ namespace particules
             [](const str& s) -> float { return s.getFloatValue(); }));
 
         // SPEED //
+        layout.add(createNormalizedParameter(
+            params::speed::id, params::speed::name, params::speed::min, params::speed::max, params::speed::skewFactor,
+            params::speed::init, [](float v, int) -> str { return ""; },
+            [](const str& s) -> float { return s.getFloatValue(); }));
 
-        layout.add(std::make_unique<juce::AudioParameterFloat>(params::speed::id, params::speed::name,
-            juce::NormalisableRange<float>(params::speed::min, params::speed::max, 0.001f), params::speed::init));
+        //layout.add(std::make_unique<juce::AudioParameterFloat>(params::speed::id, params::speed::name,
+        //    juce::NormalisableRange<float>(params::speed::min, params::speed::max, 0.001f), params::speed::init));
+
+        // PAN //
+
+        layout.add(createNormalizedParameter(
+            params::pan::id, params::pan::name, params::pan::min, params::pan::max, params::pan::skewFactor, params::pan::init,
+            [](float v, int) -> str { return ""; }, [](const str& s) -> float { return s.getFloatValue(); }));
+
+        //layout.add(std::make_unique<juce::AudioParameterFloat>(params::pan::id, params::pan::name,
+        //    juce::NormalisableRange<float>(params::pan::min, params::pan::max, 0.001f), params::pan::init));
 
         // POSITION //
 
