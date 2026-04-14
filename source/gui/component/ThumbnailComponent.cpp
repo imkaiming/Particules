@@ -13,18 +13,17 @@
 namespace particules
 {
     ThumbnailComponent::ThumbnailComponent(UIContext& uic)
-        : audioThumbnail{uiState.getAudioThumbnail()}, grainVisualComponent(uic), uiState{uic.uiState},
-          engineState{uic.engineState}
+        : audioThumbnail{uic.uiState.getAudioThumbnail()}/*, uiState{uic.uiState}*/
     {
         audioThumbnail.addChangeListener(this);
 
-        addAndMakeVisible(&grainVisualComponent);
+        setOpaque(true);
+        //addAndMakeVisible(&grainVisualComponent);
+        //grainVisualComponent.toBack();
 
         if(audioThumbnail.isFullyLoaded())
             repaint();
 
-        setOpaque(false);
-        grainVisualComponent.toBack();
 
         noFileLabel.setText("No File Loaded", juce::dontSendNotification);
         noFileLabel.setJustificationType(juce::Justification::centred);
@@ -76,7 +75,7 @@ namespace particules
 
         const int numColumns = 10;
 
-        g.setColour(juce::Colours::white.withAlpha(0.06f));
+        g.setColour(juce::Colours::white.withAlpha(0.05f));
 
         for(int i = 1; i < numColumns; ++i)
         {
@@ -88,7 +87,7 @@ namespace particules
         {
             const float y = h * static_cast<float>(i) / static_cast<float>(numRows);
 
-            const float alpha = (i == numRows / 2) ? 0.12f : 0.06f;
+            const float alpha = (i == numRows / 2) ? 0.10f : 0.05f;
             g.setColour(juce::Colours::white.withAlpha(alpha));
             g.drawHorizontalLine(static_cast<int>(y), 0.0f, w);
         }
@@ -99,7 +98,7 @@ namespace particules
     void ThumbnailComponent::resized()
     {
         juce::Rectangle<int> area = getLocalBounds();
-        grainVisualComponent.setBounds(area);
+        //grainVisualComponent.setBounds(area);
         noFileLabel.setBounds(area);
     }
 
@@ -107,7 +106,7 @@ namespace particules
     {
         if(source == &audioThumbnail)
         {
-            grainVisualComponent.setNumSamples(engineState.getNumSamples());
+            //grainVisualComponent.setNumSamples(engineState.getNumSamples());
             repaint();
             if(audioThumbnail.isFullyLoaded())
             {

@@ -16,7 +16,7 @@ namespace particules
     struct UIContext;
     struct ProcessorFacade;
     class EngineState;
-    class TitlePanel : public juce::Component
+    class TitlePanel : public juce::Component, private juce::ChangeListener
     {
     public:
         TitlePanel(UIContext& uic);
@@ -24,6 +24,8 @@ namespace particules
 
         void paint(juce::Graphics&) override;
         void resized() override;
+
+        void changeListenerCallback(juce::ChangeBroadcaster*);
 
     private:
         //static constexpr const char* fileNameBoxPlaceHolder = "audio_file_03.wav";

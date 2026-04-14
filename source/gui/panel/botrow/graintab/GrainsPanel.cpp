@@ -17,8 +17,8 @@ namespace particules
           emissionSlider{engineState, RotaryType::primaryWithAux, uic.apvts, params::emission::name, params::emission::id},
           durationSlider{engineState, RotaryType::primaryWithAux, uic.apvts, params::duration::name, params::duration::id},
           envelopeRotaryMenu{
-              uic.apvts, params::envelopeMode::id, params::envelopeRatio::id, "toreplace"}, // will be param::jitter::id
-          traversalRotaryMenu{uic.apvts, params::traversalMode::id, params::traversalFreq::id, "toreplace"},
+              uic.apvts, params::envelopeMode::id, params::envelopeRatio::id, params::envelopeRatio_jitter::id},
+          traversalRotaryMenu{uic.apvts, params::traversalMode::id, params::traversalFreq::id, params::traversalFreq_jitter::id},
           speedSlider{engineState, RotaryType::secondaryWithAux, uic.apvts, params::speed::name, params::speed::id},
           panSlider{engineState, RotaryType::secondaryWithAux, uic.apvts, params::pan::name, params::pan::id}
 

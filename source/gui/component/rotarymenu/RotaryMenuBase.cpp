@@ -27,10 +27,10 @@ namespace particules
         nameLabel.setColour(juce::Label::textColourId, coloursv2::perleBlanc);
         nameLabel.setInterceptsMouseClicks(false, false);
 
-        mainAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, mainId, mainSlider);
+        mainAttachment = std::make_unique<ValueTreeState::SliderAttachment>(apvts, mainId, mainSlider);
         if(!aId.isEmpty())
         {
-            auxAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(apvts, aId, auxSlider);
+            auxAttachment = std::make_unique<ValueTreeState::SliderAttachment>(apvts, aId, auxSlider);
         }
 
         currentMode = juce::roundToInt(apvts.getRawParameterValue(modeId)->load());

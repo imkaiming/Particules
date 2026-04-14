@@ -4,13 +4,12 @@
 #include "dsp/GranularEngine.h"
 #include "framework/PluginTypes.h"
 #include "framework/audio/AudioFileLoader.h"
+#include "framework/bridge/EngineState.h"
 #include "framework/bridge/GrainVisualBuffer.h"
 #include "framework/bridge/ParameterView.h"
-#include "framework/bridge/EngineState.h"
 #include "framework/bridge/UIState.h"
-#include "utils/struct/UIContext.h"
 #include "utils/struct/ProcessorFacade.h"
-
+#include "utils/struct/UIContext.h"
 
 namespace juce
 {
@@ -31,6 +30,15 @@ namespace particules
                 .withCategory(juce::AudioProcessorParameter::genericParameter)
                 .withStringFromValueFunction(stringFromValueFunc)
                 .withValueFromStringFunction(valueFromStringFunc));
+    }
+
+    inline std::unique_ptr<juce::AudioParameterFloat> createNormalizedParameter(
+        const juce::ParameterID& id, const str& name, float min, float max, float skew = 0.5f, float init = 0.5f)
+    {
+        juce::NormalisableRange<float> range{min, max};
+        range.setSkewForCentre(skew);
+
+        return std::make_unique<juce::AudioParameterFloat>(id, name, range, init);
     }
 
     class GranularEngine;
@@ -102,11 +110,11 @@ namespace particules
 
         AudioFileLoader loader;
 
-        // is called after the audio file loader has successfully 
+        // is called after the audio file loader has successfully
         // load a sample to init all the audio related component
         // engine state and uistate are updated and uistate will
         // broadcast the message to the UI component
-        AudioLoadedCallback onAudioLoadedCallback; 
+        AudioLoadedCallback onAudioLoadedCallback;
 
         //std::function<void(std::shared_ptr<const AudioBuffer>)> setInputBufferCallback;
         //juce::UndoManager undoManager;

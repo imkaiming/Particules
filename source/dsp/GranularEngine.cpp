@@ -6,7 +6,7 @@
 namespace particules
 {
     GranularEngine::GranularEngine(GrainVisualBuffer& vb, EngineState& es)
-        : scheduler{}, grainProcessor{pool, posMod, envLut, vb}, pool{}, posMod{}, refreshRate{60.f}, sampleAccumulator{0},
+        : scheduler{}, grainProcessor{pool, posMod, envLut, vb}, pool{}, posMod{}, refreshRate{gui::refreshRate}, sampleAccumulator{0},
           threshold{0}, smoothedParams{}, engineState{es}
     {
         spawnCallback = [this](const ParameterSnapshot& ps) { grainProcessor.spawn(ps); };

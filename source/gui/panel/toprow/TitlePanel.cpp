@@ -4,6 +4,7 @@
 
 #include "../../../framework/PluginParams.h"
 #include "../../../framework/bridge/EngineState.h"
+#include "../../../framework/bridge/UIState.h"
 #include "../../../utils/UIHelpers.h"
 #include "../../../utils/struct/ProcessorFacade.h"
 #include "../../../utils/struct/UIContext.h"
@@ -18,6 +19,9 @@ namespace particules
         : playBtn{(const str) "playBtn"}, loadBtn{(const str) "loadBtn"}, uic{uic}, facade{uic.facade},
           engineState{uic.engineState}, nextBtn{(const str) "nextBtn"}, previousBtn{(const str) "previousBtn"}
     {
+
+        uic.uiState.addChangeListener(this);
+
         playIcon = UIHelpers::loadSVG(BinaryData::play_svg, BinaryData::play_svgSize, juce::Colours::white);
         pauseIcon = UIHelpers::loadSVG(BinaryData::pause_svg, BinaryData::pause_svgSize, juce::Colours::white);
         loadIcon = UIHelpers::loadSVG(BinaryData::add_folder_svg, BinaryData::add_folder_svgSize, juce::Colours::white);
@@ -45,9 +49,20 @@ namespace particules
         addAndMakeVisible(previousBtn);
         addAndMakeVisible(nextBtn);
         addAndMakeVisible(titleLabel);
+
+        playBtn.setEnabled(false);
     }
 
     TitlePanel::~TitlePanel() {}
+
+    void TitlePanel::changeListenerCallback(juce::ChangeBroadcaster* source)
+    {
+        if(source == &uic.uiState)
+        {
+            // Active ou désactive le bouton play selon l'état du fichier en mémoire
+            playBtn.setEnabled(uic.uiState.isFileLoaded());
+        }
+    }
 
     void TitlePanel::playButtonClicked()
     {

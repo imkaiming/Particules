@@ -3,22 +3,25 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
+#include <juce_events/juce_events.h>
 
 #include "../../../framework/GuiTypes.h"
 #include "../../../framework/PluginParams.h"
 #include "../../component/ThumbnailComponent.h"
-#include "../../component/overlay/WaveformOverlay.h"
+#include "../../component/GrainVisualComponent.h"
+#include "../../component/slider/SliderOnWaveform.h"
 
 // the Audio File Frame provide the control to load and play the audio.
 namespace particules
 {
     class UIState;
     struct UIContext;
-    class AudioFilePanel : public juce::Component, public juce::FileDragAndDropTarget //, public juce::ChangeListener
+    class AudioFilePanel : public juce::Component, public juce::FileDragAndDropTarget , private juce::ChangeListener, public juce::Timer
     {
     public:
         AudioFilePanel(UIContext& uic);
-        ~AudioFilePanel() = default;
+        ~AudioFilePanel() override;
+
         void paint(juce::Graphics&) override;
         void resized() override;
 
@@ -27,24 +30,28 @@ namespace particules
         bool isInterestedInFileDrag(const juce::StringArray&);
         void filesDropped(const juce::StringArray&, int, int);
 
-        UIState& uiState;
+        void changeListenerCallback(juce::ChangeBroadcaster* source) override;
+        void timerCallback() override;
+
         UIContext& uic;
         ValueTreeState& apvts;
+
         ThumbnailComponent thumbnailComponent; // after the file is loaded draw the waveform
+        GrainVisualComponent grainVisualComponent;
+        std::unique_ptr<SliderOnWaveform> sliderOnWaveform;
 
-     
-        std::unique_ptr<WaveformOverlay> waveformOverlay;
+        juce::Label fileNameLabel;
+        juce::Label numGrainsLabel;
+        juce::Label posLabel;
+        juce::Label spanLabel;
 
+        // caching parameter to not 
+        std::atomic<float>* posParam;
+        std::atomic<float>* spanParam;
 
-        static constexpr const char* globalPositionId = params::position::id;
-        static constexpr const char* globalPositionName = params::position::name;
-        static constexpr const float globalPositionMin = params::position::min;
-        static constexpr const float globalPositionMax = params::position::max;
-
-        static constexpr const char* globalSpanId = params::span::id;
-        static constexpr const char* globalSpanName = params::span::name;
-        static constexpr const float globalSpanMin = params::span::min;
-        static constexpr const float globalSpanMax = params::span::max;
+        int lastNumGrains;
+        float lastPos;
+        float lastSpan;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFilePanel)
     };

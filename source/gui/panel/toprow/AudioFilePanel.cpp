@@ -1,6 +1,7 @@
 #include "AudioFilePanel.h"
 
 #include "../../../framework/GuiTypes.h"
+#include "../../../framework/bridge/EngineState.h"
 #include "../../../framework/bridge/UIState.h"
 #include "../../../utils/struct/ProcessorFacade.h"
 #include "../../../utils/struct/UIContext.h"
@@ -8,24 +9,133 @@
 
 namespace particules
 {
-    AudioFilePanel::AudioFilePanel(UIContext& uic) : apvts{uic.apvts}, thumbnailComponent{uic}, uiState{uic.uiState}, uic{uic}
+    AudioFilePanel::AudioFilePanel(UIContext& uic)
+        : uic{uic}, apvts{uic.apvts}, thumbnailComponent{uic}, grainVisualComponent{uic}, posParam{nullptr}, spanParam{nullptr},
+          lastNumGrains{-1}, lastPos{-1.0f}, lastSpan{-1.0f}
     {
-        //uiState.addChangeListener(this); // can now send message
+        uic.uiState.addChangeListener(this); // uistate send a message at setSource(file), audio file panel is listening
 
-        waveformOverlay = std::make_unique<WaveformOverlay>(apvts, params::position::id, params::span::id);
+        startTimerHz(static_cast<int>(gui::refreshRate));
+
+        sliderOnWaveform = std::make_unique<SliderOnWaveform>(apvts, params::position::id, params::span::id);
 
         std::function<void()> onThumbnailReady = [this]() {
-            waveformOverlay->setAudioLoaded(true);
+            sliderOnWaveform->setAudioLoaded(true);
+            grainVisualComponent.setNumSamples(this->uic.engineState.getNumSamples());
         };
 
         thumbnailComponent.setCallbackOnThumbnailReady(onThumbnailReady);
 
-        addAndMakeVisible(&thumbnailComponent);
-        addAndMakeVisible(*waveformOverlay);
+        posParam = apvts.getRawParameterValue(params::position::id);
+        spanParam = apvts.getRawParameterValue(params::span::id);
 
-        //updatePosition(uic.apvts.getRawParameterValue(globalPositionId)->load());
-        //updateSpan(uic.apvts.getRawParameterValue(globalSpanId)->load());
-        waveformOverlay->setAudioLoaded(true);
+        fileNameLabel.setInterceptsMouseClicks(false, false);
+        numGrainsLabel.setInterceptsMouseClicks(false, false);
+        posLabel.setInterceptsMouseClicks(false, false);
+        spanLabel.setInterceptsMouseClicks(false, false);
+
+        color labelColor = coloursv2::perleBlanc.withAlpha(0.5f);
+        fileNameLabel.setColour(juce::Label::textColourId, labelColor);
+        numGrainsLabel.setColour(juce::Label::textColourId, labelColor);
+        posLabel.setColour(juce::Label::textColourId, labelColor);
+        spanLabel.setColour(juce::Label::textColourId, labelColor);
+
+        fileNameLabel.getProperties().set("isValueText", true);
+        numGrainsLabel.getProperties().set("isValueText", true);
+        posLabel.getProperties().set("isValueText", true);
+        spanLabel.getProperties().set("isValueText", true);
+
+        fileNameLabel.setJustificationType(juce::Justification::topLeft);
+        numGrainsLabel.setJustificationType(juce::Justification::topRight);
+        posLabel.setJustificationType(juce::Justification::centredRight);
+        spanLabel.setJustificationType(juce::Justification::centredLeft);
+
+        fileNameLabel.setText("", juce::dontSendNotification);
+        numGrainsLabel.setText("GRAINS: 0", juce::dontSendNotification);
+        posLabel.setText("POS: -", juce::dontSendNotification);
+        spanLabel.setText("SPAN: -", juce::dontSendNotification);
+
+        addAndMakeVisible(&thumbnailComponent);
+        addAndMakeVisible(&grainVisualComponent);
+        addAndMakeVisible(*sliderOnWaveform);
+
+        addAndMakeVisible(&fileNameLabel);
+        addAndMakeVisible(&numGrainsLabel);
+        addAndMakeVisible(&posLabel);
+        addAndMakeVisible(&spanLabel);
+
+        // to test the GUI
+        sliderOnWaveform->setAudioLoaded(false);
+        //sliderOnWaveform->setAudioLoaded(true);
+    }
+
+    AudioFilePanel::~AudioFilePanel()
+    {
+        stopTimer();
+        uic.uiState.removeChangeListener(this);
+    }
+
+    void AudioFilePanel::changeListenerCallback(juce::ChangeBroadcaster* source)
+    {
+        if(source == &uic.uiState)
+        {
+            if(uic.uiState.isFileLoaded())
+            {
+                const juce::File& currentFile = uic.uiState.getCurrentFile();
+                fileNameLabel.setText(currentFile.getFileName(), juce::dontSendNotification);
+
+                sliderOnWaveform->setAudioLoaded(true);
+                grainVisualComponent.setNumSamples(uic.engineState.getNumSamples());
+            }
+            else
+            {
+                sliderOnWaveform->setAudioLoaded(false);
+            }
+        }
+    }
+
+    void AudioFilePanel::timerCallback()
+    {
+        const int numGrains = uic.engineState.getNumActiveGrains();
+        if(numGrains != lastNumGrains)
+        {
+            numGrainsLabel.setText(str::formatted("GRAINS: %d", numGrains), juce::dontSendNotification);
+            lastNumGrains = numGrains;
+        }
+
+        if(posParam != nullptr)
+        {
+            const float posVal = posParam->load(std::memory_order_relaxed);
+            if(posVal != lastPos)
+            {
+                posLabel.setText(str::formatted("POS: %.3f s", posVal), juce::dontSendNotification);
+                lastPos = posVal;
+            }
+        }
+
+        if(spanParam != nullptr)
+        {
+            const float spanVal = spanParam->load(std::memory_order_relaxed);
+            if(spanVal != lastSpan)
+            {
+                spanLabel.setText(str::formatted("SPAN: %.2f ms", spanVal), juce::dontSendNotification);
+                lastSpan = spanVal;
+            }
+        }
+
+        grainVisualComponent.repaint();
+    }
+
+    bool AudioFilePanel::isInterestedInFileDrag(const juce::StringArray& files)
+    {
+        for(str file : files)
+        {
+            if(file.endsWithIgnoreCase(".wav") || file.endsWithIgnoreCase(".aif") || file.endsWithIgnoreCase(".mp3"))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void AudioFilePanel::filesDropped(const juce::StringArray& files, int x, int y)
@@ -44,67 +154,69 @@ namespace particules
         }
     }
 
-    bool AudioFilePanel::isInterestedInFileDrag(const juce::StringArray& files)
-    {
-        for(juce::String file : files)
-        {
-            if(file.endsWithIgnoreCase(".wav") || file.endsWithIgnoreCase(".aif") || file.endsWithIgnoreCase(".mp3"))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     void AudioFilePanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::perleBlanc.darker(0.1f)); }
 
     void AudioFilePanel::resized()
     {
         juce::Rectangle<int> bounds = getLocalBounds();
+        juce::Rectangle<int> area = bounds.reduced(2);
 
-        thumbnailComponent.setBounds(bounds);
-        waveformOverlay->setBounds(bounds);
+        thumbnailComponent.setBounds(area);
+        grainVisualComponent.setBounds(area);
+        sliderOnWaveform->setBounds(area);
+
+        const int pad = 8;
+        const int labelHeight = 18;
+
+        fileNameLabel.setBounds(area.getX() + pad, area.getY() + pad, 200, labelHeight);
+        numGrainsLabel.setBounds(area.getRight() - 100 - pad, area.getY() + pad, 100, labelHeight);
+
+        juce::Rectangle<int> posSpanArea = area.withHeight(labelHeight).withY(area.getBottom() - labelHeight - pad);
+        posSpanArea = posSpanArea.withSizeKeepingCentre(240, labelHeight);
+
+        posLabel.setBounds(posSpanArea.removeFromLeft(120).withTrimmedRight(4));
+        spanLabel.setBounds(posSpanArea.withTrimmedLeft(4));
     }
 
     //void AudioFilePanel::updatePosition(float position)
     //{
-        //const float width = (float)positionOverlay.getWidth();
+    //const float width = (float)positionOverlay.getWidth();
 
-        //const float startPx = position * width;
-        //const float spanPx = spanSlider.getValue() * width;
-        //const float endPx = startPx + spanPx;
+    //const float startPx = position * width;
+    //const float spanPx = spanSlider.getValue() * width;
+    //const float endPx = startPx + spanPx;
 
-        //positionOverlay.setPosition(startPx);
-        //spanOverlay.setPosition(startPx);
+    //positionOverlay.setPosition(startPx);
+    //spanOverlay.setPosition(startPx);
 
-        //const float overflowPx = juce::jmax(0.0f, endPx - width);
-        //updateOverflow(overflowPx);
+    //const float overflowPx = juce::jmax(0.0f, endPx - width);
+    //updateOverflow(overflowPx);
 
-        //positionOverlay.repaint();
-        //spanOverlay.repaint();
-        //overflowOverlay.repaint();
-    }
+    //positionOverlay.repaint();
+    //spanOverlay.repaint();
+    //overflowOverlay.repaint();
+}
 
-    //void AudioFilePanel::updateSpan(float span)
-    //{
-        //const float width = (float)positionOverlay.getWidth();
+//void AudioFilePanel::updateSpan(float span)
+//{
+//const float width = (float)positionOverlay.getWidth();
 
-        //const float startPx = positionSlider.getValue() * width;
-        //const float spanPx = span * width;
-        //const float endPx = startPx + spanPx;
+//const float startPx = positionSlider.getValue() * width;
+//const float spanPx = span * width;
+//const float endPx = startPx + spanPx;
 
-        //spanOverlay.setSpan(spanPx);
+//spanOverlay.setSpan(spanPx);
 
-        //const float overflowPx = juce::jmax(0.0f, endPx - width);
-        //updateOverflow(overflowPx);
+//const float overflowPx = juce::jmax(0.0f, endPx - width);
+//updateOverflow(overflowPx);
 
-        //spanOverlay.repaint();
-        //overflowOverlay.repaint();
-    //}
+//spanOverlay.repaint();
+//overflowOverlay.repaint();
+//}
 
-    //void AudioFilePanel::updateOverflow(float value) { /*overflowOverlay.setSpan(value);*/ }
+//void AudioFilePanel::updateOverflow(float value) { /*overflowOverlay.setSpan(value);*/ }
 
-    /*
+/*
     void AudioFilePanel::resized()
     {
         juce::Rectangle<int> sliderArea = getBounds().reduced(0,2);
@@ -131,16 +243,16 @@ namespace particules
     }
     */
 
-    // TODO : Remove the change listener callback after MIDI implementation
-    //void AudioFilePanel::changeListenerCallback(juce::ChangeBroadcaster* source)
-    //{
-    //    if(source == &audioProcessor)
-    //    {
-    //        const juce::File& f = audioProcessor.getCurrentFile();
-    //        bool valid = f.existsAsFile();
-    //        //play_pause_btn.setEnabled(valid);
-    //    }
-    //}
+// TODO : Remove the change listener callback after MIDI implementation
+//void AudioFilePanel::changeListenerCallback(juce::ChangeBroadcaster* source)
+//{
+//    if(source == &audioProcessor)
+//    {
+//        const juce::File& f = audioProcessor.getCurrentFile();
+//        bool valid = f.existsAsFile();
+//        //play_pause_btn.setEnabled(valid);
+//    }
+//}
 
 //}
 

@@ -210,6 +210,10 @@ namespace particules
             [](float v, int) -> str { return str(v, (v > 1.f ? 2 : (v > 0.101f ? 3 : 4))) + " g/s"; },
             [](const str& s) -> float { return s.getFloatValue(); }));
 
+        layout.add(
+            createNormalizedParameter(params::emission_jitter::id, params::emission_jitter::name, params::emission_jitter::min,
+                params::emission_jitter::max, params::emission_jitter::skewFactor, params::emission_jitter::init));
+
         // DURATION //
 
         layout.add(createNormalizedParameter(
@@ -225,10 +229,14 @@ namespace particules
             [](const str& s) -> float { return s.getFloatValue(); }));
 
         // SPEED //
+
         layout.add(createNormalizedParameter(
             params::speed::id, params::speed::name, params::speed::min, params::speed::max, params::speed::skewFactor,
             params::speed::init, [](float v, int) -> str { return ""; },
             [](const str& s) -> float { return s.getFloatValue(); }));
+
+        layout.add(createNormalizedParameter(params::speed_jitter::id, params::speed_jitter::name, params::speed_jitter::min,
+            params::speed_jitter::max, params::speed_jitter::skewFactor, params::speed_jitter::init));
 
         //layout.add(std::make_unique<juce::AudioParameterFloat>(params::speed::id, params::speed::name,
         //    juce::NormalisableRange<float>(params::speed::min, params::speed::max, 0.001f), params::speed::init));
@@ -238,6 +246,9 @@ namespace particules
         layout.add(createNormalizedParameter(
             params::pan::id, params::pan::name, params::pan::min, params::pan::max, params::pan::skewFactor, params::pan::init,
             [](float v, int) -> str { return ""; }, [](const str& s) -> float { return s.getFloatValue(); }));
+
+        layout.add(createNormalizedParameter(params::pan_jitter::id, params::pan_jitter::name, params::pan_jitter::min,
+            params::pan_jitter::max, params::pan_jitter::skewFactor, params::pan_jitter::init));
 
         //layout.add(std::make_unique<juce::AudioParameterFloat>(params::pan::id, params::pan::name,
         //    juce::NormalisableRange<float>(params::pan::min, params::pan::max, 0.001f), params::pan::init));
@@ -252,7 +263,7 @@ namespace particules
         layout.add(std::make_unique<juce::AudioParameterFloat>(params::span::id, params::span::name,
             juce::NormalisableRange<float>(params::span::min, params::span::max, 0.001f), params::span::init));
 
-        // ENVELOPE RATION
+        // ENVELOPE RATIO
 
         juce::NormalisableRange<float> envelopeRatioRange{params::envelopeRatio::min, params::envelopeRatio::max}; //, 0.01f};
         envelopeRatioRange.setSkewForCentre(params::envelopeRatio::skewFactor);
@@ -263,6 +274,10 @@ namespace particules
                 .withCategory(juce::AudioProcessorParameter::genericParameter)
                 .withStringFromValueFunction([](float v, int) { return str(v, (v > 0.1f ? 2 : 3)); })
                 .withValueFromStringFunction([](const str& s) { return s.getFloatValue(); })));
+
+        layout.add(createNormalizedParameter(params::envelopeRatio_jitter::id, params::envelopeRatio_jitter::name,
+            params::envelopeRatio_jitter::min, params::envelopeRatio_jitter::max, params::envelopeRatio_jitter::skewFactor,
+            params::envelopeRatio_jitter::init));
 
         // ENVELOPE MODE //
 
@@ -292,8 +307,9 @@ namespace particules
                 .withStringFromValueFunction([](float v, int) { return str(v, (v > 0.1f ? 2 : 3)) + " Hz"; })
                 .withValueFromStringFunction([](const str& s) { return s.getFloatValue(); })));
 
-        // ajouter pan, direction
-        // randomEMISSION, randomDuration, randomPan, randomDirection, randomPitch
+        layout.add(createNormalizedParameter(params::traversalFreq_jitter::id, params::traversalFreq_jitter::name,
+            params::traversalFreq_jitter::min, params::traversalFreq_jitter::max, params::traversalFreq_jitter::skewFactor,
+            params::traversalFreq_jitter::init));
 
         return layout;
     }

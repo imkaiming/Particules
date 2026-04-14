@@ -10,6 +10,7 @@ namespace particules
     namespace gui
     {
         inline constexpr const float grainVisualSize = 8.f;
+        inline constexpr const float refreshRate = 30.f;
 
         inline constexpr const int windowWidthInit = 900; 
         inline constexpr const int windowWidthMin = 900;
@@ -79,6 +80,7 @@ namespace particules
             inline constexpr float max = 1.f;
             inline constexpr float init = .0f;
         }
+
         namespace span
         {
             inline constexpr const char* id = "SPAN";
@@ -106,6 +108,15 @@ namespace particules
             inline constexpr float init = 1.0f;
             inline constexpr float skewFactor = 1.0f;
         }
+        namespace emission_jitter
+        {
+            static constexpr const char* id = "EMISSIONJITTER";
+            static constexpr const char* name = "Emission Jitter";
+            static constexpr float min = 0.0f;
+            static constexpr float max = 1.0f;
+            static constexpr float init = 0.0f;
+            static constexpr float skewFactor = 0.5f;
+        }
         namespace duration
         {
             inline constexpr const char* id = "DURATION"; // length of emitted grains in sec
@@ -114,6 +125,15 @@ namespace particules
             inline constexpr float max = 10.0f; // 10 sec for every emitted grains (1/ 10 = 0.1)
             inline constexpr float init = 1.0f;
             inline constexpr float skewFactor = 1.0f;
+        }
+        namespace duration_jitter
+        {
+            static constexpr const char* id = "DURATIONJITTER";
+            static constexpr const char* name = "Duration Jitter";
+            static constexpr float min = 0.0f;
+            static constexpr float max = 1.0f;
+            static constexpr float init = 0.0f;
+            static constexpr float skewFactor = 0.5f;
         }
         namespace pitch
         {
@@ -132,6 +152,14 @@ namespace particules
             inline constexpr float init = 1.f;
             inline constexpr float skewFactor = 1.0f;
         }
+        namespace speed_jitter {
+            static constexpr const char* id = "SPEEDJITTER";
+            static constexpr const char* name = "Speed Jitter";
+            static constexpr float min = 0.0f;
+            static constexpr float max = 1.0f;
+            static constexpr float init = 0.0f;
+            static constexpr float skewFactor = 0.5f;
+        }
         namespace pan
         {
             inline constexpr const char* id = "PAN";
@@ -140,6 +168,15 @@ namespace particules
             inline constexpr float max = 1.f;
             inline constexpr float init = 0.5f;
             inline constexpr float skewFactor = 0.5f;
+        }
+        namespace pan_jitter
+        {
+            static constexpr const char* id = "PANJITTER";
+            static constexpr const char* name = "Pan Jitter";
+            static constexpr float min = 0.0f;
+            static constexpr float max = 1.0f;
+            static constexpr float init = 0.0f;
+            static constexpr float skewFactor = 0.5f;
         }
 
         namespace envelopeMode
@@ -159,6 +196,15 @@ namespace particules
             inline constexpr float max = 0.95f;
             inline constexpr float init = 0.0f;
             inline constexpr float skewFactor = 0.25f;
+        }
+        namespace envelopeRatio_jitter
+        {
+            static constexpr const char* id = "ENVRATIOJITTER";
+            static constexpr const char* name = "EnvelopeRatio Jitter";
+            static constexpr float min = 0.0f;
+            static constexpr float max = 1.0f;
+            static constexpr float init = 0.0f;
+            static constexpr float skewFactor = 0.5f;
         }
 
         namespace traversalMode
@@ -181,6 +227,16 @@ namespace particules
             inline constexpr float init = 1.0f;
             inline constexpr float skewFactor = 1.0f;
         }
+        namespace traversalFreq_jitter
+        {
+            static constexpr const char* id = "TRAVERSALFREQJITTER";
+            static constexpr const char* name = "TraversalFreq Jitter";
+            static constexpr float min = 0.0f;
+            static constexpr float max = 1.0f;
+            static constexpr float init = 0.0f;
+            static constexpr float skewFactor = 0.5f;
+        }
+
     }
 
 }

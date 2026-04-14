@@ -6,6 +6,7 @@
 #include <juce_gui_basics/juce_gui_basics.h> // juce::Component
 
 #include "../../framework/PluginParams.h"
+#include "../../framework/GuiTypes.h"
 
 /**
 * On a besoin de la valeur de la position du grain dans le buffer pour montrer sa position sur l'axe x.
@@ -26,11 +27,11 @@ namespace particules
 
     struct UIContext;
     class UIState;
-    class GrainVisualComponent : public juce::Component, private juce::Timer
+    class GrainVisualComponent : public juce::Component //, private juce::Timer
     {
     public:
         GrainVisualComponent(UIContext&);
-        ~GrainVisualComponent() override;
+        ~GrainVisualComponent() = default;
 
         void paint(juce::Graphics& g) override;
         void resized() override;
@@ -41,9 +42,9 @@ namespace particules
         static constexpr int MAXGRAINS = static_cast<int>(params::maxGrains);
         static constexpr float GSIZE = gui::grainVisualSize;
         static constexpr float GCENTER = GSIZE / 2.f;
-        void timerCallback() override;
+        //void timerCallback() override;
 
-        juce::Colour colour;
+        color colour;
         UIState& uiState;
         int numSamples;
 

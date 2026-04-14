@@ -14,7 +14,7 @@ namespace particules
         EngineState();
         ~EngineState() = default;
 
-        const EngineSnapshot getSnapshot() const noexcept;
+        EngineSnapshot getSnapshot() const noexcept;
 
         //void setIsPlaying(bool b) noexcept { isPlaying.store(b, std::memory_order_relaxed); }
         void setIsGrainsEmpty(bool b) noexcept { isGrainsEmpty.store(b, std::memory_order_relaxed); }
@@ -31,8 +31,8 @@ namespace particules
         int getNumSamples() const noexcept { return numSamples.load(std::memory_order_relaxed); }
         double getSampleRate() const noexcept { return sampleRate.load(std::memory_order_relaxed); }
         int getNumActiveGrains() const noexcept { return numActiveGrains.load(std::memory_order_relaxed); }
-        int getIsLinked() const noexcept { return isLinked.load(std::memory_order_relaxed); }
-        int getIsPlaying() const noexcept { return isPlaying.load(std::memory_order_relaxed); }
+        bool getIsLinked() const noexcept { return isLinked.load(std::memory_order_relaxed); }
+        bool getIsPlaying() const noexcept { return isPlaying.load(std::memory_order_relaxed); }
         //int getIsAudioLoaded() const noexcept { return isAudioLoaded.load(std::memory_order_relaxed); }
 
     private:

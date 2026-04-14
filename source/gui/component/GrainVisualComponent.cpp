@@ -12,10 +12,10 @@ namespace particules
         : uiState{uic.uiState}, numSamples{uic.engineState.getNumSamples()}, invWidthSamples{0.f}, colour{colours::lavender}
     {
         setOpaque(false);
-        startTimerHz(60);
+        //startTimerHz(static_cast<int>(gui::refreshRate));
     }
 
-    GrainVisualComponent::~GrainVisualComponent() { stopTimer(); }
+    //GrainVisualComponent::~GrainVisualComponent() { stopTimer(); }
 
     void GrainVisualComponent::paint(juce::Graphics& g)
     {
@@ -45,7 +45,7 @@ namespace particules
             invWidthSamples = 0.f;
     }
 
-    void GrainVisualComponent::timerCallback() { repaint(); }
+    //void GrainVisualComponent::timerCallback() { repaint(); }
 
     void GrainVisualComponent::resized()
     {

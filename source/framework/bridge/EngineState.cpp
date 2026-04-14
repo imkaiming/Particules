@@ -7,7 +7,7 @@ namespace particules
     {
     }
 
-    const EngineSnapshot EngineState::getSnapshot() const noexcept
+    EngineSnapshot EngineState::getSnapshot() const noexcept
     {
         EngineSnapshot snapshot;
 

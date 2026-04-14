@@ -4,8 +4,6 @@
 #include <juce_events/juce_events.h> // changeListener
 #include <juce_gui_basics/juce_gui_basics.h> // component
 
-#include "GrainVisualComponent.h"
-
 #include "../../framework/Core.h"
 #include "../../framework/PluginParams.h"
 
@@ -19,11 +17,9 @@ namespace juce
 // should not own the state of the plugin
 namespace particules
 {
-    class EngineState;
     class UIState;
-    class ParameterView;
     struct UIContext;
-    class ParticulesAudioProcessor;
+
     class ThumbnailComponent : public juce::Component,
                                private juce::ChangeListener //, public juce::AudioProcessorValueTreeState::Listener
     {
@@ -45,13 +41,10 @@ namespace particules
 
         void changeListenerCallback(juce::ChangeBroadcaster*) override; // to change the waveform when changing the audio
 
-        EngineState& engineState;
-        UIState& uiState;
-        GrainVisualComponent grainVisualComponent;
+        //UIState& uiState;
         juce::AudioThumbnail& audioThumbnail;
-
-        std::function<void()>
-            onThumbnailReady; // Callback from the AudioFilePanel to activate function after the thumbnail has fully loaded
+        std::function<void()> onThumbnailReady;
+        // Callback from the AudioFilePanel to activate function after the thumbnail has fully loaded
         //void parameterChanged(const juce::String& parameterID, float newValue) override;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ThumbnailComponent)

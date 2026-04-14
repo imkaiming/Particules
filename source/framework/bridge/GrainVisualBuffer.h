@@ -25,6 +25,5 @@ namespace particules
         VisualSnapshot visualSnapshot[2];
         std::atomic<int> readIndex{0}; // act like a latch that avoid race condition from ui and audio thread
 
-        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainVisualBuffer)
     };
 }
