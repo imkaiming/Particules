@@ -16,25 +16,34 @@ namespace particules
 
     TitlePanel::TitlePanel(UIContext& uic)
         : playBtn{(const str) "playBtn"}, loadBtn{(const str) "loadBtn"}, uic{uic}, facade{uic.facade},
-          engineState{uic.engineState}
+          engineState{uic.engineState}, nextBtn{(const str) "nextBtn"}, previousBtn{(const str) "previousBtn"}
     {
         playIcon = UIHelpers::loadSVG(BinaryData::play_svg, BinaryData::play_svgSize, juce::Colours::white);
         pauseIcon = UIHelpers::loadSVG(BinaryData::pause_svg, BinaryData::pause_svgSize, juce::Colours::white);
         loadIcon = UIHelpers::loadSVG(BinaryData::add_folder_svg, BinaryData::add_folder_svgSize, juce::Colours::white);
+        previousIcon = UIHelpers::loadSVG(BinaryData::arrow_turn_backward_svg, BinaryData::arrow_turn_backward_svgSize, juce::Colours::white);
+        nextIcon =
+            UIHelpers::loadSVG(BinaryData::arrow_turn_forward_svg, BinaryData::arrow_turn_forward_svgSize, juce::Colours::white);
 
         playBtn.setIcon(playIcon.get());
         loadBtn.setIcon(loadIcon.get());
+        previousBtn.setIcon(previousIcon.get());
+        nextBtn.setIcon(nextIcon.get());
 
         playBtn.onClick = [this]() { playButtonClicked(); };
         loadBtn.onClick = [this]() { loadSampleButtonClicked(); };
+        previousBtn.onClick = [this]() { /* undomanager . back */ };
+        nextBtn.onClick = [this]() { /* undomanager . next */ };
 
         titleLabel.setText("PARTICULES", juce::dontSendNotification);
         titleLabel.getProperties().set("isTitle", true);
-        titleLabel.setJustificationType(juce::Justification::centred);
+        titleLabel.setJustificationType(juce::Justification::centredLeft);
         titleLabel.setColour(juce::Label::textColourId, coloursv2::deepBlack);
 
         addAndMakeVisible(playBtn);
         addAndMakeVisible(loadBtn);
+        addAndMakeVisible(previousBtn);
+        addAndMakeVisible(nextBtn);
         addAndMakeVisible(titleLabel);
     }
 
@@ -62,22 +71,38 @@ namespace particules
         facade.loadFile();
     }
 
-    void TitlePanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::perleBlanc); }
+    void TitlePanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::perleBlanc.darker(0.1f)); }
 
     void TitlePanel::resized()
     {
         juce::Rectangle<int> area = getLocalBounds();
-        const int quarter = getWidth() / 8.f;
+        int margin = 15;
+        area.reduce(margin, 0);
 
-        juce::Rectangle<int> titleArea = area.removeFromLeft(quarter);
-        area.removeFromLeft(quarter * 5.f);
-        juce::Rectangle<int> loadArea = area.removeFromLeft(quarter);
-        juce::Rectangle<int> playArea = area.removeFromLeft(quarter);
+        int btnSize = juce::jmin(getHeight() - 16, 32);
+        int titleWidth = 150;
 
-        const int btnHeight = getHeight() * 0.666f;
+        juce::Rectangle<int> titleArea = area.removeFromLeft(titleWidth);
         titleLabel.setBounds(titleArea);
-        loadBtn.setBounds(loadArea.withSizeKeepingCentre(btnHeight, btnHeight));
-        playBtn.setBounds(playArea.withSizeKeepingCentre(btnHeight, btnHeight));
+
+        juce::Rectangle<int> loadArea = area.removeFromRight(btnSize);
+        loadBtn.setBounds(loadArea.withSizeKeepingCentre(btnSize, btnSize));
+
+        int transportSpacing = 15;
+        int transportWidth = (btnSize * 2) + btnSize + (transportSpacing * 2);
+        juce::Rectangle<int> transportArea = getLocalBounds().withSizeKeepingCentre(transportWidth, getHeight());
+
+        juce::Rectangle<int> prevArea = transportArea.removeFromLeft(btnSize);
+        transportArea.removeFromLeft(transportSpacing);
+
+        juce::Rectangle<int> playArea = transportArea.removeFromLeft(btnSize);
+        transportArea.removeFromLeft(transportSpacing);
+
+        juce::Rectangle<int> nextArea = transportArea.removeFromLeft(btnSize);
+
+        previousBtn.setBounds(prevArea.withSizeKeepingCentre(btnSize, btnSize));
+        playBtn.setBounds(playArea.withSizeKeepingCentre(btnSize, btnSize));
+        nextBtn.setBounds(nextArea.withSizeKeepingCentre(btnSize, btnSize));
     }
 
     //void TitlePanel::layoutLeft()

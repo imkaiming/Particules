@@ -75,7 +75,7 @@ namespace particules
         sustainLabel.setText("S", juce::NotificationType::dontSendNotification);
         releaseLabel.setText("R", juce::NotificationType::dontSendNotification);
 
-        attackLabel.getProperties().set("isValue", true); 
+        attackLabel.getProperties().set("isValue", true);
         decayLabel.getProperties().set("isValue", true);
         sustainLabel.getProperties().set("isValue", true);
         releaseLabel.getProperties().set("isValue", true);
@@ -146,7 +146,6 @@ namespace particules
         juce::Rectangle<int> traversalArea = botRow;
 
         juce::Rectangle<int> rightTopRow = rightArea.removeFromTop(static_cast<int>(rightArea.getHeight() * 0.5f));
-        juce::Rectangle<int> adsrArea = rightArea;
 
         int motionKnobWidth = rightTopRow.getWidth() / 2;
         juce::Rectangle<int> speedArea = rightTopRow.removeFromLeft(motionKnobWidth);
@@ -166,21 +165,30 @@ namespace particules
         linkBtn.setBounds(emissionArea.getRight() - (linkBtnWidth / 2), emissionArea.getCentreY() - (linkBtnWidth / 2),
             linkBtnWidth, linkBtnWidth);
 
-        juce::Rectangle<int> labelsArea = adsrArea.removeFromBottom(adsrArea.getHeight() / 4);
+        juce::Rectangle<int> adsrArea = rightArea.removeFromLeft(rightArea.getWidth() / 2);
+        adsrArea = adsrArea.withSizeKeepingCentre(adsrArea.getWidth(), adsrArea.getHeight());
 
-        int numSliders = 8;
-        int slotWidth = adsrArea.getWidth() / numSliders;
-        int barWidth = slotWidth - margin * 2;
+        const int adsrHeight = adsrArea.getHeight() / 8;
+        const int adsrWidth = adsrArea.getWidth() / 4;
+        juce::Rectangle<int> labelsArea = adsrArea.removeFromTop(adsrHeight);
+        adsrArea.removeFromBottom(adsrHeight);
+        adsrArea.removeFromLeft(adsrWidth);
+        adsrArea.removeFromRight(adsrWidth);
+        labelsArea.removeFromLeft(adsrWidth);
+        labelsArea.removeFromRight(adsrWidth);
+
+        int numSliders = 4;
+        int slotWidth = adsrArea.getWidth() / numSliders; 
 
         juce::Rectangle<int> attackSlot = adsrArea.removeFromLeft(slotWidth);
         juce::Rectangle<int> decaySlot = adsrArea.removeFromLeft(slotWidth);
         juce::Rectangle<int> sustainSlot = adsrArea.removeFromLeft(slotWidth);
         juce::Rectangle<int> releaseSlot = adsrArea.removeFromLeft(slotWidth);
 
-        attackSlider.setBounds(attackSlot.withSizeKeepingCentre(barWidth, attackSlot.getHeight()));
-        decaySlider.setBounds(decaySlot.withSizeKeepingCentre(barWidth, decaySlot.getHeight()));
-        sustainSlider.setBounds(sustainSlot.withSizeKeepingCentre(barWidth, sustainSlot.getHeight()));
-        releaseSlider.setBounds(releaseSlot.withSizeKeepingCentre(barWidth, releaseSlot.getHeight()));
+        attackSlider.setBounds(attackSlot);
+        decaySlider.setBounds(decaySlot);
+        sustainSlider.setBounds(sustainSlot);
+        releaseSlider.setBounds(releaseSlot);
 
         juce::Rectangle<int> attackLblSlot = labelsArea.removeFromLeft(slotWidth);
         juce::Rectangle<int> decayLblSlot = labelsArea.removeFromLeft(slotWidth);
@@ -192,23 +200,10 @@ namespace particules
         sustainLabel.setBounds(sustainLblSlot);
         releaseLabel.setBounds(releaseLblSlot);
 
-        juce::Justification center = juce::Justification::centred;
-        attackLabel.setJustificationType(center);
-        decayLabel.setJustificationType(center);
-        sustainLabel.setJustificationType(center);
-        releaseLabel.setJustificationType(center);
-
-        juce::Font lblFont = juce::Font(12.0f);
-        juce::Colour lblCol = juce::Colours::white.withAlpha(0.6f);
-
-        //attackLabel.setFont(lblFont);
-        //decayLabel.setFont(lblFont);
-        //sustainLabel.setFont(lblFont);
-        //releaseLabel.setFont(lblFont);
-
-        attackLabel.setColour(juce::Label::textColourId, lblCol);
-        decayLabel.setColour(juce::Label::textColourId, lblCol);
-        sustainLabel.setColour(juce::Label::textColourId, lblCol);
-        releaseLabel.setColour(juce::Label::textColourId, lblCol);
+        juce::Justification centerBot = juce::Justification::centredBottom;
+        attackLabel.setJustificationType(centerBot);
+        decayLabel.setJustificationType(centerBot);
+        sustainLabel.setJustificationType(centerBot);
+        releaseLabel.setJustificationType(centerBot);
     }
 }

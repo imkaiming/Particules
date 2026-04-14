@@ -1,13 +1,14 @@
 #include "ThumbnailComponent.h"
 
-#include <juce_graphics/juce_graphics.h> // graphics
 #include <juce_audio_utils/juce_audio_utils.h> // audiothumbnail
+#include <juce_graphics/juce_graphics.h> // graphics
 
+#include "../../framework/bridge/EngineState.h"
 #include "../../framework/bridge/UIState.h"
+#include "../../utils/struct/UIContext.h"
 #include "../lookandfeel/MyColours.h"
 #include "../lookandfeelv2/Colours.h"
-#include "../../utils/struct/UIContext.h"
-#include "../../framework/bridge/EngineState.h"
+#include "../lookandfeelv2/MainLNF.h"
 
 namespace particules
 {
@@ -24,6 +25,12 @@ namespace particules
 
         setOpaque(false);
         grainVisualComponent.toBack();
+
+        noFileLabel.setText("No File Loaded", juce::dontSendNotification);
+        noFileLabel.setJustificationType(juce::Justification::centred);
+        noFileLabel.setColour(juce::Label::textColourId, coloursv2::perleBlanc);
+        noFileLabel.getProperties().set("isValue", true);
+        addAndMakeVisible(noFileLabel);
 
         // apvts listener to update the UI
         //apvts.addParameterListener(Param::Position::id, this);
@@ -49,12 +56,16 @@ namespace particules
     {
         g.fillAll(colours::black);
         paintGrid(g);
-        g.setColour(colours::cream);
-        g.drawFittedText("No File Loaded", getLocalBounds(), juce::Justification::centred, 1);
+        noFileLabel.setVisible(true);
+        //g.setColour(coloursv2::perleBlanc);
+
+        //g.setFont(14.0f);
+        //g.drawFittedText("No File Loaded", getLocalBounds(), juce::Justification::centred, 1);
     }
 
     void ThumbnailComponent::paintIfFileLoaded(juce::Graphics& g)
     {
+        noFileLabel.setVisible(false);
         g.fillAll(colours::smokyBlack);
         paintGrid(g);
         g.setColour(colours::brightBlue);
@@ -68,7 +79,7 @@ namespace particules
         const float h = static_cast<float>(area.getHeight());
 
         const int numColumns = 10;
-        // vertical lines
+
         g.setColour(juce::Colours::white.withAlpha(0.06f));
 
         for(int i = 1; i < numColumns; ++i)
@@ -76,8 +87,6 @@ namespace particules
             const float x = w * static_cast<float>(i) / static_cast<float>(numColumns);
             g.drawVerticalLine(static_cast<int>(x), 0.0f, h);
         }
-
-        // horizontal lines
         const int numRows = 4;
         for(int i = 1; i < numRows; ++i)
         {
@@ -89,7 +98,14 @@ namespace particules
         }
     }
 
-    void ThumbnailComponent::resized() { grainVisualComponent.setBounds(getLocalBounds()); }
+
+
+    void ThumbnailComponent::resized()
+    {
+        juce::Rectangle<int> area = getLocalBounds();
+        grainVisualComponent.setBounds(area);
+        noFileLabel.setBounds(area);
+    }
 
     void ThumbnailComponent::changeListenerCallback(juce::ChangeBroadcaster* source)
     {

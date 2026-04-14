@@ -46,6 +46,8 @@ namespace particules
             bool isHighlighted, bool isTicked, bool hasSubMenu, const str& text, const str& shortcutKeyText,
             const juce::Drawable* icon, const color* textColour) override;
 
+        juce::Typeface::Ptr getGeistLight() const { return geistLight; }
+
     private:
         // Internal Knob Drawing Logic
         void drawRotarySliderCenteredText(juce::Graphics& g, juce::Slider& slider, float cx, float cy, float radius) const;
@@ -84,7 +86,7 @@ namespace particules
         void drawBorderArc(juce::Graphics& g, float cx, float cy, float radius, float startAngle, float endAngle,
             float alpha = 0.2f, float thickness = 2.f) const;
 
-        // Geometry Helpers
+        // Helpers
         [[nodiscard]] juce::Path createArcPath(float cx, float cy, float radius, float startAngle, float endAngle) const;
 
         void drawContour(juce::Graphics& g, float cx, float cy, float radius, color c, float thickness = 2.f) const;

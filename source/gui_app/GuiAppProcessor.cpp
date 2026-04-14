@@ -79,7 +79,7 @@ namespace particules
         layout.add(createNormalizedParameter(
             params::emission::id, params::emission::name, params::emission::min, params::emission::max,
             params::emission::skewFactor, params::emission::init,
-            [](float v, int) -> str { return str(v, (v > 1.f ? 2 : (v > 0.101f ? 3 : 4))) + " g/s"; },
+            [](float v, int) -> str { return str(v, (v > 1.f ? 2 : (v > 0.1001f ? 3 : 4))) + " g/s"; },
             [](const str& s) -> float { return s.getFloatValue(); }));
 
         // DURATION //

@@ -42,7 +42,8 @@ namespace particules
     {
         juce::Rectangle<int> area = getLocalBounds();
 
-        juce::Rectangle<int> tabArea = area.removeFromTop(30);
+        const int tabsHeigth = area.getHeight() / 10.f;
+        juce::Rectangle<int> tabArea = area.removeFromTop(tabsHeigth);
 
         const int buttonWidth = tabArea.getWidth() / 3;
         grainTabButton.setBounds(tabArea.removeFromLeft(buttonWidth));

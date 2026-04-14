@@ -34,8 +34,8 @@ namespace particules
         void setCallbackOnThumbnailReady(std::function<void()>);
 
     private:
-        static constexpr const char* globalPositionId = params::position::id;
-        static constexpr const char* globalSpanId = params::span::id;
+
+juce::Label noFileLabel;
 
         void paint(juce::Graphics&) override;
         void resized() override;

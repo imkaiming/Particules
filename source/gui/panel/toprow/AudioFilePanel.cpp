@@ -12,37 +12,16 @@ namespace particules
     {
         //uiState.addChangeListener(this); // can now send message
 
-        //positionSlider.setRange(params::position::min, params::position::max);
-        //spanSlider.setRange(params::span::min, params::span::max);
-
-        //positionSliderAttachment = std::make_unique<ValueTreeState::SliderAttachment>(apvts, globalPositionId, positionSlider);
-        //spanSliderAttachment = std::make_unique<ValueTreeState::SliderAttachment>(apvts, globalSpanId, spanSlider);
-
-        //positionSlider.onValueChange = [this] { updatePosition(positionSlider.getValue()); };
-        //spanSlider.onValueChange = [this] { updateSpan(spanSlider.getValue()); };
-
-        //addAndMakeVisible(&positionSlider);
-        //addAndMakeVisible(&spanSlider);
-
         waveformOverlay = std::make_unique<WaveformOverlay>(apvts, params::position::id, params::span::id);
 
         std::function<void()> onThumbnailReady = [this]() {
             waveformOverlay->setAudioLoaded(true);
-            // set the audio is ready true ; activer le play button
         };
 
         thumbnailComponent.setCallbackOnThumbnailReady(onThumbnailReady);
 
         addAndMakeVisible(&thumbnailComponent);
         addAndMakeVisible(*waveformOverlay);
-
-        //addAndMakeVisible(&spanOverlay);
-        //addAndMakeVisible(&positionOverlay);
-        //addAndMakeVisible(&overflowOverlay);
-
-        //spanOverlay.toFront(false);
-        //positionOverlay.toFront(false);
-        //overflowOverlay.toFront(false);
 
         //updatePosition(uic.apvts.getRawParameterValue(globalPositionId)->load());
         //updateSpan(uic.apvts.getRawParameterValue(globalSpanId)->load());
@@ -77,7 +56,7 @@ namespace particules
         return false;
     }
 
-    void AudioFilePanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::perleBlanc); }
+    void AudioFilePanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::perleBlanc.darker(0.1f)); }
 
     void AudioFilePanel::resized()
     {
@@ -85,8 +64,6 @@ namespace particules
 
         const int padY = 2;
         const int padX = 8;
-
-        //bounds = bounds.reduced(0, padY);
 
         const int totalH = bounds.getHeight();
 
@@ -97,18 +74,9 @@ namespace particules
         juce::Rectangle<int> thumbArea = bounds.removeFromTop(thumbH);
         juce::Rectangle<int> bottomSliderArea = bounds;
 
-        //spanSlider.setBounds(topSliderArea);
-        //positionSlider.setBounds(bottomSliderArea);
-
         juce::Rectangle<int> thumbReduced = thumbArea.reduced(padX, 0);
         thumbnailComponent.setBounds(thumbReduced);
         waveformOverlay->setBounds(thumbReduced);
-        //spanOverlay.setBounds(thumbReduced);
-        //positionOverlay.setBounds(thumbReduced);
-        //overflowOverlay.setBounds(thumbReduced);
-
-        //updatePosition(positionSlider.getValue());
-        //updateSpan(spanSlider.getValue());
     }
     //void AudioFilePanel::updatePosition(float position)
     //{

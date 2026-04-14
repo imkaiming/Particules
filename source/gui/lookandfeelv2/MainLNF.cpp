@@ -71,7 +71,6 @@ namespace particules
         setDefaultSansSerifTypeface(geistRegular);
     }
 
-    //==============================================================================
     // DISPATCHER
     void MainLNF::drawRotarySlider(
         juce::Graphics& g, int x, int y, int w, int h, float sliderPos, float startAngle, float endAngle, juce::Slider& slider)
@@ -111,7 +110,6 @@ namespace particules
         }
     }
 
-    //==============================================================================
     //  SINGLE KNOB
     void MainLNF::drawPrimaryKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
         float endAngle, float sliderPos, juce::Slider& slider) const
@@ -172,7 +170,6 @@ namespace particules
         drawRotarySliderCenteredText(g, slider, cx, cy, radius);
     }
 
-    //==============================================================================
     // KNOBS + AUX
     void MainLNF::drawPrimaryWithAuxKnob(juce::Graphics& g, float cx, float cy, float radius, float innerR, float startAngle,
         float endAngle, float sliderPos, juce::Slider& slider) const
@@ -292,17 +289,14 @@ namespace particules
         if(currentSpread < 0.00001f)
             return;
 
-        // shifting the center so the arc never gets clipped
         float jitterCenter = primaryAngle;
 
         if(primaryAngle - currentSpread < startAngle)
         {
-            // Too close to start
             jitterCenter = startAngle + currentSpread;
         }
         else if(primaryAngle + currentSpread > endAngle)
         {
-            // Too close to end
             jitterCenter = endAngle - currentSpread;
         }
 
@@ -317,8 +311,6 @@ namespace particules
         drawColoredArc(g, cx, cy, jitterArcRadius, jitterStart, jitterEnd, colours::lavender /*, baseLineWidth * 1.2f*/);
     }
 
-    //==============================================================================
-    //  DRAWING
     void MainLNF::drawRotarySliderCenteredText(juce::Graphics& g, juce::Slider& slider, float cx, float cy, float radius) const
     {
         const bool isHovered = slider.isMouseOverOrDragging();
@@ -332,8 +324,8 @@ namespace particules
         str valueStr, unitStr;
         splitValueAndUnit(text, valueStr, unitStr);
 
-        const float valueFontSize = radius * 0.35f;
-        const float unitFontSize = radius * 0.25f;
+        const float valueFontSize = radius * 0.4f;
+        const float unitFontSize = radius * 0.3f;
         const float spacing = radius * 0.05f;
 
         color textColor = isHovered ? coloursv2::white : coloursv2::white.withAlpha(0.85f);
@@ -366,46 +358,63 @@ namespace particules
         {
             juce::Rectangle<float> bounds = juce::Rectangle<int>(x, y, width, height).toFloat();
 
-            const float barW = juce::jmin(14.0f, bounds.getWidth());
-            juce::Rectangle<float> barBounds = bounds.withSizeKeepingCentre(barW, bounds.getHeight());
+            const float textHeight = 35.0f;
+            juce::Rectangle<float> trackBounds = bounds.withTrimmedBottom(textHeight);
+
+            float proportion = 1.0f - ((sliderPos - bounds.getY()) / bounds.getHeight());
+            float mappedSliderPos = trackBounds.getBottom() - proportion * trackBounds.getHeight();
+
+            const float barW = juce::jmin(14.0f, trackBounds.getWidth());
+            juce::Rectangle<float> barBounds = trackBounds.withSizeKeepingCentre(barW, trackBounds.getHeight());
             const float corner = juce::jmin(4.0f, barW * 0.5f);
 
             g.setColour(coloursv2::deepBlack);
             g.fillRoundedRectangle(barBounds, corner);
 
-            float fillHeight = barBounds.getBottom() - sliderPos;
+            float fillHeight = barBounds.getBottom() - mappedSliderPos;
 
             if(fillHeight > 0.1f)
             {
-                juce::Rectangle<float> fillRect(barBounds.getX(), sliderPos, barW, fillHeight);
+                juce::Rectangle<float> fillRect(barBounds.getX(), mappedSliderPos, barW, fillHeight);
                 g.setColour(colours::grisAnthracite);
                 g.fillRect(fillRect);
 
                 g.setColour(coloursv2::perleBlanc);
-                g.fillRect(barBounds.getX(), sliderPos, barW, 2.0f);
+                g.fillRect(barBounds.getX(), mappedSliderPos, barW, 2.0f);
             }
 
             str text = slider.getTextFromValue(slider.getValue());
+            if(text.isEmpty())
+                text = str(slider.getValue(), 2); 
 
             str valueStr, unitStr;
             splitValueAndUnit(text, valueStr, unitStr);
 
-            const float valueFontSize = 11.0f;
+            juce::Rectangle<float> textArea = bounds.withTop(trackBounds.getBottom());
+            const float valueFontSize = 12.0f;
             const float unitFontSize = 10.0f;
-            const float textCenterY = bounds.getBottom() - 24.0f;
 
-            // drop shadow
-            g.setColour(juce::Colours::black.withAlpha(0.4f));
-            g.setFont(juce::Font(geistBold).withHeight(valueFontSize));
-            g.drawText(valueStr, bounds.getX() + 1.0f, textCenterY - valueFontSize + 1.0f, bounds.getWidth(), valueFontSize,
-                juce::Justification::centred, false);
-
-            // text value
             g.setColour(coloursv2::perleBlanc);
-            g.drawText(valueStr, bounds.getX(), textCenterY - (valueFontSize / 2.0f), bounds.getWidth(), valueFontSize,
-                juce::Justification::centred, false);
+
+            if(unitStr.isNotEmpty())
+            {
+                g.setFont(juce::Font(geistBold).withHeight(valueFontSize));
+                g.drawText(valueStr, textArea.withTrimmedBottom(textArea.getHeight() * 0.45f), juce::Justification::centredBottom,
+                    false);
+
+                g.setFont(juce::Font(geistLight).withHeight(unitFontSize));
+                g.setColour(coloursv2::perleBlanc.withAlpha(0.6f));
+                g.drawText(
+                    unitStr, textArea.withTrimmedTop(textArea.getHeight() * 0.55f), juce::Justification::centredTop, false);
+            }
+            else
+            {
+                g.setFont(juce::Font(geistBold).withHeight(valueFontSize));
+                g.drawText(valueStr, textArea, juce::Justification::centred, false);
+            }
+
+            return;
         }
-        return;
 
         if(style == juce::Slider::LinearHorizontal)
         {
@@ -482,7 +491,7 @@ namespace particules
     //==============================================================================
     // TEXT BUTTONS & TABS
     void MainLNF::drawButtonBackground(
-        juce::Graphics& g, juce::Button& button, const juce::Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown)
+        juce::Graphics& g, juce::Button& button, const color& backgroundColour, bool isMouseOverButton, bool isButtonDown)
     {
         juce::Rectangle<float> bounds = button.getLocalBounds().toFloat();
         const bool isActive = button.getToggleState();
@@ -500,7 +509,7 @@ namespace particules
 
             if(isActive)
             {
-                g.setColour(coloursv2::cyan);
+                g.setColour(colours::lavender);
                 g.fillRect(bounds.removeFromTop(2.0f));
             }
             else
@@ -534,14 +543,13 @@ namespace particules
 
     void MainLNF::drawButtonText(juce::Graphics& g, juce::TextButton& button, bool isMouseOverButton, bool isButtonDown)
     {
-        g.setFont(valueFont.withHeight(14.0f));
-
         const bool isActive = button.getToggleState();
+        const bool isTab = (button.getRadioGroupId() != 0) || button.getProperties().contains("isTab");
 
-        if(button.getRadioGroupId() != 0)
+        if(isTab)
         {
-            // TAB TEXT STYLE
-            juce::Colour textCol = isActive ? coloursv2::white : coloursv2::white.withAlpha(0.4f);
+            g.setFont(juce::Font(geistMedium).withHeight(16.0f).withExtraKerningFactor(0.05f));
+            juce::Colour textCol = isActive ? juce::Colours::white : juce::Colours::white.withAlpha(0.7f);
 
             if(isMouseOverButton && !isActive)
                 textCol = textCol.withAlpha(0.7f);
@@ -551,7 +559,7 @@ namespace particules
         }
         else
         {
-            // STANDARD BUTTON TEXT STYLE
+            g.setFont(juce::Font(geistMedium).withHeight(14.0f));
             g.setColour(button.findColour(juce::TextButton::textColourOffId));
             g.drawText(button.getButtonText(), button.getLocalBounds(), juce::Justification::centred, true);
         }
@@ -563,18 +571,17 @@ namespace particules
             return juce::Font(geistSemiBold).withHeight(18.0f).withExtraKerningFactor(0.1f);
 
         if(label.getProperties().contains("isTab"))
-            return juce::Font(geistMedium).withHeight(16.0f).withExtraKerningFactor(0.05f);
+            return juce::Font(geistMedium).withHeight(17.0f).withExtraKerningFactor(0.05f);
 
         if(label.getProperties().contains("isName"))
-            return juce::Font(geistRegular).withHeight(14.0f).withExtraKerningFactor(0.05f);
+            return juce::Font(geistRegular).withHeight(16.0f).withExtraKerningFactor(0.05f);
 
         if(label.getProperties().contains("isValue"))
-            return juce::Font(geistLight).withHeight(12.0f);
+            return juce::Font(geistLight).withHeight(16.0f);
 
-        return juce::Font(geistRegular).withHeight(13.0f);
+        return juce::Font(geistRegular).withHeight(14.0f);
     }
 
-    //==============================================================================
     // POPUP MENU STYLE
     int MainLNF::getPopupMenuBorderSize() { return 1; }
 

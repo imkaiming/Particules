@@ -37,18 +37,13 @@ namespace particules
 
         IconButton loadBtn;
         IconButton playBtn;
-        std::unique_ptr<juce::Drawable> playIcon, pauseIcon, loadIcon;
-
-        //LabelBoxLookAndFeel lookAndFeel;
+        IconButton previousBtn;
+        IconButton nextBtn;
+        std::unique_ptr<juce::Drawable> playIcon, pauseIcon, loadIcon, previousIcon, nextIcon;
 
         void pauseButtonClicked();
         void playButtonClicked();
         void loadSampleButtonClicked();
-
-        //void layoutLeft();
-        //void layoutLoad();
-        //void layoutFile();
-        //void layoutRight();
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TitlePanel)
     };
