@@ -57,10 +57,6 @@ namespace particules
         g.fillAll(colours::black);
         paintGrid(g);
         noFileLabel.setVisible(true);
-        //g.setColour(coloursv2::perleBlanc);
-
-        //g.setFont(14.0f);
-        //g.drawFittedText("No File Loaded", getLocalBounds(), juce::Justification::centred, 1);
     }
 
     void ThumbnailComponent::paintIfFileLoaded(juce::Graphics& g)

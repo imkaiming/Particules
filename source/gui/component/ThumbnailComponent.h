@@ -34,8 +34,7 @@ namespace particules
         void setCallbackOnThumbnailReady(std::function<void()>);
 
     private:
-
-juce::Label noFileLabel;
+        juce::Label noFileLabel;
 
         void paint(juce::Graphics&) override;
         void resized() override;
@@ -51,7 +50,8 @@ juce::Label noFileLabel;
         GrainVisualComponent grainVisualComponent;
         juce::AudioThumbnail& audioThumbnail;
 
-        std::function<void()> onThumbnailReady; // Callback from the AudioFilePanel to activate function after the thumbnail has fully loaded
+        std::function<void()>
+            onThumbnailReady; // Callback from the AudioFilePanel to activate function after the thumbnail has fully loaded
         //void parameterChanged(const juce::String& parameterID, float newValue) override;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ThumbnailComponent)

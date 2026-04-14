@@ -62,22 +62,10 @@ namespace particules
     {
         juce::Rectangle<int> bounds = getLocalBounds();
 
-        const int padY = 2;
-        const int padX = 8;
-
-        const int totalH = bounds.getHeight();
-
-        const int sliderH = (int)(totalH * 0.10f);
-        const int thumbH = (int)(totalH * 0.80f);
-
-        juce::Rectangle<int> topSliderArea = bounds.removeFromTop(sliderH);
-        juce::Rectangle<int> thumbArea = bounds.removeFromTop(thumbH);
-        juce::Rectangle<int> bottomSliderArea = bounds;
-
-        juce::Rectangle<int> thumbReduced = thumbArea.reduced(padX, 0);
-        thumbnailComponent.setBounds(thumbReduced);
-        waveformOverlay->setBounds(thumbReduced);
+        thumbnailComponent.setBounds(bounds);
+        waveformOverlay->setBounds(bounds);
     }
+
     //void AudioFilePanel::updatePosition(float position)
     //{
         //const float width = (float)positionOverlay.getWidth();
