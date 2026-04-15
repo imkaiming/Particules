@@ -15,6 +15,7 @@ namespace particules
         //vignette.setInterceptsMouseClicks(false, false);
     }
 
+
     void MainPanel::paint(juce::Graphics& g) {}
 
     void MainPanel::resized()
