@@ -5,13 +5,13 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 
 #include "../../../../framework/GuiTypes.h"
-#include "../../../../framework/PluginParams.h"
 #include "../../../component/button/IconButton.h"
 #include "../../../component/rotarymenu/EnvelopeRotaryMenu.h"
 #include "../../../component/rotarymenu/TraversalRotaryMenu.h"
-#include "../../../component/menugroup/EnvelopeMenuControl.h"
-#include "../../../component/menugroup/TraversalMenuControl.h"
+//#include "../../../component/menugroup/EnvelopeMenuControl.h"
+//#include "../../../component/menugroup/TraversalMenuControl.h"
 #include "../../../component/slider/MainSliderWithAux.h"
+#include "../../../component/slider/RotarySlider.h"
 
 namespace juce
 {
@@ -33,10 +33,11 @@ namespace particules
 
     private:
         //void parameterChanged(const juce::String& parameterID, float newValue) override;
-        void linkButtonClicked();
         void setLinkButtonImage();
+        void onPlaybackButtonClicked();
 
         EngineState& engineState;
+        ValueTreeState& apvts;
 
         MainSliderWithAux emissionSlider;
         MainSliderWithAux durationSlider;
@@ -44,11 +45,9 @@ namespace particules
         MainSliderWithAux panSlider;
 
         IconButton linkBtn;
-        std::unique_ptr<juce::Drawable> linkInIcon, linkOffIcon;
-        std::unique_ptr<ValueTreeState::SliderAttachment> emissionSliderAttachment;
-        std::unique_ptr<ValueTreeState::SliderAttachment> durationSliderAttachment;
-        std::unique_ptr<ValueTreeState::SliderAttachment> speedSliderAttachment;
-        std::unique_ptr<ValueTreeState::SliderAttachment> panSliderAttachment;
+        IconButton playbackBtn;
+        std::unique_ptr<juce::Drawable> linkInIcon, linkOffIcon, forwardIcon, backwardIcon;
+        std::atomic<float>* playback;
 
         EnvelopeRotaryMenu envelopeRotaryMenu;
         TraversalRotaryMenu traversalRotaryMenu;
@@ -67,6 +66,16 @@ namespace particules
         std::unique_ptr<ValueTreeState::SliderAttachment> decaySliderAttachment;
         std::unique_ptr<ValueTreeState::SliderAttachment> sustainSliderAttachment;
         std::unique_ptr<ValueTreeState::SliderAttachment> releaseSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> emissionSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> durationSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> speedSliderAttachment;
+        std::unique_ptr<ValueTreeState::SliderAttachment> panSliderAttachment;
+
+        SecondaryRotarySlider outputSlider;
+        std::unique_ptr<ValueTreeState::SliderAttachment> outputSliderAttachment;
+        juce::Label outputLabel;
+
+        bool isLinkingUpdate ;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainsPanel)
     };

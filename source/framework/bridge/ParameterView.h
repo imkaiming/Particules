@@ -23,6 +23,8 @@ namespace particules
 
         const ParameterSnapshot getSnapshot() const noexcept;
 
+        float getPlay() const noexcept { return play ? play->load(std::memory_order_relaxed) : false; }
+
     private:
         float getDecibelGain() const noexcept { return output ? output->load(std::memory_order_relaxed) : 0.0f; }
         float getLinearGain() const noexcept;
@@ -36,12 +38,13 @@ namespace particules
             return sustainRatio ? sustainRatio->load(std::memory_order_relaxed) : 0.0f;
         }
         float getTraversalFreq() const noexcept { return traversalFreq ? traversalFreq->load(std::memory_order_relaxed) : 0.0f; }
-        float getPlay() const noexcept { return play ? play->load(std::memory_order_relaxed) : false; }
+        float getPlayback() const noexcept { return playback ? playback->load(std::memory_order_relaxed) : 0.0f; }
 
         EnvelopeMode getEnvelopeMode() const noexcept;
         TraversalMode getTraversalMode() const noexcept;
 
         std::atomic<float>* play = nullptr;
+        std::atomic<float>* playback = nullptr;
         std::atomic<float>* emission = nullptr;
         std::atomic<float>* duration = nullptr;
         std::atomic<float>* speed = nullptr;

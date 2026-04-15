@@ -11,7 +11,7 @@ namespace particules
 {
     AudioFilePanel::AudioFilePanel(UIContext& uic)
         : uic{uic}, apvts{uic.apvts}, thumbnailComponent{uic}, grainVisualComponent{uic}, posParam{nullptr}, spanParam{nullptr},
-          lastNumGrains{-1}, lastPos{-1.0f}, lastSpan{-1.0f}
+          lastNumGrains{-1}, lastPos{-1.0f}, lastSpan{-1.0f}, numSamples{0}/*, lastPlayState{false}*/
     {
         uic.uiState.addChangeListener(this); // uistate send a message at setSource(file), audio file panel is listening
 
@@ -40,10 +40,10 @@ namespace particules
         posLabel.setColour(juce::Label::textColourId, labelColor);
         spanLabel.setColour(juce::Label::textColourId, labelColor);
 
-        fileNameLabel.getProperties().set("isValueText", true);
-        numGrainsLabel.getProperties().set("isValueText", true);
-        posLabel.getProperties().set("isValueText", true);
-        spanLabel.getProperties().set("isValueText", true);
+        fileNameLabel.getProperties().set("isText", true);
+        numGrainsLabel.getProperties().set("isText", true);
+        posLabel.getProperties().set("isText", true);
+        spanLabel.getProperties().set("isText", true);
 
         fileNameLabel.setJustificationType(juce::Justification::topLeft);
         numGrainsLabel.setJustificationType(juce::Justification::topRight);
@@ -64,9 +64,14 @@ namespace particules
         addAndMakeVisible(&posLabel);
         addAndMakeVisible(&spanLabel);
 
-        // to test the GUI
-        sliderOnWaveform->setAudioLoaded(false);
-        //sliderOnWaveform->setAudioLoaded(true);
+        sliderOnWaveform->setAudioLoaded(false); // change to true to debug UI
+        sliderOnWaveform->setEnabled(false);
+        posLabel.setVisible(false);
+        spanLabel.setVisible(false);
+        fileNameLabel.setVisible(false);
+        numGrainsLabel.setVisible(false);
+    
+        changeListenerCallback(&uic.uiState);
     }
 
     AudioFilePanel::~AudioFilePanel()
@@ -81,19 +86,37 @@ namespace particules
         {
             if(uic.uiState.isFileLoaded())
             {
+                numSamples = uic.engineState.getNumSamples();
                 const juce::File& currentFile = uic.uiState.getCurrentFile();
-                fileNameLabel.setText(currentFile.getFileName(), juce::dontSendNotification);
 
                 sliderOnWaveform->setAudioLoaded(true);
-                grainVisualComponent.setNumSamples(uic.engineState.getNumSamples());
+                sliderOnWaveform->setEnabled(true); 
+                sliderOnWaveform->setAlpha(1.0f); 
+
+                grainVisualComponent.setNumSamples(numSamples);
+
+                fileNameLabel.setText(currentFile.getFileName(), juce::dontSendNotification);
+                fileNameLabel.setVisible(true);
+                posLabel.setVisible(true);
+                spanLabel.setVisible(true);
+                numGrainsLabel.setVisible(true);
             }
             else
             {
                 sliderOnWaveform->setAudioLoaded(false);
+                sliderOnWaveform->setEnabled(false); 
+                sliderOnWaveform->setAlpha(0.2f); 
+
+                fileNameLabel.setVisible(false);
+                posLabel.setVisible(false);
+                spanLabel.setVisible(false);
+                numGrainsLabel.setVisible(false);
             }
         }
     }
 
+    // we use timercallback to update the value instead of onValueChange to dont rely on send notification host
+    // or to avoid to trigger onValueChange 3000time with automations.
     void AudioFilePanel::timerCallback()
     {
         const int numGrains = uic.engineState.getNumActiveGrains();
@@ -108,7 +131,7 @@ namespace particules
             const float posVal = posParam->load(std::memory_order_relaxed);
             if(posVal != lastPos)
             {
-                posLabel.setText(str::formatted("POS: %.3f s", posVal), juce::dontSendNotification);
+                posLabel.setText(str::formatted("POS: %.3f s", posVal * numSamples), juce::dontSendNotification);
                 lastPos = posVal;
             }
         }
@@ -118,7 +141,7 @@ namespace particules
             const float spanVal = spanParam->load(std::memory_order_relaxed);
             if(spanVal != lastSpan)
             {
-                spanLabel.setText(str::formatted("SPAN: %.2f ms", spanVal), juce::dontSendNotification);
+                spanLabel.setText(str::formatted("SPAN: %.3f s", spanVal * numSamples), juce::dontSendNotification);
                 lastSpan = spanVal;
             }
         }
@@ -142,8 +165,9 @@ namespace particules
     {
         //paramsView.setIsPlaying(false);
         //audioProcessor.release();
-        juce::RangedAudioParameter* playParameter = apvts.getParameter(params::play::id);
-        playParameter->setValueNotifyingHost(0.f);
+        //juce::RangedAudioParameter* playParameter = apvts.getParameter(params::play::id);
+        //playParameter->setValueNotifyingHost(0.f);
+        uic.facade.setPlaying(false);
 
         for(str file : files)
         {
@@ -158,8 +182,8 @@ namespace particules
 
     void AudioFilePanel::resized()
     {
-        juce::Rectangle<int> bounds = getLocalBounds();
-        juce::Rectangle<int> area = bounds.reduced(2);
+        juce::Rectangle<int> area = getLocalBounds();
+        //juce::Rectangle<int> area = bounds.reduced(2);
 
         thumbnailComponent.setBounds(area);
         grainVisualComponent.setBounds(area);
@@ -177,25 +201,25 @@ namespace particules
         posLabel.setBounds(posSpanArea.removeFromLeft(120).withTrimmedRight(4));
         spanLabel.setBounds(posSpanArea.withTrimmedLeft(4));
     }
-
-    //void AudioFilePanel::updatePosition(float position)
-    //{
-    //const float width = (float)positionOverlay.getWidth();
-
-    //const float startPx = position * width;
-    //const float spanPx = spanSlider.getValue() * width;
-    //const float endPx = startPx + spanPx;
-
-    //positionOverlay.setPosition(startPx);
-    //spanOverlay.setPosition(startPx);
-
-    //const float overflowPx = juce::jmax(0.0f, endPx - width);
-    //updateOverflow(overflowPx);
-
-    //positionOverlay.repaint();
-    //spanOverlay.repaint();
-    //overflowOverlay.repaint();
 }
+
+//void AudioFilePanel::updatePosition(float position)
+//{
+//const float width = (float)positionOverlay.getWidth();
+
+//const float startPx = position * width;
+//const float spanPx = spanSlider.getValue() * width;
+//const float endPx = startPx + spanPx;
+
+//positionOverlay.setPosition(startPx);
+//spanOverlay.setPosition(startPx);
+
+//const float overflowPx = juce::jmax(0.0f, endPx - width);
+//updateOverflow(overflowPx);
+
+//positionOverlay.repaint();
+//spanOverlay.repaint();
+//overflowOverlay.repaint();
 
 //void AudioFilePanel::updateSpan(float span)
 //{

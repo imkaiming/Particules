@@ -6,7 +6,6 @@
 #include "../PluginParams.h"
 #include "EngineState.h"
 
-
 namespace particules
 {
     ParameterView::ParameterView(EngineState& es) : engineState{es} {}
@@ -24,6 +23,8 @@ namespace particules
         sustainRatio = apvts.getRawParameterValue(params::envelopeRatio::id);
         traversalMode = apvts.getRawParameterValue(params::traversalMode::id);
         traversalFreq = apvts.getRawParameterValue(params::traversalFreq::id);
+        play = apvts.getRawParameterValue(params::play::id);
+        playback = apvts.getRawParameterValue(params::playback::id);
     }
 
     EnvelopeMode ParameterView::getEnvelopeMode() const noexcept
@@ -58,7 +59,9 @@ namespace particules
         ParameterSnapshot ps;
         EngineSnapshot es = engineState.getSnapshot();
 
+        // state params
         ps.play = getPlay() > 0.5f ? true : false;
+        ps.playback = getPlayback() > 0.5f ? 1.0f : 0.0f;
         //// get Buffer data
 
         // position data

@@ -17,19 +17,24 @@ namespace particules
 
     TitlePanel::TitlePanel(UIContext& uic)
         : playBtn{(const str) "playBtn"}, loadBtn{(const str) "loadBtn"}, uic{uic}, facade{uic.facade},
-          engineState{uic.engineState}, nextBtn{(const str) "nextBtn"}, previousBtn{(const str) "previousBtn"}
+          lastPlayState{false}, engineState{uic.engineState}, nextBtn{(const str) "nextBtn"},
+          previousBtn{(const str) "previousBtn"}
     {
-
         uic.uiState.addChangeListener(this);
 
         playIcon = UIHelpers::loadSVG(BinaryData::play_svg, BinaryData::play_svgSize, juce::Colours::white);
         pauseIcon = UIHelpers::loadSVG(BinaryData::pause_svg, BinaryData::pause_svgSize, juce::Colours::white);
         loadIcon = UIHelpers::loadSVG(BinaryData::add_folder_svg, BinaryData::add_folder_svgSize, juce::Colours::white);
-        previousIcon = UIHelpers::loadSVG(BinaryData::arrow_turn_backward_svg, BinaryData::arrow_turn_backward_svgSize, juce::Colours::white);
+        previousIcon = UIHelpers::loadSVG(
+            BinaryData::arrow_turn_backward_svg, BinaryData::arrow_turn_backward_svgSize, juce::Colours::white);
         nextIcon =
             UIHelpers::loadSVG(BinaryData::arrow_turn_forward_svg, BinaryData::arrow_turn_forward_svgSize, juce::Colours::white);
 
-        playBtn.setIcon(playIcon.get());
+        lastPlayState = uic.facade.isPlaying();
+        playBtn.setIcon(lastPlayState ? pauseIcon.get() : playIcon.get());
+        playBtn.setEnabled(uic.uiState.isFileLoaded());
+
+        //playBtn.setIcon(playIcon.get());
         loadBtn.setIcon(loadIcon.get());
         previousBtn.setIcon(previousIcon.get());
         nextBtn.setIcon(nextIcon.get());
@@ -50,7 +55,7 @@ namespace particules
         addAndMakeVisible(nextBtn);
         addAndMakeVisible(titleLabel);
 
-        playBtn.setEnabled(false);
+        //playBtn.setEnabled(false);
     }
 
     TitlePanel::~TitlePanel() {}
@@ -66,24 +71,40 @@ namespace particules
 
     void TitlePanel::playButtonClicked()
     {
-        if(engineState.getIsPlaying())
+        if(!facade.setPlaying)
+            return;
+
+        // On inverse l'état actuel mémorisé
+        //const bool newState = !lastPlayState;
+        //facade.setPlaying(newState);
+        const bool currentState = facade.isPlaying() > 0.5f;
+        facade.setPlaying(!currentState);
+        playBtn.setIcon(currentState ? playIcon.get() : pauseIcon.get());
+
+        /*
+        if(facade.isPlaying())
         {
             //facade.stop();
             playBtn.setIcon(playIcon.get());
-            engineState.setIsPlaing(false);
+            facade.setPlaying(false);
+
         }
         else
         {
             //facade.play();
             playBtn.setIcon(pauseIcon.get());
-            engineState.setIsPlaing(true);
+            facade.setPlaying(true);
+            // TODO change to engineState.setAuditionning(true) after midi compatibility
         }
+        */
     }
 
     void TitlePanel::loadSampleButtonClicked()
     {
-        facade.stop();
-        facade.loadFile();
+        //facade.stop();
+        facade.setPlaying(false);
+        if(facade.loadFile)
+            facade.loadFile();
     }
 
     void TitlePanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::perleBlanc.darker(0.1f)); }

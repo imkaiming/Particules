@@ -38,13 +38,21 @@ namespace particules
 
         facade.loadFile = [this] { loadFile(); };
         facade.loadFilePath = [this](const str& path) { loadFile(path); };
+        facade.setPlaying = [this](bool play) {
+            if(juce::RangedAudioParameter* param = apvts.getParameter(params::play::id))
+            {
+                param->beginChangeGesture();
+                param->setValueNotifyingHost(param->convertTo0to1(play ? 1.0f : 0.0f));
+                param->endChangeGesture();
+            }
+        };
+        facade.isPlaying = [this]() -> float { return paramsView.getPlay() > 0.5f ? 1.0f : 0.f; };
     }
 
     ParticulesAudioProcessor::~ParticulesAudioProcessor() {}
 
     void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     {
-        //DBG("PREPARE TO PLAY");
         const int numChannels = getTotalNumOutputChannels();
         paramsView.init(apvts);
         engineState.setSampleRate(sampleRate);
@@ -76,31 +84,30 @@ namespace particules
 
     void ParticulesAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
     {
-        //DBG("GET STATE INFO");
         juce::ValueTree vt = apvts.copyState();
+        juce::ValueTree customState("particulesCustomState");
+
         const juce::File& f = getCurrentFile();
         if(f.existsAsFile())
         {
             // adding the input buffer to the value tree
-            //juce::ValueTree audioFileNode("AudioFile");
-            //audioFileNode.setProperty("path", f.getFullPathName(), nullptr);
-            //vt.appendChild(audioFileNode, nullptr);
-
-            juce::ValueTree runtimeParametersNode("RuntimeParameters");
-            //runtimeParametersNode.setProperty("isPlaying", engineState.getIsPlaying(), nullptr);
-            runtimeParametersNode.setProperty("numSamples", engineState.getNumSamples(), nullptr);
-            runtimeParametersNode.setProperty("sampleRate", engineState.getSampleRate(), nullptr);
-            runtimeParametersNode.setProperty("numChannels", engineState.getNumChannels(), nullptr);
-            vt.appendChild(runtimeParametersNode, nullptr);
+            juce::ValueTree audioFileNode("AudioFile");
+            customState.setProperty("audioFilePath", f.getFullPathName(), nullptr);
         }
 
+        //runtimeParametersNode.setProperty("isPlaying", engineState.getIsPlaying(), nullptr);
+        customState.setProperty("numSamples", engineState.getNumSamples(), nullptr);
+        customState.setProperty("sampleRate", engineState.getSampleRate(), nullptr);
+        customState.setProperty("numChannels", engineState.getNumChannels(), nullptr);
+        vt.addChild(customState, -1, nullptr);
+
+        //serialization to binary
         std::unique_ptr<juce::XmlElement> xml(vt.createXml());
         copyXmlToBinary(*xml, destData);
     }
 
     void ParticulesAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
     {
-        //DBG("SET STATE INFO");
         std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
         if(xmlState == nullptr)
             return;
@@ -110,33 +117,33 @@ namespace particules
         {
             juce::ValueTree vt = juce::ValueTree::fromXml(*xmlState);
 
-            juce::ValueTree runtimeParametersNode = vt.getChildWithName("RuntimeParameters");
-            if(runtimeParametersNode.isValid())
+            juce::ValueTree customState = vt.getChildWithName("particulesCustomState");
+            str filePathToLoad;
+            if(customState.isValid())
             {
                 //engineState.setIsPlaying(runtimeParametersNode.getProperty("isPlaying"));
-                engineState.setNumChannels(runtimeParametersNode.getProperty("numChannels"));
-                engineState.setSampleRate(runtimeParametersNode.getProperty("sampleRate"));
-                engineState.setNumSamples(runtimeParametersNode.getProperty("numSamples"));
+                engineState.setNumChannels(customState.getProperty("numChannels"));
+                engineState.setSampleRate(customState.getProperty("sampleRate"));
+                engineState.setNumSamples(customState.getProperty("numSamples"));
                 loader.setSampleRate(engineState.getSampleRate());
+                loader.setNumTargetChannels(engineState.getNumChannels());
+
+                filePathToLoad = customState.getProperty("audioFilePath", "").toString();
+                vt.removeChild(customState, nullptr);
             }
-
-            //juce::ValueTree audioFileNode = vt.getChildWithName("AudioFile");
-            //if(audioFileNode.isValid())
-            //{
-            //    str path = audioFileNode.getProperty("path");
-            //    loadFile(path);
-            //}
-            //vt.removeChild(audioFileNode, nullptr);
-
-            vt.removeChild(runtimeParametersNode, nullptr);
-
             apvts.replaceState(vt);
+
+            if(filePathToLoad.isNotEmpty())
+            {
+                juce::File f{filePathToLoad};
+                if(f.existsAsFile())
+                    loadFile(filePathToLoad);
+            }
         }
     }
 
     void ParticulesAudioProcessor::setInputBuffer(AudioBuffer& buffer) noexcept
     {
-        DBG("SET INPUT BUFFER");
         const int inputChannels = buffer.getNumChannels();
         const int numSamples = buffer.getNumSamples();
 
@@ -167,7 +174,12 @@ namespace particules
 
         // STATE //
 
-        layout.add(std::make_unique<juce::AudioParameterBool>(params::play::id, params::play::name, params::play::init));
+        //layout.add(std::make_unique<juce::AudioParameterBool>(params::play::id, params::play::name, params::play::init));
+
+        // PLAY //
+
+        layout.add(createNormalizedParameter(params::play::id, params::play::name, params::play::min, params::play::max,
+            params::play::skewFactor, params::play::init));
 
         // ADSR //
 
@@ -311,6 +323,11 @@ namespace particules
             params::traversalFreq_jitter::min, params::traversalFreq_jitter::max, params::traversalFreq_jitter::skewFactor,
             params::traversalFreq_jitter::init));
 
+        // PLAYBACK
+
+        layout.add(createNormalizedParameter(params::playback::id, params::playback::name, params::playback::min,
+            params::playback::max, params::playback::skewFactor, params::playback::init));
+
         return layout;
     }
 
@@ -374,6 +391,8 @@ namespace particules
         apvts.getParameter(params::envelopeRatio::id)->setValueNotifyingHost(normalizedSustainRatio);
         apvts.getParameter(params::envelopeMode::id)->setValueNotifyingHost(0.f);
         apvts.getParameter(params::traversalMode::id)->setValueNotifyingHost(0.f);
+        apvts.getParameter(params::playback::id)->setValueNotifyingHost(1.f);
+        apvts.getParameter(params::play::id)->setValueNotifyingHost(0.f);
 
         if(debugAudio.existsAsFile())
             loadFile(debugAudio.getFullPathName());

@@ -126,6 +126,7 @@ namespace particules
         if(sr > 0)
             sampleRate = sr;
     }
+    void AudioFileLoader::setNumTargetChannels(int ch) noexcept { channelMixer.setTargetChannel(ch); }
 
     juce::AudioFormatManager& AudioFileLoader::getFormatManager() { return formatManager; }
 

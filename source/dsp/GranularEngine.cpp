@@ -48,9 +48,9 @@ namespace particules
             scheduler.tick(spawnCallback, ps);
             grainProcessor.render(currentSample, outputNumChannels, outputPtrs, inputPtrs, smoothedParams);
 
-            const float env = adsr.getNextSample();
-            for(int ch = 0; ch < outputNumChannels; ++ch)
-                outputPtrs[ch][currentSample] *= env;
+            //const float env = adsr.getNextSample();
+            //for(int ch = 0; ch < outputNumChannels; ++ch)
+                //outputPtrs[ch][currentSample] *= env;
         }
 
         posMod.advanceBlock(bufferSize);
@@ -59,7 +59,7 @@ namespace particules
 
         // *** UI *** //
 
-        // write at 60hz speed
+        // write at 30hz speed
         sampleAccumulator += bufferSize;
         while(sampleAccumulator >= threshold) 
         {

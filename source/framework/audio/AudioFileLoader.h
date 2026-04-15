@@ -33,6 +33,7 @@ namespace particules
 
         void init(double, int) noexcept;
         void setSampleRate(double) noexcept;
+        void setNumTargetChannels(int) noexcept;
         juce::AudioFormatManager& getFormatManager();
         const juce::File& getCurrentFile() const noexcept { return currentFile; };
         void setCurrentFile(juce::File& f) noexcept { currentFile = f; };

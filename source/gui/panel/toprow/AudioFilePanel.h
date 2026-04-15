@@ -2,13 +2,13 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_core/juce_core.h>
-#include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_events/juce_events.h>
+#include <juce_gui_basics/juce_gui_basics.h>
 
 #include "../../../framework/GuiTypes.h"
 #include "../../../framework/PluginParams.h"
-#include "../../component/ThumbnailComponent.h"
 #include "../../component/GrainVisualComponent.h"
+#include "../../component/ThumbnailComponent.h"
 #include "../../component/slider/SliderOnWaveform.h"
 
 // the Audio File Frame provide the control to load and play the audio.
@@ -16,7 +16,10 @@ namespace particules
 {
     class UIState;
     struct UIContext;
-    class AudioFilePanel : public juce::Component, public juce::FileDragAndDropTarget , private juce::ChangeListener, public juce::Timer
+    class AudioFilePanel : public juce::Component,
+                           public juce::FileDragAndDropTarget,
+                           private juce::ChangeListener,
+                           public juce::Timer
     {
     public:
         AudioFilePanel(UIContext& uic);
@@ -45,13 +48,12 @@ namespace particules
         juce::Label posLabel;
         juce::Label spanLabel;
 
-        // caching parameter to not 
         std::atomic<float>* posParam;
         std::atomic<float>* spanParam;
 
-        int lastNumGrains;
-        float lastPos;
-        float lastSpan;
+        int numSamples, lastNumGrains;
+        float lastSpan, lastPos;
+        //bool lastPlayState;        
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFilePanel)
     };

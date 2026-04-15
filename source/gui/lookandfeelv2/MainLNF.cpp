@@ -164,7 +164,7 @@ namespace particules
         const float thickness = radius * 0.03f;
 
         juce::Path arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
-        drawArcGlow(g, arcVal, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
+        //drawArcGlow(g, arcVal, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
         drawColoredArc(g, cx, cy, innerR, startAngle, angle, colours::violetBleu, thickness);
 
         drawRotarySliderCenteredText(g, slider, cx, cy, radius);
@@ -578,6 +578,9 @@ namespace particules
 
         if(label.getProperties().contains("isValue"))
             return juce::Font(geistLight).withHeight(16.0f);
+
+        if(label.getProperties().contains("isText"))
+            return juce::Font(geistLight).withHeight(14.0f);
 
         return juce::Font(geistRegular).withHeight(14.0f);
     }

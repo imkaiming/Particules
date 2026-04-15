@@ -3,7 +3,7 @@
 namespace particules
 {
     EngineState::EngineState()
-        : isGrainsEmpty{true}, sampleRate{0.0}, numChannels{0}, numSamples{0}, numActiveGrains{0}, isLinked{false}, isPlaying{false}
+        : isGrainsEmpty{true}, sampleRate{0.0}, numChannels{0}, numSamples{0}, numActiveGrains{0}, isLinked{false}, isAuditioning{false}
     {
     }
 

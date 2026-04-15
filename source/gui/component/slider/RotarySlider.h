@@ -32,7 +32,7 @@ namespace particules
     class SecondaryRotarySlider : public juce::Slider
     {
     public:
-        SecondaryRotarySlider()
+        SecondaryRotarySlider(/*const str& s*/)
         {
             setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
             setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
@@ -42,9 +42,16 @@ namespace particules
 
             getProperties().set("RotaryType", static_cast<int>(RotaryType::secondary));
             setRepaintsOnMouseActivity(true);
+
+          /*  label.setText(s, juce::dontSendNotification);
+            label.setJustificationType(juce::Justification::centred);
+            label.setInterceptsMouseClicks(false, false);
+            label.setColour(juce::Label::textColourId, coloursv2::white);
+            label.getProperties().set("isName", true);*/
         }
 
     private:
+        /*juce::Label label;*/
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SecondaryRotarySlider)
     };
 

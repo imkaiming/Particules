@@ -48,7 +48,7 @@ namespace particules
             const bool isEdgeHovered = (currentHover == HoverState::Edge);
 
             // 1. SPAN REGION
-            color spanColor = colours::lavender.withAlpha(0.1f);
+            color spanColor = colours::lavender.withAlpha(0.15f);
             if(isBodySpanHovered)
                 spanColor = spanColor.brighter(0.2f);
 
@@ -85,7 +85,7 @@ namespace particules
 
             // Span Handle : Right Edge
             float spanHandleX = (spanEndPx > w) ? (spanEndPx - w) : spanEndPx;
-            color spanHandleColor = juce::Colours::red.brighter(0.5f).withAlpha(0.75f);
+            color spanHandleColor = juce::Colours::yellow.brighter(0.5f).withAlpha(0.75f);
             if(isEdgeHovered)
                 spanHandleColor = spanHandleColor.brighter(0.2f); 
 

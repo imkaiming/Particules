@@ -70,7 +70,11 @@ namespace particules
         {
             inline constexpr const char* id = "PLAY";
             inline constexpr const char* name = "Play";
-            inline constexpr bool init = false;
+            inline constexpr float min = 0.f;
+            inline constexpr float max = 1.0f;
+            inline constexpr float skewFactor = 0.5f;
+            inline constexpr float init = 0.0f;
+            //inline constexpr bool init = false;
         }
         namespace position
         {
@@ -110,12 +114,12 @@ namespace particules
         }
         namespace emission_jitter
         {
-            static constexpr const char* id = "EMISSIONJITTER";
-            static constexpr const char* name = "Emission Jitter";
-            static constexpr float min = 0.0f;
-            static constexpr float max = 1.0f;
-            static constexpr float init = 0.0f;
-            static constexpr float skewFactor = 0.5f;
+            inline constexpr const char* id = "EMISSIONJITTER";
+            inline constexpr const char* name = "Emission Jitter";
+            inline constexpr float min = 0.0f;
+            inline constexpr float max = 1.0f;
+            inline constexpr float init = 0.0f;
+            inline constexpr float skewFactor = 0.5f;
         }
         namespace duration
         {
@@ -128,12 +132,12 @@ namespace particules
         }
         namespace duration_jitter
         {
-            static constexpr const char* id = "DURATIONJITTER";
-            static constexpr const char* name = "Duration Jitter";
-            static constexpr float min = 0.0f;
-            static constexpr float max = 1.0f;
-            static constexpr float init = 0.0f;
-            static constexpr float skewFactor = 0.5f;
+            inline constexpr const char* id = "DURATIONJITTER";
+            inline constexpr const char* name = "Duration Jitter";
+            inline constexpr float min = 0.0f;
+            inline constexpr float max = 1.0f;
+            inline constexpr float init = 0.0f;
+            inline constexpr float skewFactor = 0.5f;
         }
         namespace pitch
         {
@@ -153,12 +157,12 @@ namespace particules
             inline constexpr float skewFactor = 1.0f;
         }
         namespace speed_jitter {
-            static constexpr const char* id = "SPEEDJITTER";
-            static constexpr const char* name = "Speed Jitter";
-            static constexpr float min = 0.0f;
-            static constexpr float max = 1.0f;
-            static constexpr float init = 0.0f;
-            static constexpr float skewFactor = 0.5f;
+            inline constexpr const char* id = "SPEEDJITTER";
+            inline constexpr const char* name = "Speed Jitter";
+            inline constexpr float min = 0.0f;
+            inline constexpr float max = 1.0f;
+            inline constexpr float init = 0.0f;
+            inline constexpr float skewFactor = 0.5f;
         }
         namespace pan
         {
@@ -171,12 +175,12 @@ namespace particules
         }
         namespace pan_jitter
         {
-            static constexpr const char* id = "PANJITTER";
-            static constexpr const char* name = "Pan Jitter";
-            static constexpr float min = 0.0f;
-            static constexpr float max = 1.0f;
-            static constexpr float init = 0.0f;
-            static constexpr float skewFactor = 0.5f;
+            inline constexpr const char* id = "PANJITTER";
+            inline constexpr const char* name = "Pan Jitter";
+            inline constexpr float min = 0.0f;
+            inline constexpr float max = 1.0f;
+            inline constexpr float init = 0.0f;
+            inline constexpr float skewFactor = 0.5f;
         }
 
         namespace envelopeMode
@@ -199,12 +203,12 @@ namespace particules
         }
         namespace envelopeRatio_jitter
         {
-            static constexpr const char* id = "ENVRATIOJITTER";
-            static constexpr const char* name = "EnvelopeRatio Jitter";
-            static constexpr float min = 0.0f;
-            static constexpr float max = 1.0f;
-            static constexpr float init = 0.0f;
-            static constexpr float skewFactor = 0.5f;
+            inline constexpr const char* id = "ENVRATIOJITTER";
+            inline constexpr const char* name = "EnvelopeRatio Jitter";
+            inline constexpr float min = 0.0f;
+            inline constexpr float max = 1.0f;
+            inline constexpr float init = 0.0f;
+            inline constexpr float skewFactor = 0.5f;
         }
 
         namespace traversalMode
@@ -229,14 +233,22 @@ namespace particules
         }
         namespace traversalFreq_jitter
         {
-            static constexpr const char* id = "TRAVERSALFREQJITTER";
-            static constexpr const char* name = "TraversalFreq Jitter";
-            static constexpr float min = 0.0f;
-            static constexpr float max = 1.0f;
-            static constexpr float init = 0.0f;
-            static constexpr float skewFactor = 0.5f;
+            inline constexpr const char* id = "TRAVERSALFREQJITTER";
+            inline constexpr const char* name = "TraversalFreq Jitter";
+            inline constexpr float min = 0.0f;
+            inline constexpr float max = 1.0f;
+            inline constexpr float init = 0.0f;
+            inline constexpr float skewFactor = 0.5f;
         }
-
+        namespace playback
+        {
+            inline constexpr const char* id = "PLAYBACK";
+            inline constexpr const char* name = "Playback";
+            inline constexpr float min = -1.0f;
+            inline constexpr float max = 1.0f;
+            inline constexpr float init = 1.0f;
+            inline constexpr float skewFactor = 0.0f;
+        }
     }
 
 }

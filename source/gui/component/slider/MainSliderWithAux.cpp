@@ -44,7 +44,7 @@ namespace particules
 
         mainSlider.onValueChange = [this]() {
             updatePrimaryAngle();
-            DBG(" SLIDER = " + (str)mainSlider.getValue());
+            //DBG(" SLIDER = " + (str)mainSlider.getValue());
             mainSlider.repaint();
 
             if(engineState.getIsLinked() && onValueChanged)

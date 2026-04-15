@@ -11,6 +11,15 @@ namespace particules
     {
         uic.facade.loadFile = [this] { DBG("facade load file"); };
         uic.facade.loadFilePath = [this](const str& path) { DBG("facade load file path = " + path); };
+        uic.facade.setPlaying = [this](bool play) {
+            if(juce::RangedAudioParameter* param = apvts.getParameter(params::play::id))
+            {
+                param->beginChangeGesture();
+                param->setValueNotifyingHost(param->convertTo0to1(play ? 1.0f : 0.0f));
+                param->endChangeGesture();
+            }
+        };
+        uic.facade.isPlaying = [this]() -> float { return paramsView.getPlay() > 0.5f ? 1.0f : 0.f; };
     }
 
     void GuiAppProcessor::prepareToPlay(double sampleRate, int /* samplesPerBlock */)

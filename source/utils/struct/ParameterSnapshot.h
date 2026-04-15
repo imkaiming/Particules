@@ -19,6 +19,7 @@ namespace particules
         float sustainRatio;
         float traversalFreq;
         int inputNumSamples;
+        float playback;
         bool isValid() const { return durationSamples > 0 && speed > 0 && emission >= 0; }
     };
 }
