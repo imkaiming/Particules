@@ -72,20 +72,12 @@ jobs:
 
           #installing dependancies
           sudo apt-get update && sudo apt-get install -y \
-            pkg-config libgtk-3-dev \
+            pkg-config \
             libasound2-dev libx11-dev libxinerama-dev libxext-dev \
-            libfreetype6-dev libwebkit2gtk-4.1-dev libglu1-mesa-dev \
+            libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev \
             libjack-jackd2-dev libcurl4-openssl-dev libxcomposite-dev \
             libxcursor-dev libxrandr-dev libxrender-dev mesa-common-dev \
-            xvfb ninja-build
-
-      - name: Verify GTK Installation
-        if: runner.os == 'Linux'
-        run: |
-          echo "=== Checking pkg-config for GTK3 ==="
-          pkg-config --cflags gtk+-3.0
-          echo "=== Checking pkg-config for WebKit2GTK ==="
-          pkg-config --cflags webkit2gtk-4.1 || pkg-config --cflags webkit2gtk-4.0
+            libgtk-3-dev xvfb ninja-build
 
       - name: Start virtual display
         if: (runner.os == 'Linux')
