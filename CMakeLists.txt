@@ -135,6 +135,7 @@ target_compile_definitions(Base PUBLIC
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0)
 
+# cmake lose gtk lib on linux
 if(LINUX)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(GTK3 REQUIRED gtk+-x11-3.0)
@@ -238,9 +239,9 @@ target_include_directories(SharedCode INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/sou
 
 # This is where you can set preprocessor definitions for JUCE and your plugin
 target_compile_definitions(SharedCode INTERFACE
-    JUCE_WEB_BROWSER=0  # If you set this to 1, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
-    JUCE_USE_CURL=0     # If you set this to 1, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
-    JUCE_VST3_CAN_REPLACE_VST2=0
+    #JUCE_WEB_BROWSER=0  # If you set this to 1, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
+    #JUCE_USE_CURL=0     # If you set this to 1, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
+    #JUCE_VST3_CAN_REPLACE_VST2=0
     # JUCE_DISPLAY_SPLASH_SCREEN=0 # Uncomment if you are paying for a an Indie/Pro license or releasing under GPLv3
     CMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}" # lets the app known if we're Debug or Release
     VERSION="${CURRENT_VERSION}"
