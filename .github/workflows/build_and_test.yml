@@ -76,7 +76,7 @@ jobs:
             libfreetype6-dev libwebkit2gtk-4.1-dev libglu1-mesa-dev \
             libjack-jackd2-dev libcurl4-openssl-dev libxcomposite-dev \
             libxcursor-dev libxrandr-dev libxrender-dev mesa-common-dev \
-            xvfb ninja-build
+            libgtk-3-dev xvfb ninja-build
 
       - name: Start virtual display
         if: (runner.os == 'Linux')
