@@ -38,6 +38,21 @@ set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT Embedded CACHE STRING "" FORCE)
 
 project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
 
+############## MACOS LINK-TIME OPTIMIZATION FIX ##############
+##############################################################
+# Bypass the Xcode 15 ld-prime linker bug when using LTO with Static Libraries
+if(APPLE)
+    execute_process(COMMAND ld -ld_classic -v
+                    RESULT_VARIABLE LD_CLASSIC_SUPPORTED
+                    OUTPUT_QUIET ERROR_QUIET)
+                    
+    if(LD_CLASSIC_SUPPORTED EQUAL 0)
+        message(STATUS "macOS: Using ld_classic linker to prevent LTO crashes")
+        add_link_options(-Wl,-ld_classic)
+    endif()
+endif()
+
+
 ############## JUCE ##############
 ##################################
 
@@ -115,7 +130,7 @@ add_library(Base STATIC)
 
 target_include_directories(Base PUBLIC  "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
-target_link_libraries(Base PRIVATE 
+target_link_libraries(Base PUBLIC 
     juce::juce_core
     #juce::juce_audio_devices
     juce::juce_audio_formats # audio format manager
