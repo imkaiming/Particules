@@ -79,6 +79,14 @@ jobs:
             libxcursor-dev libxrandr-dev libxrender-dev mesa-common-dev \
             xvfb ninja-build
 
+      - name: Verify GTK Installation
+        if: runner.os == 'Linux'
+        run: |
+          echo "=== Checking pkg-config for GTK3 ==="
+          pkg-config --cflags gtk+-3.0
+          echo "=== Checking pkg-config for WebKit2GTK ==="
+          pkg-config --cflags webkit2gtk-4.1 || pkg-config --cflags webkit2gtk-4.0
+
       - name: Start virtual display
         if: (runner.os == 'Linux')
         run: |
