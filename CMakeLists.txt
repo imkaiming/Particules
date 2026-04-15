@@ -130,6 +130,17 @@ add_library(Base STATIC)
 
 target_include_directories(Base PUBLIC  "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
+target_compile_definitions(Base PUBLIC
+    JUCE_WEB_BROWSER=0
+    JUCE_USE_CURL=0
+    JUCE_VST3_CAN_REPLACE_VST2=0)
+
+if(LINUX)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(GTK3 REQUIRED gtk+-x11-3.0)
+    target_include_directories(Base PUBLIC ${GTK3_INCLUDE_DIRS})
+endif()
+
 target_link_libraries(Base PUBLIC 
     juce::juce_core
     #juce::juce_audio_devices
