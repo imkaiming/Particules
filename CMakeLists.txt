@@ -285,7 +285,9 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     BUILDING_PLUGIN_APP=1
-    BUILDING_GUI_APP=0)
+    BUILDING_GUI_APP=0
+    PROJECT_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     SharedCode
@@ -329,8 +331,7 @@ target_link_libraries(${PROJECT_GUI_APP_NAME} PRIVATE
 target_compile_definitions(${PROJECT_GUI_APP_NAME} PRIVATE
     BUILDING_PLUGIN_APP=0
     BUILDING_GUI_APP=1
-    PROJECT_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
-)
+    )
 
 
 ############## BUILD TOOLS ##############

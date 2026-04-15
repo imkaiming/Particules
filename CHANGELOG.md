@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.3] - Work in progress
+## [0.2.3] - 2026-04-15
 
 ### Added
 - linked button that links the emission and duration parameters together
@@ -15,6 +15,7 @@
 - development tool to generate SVG shapes from LUT data for visual debugging
 - on mouse hover feedback for interactive UI elements
 - subtle grid overlay in audio thumbnail display
+- playback button added
 
 ### Changed
 - updated and pinned all git submodules to latest versions
