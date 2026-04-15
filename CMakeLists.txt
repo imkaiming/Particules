@@ -128,6 +128,8 @@ set_target_properties(${PROJECT_GUI_APP_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTOR
 
 add_library(Base STATIC)
 
+set_target_properties(Base PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
+
 target_include_directories(Base PUBLIC  "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
 target_compile_definitions(Base PUBLIC
@@ -162,6 +164,8 @@ target_sources(Base PUBLIC
 ####################################
 
 add_library(Core STATIC)
+
+set_target_properties(Core PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 target_compile_features(Core PUBLIC cxx_std_20)
 
@@ -199,6 +203,8 @@ target_link_libraries(Core PUBLIC
 ################################
 
 add_library(Gui STATIC)
+
+set_target_properties(Gui PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 target_compile_features(Gui PUBLIC cxx_std_20)
 
@@ -322,7 +328,9 @@ target_link_libraries(${PROJECT_GUI_APP_NAME} PRIVATE
 
 target_compile_definitions(${PROJECT_GUI_APP_NAME} PRIVATE
     BUILDING_PLUGIN_APP=0
-    BUILDING_GUI_APP=1)
+    BUILDING_GUI_APP=1
+    PROJECT_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+)
 
 
 ############## BUILD TOOLS ##############
