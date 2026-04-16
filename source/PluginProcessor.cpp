@@ -85,8 +85,12 @@ namespace particules
     void ParticulesAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
     {
         juce::ValueTree vt = apvts.copyState();
-        juce::ValueTree customState("particulesCustomState");
 
+        juce::ValueTree playParam = vt.getChildWithName(params::play::id);
+        if(playParam.isValid())
+            playParam.setProperty("value", 0.0f, nullptr);
+
+        juce::ValueTree customState("particulesCustomState");
         const juce::File& f = getCurrentFile();
         if(f.existsAsFile())
         {
@@ -132,7 +136,6 @@ namespace particules
                 vt.removeChild(customState, nullptr);
             }
             apvts.replaceState(vt);
-
             if(filePathToLoad.isNotEmpty())
             {
                 juce::File f{filePathToLoad};

@@ -135,7 +135,10 @@ target_include_directories(Base PUBLIC  "${CMAKE_CURRENT_SOURCE_DIR}/source")
 target_compile_definitions(Base PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
-    JUCE_VST3_CAN_REPLACE_VST2=0)
+    JUCE_VST3_CAN_REPLACE_VST2=0
+    PARTICULES_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
+    PARTICULES_VERSION="${CMAKE_PROJECT_VERSION}"
+)
 
 # cmake lose gtk lib on linux
 if(LINUX)
@@ -159,6 +162,7 @@ target_sources(Base PUBLIC
     ${BaseSources}
     "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/PluginParams.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/Core.h")
+
 
 ############# CORE LIB #############
 ####################################

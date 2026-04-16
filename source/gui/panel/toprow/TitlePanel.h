@@ -6,6 +6,9 @@
 #include "../../../framework/GuiTypes.h"
 #include "../../component/button/IconButton.h"
 
+
+
+
 namespace juce
 {
     class Graphics;
@@ -32,7 +35,7 @@ namespace particules
 
         UIContext& uic;
 
-        juce::Label titleLabel;
+        juce::Label titleLabel, versionLabel;
 
         ProcessorFacade& facade;
         EngineState& engineState;

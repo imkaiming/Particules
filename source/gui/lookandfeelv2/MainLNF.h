@@ -87,7 +87,7 @@ namespace particules
             float alpha = 0.2f, float thickness = 2.f) const;
 
         // Helpers
-        [[nodiscard]] juce::Path createArcPath(float cx, float cy, float radius, float startAngle, float endAngle) const;
+        void updateArcPath(juce::Path& path, float cx, float cy, float radius, float startAngle, float endAngle) const;
 
         void drawContour(juce::Graphics& g, float cx, float cy, float radius, color c, float thickness = 2.f) const;
 
@@ -105,6 +105,10 @@ namespace particules
         juce::Typeface::Ptr geistBlack;
 
         juce::Font valueFont;
+
+        // cached variable to avoid recomputing it
+        mutable juce::Path tempArcPath;
+        mutable juce::Path tempMenuCurve;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MainLNF)
     };

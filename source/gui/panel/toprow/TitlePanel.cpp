@@ -12,13 +12,20 @@
 
 #include "BinaryData.h"
 
+#ifndef PARTICULES_BUILD_TYPE
+    #define PARTICULES_BUILD_TYPE ""
+#endif
+
+#ifndef PARTICULES_VERSION
+    #define PARTICULES_VERSION ""
+#endif
+
 namespace particules
 {
 
     TitlePanel::TitlePanel(UIContext& uic)
-        : playBtn{(const str) "playBtn"}, loadBtn{(const str) "loadBtn"}, uic{uic}, facade{uic.facade},
-          lastPlayState{false}, engineState{uic.engineState}, nextBtn{(const str) "nextBtn"},
-          previousBtn{(const str) "previousBtn"}
+        : playBtn{(const str) "playBtn"}, loadBtn{(const str) "loadBtn"}, uic{uic}, facade{uic.facade}, lastPlayState{false},
+          engineState{uic.engineState}, nextBtn{(const str) "nextBtn"}, previousBtn{(const str) "previousBtn"}
     {
         uic.uiState.addChangeListener(this);
 
@@ -49,11 +56,18 @@ namespace particules
         titleLabel.setJustificationType(juce::Justification::centredLeft);
         titleLabel.setColour(juce::Label::textColourId, coloursv2::deepBlack);
 
-        addAndMakeVisible(playBtn);
-        addAndMakeVisible(loadBtn);
-        addAndMakeVisible(previousBtn);
-        addAndMakeVisible(nextBtn);
-        addAndMakeVisible(titleLabel);
+        juce::String versionText = str("v") + PARTICULES_VERSION;
+        versionLabel.setText(versionText, juce::dontSendNotification);
+        versionLabel.getProperties().set("isVersion", true);
+        versionLabel.setJustificationType(juce::Justification::centredLeft);
+        versionLabel.setColour(juce::Label::textColourId, coloursv2::deepBlack.withAlpha(0.5f));
+
+        addAndMakeVisible(&playBtn);
+        addAndMakeVisible(&loadBtn);
+        addAndMakeVisible(&previousBtn);
+        addAndMakeVisible(&nextBtn);
+        addAndMakeVisible(&titleLabel);
+        addAndMakeVisible(&versionLabel);
 
         //playBtn.setEnabled(false);
     }
@@ -119,7 +133,11 @@ namespace particules
         int titleWidth = 150;
 
         juce::Rectangle<int> titleArea = area.removeFromLeft(titleWidth);
+
+        //titleLabel.setBounds(titleArea.removeFromTop(titleArea.getHeight() * 0.7f));
         titleLabel.setBounds(titleArea);
+        const int textBottomY = titleArea.getCentreY() + 6;
+        versionLabel.setBounds(titleArea.withTop(textBottomY).withHeight(14));
 
         juce::Rectangle<int> loadArea = area.removeFromRight(btnSize);
         loadBtn.setBounds(loadArea.withSizeKeepingCentre(btnSize, btnSize));

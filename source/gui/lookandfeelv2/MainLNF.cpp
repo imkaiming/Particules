@@ -120,8 +120,8 @@ namespace particules
 
         drawBorderArc(g, cx, cy, arcRadius, startAngle, endAngle);
 
-        juce::Path arcVal = createArcPath(cx, cy, arcRadius, startAngle, angle);
-        drawArcGlow(g, arcVal, colours::violetBleu, thickness);
+        updateArcPath(tempArcPath, cx, cy, arcRadius, startAngle, angle);
+        drawArcGlow(g, tempArcPath, colours::violetBleu, thickness);
         drawColoredArc(g, cx, cy, arcRadius, startAngle, angle, colours::violetBleu, thickness);
 
         drawContour(g, cx, cy, innerR, colours::smokyBlack.brighter(0.20f));
@@ -163,8 +163,8 @@ namespace particules
         const float angle = startAngle + sliderPos * (endAngle - startAngle);
         const float thickness = radius * 0.03f;
 
-        juce::Path arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
-        //drawArcGlow(g, arcVal, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
+        updateArcPath(tempArcPath, cx, cy, innerR, startAngle, angle);
+        //drawArcGlow(g, tempArcPath, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
         drawColoredArc(g, cx, cy, innerR, startAngle, angle, colours::violetBleu, thickness);
 
         drawRotarySliderCenteredText(g, slider, cx, cy, radius);
@@ -184,8 +184,8 @@ namespace particules
         if(jitterAmount > 0.001f)
             drawJitterArc(g, cx, cy, arcRadius, startAngle, endAngle, angle, jitterAmount, 2.f);
 
-        juce::Path arcVal = createArcPath(cx, cy, arcRadius, startAngle, angle);
-        //drawArcGlow(g, arcVal, coloursv2::cyan, radius * 0.05f, 8, 12.0f, 0.1f);
+        updateArcPath(tempArcPath, cx, cy, arcRadius, startAngle, angle);
+        //drawArcGlow(g, tempArcPath, coloursv2::cyan, radius * 0.05f, 8, 12.0f, 0.1f);
         drawColoredArc(g, cx, cy, arcRadius, startAngle, angle, coloursv2::cyan, 2.f);
 
         //drawContour(
@@ -206,8 +206,8 @@ namespace particules
         if(jitterAmount > 0.001f)
             drawJitterArc(g, cx, cy, innerR, startAngle, endAngle, angle, jitterAmount, 2.f);
 
-        juce::Path arcVal = createArcPath(cx, cy, innerR, startAngle, angle);
-        //drawArcGlow(g, arcVal, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
+        updateArcPath(tempArcPath, cx, cy, innerR, startAngle, angle);
+        //drawArcGlow(g, tempArcPath, colours::violetBleu, radius * 0.05f, 8, 12.0f, 0.1f);
         drawColoredArc(g, cx, cy, innerR, startAngle, angle, colours::violetBleu, 2.f);
 
         drawRotarySliderCenteredText(g, slider, cx, cy, radius);
@@ -226,7 +226,7 @@ namespace particules
         if(jitterAmount > 0.001f)
             drawJitterArc(g, cx, cy, arcRadius, startAngle, endAngle, angle, jitterAmount, thickness);
 
-        juce::Path arcVal = createArcPath(cx, cy, arcRadius, startAngle, angle);
+        updateArcPath(tempArcPath, cx, cy, arcRadius, startAngle, angle);
         drawColoredArc(g, cx, cy, arcRadius, startAngle, angle, coloursv2::cyan, thickness);
 
         juce::String type = slider.getProperties().getWithDefault("menuControlType", "");
@@ -239,7 +239,7 @@ namespace particules
         const float startX = cx - (curveW * 0.5f);
         const float startY = cy - (curveH * 0.5f);
 
-        juce::Path curve;
+        tempMenuCurve.clear();
         const int numPoints = 60;
 
         for(int i = 0; i <= numPoints; ++i)
@@ -262,13 +262,13 @@ namespace particules
             float py = startY + curveH * (1.0f - val);
 
             if(i == 0)
-                curve.startNewSubPath(px, py);
+                tempMenuCurve.startNewSubPath(px, py);
             else
-                curve.lineTo(px, py);
+                tempMenuCurve.lineTo(px, py);
         }
 
         g.setColour(coloursv2::cyan);
-        g.strokePath(curve, juce::PathStrokeType(2.0f, juce::PathStrokeType::mitered, juce::PathStrokeType::rounded));
+        g.strokePath(tempMenuCurve, juce::PathStrokeType(2.0f, juce::PathStrokeType::mitered, juce::PathStrokeType::rounded));
     }
 
     void MainLNF::drawAuxKnob(
@@ -305,9 +305,9 @@ namespace particules
 
         const float jitterArcRadius = baseArcRadius * 1.125f;
 
-        juce::Path jitterArc = createArcPath(cx, cy, jitterArcRadius, jitterStart, jitterEnd);
+        updateArcPath(tempArcPath, cx, cy, jitterArcRadius, jitterStart, jitterEnd);
 
-        //drawArcGlow(g, jitterArc, coloursv2::yellow, baseLineWidth, 8, 7.5f, 0.05f);
+        //drawArcGlow(g, tempArcPath, coloursv2::yellow, baseLineWidth, 8, 7.5f, 0.05f);
         drawColoredArc(g, cx, cy, jitterArcRadius, jitterStart, jitterEnd, colours::lavender /*, baseLineWidth * 1.2f*/);
     }
 
@@ -385,7 +385,7 @@ namespace particules
 
             str text = slider.getTextFromValue(slider.getValue());
             if(text.isEmpty())
-                text = str(slider.getValue(), 2); 
+                text = str(slider.getValue(), 2);
 
             str valueStr, unitStr;
             splitValueAndUnit(text, valueStr, unitStr);
@@ -439,11 +439,10 @@ namespace particules
         }
     }
 
-    juce::Path MainLNF::createArcPath(float cx, float cy, float radius, float startAngle, float endAngle) const
+    void MainLNF::updateArcPath(juce::Path& path, float cx, float cy, float radius, float startAngle, float endAngle) const
     {
-        juce::Path path;
+        path.clear();
         path.addArc(cx - radius, cy - radius, radius * 2.0f, radius * 2.0f, startAngle, endAngle, true);
-        return path;
     }
 
     void MainLNF::drawColoredArc(
@@ -451,9 +450,9 @@ namespace particules
     {
         if(std::abs(endAngle - startAngle) < 0.001f)
             return;
-        juce::Path p = createArcPath(cx, cy, radius, startAngle, endAngle);
+        updateArcPath(tempArcPath, cx, cy, radius, startAngle, endAngle);
         g.setColour(color);
-        g.strokePath(p, juce::PathStrokeType(thickness, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+        g.strokePath(tempArcPath, juce::PathStrokeType(thickness, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
     }
 
     void MainLNF::drawArcGlow(
@@ -582,7 +581,10 @@ namespace particules
         if(label.getProperties().contains("isText"))
             return juce::Font(geistLight).withHeight(14.0f);
 
-        return juce::Font(geistRegular).withHeight(14.0f);
+        if(label.getProperties().contains("isVersion"))
+            return juce::Font(geistLight).withHeight(14.0f);
+
+        return juce::Font(geistLight).withHeight(10.0f);
     }
 
     // POPUP MENU STYLE
@@ -903,4 +905,5 @@ void MainLNF::drawTertiaryKnob(
             g.setFont(juce::Font(11.f, juce::Font::plain));
             g.drawText(text, bounds, juce::Justification::centredBottom);
         }
+}
     */

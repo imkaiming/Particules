@@ -4,6 +4,7 @@
 #include "../../utils/struct/VisualSnapshot.h"
 
 // snapshot of every actives grains published every buffers end
+// Ping Pong Buffer (double buffering)
 
 namespace particules
 {
