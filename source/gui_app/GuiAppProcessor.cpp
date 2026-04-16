@@ -6,8 +6,8 @@
 namespace particules
 {
     GuiAppProcessor::GuiAppProcessor()
-        : apvts(*this, nullptr, "Parameters", createParameterLayout()), paramsView{engineState}, engineState{}, uiState{},
-          uic{apvts, paramsView, engineState, uiState, facade} //, loader{}
+        : apvts(*this, nullptr, "Parameters", createParameterLayout()), paramsView{audioState}, audioState{}, uiState{},
+          uic{apvts, paramsView, audioState, uiState, facade} //, loader{}
     {
         uic.facade.loadFile = [this] { DBG("facade load file"); };
         uic.facade.loadFilePath = [this](const str& path) { DBG("facade load file path = " + path); };
@@ -26,7 +26,7 @@ namespace particules
     {
         //const int numChannels = getTotalNumOutputChannels();
         paramsView.init(apvts);
-        engineState.setSampleRate(sampleRate);
+        audioState.setSampleRate(sampleRate);
         uiState.init(&visualBuffer);
         //loader.init(sampleRate, numChannels);
     }

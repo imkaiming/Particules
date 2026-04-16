@@ -19,15 +19,15 @@ namespace particules
                   .withOutput("Output", juce::AudioChannelSet::stereo(), true)
     #endif
                   ),
-          apvts(*this, nullptr, "Parameters", createParameterLayout()), paramsView{engineState},
-          granularEngine{visualBuffer, engineState}, engineState{}, uiState{},
-          uic{apvts, paramsView, engineState, uiState, facade}, loader{}, debugPresetLoaded{false}
+          apvts(*this, nullptr, "Parameters", createParameterLayout()), paramsView{audioState},
+          granularEngine{visualBuffer, audioState}, audioState{}, uiState{}, uic{apvts, paramsView, audioState, uiState, facade},
+          loader{incomingBuffer}, debugPresetLoaded{false}, incomingBuffer{}, garbageCollector{}
 #endif
     {
         onAudioLoadedCallback = [this](AudioBuffer& buffer, const juce::File& loadedFile) {
             setInputBuffer(buffer);
-            engineState.setNumSamples(buffer.getNumSamples());
-            engineState.setNumChannels(buffer.getNumChannels());
+            audioState.setNumSamples(buffer.getNumSamples());
+            audioState.setNumChannels(buffer.getNumChannels());
             uiState.setSource(loadedFile);
         };
 
@@ -50,7 +50,7 @@ namespace particules
     {
         const int numChannels = getTotalNumOutputChannels();
         paramsView.init(apvts);
-        engineState.setSampleRate(sampleRate);
+        audioState.setSampleRate(sampleRate);
         uiState.init(&visualBuffer);
         granularEngine.init(sampleRate, numChannels, samplesPerBlock);
         loader.init(sampleRate, numChannels);
@@ -95,9 +95,9 @@ namespace particules
         }
 
         //runtimeParametersNode.setProperty("isPlaying", engineState.getIsPlaying(), nullptr);
-        customState.setProperty("numSamples", engineState.getNumSamples(), nullptr);
-        customState.setProperty("sampleRate", engineState.getSampleRate(), nullptr);
-        customState.setProperty("numChannels", engineState.getNumChannels(), nullptr);
+        customState.setProperty("numSamples", audioState.getNumSamples(), nullptr);
+        customState.setProperty("sampleRate", audioState.getSampleRate(), nullptr);
+        customState.setProperty("numChannels", audioState.getNumChannels(), nullptr);
         vt.addChild(customState, -1, nullptr);
 
         //serialization to binary
@@ -121,11 +121,11 @@ namespace particules
             if(customState.isValid())
             {
                 //engineState.setIsPlaying(runtimeParametersNode.getProperty("isPlaying"));
-                engineState.setNumChannels(customState.getProperty("numChannels"));
-                engineState.setSampleRate(customState.getProperty("sampleRate"));
-                engineState.setNumSamples(customState.getProperty("numSamples"));
-                loader.setSampleRate(engineState.getSampleRate());
-                loader.setNumTargetChannels(engineState.getNumChannels());
+                audioState.setNumChannels(customState.getProperty("numChannels"));
+                audioState.setSampleRate(customState.getProperty("sampleRate"));
+                audioState.setNumSamples(customState.getProperty("numSamples"));
+                loader.setSampleRate(audioState.getSampleRate());
+                loader.setNumTargetChannels(audioState.getNumChannels());
 
                 filePathToLoad = customState.getProperty("audioFilePath", "").toString();
                 vt.removeChild(customState, nullptr);

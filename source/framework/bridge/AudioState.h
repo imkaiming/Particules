@@ -1,21 +1,25 @@
-#pragma once
-#include "../../utils/struct/EngineSnapshot.h"
+﻿#pragma once
+#include "../../utils/struct/AudioStateSnapshot.h"
 #include "../Core.h"
 //#include <juce_core/juce_core.h>
 
-// own runtime flags
-// audio processor can write
-// plugin editor reads
-// should be polled by the UI
+// own audio runtime flags
+// audio thread only can write
+// ui thread only reads by polling method
+// it must remains :
+// - trivially copyable types
+// - lock‑free patterns
+// - predictable memory access
+
 namespace particules
 {
-    class EngineState
+    class AudioState
     {
     public:
-        EngineState();
-        ~EngineState() = default;
+        AudioState();
+        ~AudioState() = default;
 
-        EngineSnapshot getSnapshot() const noexcept;
+        AudioStateSnapshot getSnapshot() const noexcept;
 
         //void setIsPlaying(bool b) noexcept { isPlaying.store(b, std::memory_order_relaxed); }
         void setIsGrainsEmpty(bool b) noexcept { isGrainsEmpty.store(b, std::memory_order_relaxed); }
@@ -25,7 +29,6 @@ namespace particules
         void setNumActiveGrains(int g) noexcept { numActiveGrains.store(g, std::memory_order_relaxed); }
         void setLink(bool b) noexcept { isLinked.store(b, std::memory_order_relaxed); }
         void setIsAuditioning(bool b) noexcept { isAuditioning.store(b, std::memory_order_relaxed); }
-        //void setIsAudioLoaded(bool b) noexcept { isAudioLoaded.store(b, std::memory_order_relaxed); }
 
         bool getIsGrainsEmpty() const noexcept { return isGrainsEmpty.load(std::memory_order_relaxed); }
         int getNumChannels() const noexcept { return numChannels.load(std::memory_order_relaxed); }
@@ -34,17 +37,14 @@ namespace particules
         int getNumActiveGrains() const noexcept { return numActiveGrains.load(std::memory_order_relaxed); }
         bool getIsLinked() const noexcept { return isLinked.load(std::memory_order_relaxed); }
         bool getIsAuditioning() const noexcept { return isAuditioning.load(std::memory_order_relaxed); }
-        //int getIsAudioLoaded() const noexcept { return isAudioLoaded.load(std::memory_order_relaxed); }
 
     private:
         std::atomic<bool> isAuditioning;
-        //std::atomic<bool> isAudioLoaded;
         std::atomic<bool> isGrainsEmpty;
         std::atomic<double> sampleRate;
         std::atomic<int> numChannels;
         std::atomic<int> numSamples;
         std::atomic<int> numActiveGrains;
         std::atomic<bool> isLinked;
-
     };
 }

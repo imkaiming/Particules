@@ -21,7 +21,7 @@ namespace juce
 namespace particules
 {
     struct UIContext;
-    class EngineState;
+    class AudioState;
     class GrainsPanel : public juce::Component //, private ValueTreeState::Listener
     {
     public:
@@ -36,7 +36,7 @@ namespace particules
         void setLinkButtonImage();
         void onPlaybackButtonClicked();
 
-        EngineState& engineState;
+        AudioState& audioState;
         ValueTreeState& apvts;
 
         MainSliderWithAux emissionSlider;

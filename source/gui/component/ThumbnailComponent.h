@@ -19,7 +19,6 @@ namespace particules
 {
     class UIState;
     struct UIContext;
-
     class ThumbnailComponent : public juce::Component,
                                private juce::ChangeListener //, public juce::AudioProcessorValueTreeState::Listener
     {

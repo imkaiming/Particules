@@ -18,7 +18,7 @@ namespace particules
 {
     struct UIContext;
     struct ProcessorFacade;
-    class EngineState;
+    class AudioState;
     class TitlePanel : public juce::Component, private juce::ChangeListener
     {
     public:
@@ -38,7 +38,7 @@ namespace particules
         juce::Label titleLabel, versionLabel;
 
         ProcessorFacade& facade;
-        EngineState& engineState;
+        AudioState& audioState;
 
         IconButton loadBtn;
         IconButton playBtn;

@@ -2,6 +2,7 @@
 
 #include "../Core.h"
 #include "../PluginTypes.h"
+#include "framework/bridge/LockFreePointerQueue.h"
 
 #include <juce_audio_basics/juce_audio_basics.h> // audio loaded callback
 #include <juce_audio_formats/juce_audio_formats.h> // audio format manager
@@ -17,10 +18,12 @@ namespace juce
 
 namespace particules
 {
+    //template <typename T>
+    //class LockFreePointerQueue;
     class AudioFileLoader
     {
     public:
-        AudioFileLoader();
+        AudioFileLoader(LockFreePointerQueue<AudioBuffer>&);
         ~AudioFileLoader() = default;
 
         void loadFile(AudioLoadedCallback, const juce::File&);
@@ -44,7 +47,7 @@ namespace particules
         double sampleRate;
 
         ChannelMixer channelMixer;
-        //juce::File currentFile;
+        LockFreePointerQueue<AudioBuffer>& incomingBuffer;
         std::unique_ptr<juce::FileChooser> chooser;
         juce::AudioFormatManager formatManager; // classe qui traite les formats de fichier tq wav, aiff, ogg, vorbis ou mp3
 

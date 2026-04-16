@@ -33,11 +33,11 @@ namespace particules
 {
     //class VisualSnapshot;
     struct ParameterSnapshot;
-    class EngineState;
+    class AudioState;
     class GranularEngine
     {
     public:
-        GranularEngine(LockFreeDoubleBuffer<VisualSnapshot>& vb, EngineState& es);
+        GranularEngine(LockFreeDoubleBuffer<VisualSnapshot>& vb, AudioState& as);
         ~GranularEngine() = default;
 
         void process(
@@ -58,30 +58,33 @@ namespace particules
         static constexpr uint8_t mMaxEvent = params::maxSpawnsPerBlock;
 
         AtomicSharedPtr<const AudioBuffer> inputBufferPtr; // should be downmixed
-        std::function<void(const ParameterSnapshot& ps)> spawnCallback;
 
+        // core data members
         const float refreshRate;
         int sampleAccumulator;
         int threshold;
+        std::function<void(const ParameterSnapshot& ps)> spawnCallback;
 
+        // core components
         GrainEnvelope envLut;
         PositionModulator posMod;
         Scheduler scheduler;
         GrainPool pool;
         GrainProcessor grainProcessor;
-        LockFreeDoubleBuffer<VisualSnapshot>& visualBuffer;
 
+        // processors
         juce::dsp::Gain<float> gainProcessor;
-
         juce::ADSR adsr;
         juce::ADSR::Parameters adsrParams;
+
         // smoothed value : we only smooth parameters that change the life cycle of the grains.
         juce::SmoothedValue<float> speedSmooth;
         //juce::SmoothedValue<float> sustainRatioSmooth;
         SmoothedParameters smoothedParams;
 
-        EngineState& engineState;
-        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GranularEngine)
+        AudioState& audioState;
+        LockFreeDoubleBuffer<VisualSnapshot>& visualBuffer;
+
     };
 }
 //juce::dsp::DryWetMixer<float> mixerProcessor;

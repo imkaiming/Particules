@@ -4,11 +4,11 @@
 #include <juce_audio_processors/juce_audio_processors.h> // apvts
 
 #include "../PluginParams.h"
-#include "EngineState.h"
+#include "AudioState.h"
 
 namespace particules
 {
-    ParameterView::ParameterView(EngineState& es) : engineState{es} {}
+    ParameterView::ParameterView(AudioState& as) : audioState{as} {}
 
     void ParameterView::init(ValueTreeState& apvts)
     {
@@ -57,7 +57,7 @@ namespace particules
     const ParameterSnapshot ParameterView::getSnapshot() const noexcept
     {
         ParameterSnapshot ps;
-        EngineSnapshot es = engineState.getSnapshot();
+        AudioStateSnapshot es = audioState.getSnapshot();
 
         // state params
         ps.play = getPlay() > 0.5f ? true : false;

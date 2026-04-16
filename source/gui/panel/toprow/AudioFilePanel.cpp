@@ -1,7 +1,7 @@
 #include "AudioFilePanel.h"
 
 #include "../../../framework/GuiTypes.h"
-#include "../../../framework/bridge/EngineState.h"
+#include "../../../framework/bridge/AudioState.h"
 #include "../../../framework/bridge/UIState.h"
 #include "../../../utils/math/TimeUtils.h"
 #include "../../../utils/struct/ProcessorFacade.h"
@@ -22,7 +22,7 @@ namespace particules
 
         std::function<void()> onThumbnailReady = [this]() {
             sliderOnWaveform->setAudioLoaded(true);
-            grainVisualComponent.setNumSamples(this->uic.engineState.getNumSamples());
+            grainVisualComponent.setNumSamples(this->uic.audioState.getNumSamples());
         };
 
         thumbnailComponent.setCallbackOnThumbnailReady(onThumbnailReady);
@@ -87,7 +87,7 @@ namespace particules
         {
             if(uic.uiState.isFileLoaded())
             {
-                numSamples = uic.engineState.getNumSamples();
+                numSamples = uic.audioState.getNumSamples();
                 const juce::File& currentFile = uic.uiState.getCurrentFile();
 
                 sliderOnWaveform->setAudioLoaded(true);
@@ -120,7 +120,7 @@ namespace particules
     // or to avoid to trigger onValueChange 3000time with automations.
     void AudioFilePanel::timerCallback()
     {
-        const int numGrains = uic.engineState.getNumActiveGrains();
+        const int numGrains = uic.audioState.getNumActiveGrains();
         if(numGrains != lastNumGrains)
         {
             numGrainsLabel.setText(str::formatted("GRAINS: %d", numGrains), juce::dontSendNotification);
@@ -133,7 +133,7 @@ namespace particules
             if(posVal != lastPos)
             {
                 posLabel.setText(
-                    "POS: " + utils::formatSamplesToTime(posVal, uic.engineState.getSampleRate()), juce::dontSendNotification);
+                    "POS: " + utils::formatSamplesToTime(posVal, uic.audioState.getSampleRate()), juce::dontSendNotification);
                 lastPos = posVal;
             }
         }
@@ -144,7 +144,7 @@ namespace particules
             if(spanVal != lastSpan)
             {
                 spanLabel.setText(
-                    "SPAN: " + utils::formatSamplesToTime(spanVal, uic.engineState.getSampleRate()), juce::dontSendNotification);
+                    "SPAN: " + utils::formatSamplesToTime(spanVal, uic.audioState.getSampleRate()), juce::dontSendNotification);
                 lastSpan = spanVal;
             }
         }

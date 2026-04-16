@@ -1,15 +1,15 @@
 #include "GranularEngine.h"
-#include "../framework/bridge/EngineState.h"
+#include "../framework/bridge/AudioState.h"
 #include "../utils/struct/ParameterSnapshot.h"
 #include "GranularEngine.h"
 
 namespace particules
 {
-    GranularEngine::GranularEngine(LockFreeDoubleBuffer<VisualSnapshot>& vb, EngineState& es)
+    GranularEngine::GranularEngine(LockFreeDoubleBuffer<VisualSnapshot>& vb, AudioState& as)
         : scheduler{}, grainProcessor{pool, posMod, envLut}, pool{}, posMod{}, refreshRate{gui::refreshRate},
-          sampleAccumulator{0}, threshold{0}, smoothedParams{}, engineState{es}, visualBuffer{vb}
+          sampleAccumulator{0}, threshold{0}, smoothedParams{}, audioState{as}, visualBuffer{vb}
     {
-        spawnCallback = [this](const ParameterSnapshot& ps) { grainProcessor.spawn(ps); };
+        spawnCallback = [this](const ParameterSnapshot& ps) { grainProcessor.spawn(ps); }; // to avoid creating a new lambda every sampleBlock
     }
 
     // pour 1024 buffer size en 48kHz on a une fenetre de 21ms par appelle de compute.
@@ -65,7 +65,7 @@ namespace particules
         {
             sampleAccumulator -= threshold;
             writeVisualSnapshot();
-            engineState.setNumActiveGrains(pool.getNumActiveGrains());
+            audioState.setNumActiveGrains(pool.getNumActiveGrains());
         }
     }
 

@@ -3,7 +3,7 @@
 #include <juce_audio_utils/juce_audio_utils.h> // audiothumbnail
 #include <juce_graphics/juce_graphics.h> // graphics
 
-#include "../../framework/bridge/EngineState.h"
+//#include "../../framework/bridge/AudioState.h"
 #include "../../framework/bridge/UIState.h"
 #include "../../utils/struct/UIContext.h"
 #include "../lookandfeel/MyColours.h"

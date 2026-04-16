@@ -6,7 +6,7 @@
 
 #include "framework/bridge/LockFreeDoubleBuffer.h"
 #include "../framework/PluginTypes.h"
-#include "../framework/bridge/EngineState.h"
+#include "../framework/bridge/AudioState.h"
 //#include "../framework/bridge/GrainVisualBuffer.h"
 #include "../framework/bridge/ParameterView.h"
 #include "../framework/bridge/UIState.h"
@@ -76,7 +76,7 @@ namespace particules
     private:
         LockFreeDoubleBuffer<VisualSnapshot> visualBuffer;
         ValueTreeState apvts;
-        EngineState engineState;
+        AudioState audioState;
         ParameterView paramsView;
         UIState uiState;
 

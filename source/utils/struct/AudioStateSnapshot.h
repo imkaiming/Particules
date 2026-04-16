@@ -2,7 +2,7 @@
 
 namespace particules
 {
-    struct EngineSnapshot
+    struct AudioStateSnapshot
     {
         int inputNumSamples;
         int inputNumChannels;

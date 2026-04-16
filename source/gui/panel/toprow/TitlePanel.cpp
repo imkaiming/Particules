@@ -3,7 +3,7 @@
 #include <juce_graphics/juce_graphics.h>
 
 #include "../../../framework/PluginParams.h"
-#include "../../../framework/bridge/EngineState.h"
+#include "../../../framework/bridge/AudioState.h"
 #include "../../../framework/bridge/UIState.h"
 #include "../../../utils/UIHelpers.h"
 #include "../../../utils/struct/ProcessorFacade.h"
@@ -25,7 +25,7 @@ namespace particules
 
     TitlePanel::TitlePanel(UIContext& uic)
         : playBtn{(const str) "playBtn"}, loadBtn{(const str) "loadBtn"}, uic{uic}, facade{uic.facade}, lastPlayState{false},
-          engineState{uic.engineState}, nextBtn{(const str) "nextBtn"}, previousBtn{(const str) "previousBtn"}
+          audioState{uic.audioState}, nextBtn{(const str) "nextBtn"}, previousBtn{(const str) "previousBtn"}
     {
         uic.uiState.addChangeListener(this);
 

@@ -1,15 +1,15 @@
-#include "EngineState.h"
+#include "AudioState.h"
 
 namespace particules
 {
-    EngineState::EngineState()
+    AudioState::AudioState()
         : isGrainsEmpty{true}, sampleRate{0.0}, numChannels{0}, numSamples{0}, numActiveGrains{0}, isLinked{false}, isAuditioning{false}
     {
     }
 
-    EngineSnapshot EngineState::getSnapshot() const noexcept
+    AudioStateSnapshot AudioState::getSnapshot() const noexcept
     {
-        EngineSnapshot snapshot;
+        AudioStateSnapshot snapshot;
 
         snapshot.sampleRate = getSampleRate();
         snapshot.inputNumSamples = getNumSamples();

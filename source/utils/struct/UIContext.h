@@ -6,14 +6,14 @@ namespace particules
 {
     class GrainVisualBuffer;
     class ParameterView;
-    class EngineState;
+    class AudioState;
     class UIState;
     struct ProcessorFacade; 
     struct UIContext
     {
         ValueTreeState& apvts;
         ParameterView& paramsView;
-        EngineState& engineState;
+        AudioState& audioState;
         UIState& uiState;
         ProcessorFacade& facade;
     };

@@ -12,11 +12,11 @@
 
 namespace particules
 {
-    class EngineState;
+    class AudioState;
     class ParameterView
     {
     public:
-        ParameterView(EngineState&); // = default;
+        ParameterView(AudioState&); // = default;
         ~ParameterView() = default;
 
         void init(ValueTreeState& apvts);
@@ -57,7 +57,7 @@ namespace particules
         std::atomic<float>* traversalMode = nullptr;
         std::atomic<float>* envMode = nullptr;
 
-        EngineState& engineState;
+        AudioState& audioState;
 
         //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterView)
     };

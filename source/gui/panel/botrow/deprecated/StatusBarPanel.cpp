@@ -5,7 +5,7 @@
 namespace particules
 {
 
-    StatusBarPanel::StatusBarPanel(UIContext& uic) : uic{uic}, engineState{uic.engineState}
+    StatusBarPanel::StatusBarPanel(UIContext& uic) : uic{uic}, audioState{uic.audioState}
     {
         addAndMakeVisible(&statusLabel);
         startTimerHz(30);
@@ -45,7 +45,7 @@ namespace particules
     void StatusBarPanel::timerCallback()
     {
         statusLabel.setText(
-            (const str) "active grains: " + (const str)engineState.getNumActiveGrains(), juce::dontSendNotification);
+            (const str) "active grains: " + (const str)audioState.getNumActiveGrains(), juce::dontSendNotification);
         repaint();
     }
 }

@@ -3,7 +3,7 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../../framework/bridge/EngineState.h"
+#include "../../../framework/bridge/AudioState.h"
 #include "../../../utils/math/MathConstants.h"
 #include "../../lookandfeelv2/Colours.h"
 
@@ -14,8 +14,8 @@
 namespace particules
 {
 
-    MainSliderWithAux::MainSliderWithAux(EngineState& es, RotaryType type, ValueTreeState& apvts, const str& name, const str& id)
-        : engineState{es}, parameterID{id}, apvts{apvts}
+    MainSliderWithAux::MainSliderWithAux(AudioState& as, RotaryType type, ValueTreeState& apvts, const str& name, const str& id)
+        : audioState{as}, parameterID{id}, apvts{apvts}
     {
         label.setText(name, juce::dontSendNotification);
         label.setJustificationType(juce::Justification::centred);
@@ -47,7 +47,7 @@ namespace particules
             //DBG(" SLIDER = " + (str)mainSlider.getValue());
             mainSlider.repaint();
 
-            if(engineState.getIsLinked() && onValueChanged)
+            if(audioState.getIsLinked() && onValueChanged)
             {
                 onValueChanged(mainSlider.getValue());
             }

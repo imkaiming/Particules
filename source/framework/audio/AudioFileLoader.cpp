@@ -6,7 +6,10 @@
 
 namespace particules
 {
-    AudioFileLoader::AudioFileLoader() : sampleRate{0.0}, formatManager{} { formatManager.registerBasicFormats(); }
+    AudioFileLoader::AudioFileLoader(LockFreePointerQueue<AudioBuffer>& pq) : sampleRate{0.0}, formatManager{}, incomingBuffer{pq}
+    {
+        formatManager.registerBasicFormats();
+    }
 
     void AudioFileLoader::loadFile(AudioLoadedCallback onAudioLoaded, const juce::File& currentFile)
     {

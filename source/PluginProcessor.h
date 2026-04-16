@@ -4,8 +4,9 @@
 #include "dsp/GranularEngine.h"
 #include "framework/PluginTypes.h"
 #include "framework/audio/AudioFileLoader.h"
-#include "framework/bridge/EngineState.h"
+#include "framework/bridge/AudioState.h"
 #include "framework/bridge/LockFreeDoubleBuffer.h"
+#include "framework/bridge/LockFreePointerQueue.h"
 #include "framework/bridge/ParameterView.h"
 #include "framework/bridge/UIState.h"
 #include "utils/struct/ProcessorFacade.h"
@@ -99,17 +100,20 @@ namespace particules
 
         bool debugPresetLoaded = false;
 
+        // thread communication
         LockFreeDoubleBuffer<VisualSnapshot> visualBuffer;
-        ValueTreeState apvts; // connecte les slider du GUI et les paramètres (fourni des valeurs atomiques)
-        EngineState engineState; // own runtime plugin global parameters no snapshot
-        ParameterView paramsView; // fait le pont entre apvts et le synth
-        UIState uiState; // own UI value
-        GranularEngine granularEngine;
+        LockFreePointerQueue<AudioBuffer> incomingBuffer;
+        LockFreePointerQueue<AudioBuffer> garbageCollector;
 
+        // core components
+        ValueTreeState apvts; // connecte les slider du GUI et les paramètres (fourni des valeurs atomiques)
+        AudioState audioState; // own runtime plugin global parameters no snapshot
+        ParameterView paramsView; // fait le pont entre apvts et le synth
+        UIState uiState; // 
+        GranularEngine granularEngine;
+        AudioFileLoader loader;
         ProcessorFacade facade;
         UIContext uic;
-
-        AudioFileLoader loader;
 
         // is called after the audio file loader has successfully
         // load a sample to init all the audio related component

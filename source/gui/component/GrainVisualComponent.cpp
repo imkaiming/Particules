@@ -1,5 +1,5 @@
 #include "GrainVisualComponent.h"
-#include "../../framework/bridge/EngineState.h"
+#include "../../framework/bridge/AudioState.h"
 #include "../../framework/bridge/UIState.h"
 #include "../../utils/struct/UIContext.h"
 #include "../../utils/struct/VisualSnapshot.h"
@@ -9,7 +9,7 @@ namespace particules
 {
 
     GrainVisualComponent::GrainVisualComponent(UIContext& uic)
-        : uiState{uic.uiState}, numSamples{uic.engineState.getNumSamples()}, invWidthSamples{0.f}, colour{colours::lavender}
+        : uiState{uic.uiState}, numSamples{uic.audioState.getNumSamples()}, invWidthSamples{0.f}, colour{colours::lavender}
     {
         setOpaque(false);
         //startTimerHz(static_cast<int>(gui::refreshRate));

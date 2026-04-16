@@ -17,11 +17,11 @@ namespace juce
 
 namespace particules
 {
-    class EngineState;
+    class AudioState;
     class MainSliderWithAux : public juce::Component
     {
     public:
-        MainSliderWithAux(EngineState& es, RotaryType type, ValueTreeState& apvts, const str& name = "", const str& id = "");
+        MainSliderWithAux(AudioState& es, RotaryType type, ValueTreeState& apvts, const str& name = "", const str& id = "");
 
         void updatePrimaryAngle();
 
@@ -44,7 +44,7 @@ namespace particules
 
         str parameterID;
         ValueTreeState& apvts;
-        EngineState& engineState;
+        AudioState& audioState;
         ValueCallback onValueChanged;
         juce::Slider mainSlider;
         AuxRotarySlider auxSlider;

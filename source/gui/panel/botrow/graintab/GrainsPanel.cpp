@@ -4,7 +4,7 @@
 #include <juce_graphics/juce_graphics.h>
 
 #include "../../../../framework/PluginParams.h"
-#include "../../../../framework/bridge/EngineState.h"
+#include "../../../../framework/bridge/AudioState.h"
 #include "../../../../utils/UIHelpers.h"
 #include "../../../../utils/struct/UIContext.h"
 #include "../../../lookandfeel/MyColours.h"
@@ -15,13 +15,13 @@
 namespace particules
 {
     GrainsPanel::GrainsPanel(UIContext& uic)
-        : engineState{uic.engineState}, linkBtn{"linkBtn"}, apvts{uic.apvts}, playback{nullptr}, playbackBtn{"playbackBtn"},
-          emissionSlider{engineState, RotaryType::primaryWithAux, uic.apvts, params::emission::name, params::emission::id},
-          durationSlider{engineState, RotaryType::primaryWithAux, uic.apvts, params::duration::name, params::duration::id},
+        : audioState{uic.audioState}, linkBtn{"linkBtn"}, apvts{uic.apvts}, playback{nullptr}, playbackBtn{"playbackBtn"},
+          emissionSlider{audioState, RotaryType::primaryWithAux, uic.apvts, params::emission::name, params::emission::id},
+          durationSlider{audioState, RotaryType::primaryWithAux, uic.apvts, params::duration::name, params::duration::id},
           envelopeRotaryMenu{uic.apvts, params::envelopeMode::id, params::envelopeRatio::id, params::envelopeRatio_jitter::id},
           traversalRotaryMenu{uic.apvts, params::traversalMode::id, params::traversalFreq::id, params::traversalFreq_jitter::id},
-          speedSlider{engineState, RotaryType::secondaryWithAux, uic.apvts, params::speed::name, params::speed::id},
-          panSlider{engineState, RotaryType::secondaryWithAux, uic.apvts, params::pan::name, params::pan::id}, outputSlider{},
+          speedSlider{audioState, RotaryType::secondaryWithAux, uic.apvts, params::speed::name, params::speed::id},
+          panSlider{audioState, RotaryType::secondaryWithAux, uic.apvts, params::pan::name, params::pan::id}, outputSlider{},
           isLinkingUpdate{false}
 
     {
@@ -45,7 +45,7 @@ namespace particules
         playbackBtn.internalPaddingCoef = 0.10f;
 
         emissionSlider.setOnPrimaryValueChanged([this](double emissionVal) {
-            if(!engineState.getIsLinked() || isLinkingUpdate)
+            if(!audioState.getIsLinked() || isLinkingUpdate)
                 return;
 
             if(emissionVal <= 0.0)
@@ -62,7 +62,7 @@ namespace particules
         });
 
         durationSlider.setOnPrimaryValueChanged([this](double durationVal) {
-            if(!engineState.getIsLinked() || isLinkingUpdate)
+            if(!audioState.getIsLinked() || isLinkingUpdate)
                 return;
 
             if(durationVal <= 0.0)
@@ -163,14 +163,14 @@ namespace particules
     }
     void GrainsPanel::setLinkButtonImage()
     {
-        if(engineState.getIsLinked())
+        if(audioState.getIsLinked())
         {
-            engineState.setLink(false);
+            audioState.setLink(false);
             linkBtn.setIcon(linkOffIcon.get());
         }
         else
         {
-            engineState.setLink(true);
+            audioState.setLink(true);
             linkBtn.setIcon(linkInIcon.get());
 
             double emissionVal = emissionSlider.getPrimaryValue();

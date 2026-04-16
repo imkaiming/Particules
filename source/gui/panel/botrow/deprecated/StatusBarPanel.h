@@ -4,7 +4,7 @@
 #include <juce_gui_basics/juce_gui_basics.h>
 
 #include "../../../../framework/Core.h"
-#include "../../../../framework/bridge/EngineState.h"
+#include "../../../../framework/bridge/AudioState.h"
 
 // TODO RENAME FOOT PANEL
 
@@ -24,7 +24,7 @@ namespace particules
     private:
         juce::Label statusLabel;
         UIContext& uic;
-        EngineState& engineState;
+        AudioState& audioState;
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatusBarPanel)
     };
 }
