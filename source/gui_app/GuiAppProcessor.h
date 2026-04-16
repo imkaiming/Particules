@@ -4,13 +4,14 @@
 #include <juce_audio_processors/juce_audio_processors.h> // audio processor
 #include <juce_core/juce_core.h> // memory block and string
 
-//#include "framework/audio/AudioFileLoader.h"
+#include "framework/bridge/LockFreeDoubleBuffer.h"
 #include "../framework/PluginTypes.h"
 #include "../framework/bridge/EngineState.h"
-#include "../framework/bridge/GrainVisualBuffer.h"
+//#include "../framework/bridge/GrainVisualBuffer.h"
 #include "../framework/bridge/ParameterView.h"
 #include "../framework/bridge/UIState.h"
 #include "../utils/struct/ProcessorFacade.h"
+#include "../utils/struct/VisualSnapshot.h"
 #include "../utils/struct/UIContext.h"
 
 // just to test GUI separated than the audio DSP
@@ -73,7 +74,7 @@ namespace particules
         UIContext& getUIContext() noexcept { return uic; };
 
     private:
-        GrainVisualBuffer visualBuffer;
+        LockFreeDoubleBuffer<VisualSnapshot> visualBuffer;
         ValueTreeState apvts;
         EngineState engineState;
         ParameterView paramsView;

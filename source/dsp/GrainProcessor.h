@@ -4,19 +4,20 @@
 #include "../framework/Core.h"
 #include "../utils/struct/GrainHandle.h"
 
+
 // GrainProcessor takes segments from the spawned events and render grains from it
 namespace particules
 {
     class GrainPool;
     struct SmoothedParameters;
     struct ParameterSnapshot;
-    class GrainVisualBuffer;
     class GrainEnvelope;
     class PositionModulator;
+    struct VisualSnapshot;
     class GrainProcessor
     {
     public:
-        GrainProcessor(GrainPool& pool, PositionModulator& pm, GrainEnvelope& lut, GrainVisualBuffer& vb);
+        GrainProcessor(GrainPool& pool, PositionModulator& pm, GrainEnvelope& lut);
         ~GrainProcessor() = default;
 
         void reset();
@@ -29,7 +30,7 @@ namespace particules
         //void processSamplesGrains(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
         void spawn(const ParameterSnapshot&);
 
-        void writeVisualSnapshot();
+        void writeVisualSnapshot(VisualSnapshot& snap) noexcept ;
 
     private:
         void removeVoice(const int index);
@@ -43,7 +44,6 @@ namespace particules
         std::array<GrainHandle, SIZE> activeHandles;
         int activeCount;
 
-        GrainVisualBuffer& visualBuffer;
         std::array<float, SIZE> visualY;
 
         //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GrainProcessor)

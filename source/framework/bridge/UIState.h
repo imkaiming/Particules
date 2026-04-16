@@ -11,7 +11,8 @@
 namespace particules
 {
     struct VisualSnapshot;
-    class GrainVisualBuffer;
+    template<typename T>
+    class LockFreeDoubleBuffer;
     class UIState : public juce::ChangeBroadcaster
     {
     public:
@@ -19,7 +20,7 @@ namespace particules
         ~UIState() = default;
 
         void setSource(const juce::File& f) noexcept;
-        void init(const GrainVisualBuffer* vb) noexcept;
+        void init(const LockFreeDoubleBuffer<VisualSnapshot>* vb) noexcept;
 
         const VisualSnapshot& getSnapshot() const noexcept;
 
@@ -42,7 +43,7 @@ namespace particules
         juce::AudioThumbnailCache cache;
         juce::AudioThumbnail audioThumbnail;
 
-        const GrainVisualBuffer* visualBuffer;
+        const LockFreeDoubleBuffer<VisualSnapshot>* visualBuffer;
         //const GrainVisualBuffer& visualBuffer;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(UIState)

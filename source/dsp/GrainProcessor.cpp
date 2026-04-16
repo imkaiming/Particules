@@ -1,18 +1,19 @@
-#include "../framework/bridge/GrainVisualBuffer.h"
+#include "GrainProcessor.h"
+//#include "../framework/bridge/GrainVisualBuffer.h"
 #include "../utils/math/Lerp.h"
 #include "../utils/struct/ParameterSnapshot.h"
 #include "../utils/struct/SmoothedParameters.h"
+#include "../utils/struct/VisualSnapshot.h"
 #include "GrainEnvelope.h"
 #include "GrainPool.h"
 #include "PositionModulator.h"
-#include "GrainProcessor.h"
 
 #include <juce_core/juce_core.h>
 
 namespace particules
 {
-    GrainProcessor::GrainProcessor(GrainPool& p, PositionModulator& pm, GrainEnvelope& lut, GrainVisualBuffer& vb)
-        : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}, visualBuffer{vb}
+    GrainProcessor::GrainProcessor(GrainPool& p, PositionModulator& pm, GrainEnvelope& lut)
+        : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}
     {
         reset();
     }
@@ -85,6 +86,21 @@ namespace particules
     // after decrementing activeCount is = 4.
     void GrainProcessor::removeVoice(const int i) { activeHandles[i] = activeHandles[--activeCount]; }
 
+    void GrainProcessor::writeVisualSnapshot(VisualSnapshot& snap) noexcept
+    {
+        snap.count = 0;
+        for(int i = 0; i < activeCount; ++i)
+        {
+            const GrainHandle h = activeHandles[i];
+            const Grain* g = pool.get(h);
+            if(g != nullptr)
+            {
+                snap.grainVisuals[snap.count++] = {
+                    g->getReadPosition(), visualY[h.index], envLut.getEnvelopeValue(g->getPhase())};
+            }
+        }
+    }
+    /*
     void GrainProcessor::writeVisualSnapshot()
     {
         std::atomic<int>& index = visualBuffer.getReadIndex();
@@ -106,6 +122,7 @@ namespace particules
         //snap.count = activeCount;
         index.store(write, std::memory_order_release);
     }
+    */
 }
 
 /*

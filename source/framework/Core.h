@@ -30,6 +30,7 @@
 #include <cassert> // assert
 #include <atomic>
 #include <utility> // std::max
+#include <type_traits> // is_trivially_copyable
 
 
 #if JUCE_DEBUG

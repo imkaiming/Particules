@@ -106,7 +106,8 @@ namespace particules
 
         juce::Font valueFont;
 
-        // cached variable to avoid recomputing it
+        // mutable because we are writing in cached variable in juce const functions 
+        // bitwise mutation
         mutable juce::Path tempArcPath;
         mutable juce::Path tempMenuCurve;
 

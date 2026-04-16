@@ -5,6 +5,8 @@
 
 // snapshot of every actives grains published every buffers end
 // Ping Pong Buffer (double buffering)
+// single producer single consumer
+// useful to display infos from the audio to the GUI thread
 
 namespace particules
 {
@@ -24,7 +26,8 @@ namespace particules
 
     private:
         VisualSnapshot visualSnapshot[2];
-        std::atomic<int> readIndex{0}; // act like a latch that avoid race condition from ui and audio thread
+
+        std::atomic<int> readIndex{0}; // visible to GUI
 
     };
 }

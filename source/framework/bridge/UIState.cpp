@@ -1,7 +1,7 @@
 #include "UIState.h"
 
 #include "../../utils/struct/VisualSnapshot.h"
-#include "../bridge/GrainVisualBuffer.h"
+#include "../bridge/LockFreeDoubleBuffer.h"
 
 namespace particules
 {
@@ -25,7 +25,7 @@ namespace particules
         sendChangeMessage(); // "a file is loaded you can now enable new logic"
     }
 
-    const VisualSnapshot& UIState::getSnapshot() const noexcept { return visualBuffer->getSnapshot(); }
+    const VisualSnapshot& UIState::getSnapshot() const noexcept { return visualBuffer->getReadBuffer(); }
 
-    void UIState::init(const GrainVisualBuffer* vb) noexcept { visualBuffer = vb; }
+    void UIState::init(const LockFreeDoubleBuffer<VisualSnapshot>* vb) noexcept { visualBuffer = vb; }
 }

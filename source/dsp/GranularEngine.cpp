@@ -1,13 +1,13 @@
 #include "GranularEngine.h"
 #include "../framework/bridge/EngineState.h"
 #include "../utils/struct/ParameterSnapshot.h"
-#include "../framework/bridge/GrainVisualBuffer.h"
+#include "GranularEngine.h"
 
 namespace particules
 {
-    GranularEngine::GranularEngine(GrainVisualBuffer& vb, EngineState& es)
-        : scheduler{}, grainProcessor{pool, posMod, envLut, vb}, pool{}, posMod{}, refreshRate{gui::refreshRate}, sampleAccumulator{0},
-          threshold{0}, smoothedParams{}, engineState{es}
+    GranularEngine::GranularEngine(LockFreeDoubleBuffer<VisualSnapshot>& vb, EngineState& es)
+        : scheduler{}, grainProcessor{pool, posMod, envLut}, pool{}, posMod{}, refreshRate{gui::refreshRate},
+          sampleAccumulator{0}, threshold{0}, smoothedParams{}, engineState{es}, visualBuffer{vb}
     {
         spawnCallback = [this](const ParameterSnapshot& ps) { grainProcessor.spawn(ps); };
     }
@@ -15,8 +15,8 @@ namespace particules
     // pour 1024 buffer size en 48kHz on a une fenetre de 21ms par appelle de compute.
     // si Emission = 500g/s (1g chaque 0.002s) alors on a interOnSet = 48000/500 = 96 sample.
     // 1024/96 = 10.66 grains par appel
-    void GranularEngine::process(AudioBuffer& bufferOut, int bufferSize, float* const* outputPtrs, int outputNumChannels,
-        const ParameterSnapshot& ps)
+    void GranularEngine::process(
+        AudioBuffer& bufferOut, int bufferSize, float* const* outputPtrs, int outputNumChannels, const ParameterSnapshot& ps)
     {
         // *** security *** //
 
@@ -50,7 +50,7 @@ namespace particules
 
             //const float env = adsr.getNextSample();
             //for(int ch = 0; ch < outputNumChannels; ++ch)
-                //outputPtrs[ch][currentSample] *= env;
+            //outputPtrs[ch][currentSample] *= env;
         }
 
         posMod.advanceBlock(bufferSize);
@@ -61,10 +61,10 @@ namespace particules
 
         // write at 30hz speed
         sampleAccumulator += bufferSize;
-        while(sampleAccumulator >= threshold) 
+        while(sampleAccumulator >= threshold)
         {
             sampleAccumulator -= threshold;
-            grainProcessor.writeVisualSnapshot();
+            writeVisualSnapshot();
             engineState.setNumActiveGrains(pool.getNumActiveGrains());
         }
     }
@@ -98,6 +98,13 @@ namespace particules
         //sustainRatioSmooth.reset(sampleRate, 0.01);
 
         scheduler.init(sampleRate);
+    }
+
+    void GranularEngine::writeVisualSnapshot() noexcept
+    {
+        VisualSnapshot& snap = visualBuffer.beginWriteBuffer();
+        grainProcessor.writeVisualSnapshot(snap);
+        visualBuffer.endWriteBuffer();
     }
 
     void GranularEngine::gainProcess(juce::dsp::ProcessContextReplacing<float> context, const float gainLin)

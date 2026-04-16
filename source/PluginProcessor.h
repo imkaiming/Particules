@@ -5,11 +5,12 @@
 #include "framework/PluginTypes.h"
 #include "framework/audio/AudioFileLoader.h"
 #include "framework/bridge/EngineState.h"
-#include "framework/bridge/GrainVisualBuffer.h"
+#include "framework/bridge/LockFreeDoubleBuffer.h"
 #include "framework/bridge/ParameterView.h"
 #include "framework/bridge/UIState.h"
 #include "utils/struct/ProcessorFacade.h"
 #include "utils/struct/UIContext.h"
+#include "utils/struct/VisualSnapshot.h"
 
 namespace juce
 {
@@ -98,7 +99,7 @@ namespace particules
 
         bool debugPresetLoaded = false;
 
-        GrainVisualBuffer visualBuffer;
+        LockFreeDoubleBuffer<VisualSnapshot> visualBuffer;
         ValueTreeState apvts; // connecte les slider du GUI et les paramètres (fourni des valeurs atomiques)
         EngineState engineState; // own runtime plugin global parameters no snapshot
         ParameterView paramsView; // fait le pont entre apvts et le synth

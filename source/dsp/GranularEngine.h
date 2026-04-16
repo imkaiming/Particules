@@ -19,23 +19,25 @@
 
 #include "../framework/PluginParams.h"
 #include "../framework/PluginTypes.h"
+#include "../framework/bridge/LockFreeDoubleBuffer.h"
 #include "../utils/AtomicSharedPtr.h"
 #include "../utils/struct/SmoothedParameters.h"
+#include "../utils/struct/VisualSnapshot.h"
 #include "GrainEnvelope.h"
 #include "GrainPool.h"
+#include "GrainProcessor.h"
 #include "PositionModulator.h"
 #include "Scheduler.h"
-#include "GrainProcessor.h"
 
 namespace particules
 {
-    class GrainVisualBuffer;
+    //class VisualSnapshot;
     struct ParameterSnapshot;
     class EngineState;
     class GranularEngine
     {
     public:
-        GranularEngine(GrainVisualBuffer& vb, EngineState& es);
+        GranularEngine(LockFreeDoubleBuffer<VisualSnapshot>& vb, EngineState& es);
         ~GranularEngine() = default;
 
         void process(
@@ -48,6 +50,7 @@ namespace particules
         const bool isInputBufferLoaded() const noexcept { return inputBufferPtr.load() != nullptr; }
 
     private:
+        void writeVisualSnapshot() noexcept ;
         void gainProcess(juce::dsp::ProcessContextReplacing<float>, const float);
         void updateSmoothedParameters() noexcept;
         void setTargetSmoothedValue(const ParameterSnapshot&) noexcept;
@@ -66,6 +69,7 @@ namespace particules
         Scheduler scheduler;
         GrainPool pool;
         GrainProcessor grainProcessor;
+        LockFreeDoubleBuffer<VisualSnapshot>& visualBuffer;
 
         juce::dsp::Gain<float> gainProcessor;
 
