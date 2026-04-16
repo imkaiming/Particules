@@ -3,9 +3,9 @@
 #include "../../../framework/GuiTypes.h"
 #include "../../../framework/bridge/EngineState.h"
 #include "../../../framework/bridge/UIState.h"
+#include "../../../utils/math/TimeUtils.h"
 #include "../../../utils/struct/ProcessorFacade.h"
 #include "../../../utils/struct/UIContext.h"
-#include "../../../utils/math/TimeUtils.h"
 #include "../../lookandfeelv2/Colours.h"
 
 namespace particules
@@ -71,7 +71,7 @@ namespace particules
         spanLabel.setVisible(false);
         fileNameLabel.setVisible(false);
         numGrainsLabel.setVisible(false);
-    
+
         changeListenerCallback(&uic.uiState);
     }
 
@@ -91,8 +91,8 @@ namespace particules
                 const juce::File& currentFile = uic.uiState.getCurrentFile();
 
                 sliderOnWaveform->setAudioLoaded(true);
-                sliderOnWaveform->setEnabled(true); 
-                sliderOnWaveform->setAlpha(1.0f); 
+                sliderOnWaveform->setEnabled(true);
+                sliderOnWaveform->setAlpha(1.0f);
 
                 grainVisualComponent.setNumSamples(numSamples);
 
@@ -105,8 +105,8 @@ namespace particules
             else
             {
                 sliderOnWaveform->setAudioLoaded(false);
-                sliderOnWaveform->setEnabled(false); 
-                sliderOnWaveform->setAlpha(0.2f); 
+                sliderOnWaveform->setEnabled(false);
+                sliderOnWaveform->setAlpha(0.2f);
 
                 fileNameLabel.setVisible(false);
                 posLabel.setVisible(false);
@@ -132,7 +132,8 @@ namespace particules
             const float posVal = posParam->load(std::memory_order_relaxed);
             if(posVal != lastPos)
             {
-                posLabel.setText(str::formatted("POS: %.3f s",  utils::formatSamplesToTime(posVal,  uic.engineState.getSampleRate()), juce::dontSendNotification);
+                posLabel.setText(
+                    "POS: " + utils::formatSamplesToTime(posVal, uic.engineState.getSampleRate()), juce::dontSendNotification);
                 lastPos = posVal;
             }
         }
@@ -142,7 +143,8 @@ namespace particules
             const float spanVal = spanParam->load(std::memory_order_relaxed);
             if(spanVal != lastSpan)
             {
-                spanLabel.setText(str::formatted("SPAN: %.3f s",  utils::formatSamplesToTime(spanVal,  uic.engineState.getSampleRate()), juce::dontSendNotification);
+                spanLabel.setText(
+                    "SPAN: " + utils::formatSamplesToTime(spanVal, uic.engineState.getSampleRate()), juce::dontSendNotification);
                 lastSpan = spanVal;
             }
         }

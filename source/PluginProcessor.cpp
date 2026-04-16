@@ -86,7 +86,7 @@ namespace particules
             playParam.setProperty("value", 0.0f, nullptr);
 
         juce::ValueTree customState("particulesCustomState");
-        const juce::File& f = getCurrentFile();
+        const juce::File& f = uiState.getCurrentFile();
         if(f.existsAsFile())
         {
             // adding the input buffer to the value tree

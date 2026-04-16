@@ -25,7 +25,7 @@ namespace particules
 
         void loadFile(AudioLoadedCallback, const juce::File&);
 
-        void loadFile(const str&, AudioLoadedCallback, , const juce::File&);
+        void loadFile(const str&, AudioLoadedCallback, const juce::File&);
 
         void processLoadingFile(juce::File&, AudioLoadedCallback);
 
@@ -35,13 +35,11 @@ namespace particules
         void setSampleRate(double) noexcept;
         void setNumTargetChannels(int) noexcept;
         juce::AudioFormatManager& getFormatManager();
-        //const juce::File& getCurrentFile() const noexcept { return currentFile; };
-        //void setCurrentFile(juce::File& f) noexcept { currentFile = f; };
 
     private:
         static constexpr int MAX_FILE_SIZE = params::maxFileSize;
         static constexpr double MAX_DURATION = params::maxFileDuration;
-        void showErrorWindow(const juce::String&);
+        void showErrorWindow(const str&);
 
         double sampleRate;
 

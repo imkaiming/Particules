@@ -83,7 +83,7 @@ namespace particules
         ValueTreeState& getValueTreeState() noexcept { return apvts; };
         ParameterView& getParametersView() noexcept { return paramsView; };
         UIContext& getUIContext() noexcept { return uic; };
-        const juce::File& getCurrentFile() const noexcept { return loader.getCurrentFile(); };
+        //const juce::File& getCurrentFile() const noexcept { return loader.getCurrentFile(); };
         AudioFileLoader& getAudioFileLoader() noexcept { return loader; };
         const int getNumActiveGrains() const noexcept { return granularEngine.getNumActiveGrains(); };
         const bool isInputBufferLoaded() const noexcept { return granularEngine.isInputBufferLoaded(); };

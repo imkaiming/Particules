@@ -13,9 +13,9 @@ namespace particules
         if(!chooser)
             chooser = std::make_unique<juce::FileChooser>(
                 "Select an audio file.", juce::File{}, formatManager.getWildcardForAllFormats());
-        int flags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
+        const int flags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
 
-        chooser->launchAsync(flags, [this, onAudioLoaded](const juce::FileChooser& resultChooser) {
+        chooser->launchAsync(flags, [this, onAudioLoaded, currentFile](const juce::FileChooser& resultChooser) {
             juce::File file = resultChooser.getResult();
             if(currentFile == file)
                 return;
