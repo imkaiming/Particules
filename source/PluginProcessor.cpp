@@ -24,16 +24,11 @@ namespace particules
           uic{apvts, paramsView, engineState, uiState, facade}, loader{}, debugPresetLoaded{false}
 #endif
     {
-        onAudioLoadedCallback = [this](AudioBuffer& buffer) {
+        onAudioLoadedCallback = [this](AudioBuffer& buffer, const juce::File& loadedFile) {
             setInputBuffer(buffer);
-            const juce::File& f = getCurrentFile();
-            if(f.existsAsFile())
-            {
-                engineState.setNumSamples(buffer.getNumSamples());
-                engineState.setNumChannels(buffer.getNumChannels());
-                uiState.setNumSamples(buffer.getNumSamples());
-                uiState.setSource(f);
-            }
+            engineState.setNumSamples(buffer.getNumSamples());
+            engineState.setNumChannels(buffer.getNumChannels());
+            uiState.setSource(loadedFile);
         };
 
         facade.loadFile = [this] { loadFile(); };
@@ -147,8 +142,8 @@ namespace particules
         const int inputChannels = buffer.getNumChannels();
         const int numSamples = buffer.getNumSamples();
 
-        engineState.setNumChannels(inputChannels);
-        engineState.setNumSamples(numSamples);
+        //engineState.setNumChannels(inputChannels);
+        //engineState.setNumSamples(numSamples);
 
         // adding a guard sample to the input buffer to make it safe to interpolate the buffer's read position
         AudioBuffer tempBuffer(inputChannels, numSamples + 1);
@@ -164,9 +159,12 @@ namespace particules
         granularEngine.setInputBuffer(std::move(safeBufferPtr));
     }
 
-    void ParticulesAudioProcessor::loadFile(const str& path) { loader.loadFile(path, onAudioLoadedCallback); }
+    void ParticulesAudioProcessor::loadFile(const str& path)
+    {
+        loader.loadFile(path, onAudioLoadedCallback, uiState.getCurrentFile());
+    }
 
-    void ParticulesAudioProcessor::loadFile() { loader.loadFile(onAudioLoadedCallback); }
+    void ParticulesAudioProcessor::loadFile() { loader.loadFile(onAudioLoadedCallback, uiState.getCurrentFile()); }
 
     ValueTreeState::ParameterLayout ParticulesAudioProcessor::createParameterLayout()
     {
@@ -333,19 +331,8 @@ namespace particules
 
     void ParticulesAudioProcessor::loadDebugPreset()
     {
-        //DBG("SAMPLE RATE = " + (str) paramsView.getSampleRate());
-        DBG("LOAD DBG PRESET");
-        const juce::File debugAudio = juce::File::getSpecialLocation(juce::File::currentExecutableFile)
-                                          .getParentDirectory()
-                                          .getParentDirectory()
-                                          .getParentDirectory()
-                                          .getParentDirectory()
-                                          .getParentDirectory()
-                                          .getParentDirectory()
-                                          .getParentDirectory()
-                                          .getChildFile("resources")
-                                          .getChildFile("audio")
-                                          .getChildFile("01_Piano_E.wav");
+        juce::File projectRoot(PROJECT_SOURCE_DIR);
+        juce::File debugAudio = projectRoot.getChildFile("resources").getChildFile("audio").getChildFile("01_Piano_E.wav");
 
         //DBG("juce::File::currentApplicationFile " + debugAudioPlaceHolder.getFullPathName());
 

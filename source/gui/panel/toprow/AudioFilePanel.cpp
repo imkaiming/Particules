@@ -5,13 +5,14 @@
 #include "../../../framework/bridge/UIState.h"
 #include "../../../utils/struct/ProcessorFacade.h"
 #include "../../../utils/struct/UIContext.h"
+#include "../../../utils/math/TimeUtils.h"
 #include "../../lookandfeelv2/Colours.h"
 
 namespace particules
 {
     AudioFilePanel::AudioFilePanel(UIContext& uic)
         : uic{uic}, apvts{uic.apvts}, thumbnailComponent{uic}, grainVisualComponent{uic}, posParam{nullptr}, spanParam{nullptr},
-          lastNumGrains{-1}, lastPos{-1.0f}, lastSpan{-1.0f}, numSamples{0}/*, lastPlayState{false}*/
+          lastNumGrains{-1}, lastPos{-1.0f}, lastSpan{-1.0f}, numSamples{0} /*, lastPlayState{false}*/
     {
         uic.uiState.addChangeListener(this); // uistate send a message at setSource(file), audio file panel is listening
 
@@ -131,7 +132,7 @@ namespace particules
             const float posVal = posParam->load(std::memory_order_relaxed);
             if(posVal != lastPos)
             {
-                posLabel.setText(str::formatted("POS: %.3f s", posVal * numSamples), juce::dontSendNotification);
+                posLabel.setText(str::formatted("POS: %.3f s",  utils::formatSamplesToTime(posVal,  uic.engineState.getSampleRate()), juce::dontSendNotification);
                 lastPos = posVal;
             }
         }
@@ -141,7 +142,7 @@ namespace particules
             const float spanVal = spanParam->load(std::memory_order_relaxed);
             if(spanVal != lastSpan)
             {
-                spanLabel.setText(str::formatted("SPAN: %.3f s", spanVal * numSamples), juce::dontSendNotification);
+                spanLabel.setText(str::formatted("SPAN: %.3f s",  utils::formatSamplesToTime(spanVal,  uic.engineState.getSampleRate()), juce::dontSendNotification);
                 lastSpan = spanVal;
             }
         }

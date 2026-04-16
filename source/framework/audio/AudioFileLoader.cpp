@@ -8,7 +8,7 @@ namespace particules
 {
     AudioFileLoader::AudioFileLoader() : sampleRate{0.0}, formatManager{} { formatManager.registerBasicFormats(); }
 
-    void AudioFileLoader::loadFile(AudioLoadedCallback onAudioLoaded)
+    void AudioFileLoader::loadFile(AudioLoadedCallback onAudioLoaded, const juce::File& currentFile)
     {
         if(!chooser)
             chooser = std::make_unique<juce::FileChooser>(
@@ -24,7 +24,7 @@ namespace particules
         });
     }
 
-    void AudioFileLoader::loadFile(const str& path, AudioLoadedCallback onAudioLoaded)
+    void AudioFileLoader::loadFile(const str& path, AudioLoadedCallback onAudioLoaded, const juce::File& currentFile)
     {
         juce::File file(path);
         if(currentFile == file)
@@ -35,15 +35,12 @@ namespace particules
 
     void AudioFileLoader::processLoadingFile(juce::File& file, AudioLoadedCallback onAudioLoaded)
     {
-        bool ok = false;
         if(file.existsAsFile())
         {
             AudioBuffer bufferOut;
-            ok = loadAudioFromFile(file, bufferOut);
-            if(ok)
+            if(loadAudioFromFile(file, bufferOut))
             {
-                setCurrentFile(file);
-                onAudioLoaded(bufferOut);
+                onAudioLoaded(bufferOut, file);
             }
         }
     }
@@ -94,7 +91,8 @@ namespace particules
 
         AudioBuffer resampledBuffer(inputNumChannels, resampledSamples);
 
-        juce::LagrangeInterpolator resampler;
+        // better than lagrangeinterpolator for offline
+        juce::WindowedSincInterpolator resampler;
 
         for(int channel = 0; channel < resampledBuffer.getNumChannels(); ++channel)
         {

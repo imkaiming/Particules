@@ -6,6 +6,7 @@
 // own runtime flags
 // audio processor can write
 // plugin editor reads
+// should be polled by the UI
 namespace particules
 {
     class EngineState

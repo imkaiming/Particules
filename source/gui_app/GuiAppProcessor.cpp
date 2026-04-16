@@ -198,6 +198,11 @@ namespace particules
             params::traversalFreq_jitter::min, params::traversalFreq_jitter::max, params::traversalFreq_jitter::skewFactor,
             params::traversalFreq_jitter::init));
 
+        // PLAYBACK
+
+        layout.add(createNormalizedParameter(params::playback::id, params::playback::name, params::playback::min,
+            params::playback::max, params::playback::skewFactor, params::playback::init));
+
         return layout;
     }
 }

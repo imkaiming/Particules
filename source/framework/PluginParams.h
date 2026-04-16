@@ -109,8 +109,8 @@ namespace particules
             inline constexpr const char* name = "Emission";
             inline constexpr float min = 0.1f; // 0.1 grain per seconds (1 grain / 10 sec)
             inline constexpr float max = 50.f; // 500 grains per seconds (1 grain / 0.002 s)
-            inline constexpr float init = 1.0f;
-            inline constexpr float skewFactor = 1.0f;
+            inline constexpr float init = 5.0f;
+            inline constexpr float skewFactor = 5.0f;
         }
         namespace emission_jitter
         {
@@ -127,8 +127,8 @@ namespace particules
             inline constexpr const char* name = "Duration";
             inline constexpr float min = 0.02f; // 0.002s for every emitted grains (1/ 0.002 = 500)
             inline constexpr float max = 10.0f; // 10 sec for every emitted grains (1/ 10 = 0.1)
-            inline constexpr float init = 1.0f;
-            inline constexpr float skewFactor = 1.0f;
+            inline constexpr float init = 0.2f;
+            inline constexpr float skewFactor = 0.2f;
         }
         namespace duration_jitter
         {
