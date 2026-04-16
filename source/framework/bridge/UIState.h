@@ -7,6 +7,7 @@
 
 #include "../Core.h"
 
+// pushed 
 namespace particules
 {
     struct VisualSnapshot;
@@ -23,8 +24,8 @@ namespace particules
         const VisualSnapshot& getSnapshot() const noexcept;
 
         bool isFileLoaded() const noexcept { return fileLoaded.load(); }
-        void setNumSamples(int s) noexcept { numSamples = s; }
-        int getNumSamples() const noexcept { return numSamples; }
+        //void setNumSamples(int s) noexcept { numSamples = s; }
+        //int getNumSamples() const noexcept { return numSamples; }
 
         juce::AudioThumbnail& getAudioThumbnail() noexcept { return audioThumbnail; }
         const juce::File& getCurrentFile() const noexcept { return currentFile; }
@@ -32,7 +33,7 @@ namespace particules
     private:
         void setFileLoaded(bool b);
 
-        int numSamples;
+        //int numSamples;
         std::atomic<bool> fileLoaded;
         juce::File currentFile;
 

@@ -6,8 +6,8 @@
 namespace particules
 {
     UIState::UIState()
-        : formatManager{}, fileLoaded{false}, numSamples{0}, cache{10},
-          visualBuffer{nullptr}, audioThumbnail{samplesPerThumbnail, formatManager, cache} /*, visualBuffer{vb}*/
+        : formatManager{}, fileLoaded{false}, cache{10}, visualBuffer{nullptr},
+          audioThumbnail{samplesPerThumbnail, formatManager, cache} /*, visualBuffer{vb}*/
     {
         formatManager.registerBasicFormats();
     }

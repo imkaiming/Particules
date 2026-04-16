@@ -6,7 +6,7 @@
 namespace particules
 {
 
-    IconButton::IconButton(const str& name) : Button(name) { setClickingTogglesState(false); }
+    IconButton::IconButton(const str& name) : Button(name), internalPaddingCoef{0.25f} { setClickingTogglesState(false); }
 
     void IconButton::setIcon(juce::Drawable* newIcon)
     {
@@ -22,7 +22,7 @@ namespace particules
         juce::Rectangle<float> bounds = getLocalBounds().toFloat();
 
         const float alpha = isPressed ? 0.8f : (isHovered ? 1.0f : 0.6f);
-        const float padding = getWidth() * 0.25f;
+        const float padding = getWidth() * internalPaddingCoef;
 
         g.setColour(coloursv2::deepBlack);
         g.fillRoundedRectangle(bounds, 6.0f);

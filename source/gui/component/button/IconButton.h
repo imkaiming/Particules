@@ -20,6 +20,7 @@ namespace particules
         void setIcon(juce::Drawable* newIcon);
         void paintButton(juce::Graphics& g, bool isHovered, bool isPressed) override;
 
+        float internalPaddingCoef;
     private:
         juce::Drawable* currentIcon = nullptr;
 

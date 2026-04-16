@@ -41,6 +41,9 @@ namespace particules
         linkBtn.onClick = [this]() { setLinkButtonImage(); };
         playbackBtn.onClick = [this]() { onPlaybackButtonClicked(); };
 
+        linkBtn.internalPaddingCoef = 0.25f;
+        playbackBtn.internalPaddingCoef = 0.10f;
+
         emissionSlider.setOnPrimaryValueChanged([this](double emissionVal) {
             if(!engineState.getIsLinked() || isLinkingUpdate)
                 return;
@@ -190,7 +193,6 @@ namespace particules
         const int margin = juce::jmax(5, area.getWidth() / 50);
         const int sliderMargin = margin / 2;
         area.reduced(margin);
-
         juce::Rectangle<int> leftCoreArea = area.removeFromLeft(static_cast<int>(area.getWidth() * 0.5f));
         area.removeFromLeft(margin);
         juce::Rectangle<int> rightArea = area;
@@ -229,90 +231,103 @@ namespace particules
         linkBtn.setBounds(emissionArea.getRight() - (linkBtnWidth / 2), emissionArea.getCentreY() - (linkBtnWidth / 2),
             linkBtnWidth, linkBtnWidth);
 
-        // PLAYBACK BUTTON
-        const int btnSize = juce::jlimit(16, 24, static_cast<int>(globalSliderSize * 0.16f));
-        const float speedCenterX = speedSlider.getBounds().getCentre().toFloat().x;
-        const float speedCenterY = speedSlider.getBounds().getCentre().toFloat().y;
-        const float speedOuterRadius = speedSlider.getBounds().getWidth() * 0.5f;
+        // playback button
+        {
+            juce::Rectangle<int> speedSliderBounds = speedSlider.getBounds();
 
-        const float gap = 3.0f;
-        const float btnDistance = speedOuterRadius + gap + (btnSize * 0.5f);
+            const float minDim = juce::jmin((float)speedSliderBounds.getWidth(), (float)speedSliderBounds.getHeight());
+            const float maxExtentFromCenter = minDim * 0.62f;
+            const float auxSize = juce::jlimit(18.0f, 32.0f, minDim * 0.18f);
 
-        // 10 o'clock
-        const float angle10OClock = 5.0f * pi / 6.0f;
+            const float jitterOuterMultiplier = 1.10f;
+            const float auxGap = 4.0f;
+            const float safetyPadding = 3.0f;
+            const float jitterLineWidthHalf = 1.0f;
 
-        const float btnX = speedCenterX + std::cos(angle10OClock) * btnDistance;
-        const float btnY = speedCenterY - std::sin(angle10OClock) * btnDistance;
+            const float maxAuxCenterDist = maxExtentFromCenter - safetyPadding - (auxSize * 0.5f);
+            const float availableForJitter = maxAuxCenterDist - auxGap - (auxSize * 0.5f);
+            const float primaryVisualRadius =
+                juce::jmax(1.0f, (availableForJitter - jitterLineWidthHalf) / jitterOuterMultiplier);
+            const float jitterOuterEdge = (primaryVisualRadius * jitterOuterMultiplier) + jitterLineWidthHalf;
 
-        playbackBtn.setBounds(
-            juce::Rectangle<int>(btnSize, btnSize).withCentre(juce::Point<int>(static_cast<int>(btnX), static_cast<int>(btnY))));
+            const float auxDistance = jitterOuterEdge + auxGap + (auxSize * 0.5f);
 
+            // 10 o'clock
+            const float anglePlayback = -pi + (pi / 5.0f);
+
+            // Apply the distance relative to the slider's center within the GrainsPanel coordinate space
+            const float px = speedSliderBounds.getCentreX() + std::cos(anglePlayback) * auxDistance;
+            const float py = speedSliderBounds.getCentreY() + std::sin(anglePlayback) * auxDistance;
+
+            playbackBtn.setBounds(juce::Rectangle<float>(auxSize, auxSize).withCentre(juce::Point<float>(px, py)).toNearestInt());
+        }
         // ADSR
+        {
+            juce::Rectangle<int> adsrArea = rightArea.removeFromLeft(rightArea.getWidth() / 2);
+            adsrArea = adsrArea.withSizeKeepingCentre(adsrArea.getWidth(), adsrArea.getHeight());
 
-        juce::Rectangle<int> adsrArea = rightArea.removeFromLeft(rightArea.getWidth() / 2);
-        adsrArea = adsrArea.withSizeKeepingCentre(adsrArea.getWidth(), adsrArea.getHeight());
+            const int adsrHeight = adsrArea.getHeight() / 8;
+            const int adsrWidth = adsrArea.getWidth() / 4;
+            juce::Rectangle<int> labelsArea = adsrArea.removeFromTop(adsrHeight);
+            adsrArea.removeFromBottom(adsrHeight);
+            adsrArea.removeFromLeft(adsrWidth);
+            adsrArea.removeFromRight(adsrWidth);
+            labelsArea.removeFromLeft(adsrWidth);
+            labelsArea.removeFromRight(adsrWidth);
 
-        const int adsrHeight = adsrArea.getHeight() / 8;
-        const int adsrWidth = adsrArea.getWidth() / 4;
-        juce::Rectangle<int> labelsArea = adsrArea.removeFromTop(adsrHeight);
-        adsrArea.removeFromBottom(adsrHeight);
-        adsrArea.removeFromLeft(adsrWidth);
-        adsrArea.removeFromRight(adsrWidth);
-        labelsArea.removeFromLeft(adsrWidth);
-        labelsArea.removeFromRight(adsrWidth);
+            int numSliders = 4;
+            int slotWidth = adsrArea.getWidth() / numSliders;
 
-        int numSliders = 4;
-        int slotWidth = adsrArea.getWidth() / numSliders;
+            juce::Rectangle<int> attackSlot = adsrArea.removeFromLeft(slotWidth);
+            juce::Rectangle<int> decaySlot = adsrArea.removeFromLeft(slotWidth);
+            juce::Rectangle<int> sustainSlot = adsrArea.removeFromLeft(slotWidth);
+            juce::Rectangle<int> releaseSlot = adsrArea.removeFromLeft(slotWidth);
 
-        juce::Rectangle<int> attackSlot = adsrArea.removeFromLeft(slotWidth);
-        juce::Rectangle<int> decaySlot = adsrArea.removeFromLeft(slotWidth);
-        juce::Rectangle<int> sustainSlot = adsrArea.removeFromLeft(slotWidth);
-        juce::Rectangle<int> releaseSlot = adsrArea.removeFromLeft(slotWidth);
+            attackSlider.setBounds(attackSlot);
+            decaySlider.setBounds(decaySlot);
+            sustainSlider.setBounds(sustainSlot);
+            releaseSlider.setBounds(releaseSlot);
 
-        attackSlider.setBounds(attackSlot);
-        decaySlider.setBounds(decaySlot);
-        sustainSlider.setBounds(sustainSlot);
-        releaseSlider.setBounds(releaseSlot);
+            juce::Rectangle<int> attackLblSlot = labelsArea.removeFromLeft(slotWidth);
+            juce::Rectangle<int> decayLblSlot = labelsArea.removeFromLeft(slotWidth);
+            juce::Rectangle<int> sustainLblSlot = labelsArea.removeFromLeft(slotWidth);
+            juce::Rectangle<int> releaseLblSlot = labelsArea.removeFromLeft(slotWidth);
 
-        juce::Rectangle<int> attackLblSlot = labelsArea.removeFromLeft(slotWidth);
-        juce::Rectangle<int> decayLblSlot = labelsArea.removeFromLeft(slotWidth);
-        juce::Rectangle<int> sustainLblSlot = labelsArea.removeFromLeft(slotWidth);
-        juce::Rectangle<int> releaseLblSlot = labelsArea.removeFromLeft(slotWidth);
-
-        attackLabel.setBounds(attackLblSlot);
-        decayLabel.setBounds(decayLblSlot);
-        sustainLabel.setBounds(sustainLblSlot);
-        releaseLabel.setBounds(releaseLblSlot);
+            attackLabel.setBounds(attackLblSlot);
+            decayLabel.setBounds(decayLblSlot);
+            sustainLabel.setBounds(sustainLblSlot);
+            releaseLabel.setBounds(releaseLblSlot);
+        }
 
         // output
+        {
+            juce::Rectangle<int> outputArea = rightArea;
+            juce::Rectangle<int> outputCompArea =
+                outputArea.withSizeKeepingCentre(globalSliderSize, globalSliderSize).reduced(sliderMargin);
 
-        juce::Rectangle<int> outputArea = rightArea;
-        juce::Rectangle<int> outputCompArea =
-            outputArea.withSizeKeepingCentre(globalSliderSize, globalSliderSize).reduced(sliderMargin);
+            // same logic than main slider with aux
+            const float minDim = juce::jmin(outputCompArea.getWidth(), outputCompArea.getHeight());
+            const float maxExtentFromCenter = minDim * 0.62f;
+            const float auxSize = juce::jlimit(18.0f, 32.0f, minDim * 0.18f);
+            const float auxGap = 4.0f;
+            const float safetyPadding = 3.0f;
+            const float jitterLineWidthHalf = 1.0f;
+            const float jitterOuterMultiplier = 1.10f;
 
-        // same logic than main slider with aux
-        const float minDim = juce::jmin(outputCompArea.getWidth(), outputCompArea.getHeight());
-        const float maxExtentFromCenter = minDim * 0.62f;
-        const float auxSize = juce::jlimit(18.0f, 32.0f, minDim * 0.18f);
-        const float auxGap = 4.0f;
-        const float safetyPadding = 3.0f;
-        const float jitterLineWidthHalf = 1.0f;
-        const float jitterOuterMultiplier = 1.10f;
+            const float maxAuxCenterDist = maxExtentFromCenter - safetyPadding - (auxSize * 0.5f);
+            const float availableForJitter = maxAuxCenterDist - auxGap - (auxSize * 0.5f);
+            const float primaryVisualRadius =
+                juce::jmax(1.0f, (availableForJitter - jitterLineWidthHalf) / jitterOuterMultiplier);
+            const float jitterOuterEdge = (primaryVisualRadius * jitterOuterMultiplier) + jitterLineWidthHalf;
 
-        const float maxAuxCenterDist = maxExtentFromCenter - safetyPadding - (auxSize * 0.5f);
-        const float availableForJitter = maxAuxCenterDist - auxGap - (auxSize * 0.5f);
-        const float primaryVisualRadius = juce::jmax(1.0f, (availableForJitter - jitterLineWidthHalf) / jitterOuterMultiplier);
-        const float jitterOuterEdge = (primaryVisualRadius * jitterOuterMultiplier) + jitterLineWidthHalf;
+            const int primaryBoundsSize = static_cast<int>((jitterOuterEdge + 1.0f) * 2.0f);
 
-        const int primaryBoundsSize = static_cast<int>((jitterOuterEdge + 1.0f) * 2.0f);
+            outputSlider.setBounds(outputCompArea.withSizeKeepingCentre(primaryBoundsSize, primaryBoundsSize));
 
-        outputSlider.setBounds(outputCompArea.withSizeKeepingCentre(primaryBoundsSize, primaryBoundsSize));
-
-        // output label
-        const int labelHeight = static_cast<int>((outputCompArea.getHeight() - jitterOuterEdge) * 0.4f - safetyPadding);
-        outputLabel.setBounds(
-            outputCompArea.getX(), outputCompArea.getBottom() - labelHeight, outputCompArea.getWidth(), labelHeight);
-        //outputLabel.setBounds(rightArea.removeFromBottom(labelArea));
-        //outputSlider.setBounds(rightArea.withSizeKeepingCentre(globalSliderSize, globalSliderSize).reduced(sliderMargin));
+            // output label
+            const int labelHeight = static_cast<int>((outputCompArea.getHeight() - jitterOuterEdge) * 0.4f - safetyPadding);
+            outputLabel.setBounds(
+                outputCompArea.getX(), outputCompArea.getBottom() - labelHeight, outputCompArea.getWidth(), labelHeight);
+        }
     }
 }
