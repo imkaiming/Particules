@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../PluginTypes.h"
-
-//#include <juce_audio_basics/juce_audio_basics.h>
 #include <juce_core/juce_core.h>
+//#include <juce_audio_basics/juce_audio_basics.h>
+
+#include "framework/core/PluginTypes.h"
 
 // just convert a buffer into a downmixed buffer
 // apply predefined mix matrix

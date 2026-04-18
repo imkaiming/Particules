@@ -1,24 +1,24 @@
 #include "PluginEditor.h"
-//#include "PluginProcessor.h"
+#include "PluginProcessor.h"
+
 
 namespace particules
 {
     ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(ParticulesAudioProcessor& p)
-        : AudioProcessorEditor(&p), pluginProcessor(p), mainPanel(p.getUIContext()),
-          globalLookAndFeel()
+        : AudioProcessorEditor(&p), pluginProcessor(p), mainPanel(p.getUIContext()), globalLookAndFeel()
     {
-        //setLookAndFeel(&globalLookAndFeel);
         setLookAndFeel(&lnf);
 
         setResizable(true, true);
-        setResizeLimits(windowWidthMin, windowHeightMin, windowWidthMax, windowHeightMax);
+        setResizeLimits(gui::windowWidthMin, gui::windowHeightMin, gui::windowWidthMax, gui::windowHeightMax);
 
         const float ratio = 1.5f; // ratio 3:2
         getConstrainer()->setFixedAspectRatio(ratio);
 
-        setSize(windowWidthInit, windowHeightInit);
+        setSize(gui::windowWidthInit, gui::windowHeightInit);
 
         addAndMakeVisible(&mainPanel);
+
 #if ENABLE_DEBUG_PRESET
         pluginProcessor.loadDebugPreset();
 #endif
@@ -30,8 +30,6 @@ namespace particules
     }
 
     ParticulesAudioProcessorEditor::~ParticulesAudioProcessorEditor() { setLookAndFeel(nullptr); }
-
-    void ParticulesAudioProcessorEditor::paint(juce::Graphics& /*g*/) { /* g.fillAll(colours::black); */ }
 
     void ParticulesAudioProcessorEditor::resized() { mainPanel.setBounds(getLocalBounds()); }
 }

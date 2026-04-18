@@ -3,8 +3,8 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../../framework/GuiTypes.h"
-#include "../../component/button/IconButton.h"
+#include "framework/core/GuiTypes.h"
+#include "gui/component/button/IconButton.h"
 
 
 
@@ -17,7 +17,7 @@ namespace juce
 namespace particules
 {
     struct UIContext;
-    struct ProcessorFacade;
+    class FromUI;
     class AudioState;
     class TitlePanel : public juce::Component, private juce::ChangeListener
     {
@@ -31,13 +31,11 @@ namespace particules
         void changeListenerCallback(juce::ChangeBroadcaster*);
 
     private:
-        //static constexpr const char* fileNameBoxPlaceHolder = "audio_file_03.wav";
-
         UIContext& uic;
 
         juce::Label titleLabel, versionLabel;
 
-        ProcessorFacade& facade;
+        FromUI& fui;
         AudioState& audioState;
 
         IconButton loadBtn;

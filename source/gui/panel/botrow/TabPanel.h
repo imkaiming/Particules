@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../../../framework/GuiTypes.h"
-#include "graintab/GrainsPanel.h"
-
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
+
+#include "framework/core/GuiTypes.h"
+#include "gui/panel/botrow/graintab/GrainsPanel.h"
 
 namespace particules
 {

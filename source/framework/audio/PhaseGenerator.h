@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../PluginParams.h"
+#include "framework/core/PluginParams.h"
 
 // return normalized phase value based on the freq / sampleRate
 

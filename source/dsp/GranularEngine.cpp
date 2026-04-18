@@ -1,12 +1,13 @@
 #include "GranularEngine.h"
-#include "../framework/bridge/AudioState.h"
-#include "../utils/struct/ParameterSnapshot.h"
+#include "framework/state/AudioState.h"
+#include "framework/bridge/FromAudio.h"
+#include "utils/struct/ParameterSnapshot.h"
 
 namespace particules
 {
-    GranularEngine::GranularEngine(PingPongBuffer<VisualSnapshot>& vb, AudioState& as)
+    GranularEngine::GranularEngine(FromAudio& fa)
         : scheduler{}, grainProcessor{pool, posMod, envLut}, pool{}, posMod{}, refreshRate{gui::refreshRate},
-          sampleAccumulator{0}, threshold{0}, smoothedParams{}, audioState{as}, visualBuffer{vb}
+          sampleAccumulator{0}, threshold{0}, smoothedParams{}, faudio{fa}
     {
         spawnCallback = [this](const ParameterSnapshot& ps) {
             grainProcessor.spawn(ps);
@@ -19,12 +20,6 @@ namespace particules
     void GranularEngine::process(AudioBuffer& outputBuffer, AudioBuffer& inputBuffer, int bufferSize, float* const* outputPtrs,
         int outputNumChannels, const ParameterSnapshot& ps)
     {
-
-        //auto bufferGuard = inputBufferPtr.load();
-        //if(!bufferGuard)
-        //return;
-        //const AudioBuffer* inputBuffer = bufferGuard.get();
-
         // parameters
         AudioBlock outputBlock(outputBuffer);
 
@@ -55,15 +50,15 @@ namespace particules
 
         gainProcess(outputBlock, ps.linearGain);
 
-        // *** UI *** //
-
         // write at 30hz speed
         sampleAccumulator += bufferSize;
         while(sampleAccumulator >= threshold)
         {
             sampleAccumulator -= threshold;
-            writeVisualSnapshot();
-            audioState.setNumActiveGrains(pool.getNumActiveGrains());
+            VisualSnapshot& snap = faudio.beginWriteVisualSnapshot();
+            grainProcessor.writeVisualSnapshot(snap);
+            faudio.endWriteVisualSnapshot();
+            faudio.setNumActiveGrains(pool.getNumActiveGrains());
         }
     }
 
@@ -98,18 +93,7 @@ namespace particules
         scheduler.init(sampleRate);
     }
 
-    void GranularEngine::clear() noexcept
-    {
-        grainProcessor.reset();
-        //pool.reset();
-    }
-
-    void GranularEngine::writeVisualSnapshot() noexcept
-    {
-        VisualSnapshot& snap = visualBuffer.beginWriteBuffer();
-        grainProcessor.writeVisualSnapshot(snap);
-        visualBuffer.endWriteBuffer();
-    }
+    void GranularEngine::clear() noexcept { grainProcessor.reset(); }
 
     void GranularEngine::gainProcess(juce::dsp::ProcessContextReplacing<float> context, const float gainLin)
     {

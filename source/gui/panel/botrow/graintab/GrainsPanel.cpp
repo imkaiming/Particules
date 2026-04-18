@@ -3,12 +3,12 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_graphics/juce_graphics.h>
 
-#include "../../../../framework/PluginParams.h"
-#include "../../../../framework/bridge/AudioState.h"
-#include "../../../../utils/UIHelpers.h"
-#include "../../../../utils/struct/UIContext.h"
-#include "../../../lookandfeel/MyColours.h"
-#include "../../../lookandfeelv2/Colours.h"
+#include "framework/state/AudioState.h"
+#include "framework/core/PluginParams.h"
+#include "gui/lookandfeel/MyColours.h"
+#include "gui/lookandfeelv2/Colours.h"
+#include "utils/UIHelpers.h"
+#include "utils/struct/UIContext.h"
 
 #include "BinaryData.h"
 

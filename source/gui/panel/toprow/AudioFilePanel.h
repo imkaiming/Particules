@@ -5,11 +5,11 @@
 #include <juce_events/juce_events.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../../framework/GuiTypes.h"
-#include "../../../framework/PluginParams.h"
-#include "../../component/GrainVisualComponent.h"
-#include "../../component/ThumbnailComponent.h"
-#include "../../component/slider/SliderOnWaveform.h"
+#include "framework/core/GuiTypes.h"
+#include "framework/core/PluginParams.h"
+#include "gui/component/GrainVisualComponent.h"
+#include "gui/component/ThumbnailComponent.h"
+#include "gui/component/slider/SliderOnWaveform.h"
 
 // the Audio File Frame provide the control to load and play the audio.
 namespace particules

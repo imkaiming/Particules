@@ -1,7 +1,7 @@
 #include "StateSynchronizer.h"
 
-#include "framework/bridge/AudioState.h"
-#include "framework/bridge/UIState.h"
+#include "framework/state/AudioState.h"
+#include "framework/state/UIState.h"
 #include "utils/struct/AudioPayload.h"
 
 namespace particules

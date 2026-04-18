@@ -1,14 +1,14 @@
 #include "GrainProcessor.h"
-//#include "../framework/bridge/GrainVisualBuffer.h"
-#include "../utils/math/Lerp.h"
-#include "../utils/struct/ParameterSnapshot.h"
-#include "../utils/struct/SmoothedParameters.h"
-#include "../utils/struct/VisualSnapshot.h"
+
+#include <juce_core/juce_core.h>
+
 #include "GrainEnvelope.h"
 #include "GrainPool.h"
 #include "PositionModulator.h"
-
-#include <juce_core/juce_core.h>
+#include "utils/math/Lerp.h"
+#include "utils/struct/ParameterSnapshot.h"
+#include "utils/struct/SmoothedParameters.h"
+#include "utils/struct/VisualSnapshot.h"
 
 namespace particules
 {
@@ -101,118 +101,5 @@ namespace particules
             }
         }
     }
-    /*
-    void GrainProcessor::writeVisualSnapshot()
-    {
-        std::atomic<int>& index = visualBuffer.getReadIndex();
-        const int write = 1 - index.load(std::memory_order_relaxed);
-        auto& snap = visualBuffer.getSnapshot(write); // snapshot is not taken by GUI thread
-
-        snap.count = 0;
-        for(int i = 0; i < activeCount; ++i)
-        {
-            const GrainHandle h = activeHandles[i];
-            const Grain* g = pool.get(h);
-            if(g != nullptr)
-            {
-                snap.grainVisuals[snap.count++] = {
-                    g->getReadPosition(), visualY[h.index], envLut.getEnvelopeValue(g->getPhase())};
-            }
-        }
-
-        //snap.count = activeCount;
-        index.store(write, std::memory_order_release);
-    }
-    */
+   
 }
-
-/*
-
-void GrainProcessor::getAllActiveGrains(std::vector<GrainPoint>& out) const
-{
-    out.clear();
-    out.reserve(activeCount);
-    for(int i = 0; i < activeCount; ++i)
-    {
-        GrainHandle h = activeHandles[i];
-        const Grain* g = pool.get(h);
-        GrainPoint gp{g->getReadPosition(), visualY[h.index], envLut.getEnvelopeValue(g->getPhase())};
-        out.push_back(gp);
-    }
-}
-
-void GrainProcessor::process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)
-{
-    //processGrainsSamples(outputBlock, bufferSize, inputSource);
-    processSamplesGrains(outputBlock, bufferSize, inputSource);
-
-    // TODO : proper AGC automatic gain compensation
-    if(activeCount > 0)
-    {
-        const float scale = 1 / std::sqrt(static_cast<float>(activeCount));
-        outputBlock.multiplyBy(scale);
-    }
-}
-
-void GrainProcessor::processGrainsSamples(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)
-{
-    const size_t numChannels = outputBlock.getNumChannels();
-    const int inputNumChannels = inputSource->getNumChannels();
-    const int inputNumSamples = inputSource->getNumSamples();
-
-    for(int i = activeCount - 1; i >= 0; --i) // backward iteration for removing handle securely
-    {
-        GrainHandle h = activeHandles[i];
-        Grain* g = pool.get(h);
-
-        if(g->isExhausted())
-        {
-            pool.release(h);
-            removeVoice(i);
-        }
-
-        for(int currentSample = 0; currentSample < bufferSize; ++currentSample)
-        {
-            const float phase = g->getPhase();
-            for(int channel = 0; channel < numChannels; ++channel)
-            {
-                const float sampleValue = g->getCurrentSample(inputSource, channel, numChannels);
-                const float envelopeValue = envLut.getEnvelopeValue(phase);
-                outputBlock.addSample(channel, currentSample, sampleValue * envelopeValue);
-            }
-            g->update();
-        }
-    }
-}
-
-void GrainProcessor::processSamplesGrains(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource)
-{
-    const size_t numChannels = outputBlock.getNumChannels();
-    const int inputNumChannels = inputSource->getNumChannels();
-    const int inputNumSamples = inputSource->getNumSamples();
-
-    for(int currentSample = 0; currentSample < bufferSize; currentSample++)
-    {
-        for(int i = activeCount - 1; i >= 0; --i) // backward iteration for removing handle securely
-        {
-            GrainHandle h = activeHandles[i];
-            Grain* g = pool.get(h);
-
-            const float phase = g->getPhase();
-            for(int channel = 0; channel < numChannels; ++channel)
-            {
-                const float sampleValue = g->getCurrentSample(inputSource, channel, numChannels);
-                const float envelopeValue = envLut.getEnvelopeValue(phase);
-                outputBlock.addSample(channel, currentSample, sampleValue * envelopeValue);
-            }
-            g->update();
-            if(g->isExhausted())
-            {
-                pool.release(h);
-                removeVoice(i);
-            }
-        }
-    }
-}
-
-*/

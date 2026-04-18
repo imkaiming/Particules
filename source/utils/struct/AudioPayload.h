@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "framework/PluginTypes.h"
+#include "framework/core/PluginTypes.h"
 
 namespace particules
 {

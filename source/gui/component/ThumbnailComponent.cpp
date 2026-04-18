@@ -3,12 +3,11 @@
 #include <juce_audio_utils/juce_audio_utils.h> // audiothumbnail
 #include <juce_graphics/juce_graphics.h> // graphics
 
-//#include "../../framework/bridge/AudioState.h"
-#include "../../framework/bridge/UIState.h"
-#include "../../utils/struct/UIContext.h"
-#include "../lookandfeel/MyColours.h"
-#include "../lookandfeelv2/Colours.h"
-#include "../lookandfeelv2/MainLNF.h"
+#include "framework/state/UIState.h"
+#include "utils/struct/UIContext.h"
+#include "gui/lookandfeel/MyColours.h"
+#include "gui/lookandfeelv2/Colours.h"
+#include "gui/lookandfeelv2/MainLNF.h"
 
 namespace particules
 {

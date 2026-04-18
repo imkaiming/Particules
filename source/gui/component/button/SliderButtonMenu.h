@@ -1,14 +1,14 @@
 #pragma once
 
-#include "../../../framework/Core.h"
-#include "../../../framework/GuiTypes.h"
-#include "../../../framework/PluginParams.h"
-#include "../../lookandfeelv2/Colours.h"
-
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_core/juce_core.h>
 #include <juce_graphics/juce_graphics.h>
 #include <juce_gui_basics/juce_gui_basics.h>
+
+#include "framework/core/Core.h"
+#include "framework/core/GuiTypes.h"
+#include "framework/core/PluginParams.h"
+#include "gui/lookandfeelv2/Colours.h"
 
 namespace particules
 {

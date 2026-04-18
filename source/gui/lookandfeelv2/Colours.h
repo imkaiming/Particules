@@ -1,7 +1,7 @@
 #pragma once
 
 #include <juce_graphics/juce_graphics.h>
-#include "../../framework/GuiTypes.h"
+#include "framework/core/GuiTypes.h"
 
 namespace particules
 {

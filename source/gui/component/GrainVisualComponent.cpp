@@ -1,9 +1,10 @@
 #include "GrainVisualComponent.h"
-#include "../../framework/bridge/AudioState.h"
-#include "../../framework/bridge/UIState.h"
-#include "../../utils/struct/UIContext.h"
-#include "../../utils/struct/VisualSnapshot.h"
-#include "../lookandfeelv2/Colours.h"
+
+#include "framework/state/AudioState.h"
+#include "framework/state/UIState.h"
+#include "gui/lookandfeelv2/Colours.h"
+#include "utils/struct/UIContext.h"
+#include "utils/struct/VisualSnapshot.h"
 
 namespace particules
 {

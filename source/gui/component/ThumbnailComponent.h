@@ -4,8 +4,8 @@
 #include <juce_events/juce_events.h> // changeListener
 #include <juce_gui_basics/juce_gui_basics.h> // component
 
-#include "../../framework/Core.h"
-#include "../../framework/PluginParams.h"
+#include "framework/core/Core.h"
+#include "framework/core/PluginParams.h"
 
 namespace juce
 {

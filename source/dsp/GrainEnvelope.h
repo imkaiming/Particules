@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../framework/PluginParams.h"
-#include "../framework/Core.h"
-#include "../framework/audio/LookUpTable.h"
-#include "../utils/enum/EnvelopeMode.h"
+#include "framework/core/PluginParams.h"
+#include "framework/core/Core.h"
+#include "framework/audio/LookUpTable.h"
+#include "utils/enum/EnvelopeMode.h"
 
 // LUT TABLE
 // fadeIn : 0 -> 0.5

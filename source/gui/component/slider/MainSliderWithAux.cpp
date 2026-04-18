@@ -3,11 +3,10 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../../framework/bridge/AudioState.h"
-#include "../../../utils/math/MathConstants.h"
-#include "../../lookandfeelv2/Colours.h"
-
-#include "../../lookandfeelv2/MainLNF.h"
+#include "framework/state/AudioState.h"
+#include "utils/math/MathConstants.h"
+#include "gui/lookandfeelv2/Colours.h"
+#include "gui/lookandfeelv2/MainLNF.h"
 #include "AuxRotarySlider.h"
 #include "RotarySlider.h"
 

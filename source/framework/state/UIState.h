@@ -5,7 +5,7 @@
 #include <juce_core/juce_core.h> // file
 #include <juce_events/juce_events.h> // change broadcaster
 
-#include "framework/Core.h"
+#include "framework/core/Core.h"
 
 // pushed
 namespace particules

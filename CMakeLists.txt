@@ -149,19 +149,21 @@ endif()
 
 target_link_libraries(Base PUBLIC 
     juce::juce_core
-    #juce::juce_audio_devices
     juce::juce_audio_formats # audio format manager
-    juce::juce_audio_utils) # audio thumbnail
+    juce::juce_audio_utils # audio thumbnail
+)
 
 file(GLOB_RECURSE BaseSources CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/bridge/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/bridge/*.h") 
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/state/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/state/*.h"
+) 
 
 target_sources(Base PUBLIC 
     ${BaseSources}
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/PluginParams.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/Core.h")
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/core/PluginParams.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/core/Core.h"
+)
 
 
 ############# CORE LIB #############
@@ -180,7 +182,10 @@ file(GLOB_RECURSE CoreSources CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/source/dsp/*.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/audio/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/audio/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/*.h") # ProcessorFacade demande juce::String donc juce core seulement # TODO mettre dans framework en tant que Commands
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/bridge/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/bridge/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/utils/*.h"
+)
 
 #list(FILTER CoreSources EXCLUDE REGEX 
 #    "/bridge/"
@@ -193,14 +198,13 @@ file(GLOB_RECURSE CoreSources CONFIGURE_DEPENDS
 
 target_sources(Core PUBLIC 
     ${CoreSources}  
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/PluginTypes.h")
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/core/PluginTypes.h"
+)
 
 target_link_libraries(Core PUBLIC
     Base                          # dsp depend de juce::Random pour le random
     juce::juce_dsp
     juce::juce_audio_basics
-    #juce::juce_audio_formats
-    #juce::juce_audio_utils
     juce::juce_audio_processors) # pas de apvts dans dsp mais dans framework
 
 ########### GUI LIB ############
@@ -217,11 +221,14 @@ target_include_directories(Gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/source")
 # gui depend de audio processor et de juce core pour juce::string
 file(GLOB_RECURSE GuiSources CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/source/gui/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/gui/*.h")
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/gui/*.h"
+)
 
 target_sources(Gui PRIVATE 
     ${GuiSources}
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/GuiTypes.h")
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/core/GuiTypes.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/bridge/FromUI.h"
+)
 
 target_link_libraries(Gui PUBLIC
     Base
@@ -275,6 +282,8 @@ target_link_libraries(SharedCode INTERFACE
     juce::juce_recommended_warning_flags)
 
 target_sources(SharedCode INTERFACE
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/PluginCore.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/PluginCore.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginEditor.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginEditor.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginProcessor.cpp"

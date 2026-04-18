@@ -1,7 +1,7 @@
 #pragma once
-#include "../framework/Core.h"
-#include "../utils/enum/EnvelopeMode.h"
-#include "../utils/enum/TraversalMode.h"
+#include "framework/core/Core.h"
+#include "utils/enum/EnvelopeMode.h"
+#include "utils/enum/TraversalMode.h"
 
 // init parameters for the plugin
 
@@ -27,7 +27,7 @@ namespace particules
         inline constexpr int maxMidiVoice = 16;
         inline constexpr int maxSpawnsPerBlock = 16;
         inline constexpr double maxFileDuration = 600.0; // 10 min
-        inline constexpr int maxFileSize = /*4LL **/ 512LL * 1024LL * 1024LL; // 512MB limits ULL -> Unsigned Long Long : 2GB
+        inline constexpr uint64_t maxFileSize = 4LL * 512LL * 1024LL * 1024LL; // 512MB limits ULL -> Unsigned Long Long : 2GB
         inline constexpr int maxLutSize = 2048;
         inline constexpr int maxGrains = 500;
         inline constexpr float maxDuration = 10.0f; // seconds

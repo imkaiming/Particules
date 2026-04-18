@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../../../framework/GuiTypes.h"
-#include "../../../framework/PluginParams.h"
-#include "../../../utils/enum/TraversalMode.h"
+#include "framework/core/GuiTypes.h"
+#include "framework/core/PluginParams.h"
+#include "utils/enum/TraversalMode.h"
 #include "SliderButtonMenu.h"
 
 namespace particules

@@ -1,20 +1,22 @@
 #pragma once
 
-#include "../../framework/GuiTypes.h"
+#include "framework/core/GuiTypes.h"
 
 namespace particules
 {
     class GrainVisualBuffer;
-    class ParameterView;
+    class ParameterState;
     class AudioState;
     class UIState;
-    struct ProcessorFacade; 
+    class FromUI;
+    //class FromAudio;
     struct UIContext
     {
         ValueTreeState& apvts;
-        ParameterView& paramsView;
+        ParameterState& paramState;
         AudioState& audioState;
         UIState& uiState;
-        ProcessorFacade& facade;
+        FromUI& fui;
+        //FromAudio& faudio;
     };
 }

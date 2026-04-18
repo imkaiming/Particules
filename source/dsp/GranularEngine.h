@@ -1,7 +1,3 @@
-// http://www.rossbencina.com/static/code/granular-synthesis/BencinaAudioAnecdotes310801.pdf
-
-// Top level container that orchestrate all the blocks
-
 #pragma once
 
 #include <juce_audio_basics/juce_audio_basics.h>
@@ -12,21 +8,24 @@
 #include "GrainProcessor.h"
 #include "PositionModulator.h"
 #include "Scheduler.h"
-#include "framework/PluginParams.h"
-#include "framework/PluginTypes.h"
 #include "framework/bridge/PingPongBuffer.h"
+#include "framework/core/PluginParams.h"
+#include "framework/core/PluginTypes.h"
 #include "utils/AtomicSharedPtr.h"
 #include "utils/struct/SmoothedParameters.h"
 #include "utils/struct/VisualSnapshot.h"
 
+// http://www.rossbencina.com/static/code/granular-synthesis/BencinaAudioAnecdotes310801.pdf
+// Top level container that orchestrate all the blocks
+
 namespace particules
 {
     struct ParameterSnapshot;
-    class AudioState;
+    class FromAudio;
     class GranularEngine
     {
     public:
-        GranularEngine(PingPongBuffer<VisualSnapshot>& vb, AudioState& as);
+        GranularEngine(FromAudio& fa);
         ~GranularEngine() = default;
 
         void process(AudioBuffer& outputBuffer, AudioBuffer& inputBuffer, int bufferSize, float* const* outputPtrs,
@@ -37,7 +36,6 @@ namespace particules
         int getNumActiveGrains() const noexcept { return pool.getNumActiveGrains(); }
 
     private:
-        void writeVisualSnapshot() noexcept;
         void gainProcess(juce::dsp::ProcessContextReplacing<float>, const float);
         void updateSmoothedParameters() noexcept;
         void setTargetSmoothedValue(const ParameterSnapshot&) noexcept;
@@ -67,8 +65,7 @@ namespace particules
         //juce::SmoothedValue<float> sustainRatioSmooth;
         SmoothedParameters smoothedParams;
 
-        AudioState& audioState;
-        PingPongBuffer<VisualSnapshot>& visualBuffer;
+        FromAudio& faudio;
     };
 }
 //juce::dsp::DryWetMixer<float> mixerProcessor;

@@ -1,7 +1,7 @@
 
 #pragma once
-#include "../framework/PluginParams.h"
-#include "../framework/Core.h"
+#include "framework/core/PluginParams.h"
+#include "framework/core/Core.h"
 #include "Grain.h"
 
 // Preallocate Grains so we dont use new / delete in the audio thread

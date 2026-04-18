@@ -5,8 +5,8 @@
 #include <juce_graphics/juce_graphics.h> // juce::Colour
 #include <juce_gui_basics/juce_gui_basics.h> // juce::Component
 
-#include "../../framework/PluginParams.h"
-#include "../../framework/GuiTypes.h"
+#include "framework/core/PluginParams.h"
+#include "framework/core/GuiTypes.h"
 
 /**
 * On a besoin de la valeur de la position du grain dans le buffer pour montrer sa position sur l'axe x.

@@ -9,7 +9,6 @@
 #include <juce_core/juce_core.h>
 
 #include "../gui/lookandfeelv2/MainLNF.h"
-//#include "../gui/lookandfeel/LightRotarySliderLNF.h"
 #include "../gui/panel/MainPanel.h"
 
 namespace juce
@@ -26,14 +25,11 @@ namespace particules
         GuiAppEditor(GuiAppProcessor&);
         ~GuiAppEditor() override;
 
-        //void paint(juce::Graphics&) override;
         void resized() override;
 
         const MainPanel& getMainPanel() const noexcept { return mainPanel; };
 
     private:
-
-
         MainLNF lnf;
         MainPanel mainPanel;
 

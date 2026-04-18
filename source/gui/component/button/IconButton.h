@@ -2,8 +2,8 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../../framework/Core.h"
-#include "../../../framework/GuiTypes.h"
+#include "framework/core/Core.h"
+#include "framework/core/GuiTypes.h"
 
 namespace juce
 {

@@ -1,8 +1,9 @@
-#include "../source/dsp/Grain.h"
-#include "../source/dsp/GrainPool.h"
-#include "../source/framework/PluginParams.h"
-#include "../source/utils/struct/GrainHandle.h"
 #include <catch2/catch_test_macros.hpp>
+
+#include "dsp/Grain.h"
+#include "dsp/GrainPool.h"
+#include "framework/core/PluginParams.h"
+#include "utils/struct/GrainHandle.h"
 
 
 namespace particulesTest

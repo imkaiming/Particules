@@ -1,7 +1,6 @@
 ﻿#pragma once
-#include "../../utils/struct/AudioStateSnapshot.h"
-#include "../Core.h"
-//#include <juce_core/juce_core.h>
+#include "utils/struct/AudioStateSnapshot.h"
+#include "framework/core/Core.h"
 
 // own audio runtime flags
 // audio thread only can write

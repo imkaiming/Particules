@@ -4,14 +4,12 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../../../framework/GuiTypes.h"
-#include "../../../component/button/IconButton.h"
-#include "../../../component/rotarymenu/EnvelopeRotaryMenu.h"
-#include "../../../component/rotarymenu/TraversalRotaryMenu.h"
-//#include "../../../component/menugroup/EnvelopeMenuControl.h"
-//#include "../../../component/menugroup/TraversalMenuControl.h"
-#include "../../../component/slider/MainSliderWithAux.h"
-#include "../../../component/slider/RotarySlider.h"
+#include "framework/core/GuiTypes.h"
+#include "gui/component/button/IconButton.h"
+#include "gui/component/rotarymenu/EnvelopeRotaryMenu.h"
+#include "gui/component/rotarymenu/TraversalRotaryMenu.h"
+#include "gui/component/slider/MainSliderWithAux.h"
+#include "gui/component/slider/RotarySlider.h"
 
 namespace juce
 {

@@ -1,16 +1,16 @@
-#include "ParameterView.h"
+#include "ParameterState.h"
 
 #include <juce_audio_basics/juce_audio_basics.h> // decibel
 #include <juce_audio_processors/juce_audio_processors.h> // apvts
 
-#include "../PluginParams.h"
 #include "AudioState.h"
+#include "framework/core/PluginParams.h"
 
 namespace particules
 {
-    ParameterView::ParameterView(AudioState& as) : audioState{as} {}
+    ParameterState::ParameterState(AudioState& as) : audioState{as} {}
 
-    void ParameterView::init(ValueTreeState& apvts)
+    void ParameterState::init(ValueTreeState& apvts)
     {
         //mix = apvts.getRawParameterValue(params::mix::id);
         output = apvts.getRawParameterValue(params::output::id);
@@ -27,7 +27,7 @@ namespace particules
         playback = apvts.getRawParameterValue(params::playback::id);
     }
 
-    EnvelopeMode ParameterView::getEnvelopeMode() const noexcept
+    EnvelopeMode ParameterState::getEnvelopeMode() const noexcept
     {
         if(!envMode)
             return EnvelopeMode::Hann;
@@ -41,7 +41,7 @@ namespace particules
         return static_cast<EnvelopeMode>(choice);
     }
 
-    TraversalMode ParameterView::getTraversalMode() const noexcept
+    TraversalMode ParameterState::getTraversalMode() const noexcept
     {
         if(!traversalMode)
             return TraversalMode::Sine;
@@ -54,7 +54,7 @@ namespace particules
         return static_cast<TraversalMode>(choice);
     }
 
-    const ParameterSnapshot ParameterView::getSnapshot() const noexcept
+    const ParameterSnapshot ParameterState::getSnapshot() const noexcept
     {
         ParameterSnapshot ps;
         AudioStateSnapshot es = audioState.getSnapshot();
@@ -84,7 +84,7 @@ namespace particules
         return ps;
     };
 
-    float ParameterView::getLinearGain() const noexcept
+    float ParameterState::getLinearGain() const noexcept
     {
         return output ? juce::Decibels::decibelsToGain(output->load(std::memory_order_relaxed)) : 0.0f;
     }

@@ -1,11 +1,12 @@
 #include "MainPanel.h"
-#include "../../framework/bridge/ParameterView.h"
-#include "../../utils/struct/UIContext.h"
-#include "../lookandfeel/MyColours.h"
+
+#include "framework/state/ParameterState.h"
+#include "gui/lookandfeel/MyColours.h"
+#include "utils/struct/UIContext.h"
 
 namespace particules
 {
-    MainPanel::MainPanel(UIContext& uic) : titlePanel{uic}, tabPanel{uic}, audioFilePanel{uic} 
+    MainPanel::MainPanel(UIContext& uic) : titlePanel{uic}, tabPanel{uic}, audioFilePanel{uic}
     {
         addAndMakeVisible(&titlePanel);
         addAndMakeVisible(&audioFilePanel);
@@ -14,7 +15,6 @@ namespace particules
         //addAndMakeVisible(&vignette);
         //vignette.setInterceptsMouseClicks(false, false);
     }
-
 
     void MainPanel::paint(juce::Graphics& g) {}
 

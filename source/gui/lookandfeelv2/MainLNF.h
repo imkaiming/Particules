@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../../framework/GuiTypes.h"
 #include <juce_core/juce_core.h> // end macro
 #include <juce_graphics/juce_graphics.h> // juce image
 #include <juce_gui_basics/juce_gui_basics.h> // look and feel
+
+#include "framework/core/GuiTypes.h"
 
 namespace juce
 {

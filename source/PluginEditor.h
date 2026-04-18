@@ -5,40 +5,32 @@
 
 #pragma once
 
-#include "PluginProcessor.h"
-#include "gui/panel/MainPanel.h"
+#include "melatonin_inspector/melatonin_inspector.h"
+
 #include "gui/lookandfeel/GlobalLookAndFeel.h"
 #include "gui/lookandfeelv2/MainLNF.h"
-
-#include "melatonin_inspector/melatonin_inspector.h"
+#include "gui/panel/MainPanel.h"
 
 namespace particules
 {
+    class ParticulesAudioProcessor;
     class ParticulesAudioProcessorEditor : public juce::AudioProcessorEditor
     {
     public:
         ParticulesAudioProcessorEditor(ParticulesAudioProcessor&);
         ~ParticulesAudioProcessorEditor() override;
 
-        void paint(juce::Graphics&) override;
+        //void paint(juce::Graphics&) override;
         void resized() override;
 
         GlobalLookAndFeel& getCustomLook() { return globalLookAndFeel; };
-        const MainPanel& getMainPanel() const noexcept { return mainPanel; };
 
     private:
-        static constexpr const int windowHeightInit = gui::windowHeightInit;
-        static constexpr const int windowHeightMin = gui::windowHeightMin;
-        static constexpr const int windowHeightMax = gui::windowHeightMax;
-
-        static constexpr const int windowWidthInit = gui::windowWidthInit;
-        static constexpr const int windowWidthMin = gui::windowWidthMin;
-        static constexpr const int windowWidthMax = gui::windowWidthMax;
-
-        MainLNF lnf;
         ParticulesAudioProcessor& pluginProcessor;
+        MainLNF lnf;
         MainPanel mainPanel;
         GlobalLookAndFeel globalLookAndFeel;
+
 #if ENABLE_MELATONINE_INSPECTOR
         melatonin::Inspector inspector{*this};
 #endif

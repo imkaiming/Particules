@@ -1,20 +1,7 @@
 #pragma once
 #include <juce_audio_processors/juce_audio_processors.h>
 
-#include "dsp/GranularEngine.h"
-#include "framework/PluginTypes.h"
-#include "framework/audio/AudioFileLoader.h"
-#include "framework/bridge/AudioState.h"
-#include "framework/bridge/ParameterView.h"
-#include "framework/bridge/PingPongBuffer.h"
-#include "framework/bridge/RingBuffer.h"
-#include "framework/bridge/StateSynchronizer.h"
-#include "framework/bridge/UIState.h"
-#include "utils/struct/ProcessorFacade.h"
-#include "utils/struct/UIContext.h"
-#include "utils/struct/VisualSnapshot.h"
-
-//#include "framework/PluginCore.h"
+#include "framework/PluginCore.h"
 
 namespace juce
 {
@@ -23,30 +10,6 @@ namespace juce
 
 namespace particules
 {
-    inline std::unique_ptr<juce::AudioParameterFloat> createNormalizedParameter(const juce::ParameterID& id, const str& name,
-        float min, float max, float skew, float init, std::function<str(float, int)> stringFromValueFunc,
-        std::function<float(const str&)> valueFromStringFunc)
-    {
-        juce::NormalisableRange<float> range{min, max};
-        range.setSkewForCentre(skew);
-
-        return std::make_unique<juce::AudioParameterFloat>(id, name, range, init,
-            juce::AudioParameterFloatAttributes{}
-                .withCategory(juce::AudioProcessorParameter::genericParameter)
-                .withStringFromValueFunction(stringFromValueFunc)
-                .withValueFromStringFunction(valueFromStringFunc));
-    }
-
-    inline std::unique_ptr<juce::AudioParameterFloat> createNormalizedParameter(
-        const juce::ParameterID& id, const str& name, float min, float max, float skew = 0.5f, float init = 0.5f)
-    {
-        juce::NormalisableRange<float> range{min, max};
-        range.setSkewForCentre(skew);
-
-        return std::make_unique<juce::AudioParameterFloat>(id, name, range, init);
-    }
-
-    class GranularEngine;
     class ParticulesAudioProcessor : public juce::AudioProcessor
 #if JucePlugin_Enable_ARA
         ,
@@ -55,19 +18,21 @@ namespace particules
     {
     public:
         ParticulesAudioProcessor();
-        ~ParticulesAudioProcessor() override;
+        ~ParticulesAudioProcessor() = default;
 
-        // Audio Processor classes //
         void prepareToPlay(double sampleRate, int samplesPerBlock) override;
         void releaseResources() override;
+        void processBlock(AudioBuffer&, juce::MidiBuffer&) override;
 
 #ifndef JucePlugin_PreferredChannelConfigurations
         bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
 #endif
 
-        void processBlock(AudioBuffer&, juce::MidiBuffer&) override;
+        void getStateInformation(juce::MemoryBlock& destData) override;
+        void setStateInformation(const void* data, int sizeInBytes) override;
 
         juce::AudioProcessorEditor* createEditor() override;
+
         bool hasEditor() const override;
         const juce::String getName() const override;
         bool acceptsMidi() const override;
@@ -80,57 +45,14 @@ namespace particules
         const juce::String getProgramName(int index) override;
         void changeProgramName(int index, const str& newName) override;
 
-        void getStateInformation(juce::MemoryBlock& destData) override;
-        void setStateInformation(const void* data, int sizeInBytes) override;
-
-        // User classes //
-
-        ValueTreeState& getValueTreeState() noexcept { return apvts; };
-        ParameterView& getParametersView() noexcept { return paramsView; };
-        UIContext& getUIContext() noexcept { return uic; };
-        //const juce::File& getCurrentFile() const noexcept { return loader.getCurrentFile(); };
-        AudioFileLoader& getAudioFileLoader() noexcept { return loader; };
-        const int getNumActiveGrains() const noexcept { return granularEngine.getNumActiveGrains(); };
-        //const bool isInputBufferLoaded() const noexcept { return granularEngine.isInputBufferLoaded(); };
+        // Core interface
+        void loadDebugPreset() { core.loadDebugPreset(); }
+        PluginCore& getPluginCore() noexcept { return core; }
+        UIContext& getUIContext() noexcept { return core.getUIContext(); }
 
     private:
-        static ValueTreeState::ParameterLayout createParameterLayout();
-        void loadDebugPreset();
-        void loadFile(const str& path);
-        void loadFile();
+        PluginCore core;
 
-        bool debugPresetLoaded = false;
-
-        // thread communication
-        PingPongBuffer<VisualSnapshot> visualBuffer;
-        RingBuffer<AudioPayload> incomingBuffer;
-        RingBuffer<AudioPayload> garbageCollector;
-        std::atomic<AudioPayload*> currentPayload{nullptr};
-
-        // core components
-        ValueTreeState apvts; // connecte les slider du GUI et les paramètres (fourni des valeurs atomiques)
-        AudioState audioState; // own runtime plugin global parameters no snapshot
-        ParameterView paramsView; // fait le pont entre apvts et le synth
-        UIState uiState; //
-        GranularEngine granularEngine;
-        AudioFileLoader loader;
-        ProcessorFacade facade;
-        UIContext uic;
-        StateSynchronizer synchronizer;
-
-        // is called after the audio file loader has successfully
-        // load a sample to init all the audio related component
-        // engine state and uistate are updated and uistate will
-        // broadcast the message to the UI component
-        AudioLoadedCallback onAudioLoadedCallback;
-
-        //std::function<void(std::shared_ptr<const AudioBuffer>)> setInputBufferCallback;
-        //juce::UndoManager undoManager;
-        //juce::AbstractFifo fifo;
-        //juce::ADSR::Parameters adsrParameters;
-        //juce::ADSR adsr;
-
-        //PluginCore core;
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessor)
     };
 }

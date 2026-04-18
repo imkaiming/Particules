@@ -1,7 +1,7 @@
 #pragma once
-#include "../framework/Core.h"
-#include "../utils/struct/ParameterSnapshot.h"
-#include "../utils/struct/SmoothedParameters.h"
+#include "framework/core/Core.h"
+#include "utils/struct/ParameterSnapshot.h"
+#include "utils/struct/SmoothedParameters.h"
 
 // Grain is the unit that read samples the buffer
 // It have 2 main structure time and amplitude

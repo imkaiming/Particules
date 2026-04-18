@@ -1,12 +1,11 @@
 #pragma once
 
 #include <juce_core/juce_core.h>
-//#include <juce_graphics/juce_graphics.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../../framework/Core.h"
-#include "../../../utils/enum/RotaryType.h"
-#include "../../lookandfeelv2/Colours.h"
+#include "framework/core/Core.h"
+#include "gui/lookandfeelv2/Colours.h"
+#include "utils/enum/RotaryType.h"
 
 namespace particules
 {

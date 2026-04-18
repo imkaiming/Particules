@@ -2,29 +2,29 @@
 
 #include <juce_graphics/juce_graphics.h>
 
-#include "../../../framework/PluginParams.h"
-#include "../../../framework/bridge/AudioState.h"
-#include "../../../framework/bridge/UIState.h"
-#include "../../../utils/UIHelpers.h"
-#include "../../../utils/struct/ProcessorFacade.h"
-#include "../../../utils/struct/UIContext.h"
-#include "../../lookandfeelv2/Colours.h"
+#include "framework/bridge/FromUI.h"
+#include "framework/core/PluginParams.h"
+#include "framework/state/AudioState.h"
+#include "framework/state/UIState.h"
+#include "gui/lookandfeelv2/Colours.h"
+#include "utils/UIHelpers.h"
+#include "utils/struct/UIContext.h"
 
 #include "BinaryData.h"
 
 #ifndef PARTICULES_BUILD_TYPE
-    #define PARTICULES_BUILD_TYPE ""
+#define PARTICULES_BUILD_TYPE ""
 #endif
 
 #ifndef PARTICULES_VERSION
-    #define PARTICULES_VERSION ""
+#define PARTICULES_VERSION ""
 #endif
 
 namespace particules
 {
 
     TitlePanel::TitlePanel(UIContext& uic)
-        : playBtn{(const str) "playBtn"}, loadBtn{(const str) "loadBtn"}, uic{uic}, facade{uic.facade}, lastPlayState{false},
+        : playBtn{(const str) "playBtn"}, loadBtn{(const str) "loadBtn"}, uic{uic}, fui{uic.fui}, lastPlayState{false},
           audioState{uic.audioState}, nextBtn{(const str) "nextBtn"}, previousBtn{(const str) "previousBtn"}
     {
         uic.uiState.addChangeListener(this);
@@ -37,7 +37,7 @@ namespace particules
         nextIcon =
             UIHelpers::loadSVG(BinaryData::arrow_turn_forward_svg, BinaryData::arrow_turn_forward_svgSize, juce::Colours::white);
 
-        lastPlayState = uic.facade.isPlaying();
+        lastPlayState = fui.isPlaying();
         playBtn.setIcon(lastPlayState ? pauseIcon.get() : playIcon.get());
         playBtn.setEnabled(uic.uiState.isFileLoaded());
 
@@ -68,8 +68,6 @@ namespace particules
         addAndMakeVisible(&nextBtn);
         addAndMakeVisible(&titleLabel);
         addAndMakeVisible(&versionLabel);
-
-        //playBtn.setEnabled(false);
     }
 
     TitlePanel::~TitlePanel() {}
@@ -85,40 +83,20 @@ namespace particules
 
     void TitlePanel::playButtonClicked()
     {
-        if(!facade.setPlaying)
-            return;
-
         // On inverse l'état actuel mémorisé
         //const bool newState = !lastPlayState;
-        //facade.setPlaying(newState);
-        const bool currentState = facade.isPlaying() > 0.5f;
-        facade.setPlaying(!currentState);
+        //fui.setPlaying(newState);
+        const bool currentState = fui.isPlaying() > 0.5f;
+        fui.setPlaying(!currentState);
         playBtn.setIcon(currentState ? playIcon.get() : pauseIcon.get());
-
-        /*
-        if(facade.isPlaying())
-        {
-            //facade.stop();
-            playBtn.setIcon(playIcon.get());
-            facade.setPlaying(false);
-
-        }
-        else
-        {
-            //facade.play();
-            playBtn.setIcon(pauseIcon.get());
-            facade.setPlaying(true);
-            // TODO change to engineState.setAuditionning(true) after midi compatibility
-        }
-        */
     }
 
     void TitlePanel::loadSampleButtonClicked()
     {
-        //facade.stop();
-        facade.setPlaying(false);
-        if(facade.loadFile)
-            facade.loadFile();
+        //fui.stop();
+        fui.setPlaying(false);
+        //if(fui.onLoadFile)
+        fui.loadFile();
     }
 
     void TitlePanel::paint(juce::Graphics& g) { g.fillAll(coloursv2::perleBlanc.darker(0.1f)); }
@@ -134,7 +112,6 @@ namespace particules
 
         juce::Rectangle<int> titleArea = area.removeFromLeft(titleWidth);
 
-        //titleLabel.setBounds(titleArea.removeFromTop(titleArea.getHeight() * 0.7f));
         titleLabel.setBounds(titleArea);
         const int textBottomY = titleArea.getCentreY() + 6;
         versionLabel.setBounds(titleArea.withTop(textBottomY).withHeight(14));
@@ -158,73 +135,4 @@ namespace particules
         playBtn.setBounds(playArea.withSizeKeepingCentre(btnSize, btnSize));
         nextBtn.setBounds(nextArea.withSizeKeepingCentre(btnSize, btnSize));
     }
-
-    //void TitlePanel::layoutLeft()
-    //{
-    //    juce::Rectangle<int> area = leftArea.getLocalBounds().reduced(4, 0);
-
-    //    juce::FlexBox fb;
-    //    fb.flexDirection = juce::FlexBox::Direction::row;
-    //    fb.justifyContent = juce::FlexBox::JustifyContent::center;
-    //    fb.alignItems = juce::FlexBox::AlignItems::center;
-
-    //    fb.items.add(juce::FlexItem(titleLabel).withFlex(1.0f).withHeight(20.f));
-    //    fb.performLayout(area);
-    //}
-
-    //void TitlePanel::layoutLoad()
-    //{
-    //    juce::Rectangle<int> area = loadArea.getLocalBounds().reduced(4, 0);
-
-    //    juce::FlexBox fb;
-    //    fb.flexDirection = juce::FlexBox::Direction::row;
-    //    fb.justifyContent = juce::FlexBox::JustifyContent::flexEnd;
-    //    fb.alignItems = juce::FlexBox::AlignItems::center;
-
-    //    fb.items.add(juce::FlexItem(loadBtn).withWidth(90.f).withHeight(25.f));
-    //    fb.performLayout(area);
-    //}
-
-    //void TitlePanel::layoutFile()
-    //{
-    //    juce::Rectangle<int> area = fileArea.getLocalBounds().reduced(4, 0);
-
-    //    juce::FlexBox fb;
-    //    fb.flexDirection = juce::FlexBox::Direction::row;
-    //    fb.justifyContent = juce::FlexBox::JustifyContent::flexStart;
-    //    fb.alignItems = juce::FlexBox::AlignItems::center;
-
-    //    //fb.items.add(juce::FlexItem(fileNameBox).withFlex(1.0f).withHeight(25.f));
-    //    fb.performLayout(area);
-
-    //    //fileNameBox.repaint();
-    //}
-
-    //void TitlePanel::layoutRight()
-    //{
-    //    juce::Rectangle<int> area = rightArea.getLocalBounds();
-
-    //    juce::FlexBox fb;
-    //    fb.flexDirection = juce::FlexBox::Direction::row;
-    //    fb.alignItems = juce::FlexBox::AlignItems::stretch;
-
-    //    fb.items.add(juce::FlexItem().withFlex(1.0f));
-    //    fb.items.add(juce::FlexItem(btnArea).withFlex(1.0f));
-
-    //    fb.performLayout(area);
-
-    //    // Centre les boutons dans btnArea
-    //    juce::FlexBox btnFb;
-    //    btnFb.flexDirection = juce::FlexBox::Direction::row;
-    //    btnFb.justifyContent = juce::FlexBox::JustifyContent::center;
-    //    btnFb.alignItems = juce::FlexBox::AlignItems::center;
-
-    //    const float btnSize = 25.0f;
-    //    const float gap = 8.0f;
-
-    //    btnFb.items.add(juce::FlexItem(playBtn).withWidth(btnSize).withHeight(btnSize).withMargin({0, gap * 0.5f, 0, 0}));
-    //    //btnFb.items.add(juce::FlexItem(pauseBtn).withWidth(btnSize).withHeight(btnSize).withMargin({0, 0, 0, gap * 0.5f}));
-
-    //    btnFb.performLayout(btnArea.getLocalBounds());
-    //}
 }

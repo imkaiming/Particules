@@ -1,11 +1,10 @@
 #pragma once
 
-#include "../../utils/enum/EnvelopeMode.h"
-#include "../../utils/enum/TraversalMode.h"
-#include "../../utils/struct/ParameterSnapshot.h"
-#include "../PluginTypes.h"
-
-#include "../Core.h"
+#include "utils/enum/EnvelopeMode.h"
+#include "utils/enum/TraversalMode.h"
+#include "utils/struct/ParameterSnapshot.h"
+#include "framework/core/PluginTypes.h"
+#include "framework/core/Core.h"
 
 // APVTS wrapper that create snapshot for the DSP
 // own atomic ptr
@@ -13,11 +12,11 @@
 namespace particules
 {
     class AudioState;
-    class ParameterView
+    class ParameterState
     {
     public:
-        ParameterView(AudioState&); // = default;
-        ~ParameterView() = default;
+        ParameterState(AudioState&); 
+        ~ParameterState() = default;
 
         void init(ValueTreeState& apvts);
 
@@ -59,6 +58,5 @@ namespace particules
 
         AudioState& audioState;
 
-        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterView)
     };
 }

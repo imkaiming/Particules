@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../../framework/Core.h"
-#include "../../gui/component/slider/RotarySlider.h"
-
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
+
+#include "framework/core/Core.h"
+#include "gui/component/slider/RotarySlider.h"
 
 
 namespace particules

@@ -1,15 +1,13 @@
 #pragma once
 
-#include "../Core.h"
-#include "../PluginTypes.h"
-//#include "framework/bridge/RingBuffer.h"
-
 #include <juce_audio_basics/juce_audio_basics.h> // audio loaded callback
 #include <juce_audio_formats/juce_audio_formats.h> // audio format manager
 #include <juce_core/juce_core.h> // file
 
-#include "../PluginParams.h"
 #include "ChannelMixer.h"
+#include "framework/core/Core.h"
+#include "framework/core/PluginParams.h"
+#include "framework/core/PluginTypes.h"
 
 namespace juce
 {
@@ -40,8 +38,6 @@ namespace particules
         juce::AudioFormatManager& getFormatManager();
 
     private:
-        static constexpr int MAX_FILE_SIZE = params::maxFileSize;
-        static constexpr double MAX_DURATION = params::maxFileDuration;
         void showErrorWindow(const str&);
 
         double sampleRate;

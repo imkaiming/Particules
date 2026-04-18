@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../framework/PluginParams.h"
-#include "../framework/audio/LookUpTable.h"
-#include "../framework/audio/PhaseGenerator.h"
-#include "../utils/enum/TraversalMode.h"
+#include "framework/core/PluginParams.h"
+#include "framework/audio/LookUpTable.h"
+#include "framework/audio/PhaseGenerator.h"
+#include "utils/enum/TraversalMode.h"
 
 // unipolar LFO modulator return normalized position [0.f, 1.f]
 

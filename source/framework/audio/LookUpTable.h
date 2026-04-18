@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../PluginParams.h"
-#include "../Core.h"
+#include "framework/core/PluginParams.h"
+#include "framework/core/Core.h"
 
 namespace particules
 {

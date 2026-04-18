@@ -1,9 +1,10 @@
 #include "ADSRPanel.h"
 
 #include <juce_gui_basics/juce_gui_basics.h>
-#include "../../../../utils/struct/UIContext.h"
-#include "../../../../framework/PluginParams.h"
-#include "../../../lookandfeelv2/Colours.h"
+
+#include "utils/struct/UIContext.h"
+#include "framework/core/PluginParams.h"
+#include "gui/lookandfeelv2/Colours.h"
 
 namespace particules
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Core.h"
+#include "framework/core/Core.h"
 
 // latch SPSC 
 // Ping Pong Buffer (double buffering)

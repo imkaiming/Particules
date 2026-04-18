@@ -1,33 +1,26 @@
 #include "GuiAppProcessor.h"
 #include "GuiAppEditor.h"
 
-#include "../framework/PluginParams.h"
+#include "framework/core/PluginParams.h"
 
 namespace particules
 {
     GuiAppProcessor::GuiAppProcessor()
-        : apvts(*this, nullptr, "Parameters", createParameterLayout()), paramsView{audioState}, audioState{}, uiState{},
-          uic{apvts, paramsView, audioState, uiState, facade} //, loader{}
+        : apvts(*this, nullptr, "Parameters", createParameterLayout()), paramState{audioState}, audioState{}, uiState{},
+          uic{apvts, paramState, audioState, uiState, fui} 
     {
-        uic.facade.loadFile = [this] { DBG("facade load file"); };
-        uic.facade.loadFilePath = [this](const str& path) { DBG("facade load file path = " + path); };
-        uic.facade.setPlaying = [this](bool play) {
-            if(juce::RangedAudioParameter* param = apvts.getParameter(params::play::id))
-            {
-                param->beginChangeGesture();
-                param->setValueNotifyingHost(param->convertTo0to1(play ? 1.0f : 0.0f));
-                param->endChangeGesture();
-            }
-        };
-        uic.facade.isPlaying = [this]() -> float { return paramsView.getPlay() > 0.5f ? 1.0f : 0.f; };
+        uic.fui.onLoadFile = [this] { DBG("fui load file"); };
+        uic.fui.onLoadFilePath = [this](const str& path) { DBG("fui load file path = " + path); };
+        uic.fui.onSetPlaying = [this](bool play) { DBG("on set playing " + play ? 1.0f > 0.0f); };
+        uic.fui.onIsPlaying = [this]() -> float { return paramState.getPlay() > 0.5f ? 1.0f : 0.f; };
     }
 
     void GuiAppProcessor::prepareToPlay(double sampleRate, int /* samplesPerBlock */)
     {
         //const int numChannels = getTotalNumOutputChannels();
-        paramsView.init(apvts);
+        paramState.init(apvts);
         audioState.setSampleRate(sampleRate);
-        uiState.init(&visualBuffer);
+        uiState.init(nullptr);
         //loader.init(sampleRate, numChannels);
     }
     void GuiAppProcessor::releaseResources() {}

@@ -1,26 +1,15 @@
-/*
-  ==============================================================================
-
-	Scheduler.h
-	Created: 15 Feb 2023 1:44:18pm
-	Author:  user
-
-  ==============================================================================
-*/
-
-// Maintains state necessary for activating grains according to Grain onset timesand durations
-// Exposes a method for synthesizing samples of sound by mixing together the output from its active Grains.
-// Manages grain allocation, for efficiency it may maintain a pool of reusable Grains
-
-// Scheduler is responsible of computing the events
-
 #pragma once
-
-#include "../framework/PluginParams.h"
-#include "../framework/Core.h"
 
 #include <juce_core/juce_core.h>
 
+#include "framework/core/PluginParams.h"
+#include "framework/core/Core.h"
+
+
+// Scheduler is responsible of computing the events
+// Maintains state necessary for activating grains according to Grain onset timesand durations
+// Exposes a method for synthesizing samples of sound by mixing together the output from its active Grains.
+// Manages grain allocation, for efficiency it may maintain a pool of reusable Grains
 // Scheduler compute onsets
 namespace particules
 {

@@ -3,14 +3,11 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../framework/Core.h"
-#include "../../utils/struct/UIContext.h"
-
 //#include "../Component/effect/VignetteEffect.h"
-
-#include "botrow/TabPanel.h"
-#include "toprow/AudioFilePanel.h"
-#include "toprow/TitlePanel.h"
+#include "utils/struct/UIContext.h"
+#include "gui/panel/botrow/TabPanel.h"
+#include "gui/panel/toprow/AudioFilePanel.h"
+#include "gui/panel/toprow/TitlePanel.h"
 
 namespace particules
 {

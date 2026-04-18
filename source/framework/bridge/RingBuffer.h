@@ -1,5 +1,5 @@
 #pragma once
-#include "../Core.h"
+#include "framework/core/Core.h"
 
 // SPSC Queue (FIFO)
 // its move pointers between thread

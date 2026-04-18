@@ -3,11 +3,10 @@
 #include <juce_core/juce_core.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-#include "../../../../framework/Core.h"
-#include "../../../../framework/bridge/AudioState.h"
+#include "framework/core/Core.h"
+#include "framework/state/AudioState.h"
 
 // TODO RENAME FOOT PANEL
-
 namespace particules
 {
     class EngineState;

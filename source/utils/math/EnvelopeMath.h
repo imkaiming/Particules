@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../framework/PluginParams.h"
+#include "framework/core/PluginParams.h"
 #include "MathConstants.h"
 
 namespace particules

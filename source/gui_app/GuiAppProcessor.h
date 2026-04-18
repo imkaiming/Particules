@@ -4,15 +4,14 @@
 #include <juce_audio_processors/juce_audio_processors.h> // audio processor
 #include <juce_core/juce_core.h> // memory block and string
 
-#include "../framework/PluginTypes.h"
-#include "../framework/bridge/AudioState.h"
+#include "framework/bridge/FromUI.h"
 #include "framework/bridge/PingPongBuffer.h"
-//#include "../framework/bridge/GrainVisualBuffer.h"
-#include "../framework/bridge/ParameterView.h"
-#include "../framework/bridge/UIState.h"
-#include "../utils/struct/ProcessorFacade.h"
-#include "../utils/struct/UIContext.h"
-#include "../utils/struct/VisualSnapshot.h"
+#include "framework/core/PluginTypes.h"
+#include "framework/state/AudioState.h"
+#include "framework/state/ParameterState.h"
+#include "framework/state/UIState.h"
+#include "utils/struct/UIContext.h"
+#include "utils/struct/VisualSnapshot.h"
 
 // just to test GUI separated than the audio DSP
 namespace particules
@@ -74,12 +73,11 @@ namespace particules
         UIContext& getUIContext() noexcept { return uic; };
 
     private:
-        PingPongBuffer<VisualSnapshot> visualBuffer;
         ValueTreeState apvts;
         AudioState audioState;
-        ParameterView paramsView;
+        ParameterState paramState;
         UIState uiState;
-        ProcessorFacade facade;
+        FromUI fui;
         UIContext uic;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GuiAppProcessor)

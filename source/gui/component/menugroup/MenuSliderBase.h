@@ -1,19 +1,20 @@
 #pragma once
-#include "../../../framework/GuiTypes.h"
-#include "../../../framework/PluginParams.h"
-#include "../../lookandfeelv2/Colours.h"
-#include "../slider/AuxRotarySlider.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_basics/juce_gui_basics.h>
+
+#include "framework/core/GuiTypes.h"
+#include "framework/core/PluginParams.h"
+#include "gui/lookandfeelv2/Colours.h"
+#include "gui/component/slider/AuxRotarySlider.h"
 
 namespace particules
 {
     class MenuSliderBase : public juce::Component, protected ValueTreeState::Listener
     {
     public:
-        MenuSliderBase(ValueTreeState& apvts, const str& modeParamId, const str& mainParamId,
-            const str& auxParamId, const str& name, const str& controlTypeTag);
+        MenuSliderBase(ValueTreeState& apvts, const str& modeParamId, const str& mainParamId, const str& auxParamId,
+            const str& name, const str& controlTypeTag);
         ~MenuSliderBase() override;
 
         void resized() override;

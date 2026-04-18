@@ -1,6 +1,6 @@
 #include "PhaseGenerator.h"
 
-#include "../Core.h"
+#include "framework/core/Core.h"
 
 namespace particules
 {

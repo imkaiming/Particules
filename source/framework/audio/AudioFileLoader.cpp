@@ -56,9 +56,9 @@ namespace particules
 
         // 1. security step
         const double fileDuration = static_cast<double>(reader->lengthInSamples) / reader->sampleRate;
-        if(fileDuration >= MAX_DURATION)
+        if(fileDuration >= params::maxFileDuration)
         {
-            showErrorWindow("The file duration must not exceed " + str(MAX_DURATION) + " seconds.\nYour file is currently "
+            showErrorWindow("The file duration must not exceed " + str(params::maxFileDuration) + " seconds.\nYour file is currently "
                             + str(fileDuration, 2) + " seconds.");
             return nullptr;
         }
@@ -70,7 +70,7 @@ namespace particules
             return nullptr;
         }
 
-        if(file.getSize() > MAX_FILE_SIZE)
+        if(file.getSize() > params::maxFileSize)
         {
             showErrorWindow("File too large to process (" + str(file.getSize() / (1024 * 1024)) + " MB estimated)");
             return nullptr;
