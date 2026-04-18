@@ -35,7 +35,6 @@ namespace particules
             newPayload->file = loadedFile;
 
             incomingBuffer.push(newPayload);
-
         };
 
         facade.loadFile = [this] { loadFile(); };
@@ -58,19 +57,14 @@ namespace particules
         synchronizer.stop();
 
         while(AudioPayload* payload = incomingBuffer.pop())
-        {
             delete payload;
-        }
 
         while(AudioPayload* payload = garbageCollector.pop())
-        {
             delete payload;
-        }
+
         AudioPayload* active = currentPayload.exchange(nullptr);
-        if(active != nullptr)
-        {
+        if(active)
             delete active;
-        }
     }
 
     void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
@@ -87,6 +81,9 @@ namespace particules
 
     void ParticulesAudioProcessor::processBlock(AudioBuffer& outputBuffer, juce::MidiBuffer& midiMessages)
     {
+        // security for pluginval
+        outputBuffer.clear();
+
         AudioPayload* active = currentPayload.load(std::memory_order_relaxed);
         bool fileSwappedThisBlock = false;
 
@@ -129,7 +126,6 @@ namespace particules
 
         if(ps.play)
         {
-            outputBuffer.clear();
             granularEngine.process(outputBuffer, *inputBuffer, bufferSize, outputPtrs, outputNumChannels, ps);
         }
     }
