@@ -1,6 +1,21 @@
 # Changelog
 
-## [0.2.3] - 2026-04-15
+## [0.3.1] - 2026-04-17
+
+### Added
+- `StateSynchronizer`: Thread-safe UI data updates via a Timer
+- `AudioPayload`: New data structure bundling the audio buffer and its metadata
+
+### Changed
+- Replaced `shared_ptr` with SPSC queues to separate UI and DSP threads
+- Memory cleanup is now delegated to the UI thread via a garbage collector 
+
+### Fixed
+- Crash when swapping to a shorter audio file 
+- Instant loading bypass when the source file matches the DAW's sample rate
+
+
+## [0.3.0] - 2026-04-15
 
 ### Added
 - linked button that links the emission and duration parameters together

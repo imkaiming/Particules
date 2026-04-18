@@ -2,7 +2,7 @@
 
 #include "../Core.h"
 #include "../PluginTypes.h"
-#include "framework/bridge/LockFreePointerQueue.h"
+//#include "framework/bridge/RingBuffer.h"
 
 #include <juce_audio_basics/juce_audio_basics.h> // audio loaded callback
 #include <juce_audio_formats/juce_audio_formats.h> // audio format manager
@@ -23,7 +23,7 @@ namespace particules
     class AudioFileLoader
     {
     public:
-        AudioFileLoader(LockFreePointerQueue<AudioBuffer>&);
+        AudioFileLoader(/*RingBuffer<AudioBuffer>&*/);
         ~AudioFileLoader() = default;
 
         void loadFile(AudioLoadedCallback, const juce::File&);
@@ -32,7 +32,7 @@ namespace particules
 
         void processLoadingFile(juce::File&, AudioLoadedCallback);
 
-        bool loadAudioFromFile(juce::File&, AudioBuffer&);
+        std::unique_ptr<AudioBuffer> loadAudioFromFile(juce::File&);
 
         void init(double, int) noexcept;
         void setSampleRate(double) noexcept;
@@ -46,8 +46,9 @@ namespace particules
 
         double sampleRate;
 
+        int targetChannels;
         ChannelMixer channelMixer;
-        LockFreePointerQueue<AudioBuffer>& incomingBuffer;
+        //RingBuffer<AudioBuffer>& incomingBuffer;
         std::unique_ptr<juce::FileChooser> chooser;
         juce::AudioFormatManager formatManager; // classe qui traite les formats de fichier tq wav, aiff, ogg, vorbis ou mp3
 

@@ -18,7 +18,7 @@ namespace particules
         Grain* get(const GrainHandle handle);
         GrainHandle acquire();
         void release(const GrainHandle hadle);
-        void reset();
+        void reset() noexcept;
 
         int getNumActiveGrains() const noexcept { return nextFree; }
         bool isFull() const noexcept { return nextFree == SIZE; }

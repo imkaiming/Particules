@@ -1,52 +1,50 @@
 #include "GranularEngine.h"
 #include "../framework/bridge/AudioState.h"
 #include "../utils/struct/ParameterSnapshot.h"
-#include "GranularEngine.h"
 
 namespace particules
 {
-    GranularEngine::GranularEngine(LockFreeDoubleBuffer<VisualSnapshot>& vb, AudioState& as)
+    GranularEngine::GranularEngine(PingPongBuffer<VisualSnapshot>& vb, AudioState& as)
         : scheduler{}, grainProcessor{pool, posMod, envLut}, pool{}, posMod{}, refreshRate{gui::refreshRate},
           sampleAccumulator{0}, threshold{0}, smoothedParams{}, audioState{as}, visualBuffer{vb}
     {
-        spawnCallback = [this](const ParameterSnapshot& ps) { grainProcessor.spawn(ps); }; // to avoid creating a new lambda every sampleBlock
+        spawnCallback = [this](const ParameterSnapshot& ps) {
+            grainProcessor.spawn(ps);
+        }; // to avoid creating a new lambda every sampleBlock
     }
 
     // pour 1024 buffer size en 48kHz on a une fenetre de 21ms par appelle de compute.
     // si Emission = 500g/s (1g chaque 0.002s) alors on a interOnSet = 48000/500 = 96 sample.
     // 1024/96 = 10.66 grains par appel
-    void GranularEngine::process(
-        AudioBuffer& bufferOut, int bufferSize, float* const* outputPtrs, int outputNumChannels, const ParameterSnapshot& ps)
+    void GranularEngine::process(AudioBuffer& outputBuffer, AudioBuffer& inputBuffer, int bufferSize, float* const* outputPtrs,
+        int outputNumChannels, const ParameterSnapshot& ps)
     {
-        // *** security *** //
 
-        auto bufferGuard = inputBufferPtr.load();
-        if(!bufferGuard)
-            return;
+        //auto bufferGuard = inputBufferPtr.load();
+        //if(!bufferGuard)
+        //return;
+        //const AudioBuffer* inputBuffer = bufferGuard.get();
 
-        // *** parameters *** //
+        // parameters
+        AudioBlock outputBlock(outputBuffer);
 
-        const AudioBuffer* inputBuffer = bufferGuard.get();
+        const float* const* inputPtrs = inputBuffer.getArrayOfReadPointers();
+        const int inputNumsChannels = inputBuffer.getNumChannels();
+        const int inputNumSamples = inputBuffer.getNumSamples();
 
-        AudioBlock outputBlock(bufferOut);
-
-        const float* const* inputPtrs = inputBuffer->getArrayOfReadPointers();
-        const int inputNumsChannels = inputBuffer->getNumChannels();
-        const int inputNumSamples = inputBuffer->getNumSamples();
-
+        // security
         jassert(inputNumsChannels == outputNumChannels);
 
         setTargetSmoothedValue(ps);
         posMod.setParameters(ps.traversalMode, ps.traversalFreq);
         scheduler.setEmission(ps.emission);
 
-        // *** dsp *** //
-
+        // main loop
         for(int currentSample = 0; currentSample < bufferSize; currentSample++)
         {
             updateSmoothedParameters();
             scheduler.tick(spawnCallback, ps);
-            grainProcessor.render(currentSample, outputNumChannels, outputPtrs, inputPtrs, smoothedParams);
+            grainProcessor.render(currentSample, outputNumChannels, outputPtrs, inputPtrs, smoothedParams, inputNumSamples);
 
             //const float env = adsr.getNextSample();
             //for(int ch = 0; ch < outputNumChannels; ++ch)
@@ -98,6 +96,12 @@ namespace particules
         //sustainRatioSmooth.reset(sampleRate, 0.01);
 
         scheduler.init(sampleRate);
+    }
+
+    void GranularEngine::clear() noexcept
+    {
+        grainProcessor.reset();
+        //pool.reset();
     }
 
     void GranularEngine::writeVisualSnapshot() noexcept

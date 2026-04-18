@@ -5,13 +5,16 @@
 #include "framework/PluginTypes.h"
 #include "framework/audio/AudioFileLoader.h"
 #include "framework/bridge/AudioState.h"
-#include "framework/bridge/LockFreeDoubleBuffer.h"
-#include "framework/bridge/LockFreePointerQueue.h"
 #include "framework/bridge/ParameterView.h"
+#include "framework/bridge/PingPongBuffer.h"
+#include "framework/bridge/RingBuffer.h"
+#include "framework/bridge/StateSynchronizer.h"
 #include "framework/bridge/UIState.h"
 #include "utils/struct/ProcessorFacade.h"
 #include "utils/struct/UIContext.h"
 #include "utils/struct/VisualSnapshot.h"
+
+//#include "framework/PluginCore.h"
 
 namespace juce
 {
@@ -88,11 +91,9 @@ namespace particules
         //const juce::File& getCurrentFile() const noexcept { return loader.getCurrentFile(); };
         AudioFileLoader& getAudioFileLoader() noexcept { return loader; };
         const int getNumActiveGrains() const noexcept { return granularEngine.getNumActiveGrains(); };
-        const bool isInputBufferLoaded() const noexcept { return granularEngine.isInputBufferLoaded(); };
+        //const bool isInputBufferLoaded() const noexcept { return granularEngine.isInputBufferLoaded(); };
 
     private:
-        void setInputBuffer(AudioBuffer&) noexcept;
-
         static ValueTreeState::ParameterLayout createParameterLayout();
         void loadDebugPreset();
         void loadFile(const str& path);
@@ -101,19 +102,21 @@ namespace particules
         bool debugPresetLoaded = false;
 
         // thread communication
-        LockFreeDoubleBuffer<VisualSnapshot> visualBuffer;
-        LockFreePointerQueue<AudioBuffer> incomingBuffer;
-        LockFreePointerQueue<AudioBuffer> garbageCollector;
+        PingPongBuffer<VisualSnapshot> visualBuffer;
+        RingBuffer<AudioPayload> incomingBuffer;
+        RingBuffer<AudioPayload> garbageCollector;
+        std::atomic<AudioPayload*> currentPayload{nullptr};
 
         // core components
         ValueTreeState apvts; // connecte les slider du GUI et les paramètres (fourni des valeurs atomiques)
         AudioState audioState; // own runtime plugin global parameters no snapshot
         ParameterView paramsView; // fait le pont entre apvts et le synth
-        UIState uiState; // 
+        UIState uiState; //
         GranularEngine granularEngine;
         AudioFileLoader loader;
         ProcessorFacade facade;
         UIContext uic;
+        StateSynchronizer synchronizer;
 
         // is called after the audio file loader has successfully
         // load a sample to init all the audio related component
@@ -127,6 +130,7 @@ namespace particules
         //juce::ADSR::Parameters adsrParameters;
         //juce::ADSR adsr;
 
+        //PluginCore core;
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParticulesAudioProcessor)
     };
 }

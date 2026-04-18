@@ -9,13 +9,13 @@
 namespace particules
 {
     template <typename T>
-    class LockFreeDoubleBuffer
+    class PingPongBuffer
     {
-        static_assert(std::is_trivially_copyable<T>(),
-            "LockFreeDoubleBuffer<T> : T must be trivially copyable. No Vector, array or raw ptr");
+        static_assert(
+            std::is_trivially_copyable<T>(), "PingPongBuffer<T> : T must be trivially copyable. No Vector, array or raw ptr");
 
     public:
-        LockFreeDoubleBuffer() = default;
+        PingPongBuffer() = default;
 
         // Audio Thread ; single producer
         T& beginWriteBuffer() noexcept { return buffers[writeIndex]; }
@@ -30,8 +30,8 @@ namespace particules
         // gui thread : single consummer
         const T& getReadBuffer() const noexcept { return buffers[readIndex.load(std::memory_order_acquire)]; }
 
-        LockFreeDoubleBuffer(const LockFreeDoubleBuffer&) = delete; // no copy constructor
-        LockFreeDoubleBuffer& operator=(const LockFreeDoubleBuffer&) = delete; // no assignation
+        PingPongBuffer(const PingPongBuffer&) = delete; // no copy constructor
+        PingPongBuffer& operator=(const PingPongBuffer&) = delete; // no assignation
     private:
         T buffers[2];
         int writeIndex = 0; // strictly for the audio thread

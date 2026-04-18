@@ -19,7 +19,7 @@ namespace particulesTest
 
     struct VoiceManagerFixture
     {
-        LockFreeDoubleBuffer<VisualSnapshot> vb;
+        PingPongBuffer<VisualSnapshot> vb;
         GrainEnvelope lut;
         GrainHandle h;
         Grain g;

@@ -16,7 +16,7 @@ namespace particules
 
     GrainPool::GrainPool() { reset(); }
 
-    void GrainPool::reset()
+    void GrainPool::reset() noexcept
     {
         nextFree = 0;
         for(int i = 0; i < SIZE; ++i)

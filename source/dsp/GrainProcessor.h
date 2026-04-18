@@ -1,9 +1,8 @@
 #pragma once
 
-#include "../framework/PluginParams.h"
 #include "../framework/Core.h"
+#include "../framework/PluginParams.h"
 #include "../utils/struct/GrainHandle.h"
-
 
 // GrainProcessor takes segments from the spawned events and render grains from it
 namespace particules
@@ -20,17 +19,16 @@ namespace particules
         GrainProcessor(GrainPool& pool, PositionModulator& pm, GrainEnvelope& lut);
         ~GrainProcessor() = default;
 
-        void reset();
+        void reset() noexcept;
         //void render(const int, const int, AudioBlock&, const AudioBuffer*, const SmoothedParameters&);
         void render(int currentSample, int outputNumChannels, float* const* outputPtrs, const float* const* inputPtrs,
-            const SmoothedParameters& params);
+            const SmoothedParameters& params, int numSamples);
 
         //void process(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
         //void processGrainsSamples(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
         //void processSamplesGrains(AudioBlock& outputBlock, int bufferSize, const AudioBuffer* inputSource);
         void spawn(const ParameterSnapshot&);
-
-        void writeVisualSnapshot(VisualSnapshot& snap) noexcept ;
+        void writeVisualSnapshot(VisualSnapshot& snap) noexcept;
 
     private:
         void removeVoice(const int index);

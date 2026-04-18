@@ -18,7 +18,7 @@ namespace particules
         reset();
     }
 
-    void GrainProcessor::reset()
+    void GrainProcessor::reset() noexcept
     {
         activeCount = 0;
         for(GrainHandle& handle : activeHandles)
@@ -27,7 +27,7 @@ namespace particules
     }
 
     void GrainProcessor::render(int currentSample, int outputNumChannels, float* const* outputPtrs, const float* const* inputPtrs,
-        const SmoothedParameters& params)
+        const SmoothedParameters& params, int numSamples)
     {
         for(int i = activeCount - 1; i >= 0; --i) // backward iteration
         {
@@ -40,6 +40,7 @@ namespace particules
 
             int index = static_cast<int>(readPos);
             float frac = readPos - (float)index;
+            jassert(index >= 0 && index < numSamples);
 
             for(int channel = 0; channel < outputNumChannels; ++channel)
             {

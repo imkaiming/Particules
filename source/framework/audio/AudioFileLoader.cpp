@@ -6,7 +6,8 @@
 
 namespace particules
 {
-    AudioFileLoader::AudioFileLoader(LockFreePointerQueue<AudioBuffer>& pq) : sampleRate{0.0}, formatManager{}, incomingBuffer{pq}
+    AudioFileLoader::AudioFileLoader(/*RingBuffer<AudioBuffer>& pq*/)
+        : sampleRate{0.0}, formatManager{}, targetChannels{0} /*, incomingBuffer{pq}*/
     {
         formatManager.registerBasicFormats();
     }
@@ -40,79 +41,92 @@ namespace particules
     {
         if(file.existsAsFile())
         {
-            AudioBuffer bufferOut;
-            if(loadAudioFromFile(file, bufferOut))
-            {
-                onAudioLoaded(bufferOut, file);
-            }
+            std::unique_ptr<AudioBuffer> finalBufferPtr = loadAudioFromFile(file);
+            if(finalBufferPtr != nullptr)
+                onAudioLoaded(std::move(finalBufferPtr), file);
         }
     }
 
-    bool AudioFileLoader::loadAudioFromFile(juce::File& file, AudioBuffer& bufferOut)
+    std::unique_ptr<AudioBuffer> AudioFileLoader::loadAudioFromFile(juce::File& file)
     {
         std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(file));
 
         if(!reader)
-            return false;
+            return nullptr;
 
-        // si le reader de fichier lit un fichier de plus de MaxDuration alors on annule tout
+        // 1. security step
         const double fileDuration = static_cast<double>(reader->lengthInSamples) / reader->sampleRate;
         if(fileDuration >= MAX_DURATION)
         {
-            showErrorWindow("The file duration must not exceed " + (str)MAX_DURATION + " seconds." + "/nYour file is currently "
+            showErrorWindow("The file duration must not exceed " + str(MAX_DURATION) + " seconds.\nYour file is currently "
                             + str(fileDuration, 2) + " seconds.");
-            return false;
+            return nullptr;
         }
 
-        //const double targetSampleRate = paramsView.getSampleRate();
         const double targetSampleRate = sampleRate;
         if(targetSampleRate <= 0.0)
         {
-            showErrorWindow("invalid sample rate : targetSampleRate <= 0");
-            return false;
+            showErrorWindow("Invalid sample rate : targetSampleRate <= 0");
+            return nullptr;
         }
-
-        const int numSamples = (int)reader->lengthInSamples;
-        const int inputNumChannels = reader->numChannels;
 
         if(file.getSize() > MAX_FILE_SIZE)
         {
-            showErrorWindow("File too large to process (" + str(file.getSize() / 2 * (1024 * 1024)) + " MB estimated)");
-            return false;
+            showErrorWindow("File too large to process (" + str(file.getSize() / (1024 * 1024)) + " MB estimated)");
+            return nullptr;
         }
 
-        double ratio = reader->sampleRate / targetSampleRate;
+        // 2. loading file
+        const int numSamples = static_cast<int>(reader->lengthInSamples);
+        const int inputNumChannels = reader->numChannels;
 
-        AudioBuffer tempBuffer(inputNumChannels, numSamples);
-        if(!reader->read(&tempBuffer, 0, numSamples, 0, true, true))
+        AudioBuffer readBuffer(inputNumChannels, numSamples);
+        if(!reader->read(&readBuffer, 0, numSamples, 0, true, true))
         {
-            showErrorWindow("Failed to read audio data from the temporary buffer");
-            return false;
+            showErrorWindow("Failed to read audio data from the file");
+            return nullptr;
         }
 
+        // 3. downmix
+        AudioBuffer mixedBuffer = channelMixer.downmix(readBuffer);
+
+        // 4. ratio
+        const double ratio = reader->sampleRate / targetSampleRate;
         const int resampledSamples = static_cast<int>(numSamples / ratio);
 
-        AudioBuffer resampledBuffer(inputNumChannels, resampledSamples);
-
-        // better than lagrangeinterpolator for offline
-        juce::WindowedSincInterpolator resampler;
-
-        for(int channel = 0; channel < resampledBuffer.getNumChannels(); ++channel)
+        if(resampledSamples <= 0)
         {
-            resampler.reset();
-            resampler.process(
-                ratio, tempBuffer.getReadPointer(channel), resampledBuffer.getWritePointer(channel), resampledSamples);
+            showErrorWindow("Invalid sample source created : resampledSamples <= 0");
+            return nullptr;
         }
 
-        if(resampledBuffer.getNumSamples() == 0)
+        // 5. heap allocation + added a guard Sample
+        const int mixedChannels = mixedBuffer.getNumChannels();
+        std::unique_ptr<juce::AudioBuffer<float>> finalBuffer =
+            std::make_unique<juce::AudioBuffer<float>>(mixedChannels, resampledSamples + 1);
+
+        // 6. resampling is bypassed if sample rate is identical 
+        if(std::abs(ratio - 1.0) < 0.00001)
         {
-            showErrorWindow("Invalid sample source created : resampledBuffer.getNumSamples() == 0");
-            return false;
+            for(int ch = 0; ch < mixedChannels; ++ch)
+            {
+                finalBuffer->copyFrom(ch, 0, mixedBuffer, ch, 0, resampledSamples);
+                finalBuffer->getWritePointer(ch)[resampledSamples] = finalBuffer->getReadPointer(ch)[0];
+            }
+        }
+        else
+        {
+            juce::WindowedSincInterpolator resampler;
+
+            for(int ch = 0; ch < mixedChannels; ++ch)
+            {
+                resampler.reset();
+                resampler.process(ratio, mixedBuffer.getReadPointer(ch), finalBuffer->getWritePointer(ch), resampledSamples);
+                finalBuffer->getWritePointer(ch)[resampledSamples] = finalBuffer->getReadPointer(ch)[0]; // guard sample
+            }
         }
 
-        bufferOut = channelMixer.downmix(resampledBuffer);
-
-        return true;
+        return finalBuffer;
     }
 
     void AudioFileLoader::init(double sr, int numCh) noexcept
@@ -127,7 +141,12 @@ namespace particules
         if(sr > 0)
             sampleRate = sr;
     }
-    void AudioFileLoader::setNumTargetChannels(int ch) noexcept { channelMixer.setTargetChannel(ch); }
+    void AudioFileLoader::setNumTargetChannels(int ch) noexcept
+    {
+        assert(ch > 0);
+        targetChannels = ch;
+        channelMixer.setTargetChannel(ch);
+    }
 
     juce::AudioFormatManager& AudioFileLoader::getFormatManager() { return formatManager; }
 

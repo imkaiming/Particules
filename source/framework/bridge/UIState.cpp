@@ -1,13 +1,14 @@
 #include "UIState.h"
 
-#include "../../utils/struct/VisualSnapshot.h"
-#include "../bridge/LockFreeDoubleBuffer.h"
+#include "utils/struct/AudioPayload.h"
+#include "utils/struct/VisualSnapshot.h"
+#include "framework/bridge/PingPongBuffer.h"
 
 namespace particules
 {
     UIState::UIState()
         : formatManager{}, fileLoaded{false}, cache{10}, visualBuffer{nullptr},
-          audioThumbnail{samplesPerThumbnail, formatManager, cache} /*, visualBuffer{vb}*/
+          audioThumbnail{samplesPerThumbnail, formatManager, cache}, currentPayload{nullptr} /*, visualBuffer{vb}*/
     {
         formatManager.registerBasicFormats();
     }
@@ -27,5 +28,7 @@ namespace particules
 
     const VisualSnapshot& UIState::getSnapshot() const noexcept { return visualBuffer->getReadBuffer(); }
 
-    void UIState::init(const LockFreeDoubleBuffer<VisualSnapshot>* vb) noexcept { visualBuffer = vb; }
+    void UIState::init(const PingPongBuffer<VisualSnapshot>* vb) noexcept { visualBuffer = vb; }
+
+    void UIState::setPayload(AudioPayload* payload) { currentPayload.store(payload, std::memory_order_relaxed); }
 }

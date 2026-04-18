@@ -191,7 +191,7 @@ file(GLOB_RECURSE CoreSources CONFIGURE_DEPENDS
 #    message(STATUS "  ${file}")
 #endforeach()
 
-target_sources(Core PRIVATE 
+target_sources(Core PUBLIC 
     ${CoreSources}  
     "${CMAKE_CURRENT_SOURCE_DIR}/source/framework/PluginTypes.h")
 

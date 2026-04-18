@@ -1,9 +1,10 @@
 #include "PluginProcessor.h"
-#include "PluginEditor.h"
 
 #include <juce_audio_processors_headless/juce_audio_processors_headless.h>
 
+#include "PluginEditor.h"
 #include "framework/PluginParams.h"
+#include "utils/struct/AudioPayload.h"
 #include "utils/struct/ParameterSnapshot.h"
 #include "utils/struct/ProcessorFacade.h"
 
@@ -12,23 +13,29 @@ namespace particules
     ParticulesAudioProcessor::ParticulesAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
         : AudioProcessor(BusesProperties()
-    #if !JucePlugin_IsMidiEffect
-        #if !JucePlugin_IsSynth
+#if !JucePlugin_IsMidiEffect
+#if !JucePlugin_IsSynth
                   .withInput("Input", juce::AudioChannelSet::stereo(), true)
-        #endif
+#endif
                   .withOutput("Output", juce::AudioChannelSet::stereo(), true)
-    #endif
+#endif
                   ),
           apvts(*this, nullptr, "Parameters", createParameterLayout()), paramsView{audioState},
           granularEngine{visualBuffer, audioState}, audioState{}, uiState{}, uic{apvts, paramsView, audioState, uiState, facade},
-          loader{incomingBuffer}, debugPresetLoaded{false}, incomingBuffer{}, garbageCollector{}
+          loader{}, debugPresetLoaded{false}, incomingBuffer{}, garbageCollector{}, currentPayload{nullptr},
+          synchronizer(currentPayload, garbageCollector, audioState, uiState)
 #endif
     {
-        onAudioLoadedCallback = [this](AudioBuffer& buffer, const juce::File& loadedFile) {
-            setInputBuffer(buffer);
-            audioState.setNumSamples(buffer.getNumSamples());
-            audioState.setNumChannels(buffer.getNumChannels());
-            uiState.setSource(loadedFile);
+        onAudioLoadedCallback = [this](std::unique_ptr<AudioBuffer> buffer, const juce::File& loadedFile) {
+            AudioPayload* newPayload = new AudioPayload();
+
+            newPayload->buffer = std::move(buffer);
+            newPayload->numSamples = newPayload->buffer->getNumSamples() - 1; // minus the added guard sample
+            newPayload->numChannels = newPayload->buffer->getNumChannels();
+            newPayload->file = loadedFile;
+
+            incomingBuffer.push(newPayload);
+
         };
 
         facade.loadFile = [this] { loadFile(); };
@@ -42,9 +49,29 @@ namespace particules
             }
         };
         facade.isPlaying = [this]() -> float { return paramsView.getPlay() > 0.5f ? 1.0f : 0.f; };
+
+        synchronizer.start(10);
     }
 
-    ParticulesAudioProcessor::~ParticulesAudioProcessor() {}
+    ParticulesAudioProcessor::~ParticulesAudioProcessor()
+    {
+        synchronizer.stop();
+
+        while(AudioPayload* payload = incomingBuffer.pop())
+        {
+            delete payload;
+        }
+
+        while(AudioPayload* payload = garbageCollector.pop())
+        {
+            delete payload;
+        }
+        AudioPayload* active = currentPayload.exchange(nullptr);
+        if(active != nullptr)
+        {
+            delete active;
+        }
+    }
 
     void ParticulesAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     {
@@ -58,23 +85,53 @@ namespace particules
 
     void ParticulesAudioProcessor::releaseResources() {}
 
-    void ParticulesAudioProcessor::processBlock(AudioBuffer& buffer, juce::MidiBuffer& midiMessages)
+    void ParticulesAudioProcessor::processBlock(AudioBuffer& outputBuffer, juce::MidiBuffer& midiMessages)
     {
+        AudioPayload* active = currentPayload.load(std::memory_order_relaxed);
+        bool fileSwappedThisBlock = false;
+
+        // 1. new payload verification
+        while(AudioPayload* next = incomingBuffer.pop())
+        {
+            if(active)
+                garbageCollector.push(active);
+
+            active = next;
+            fileSwappedThisBlock = true;
+        }
+
+        // 2. set the new payload as the current
+        currentPayload.store(active, std::memory_order_release);
+
+        // 3. security
+        if(!active)
+            return;
+
+        // 4. if new payload we need to clear the active grains
+        if(fileSwappedThisBlock)
+        {
+            granularEngine.clear();
+        }
+
+        AudioBuffer* inputBuffer = active->buffer.get();
         ParameterSnapshot ps = paramsView.getSnapshot();
 
-        if(!ps.isValid())
+        if(!ps.isValid() || inputBuffer == nullptr)
             return;
 
         const int inputuNumChannels = getTotalNumInputChannels();
         const int outputNumChannels = getTotalNumOutputChannels();
-        const int bufferSize = buffer.getNumSamples();
-        float* const* outputPtrs = buffer.getArrayOfWritePointers();
+        const int bufferSize = outputBuffer.getNumSamples();
+        float* const* outputPtrs = outputBuffer.getArrayOfWritePointers();
 
-        for(int i = inputuNumChannels; i < outputNumChannels; ++i)
-            juce::FloatVectorOperations::clear(outputPtrs[i], bufferSize);
+        //for(int i = 0; i < outputNumChannels; ++i)
+        //juce::FloatVectorOperations::clear(outputPtrs[i], bufferSize);
 
         if(ps.play)
-            granularEngine.process(buffer, bufferSize, outputPtrs, outputNumChannels, ps);
+        {
+            outputBuffer.clear();
+            granularEngine.process(outputBuffer, *inputBuffer, bufferSize, outputPtrs, outputNumChannels, ps);
+        }
     }
 
     void ParticulesAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
@@ -140,30 +197,9 @@ namespace particules
         }
     }
 
-    void ParticulesAudioProcessor::setInputBuffer(AudioBuffer& buffer) noexcept
-    {
-        const int inputChannels = buffer.getNumChannels();
-        const int numSamples = buffer.getNumSamples();
-
-        //engineState.setNumChannels(inputChannels);
-        //engineState.setNumSamples(numSamples);
-
-        // adding a guard sample to the input buffer to make it safe to interpolate the buffer's read position
-        AudioBuffer tempBuffer(inputChannels, numSamples + 1);
-
-        for(int ch = 0; ch < inputChannels; ch++)
-        {
-            juce::FloatVectorOperations::copy(tempBuffer.getWritePointer(ch), buffer.getReadPointer(ch), numSamples);
-            tempBuffer.getWritePointer(ch)[numSamples] = tempBuffer.getReadPointer(ch)[0];
-        }
-
-        std::shared_ptr<const AudioBuffer> safeBufferPtr = std::make_shared<const AudioBuffer>(std::move(tempBuffer));
-
-        granularEngine.setInputBuffer(std::move(safeBufferPtr));
-    }
-
     void ParticulesAudioProcessor::loadFile(const str& path)
     {
+        DBG("load file");
         loader.loadFile(path, onAudioLoadedCallback, uiState.getCurrentFile());
     }
 
@@ -408,10 +444,10 @@ namespace particules
 #ifndef JucePlugin_PreferredChannelConfigurations
     bool ParticulesAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
     {
-    #if JucePlugin_IsMidiEffect
+#if JucePlugin_IsMidiEffect
         juce::ignoreUnused(layouts);
         return true;
-    #else
+#else
         // This is the place where you check if the layout is supported.
         // In this template code we only support mono or stereo.
         // Some plugin hosts, such as certain GarageBand versions, will only
@@ -420,14 +456,14 @@ namespace particules
             && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
             return false;
 
-        // This checks if the input layout matches the output layout
-        #if !JucePlugin_IsSynth
+// This checks if the input layout matches the output layout
+#if !JucePlugin_IsSynth
         if(layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
             return false;
-        #endif
+#endif
 
         return true;
-    #endif
+#endif
     }
 #endif
 
@@ -478,6 +514,5 @@ namespace particules
     {
         return true; // (change this to false if you choose to not supply an editor)
     }
-
 }
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new particules::ParticulesAudioProcessor(); }
