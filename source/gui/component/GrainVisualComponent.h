@@ -45,7 +45,7 @@ namespace particules
         //void timerCallback() override;
 
         color colour;
-        UIState& uiState;
+        const UIState& uiState;
         int numSamples;
 
         float invWidthSamples;

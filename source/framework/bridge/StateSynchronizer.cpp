@@ -7,7 +7,7 @@
 namespace particules
 {
     StateSynchronizer::StateSynchronizer(
-        std::atomic<AudioPayload*>& payload, RingBuffer<AudioPayload>& gc, AudioState& as, UIState& us)
+        std::atomic<AudioPayload*>& payload, RingBuffer<AudioPayload*>& gc, AudioState& as, UIState& us)
         : currentPayload{payload}, garbageCollector{gc}, audioState{as}, uiState{us}
     {
     }

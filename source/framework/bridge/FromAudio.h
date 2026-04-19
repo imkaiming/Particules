@@ -19,6 +19,8 @@ namespace particules
         VisualSnapshot& beginWriteVisualSnapshot() const noexcept { return visualBuffer.beginWriteBuffer(); }
         void endWriteVisualSnapshot() const noexcept { visualBuffer.endWriteBuffer(); }
 
+        void setLink(bool b) noexcept { audioState.setLink(b); }
+
         FromAudio(const FromAudio&) = delete;
         FromAudio& operator=(const FromAudio&) = delete;
         FromAudio(FromAudio&&) = delete;    

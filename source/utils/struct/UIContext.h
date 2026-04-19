@@ -9,14 +9,14 @@ namespace particules
     class AudioState;
     class UIState;
     class FromUI;
-    //class FromAudio;
+    class FromAudio;
     struct UIContext
     {
         ValueTreeState& apvts;
         ParameterState& paramState;
-        AudioState& audioState;
-        UIState& uiState;
+        const AudioState& audioState;
+        /*const*/ UIState& uiState; // cannot make it const because of the add listener
         FromUI& fui;
-        //FromAudio& faudio;
+        FromAudio& faudio;
     };
 }

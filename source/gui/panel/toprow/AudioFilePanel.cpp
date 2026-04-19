@@ -12,9 +12,9 @@ namespace particules
 {
     AudioFilePanel::AudioFilePanel(UIContext& uic)
         : uic{uic}, apvts{uic.apvts}, thumbnailComponent{uic}, grainVisualComponent{uic}, posParam{nullptr}, spanParam{nullptr},
-          lastNumGrains{-1}, lastPos{-1.0f}, lastSpan{-1.0f}, numSamples{0} /*, lastPlayState{false}*/
+          lastNumGrains{-1}, lastPos{-1.0f}, lastSpan{-1.0f}, numSamples{0}, uiState{uic.uiState}
     {
-        uic.uiState.addChangeListener(this); // uistate send a message at setSource(file), audio file panel is listening
+        uiState.addChangeListener(this); // uistate send a message at setSource(file), audio file panel is listening
 
         startTimerHz(static_cast<int>(gui::refreshRate));
 
@@ -91,20 +91,20 @@ namespace particules
         spanTitleLabel.setVisible(false);
         spanLabel.setVisible(false);
 
-        changeListenerCallback(&uic.uiState);
+        changeListenerCallback(&uiState);
     }
 
     AudioFilePanel::~AudioFilePanel()
     {
         stopTimer();
-        uic.uiState.removeChangeListener(this);
+        uiState.removeChangeListener(this);
     }
 
     void AudioFilePanel::changeListenerCallback(juce::ChangeBroadcaster* source)
     {
         if(source == &uic.uiState)
         {
-            if(uic.uiState.isFileLoaded())
+            if(uiState.isFileLoaded())
             {
                 numSamples = uic.audioState.getNumSamples();
                 const juce::File& currentFile = uic.uiState.getCurrentFile();

@@ -6,9 +6,6 @@
 #include "framework/core/GuiTypes.h"
 #include "gui/component/button/IconButton.h"
 
-
-
-
 namespace juce
 {
     class Graphics;
@@ -19,6 +16,7 @@ namespace particules
     struct UIContext;
     class FromUI;
     class AudioState;
+    class UIState;
     class TitlePanel : public juce::Component, private juce::ChangeListener
     {
     public:
@@ -31,12 +29,12 @@ namespace particules
         void changeListenerCallback(juce::ChangeBroadcaster*);
 
     private:
-        UIContext& uic;
 
         juce::Label titleLabel, versionLabel;
 
         FromUI& fui;
-        AudioState& audioState;
+        const AudioState& audioState;
+        UIState& uiState;
 
         IconButton loadBtn;
         IconButton playBtn;
@@ -49,7 +47,6 @@ namespace particules
         void loadSampleButtonClicked();
 
         bool lastPlayState;
-
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(TitlePanel)
     };

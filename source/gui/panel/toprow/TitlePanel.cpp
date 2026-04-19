@@ -24,10 +24,10 @@ namespace particules
 {
 
     TitlePanel::TitlePanel(UIContext& uic)
-        : playBtn{(const str) "playBtn"}, loadBtn{(const str) "loadBtn"}, uic{uic}, fui{uic.fui}, lastPlayState{false},
-          audioState{uic.audioState}, nextBtn{(const str) "nextBtn"}, previousBtn{(const str) "previousBtn"}
+        : playBtn{(const str) "playBtn"}, loadBtn{(const str) "loadBtn"}, uiState{uic.uiState}, fui{uic.fui},
+          lastPlayState{false}, audioState{uic.audioState}, nextBtn{(const str) "nextBtn"}, previousBtn{(const str) "previousBtn"}
     {
-        uic.uiState.addChangeListener(this);
+        uiState.addChangeListener(this);
 
         playIcon = UIHelpers::loadSVG(BinaryData::play_svg, BinaryData::play_svgSize, juce::Colours::white);
         pauseIcon = UIHelpers::loadSVG(BinaryData::pause_svg, BinaryData::pause_svgSize, juce::Colours::white);
@@ -74,10 +74,10 @@ namespace particules
 
     void TitlePanel::changeListenerCallback(juce::ChangeBroadcaster* source)
     {
-        if(source == &uic.uiState)
+        if(source == &uiState)
         {
             // Active ou désactive le bouton play selon l'état du fichier en mémoire
-            playBtn.setEnabled(uic.uiState.isFileLoaded());
+            playBtn.setEnabled(uiState.isFileLoaded());
         }
     }
 

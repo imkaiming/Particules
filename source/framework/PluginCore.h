@@ -61,21 +61,21 @@ namespace particules
         AudioState audioState;
         UIState uiState;
 
-        ValueTreeState apvts;
-        ParameterState paramsView;
-        GranularEngine granularEngine;
-        AudioFileLoader loader;
-        UIContext uic;
-
         // lock free queues
-        RingBuffer<AudioPayload> incomingBuffer;
-        RingBuffer<AudioPayload> garbageCollector;
+        RingBuffer<AudioPayload*> incomingBuffer;
+        RingBuffer<AudioPayload*> garbageCollector;
         PingPongBuffer<VisualSnapshot> visualBuffer;
         std::atomic<AudioPayload*> currentPayload{nullptr};
 
         // communications pipeline
         FromAudio faudio;
         FromUI fui;
+
+        ValueTreeState apvts;
+        ParameterState paramState;
+        GranularEngine granularEngine;
+        AudioFileLoader loader;
+        UIContext uic;
 
         // is called after the audio file loader has successfully
         // load a sample to init all the audio related component

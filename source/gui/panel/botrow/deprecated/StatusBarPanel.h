@@ -23,7 +23,7 @@ namespace particules
     private:
         juce::Label statusLabel;
         UIContext& uic;
-        AudioState& audioState;
+        const AudioState& audioState;
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StatusBarPanel)
     };
 }

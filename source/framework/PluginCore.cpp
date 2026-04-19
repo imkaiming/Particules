@@ -10,8 +10,8 @@
 namespace particules
 {
     PluginCore::PluginCore(juce::AudioProcessor& p)
-        : proc{p}, apvts(p, nullptr, "Parameters", createParameterLayout()), paramsView{audioState}, granularEngine{faudio},
-          audioState{}, uiState{}, uic{apvts, paramsView, audioState, uiState, fui}, loader{}, debugPresetLoaded{false},
+        : proc{p}, apvts(p, nullptr, "Parameters", createParameterLayout()), paramState{audioState}, granularEngine{faudio},
+          audioState{}, uiState{}, uic{apvts, paramState, audioState, uiState, fui, faudio}, loader{}, debugPresetLoaded{false},
           incomingBuffer{}, garbageCollector{}, currentPayload{nullptr},
           synchronizer{currentPayload, garbageCollector, audioState, uiState}, faudio{audioState, visualBuffer}
     {
@@ -36,7 +36,7 @@ namespace particules
                 param->endChangeGesture();
             }
         };
-        fui.onIsPlaying = [this]() -> float { return paramsView.getPlay() > 0.5f ? 1.0f : 0.f; };
+        fui.onIsPlaying = [this]() -> float { return paramState.getPlay() > 0.5f ? 1.0f : 0.f; };
 
         synchronizer.start(10);
     }
@@ -59,7 +59,7 @@ namespace particules
     void PluginCore::prepareToPlay(double sampleRate, int samplesPerBlock)
     {
         const int numChannels = proc.getTotalNumOutputChannels();
-        paramsView.init(apvts);
+        paramState.init(apvts);
         audioState.setSampleRate(sampleRate);
         uiState.init(&visualBuffer);
         granularEngine.init(sampleRate, numChannels, samplesPerBlock);
@@ -98,7 +98,7 @@ namespace particules
         }
 
         AudioBuffer* inputBuffer = active->buffer.get();
-        ParameterSnapshot ps = paramsView.getSnapshot();
+        ParameterSnapshot ps = paramState.getSnapshot();
 
         if(!ps.isValid() || inputBuffer == nullptr)
             return;

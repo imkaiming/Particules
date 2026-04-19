@@ -12,10 +12,12 @@ namespace particules
     template <typename T, size_t Size = 16>
     class RingBuffer
     {
+        static_assert(
+            std::is_trivially_copyable<T>(), "RingBuffer<T> : T must be trivially copyable. No vector or array");
     public:
         RingBuffer() = default;
 
-        bool push(T* item) noexcept
+        bool push(T item) noexcept
         {
             const int currentWrite = writePos.load(std::memory_order_relaxed);
             const int nextWrite = (currentWrite + 1) % Size;
@@ -24,24 +26,24 @@ namespace particules
                 return false; // queue is full
 
             buffer[currentWrite] = item;
-            writePos.store(nextWrite, std::memory_order_release);
+            writePos.store(nextWrite, std::memory_order_release);   
             return true;
         }
 
-        T* pop() noexcept
+        T pop() noexcept
         {
             const int currentRead = readPos.load(std::memory_order_relaxed);
 
             if(currentRead == writePos.load(std::memory_order_acquire))
                 return nullptr; // queue is empty
 
-            T* item = buffer[currentRead];
+            T item = buffer[currentRead];
             readPos.store((currentRead + 1) % Size, std::memory_order_release);
             return item;
         }
 
     private:
-        std::array<T*, Size> buffer{};
+        std::array<T, Size> buffer{};
         std::atomic<int> writePos{0};
         std::atomic<int> readPos{0};
     };

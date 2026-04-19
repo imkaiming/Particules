@@ -12,7 +12,7 @@ namespace particules
     class PingPongBuffer
     {
         static_assert(
-            std::is_trivially_copyable<T>(), "PingPongBuffer<T> : T must be trivially copyable. No Vector, array or raw ptr");
+            std::is_trivially_copyable<T>(), "PingPongBuffer<T> : T must be trivially copyable. No vector or array");
 
     public:
         PingPongBuffer() = default;

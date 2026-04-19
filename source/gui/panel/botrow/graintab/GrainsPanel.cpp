@@ -4,6 +4,7 @@
 #include <juce_graphics/juce_graphics.h>
 
 #include "framework/state/AudioState.h"
+#include "framework/bridge/FromAudio.h"
 #include "framework/core/PluginParams.h"
 #include "gui/lookandfeel/MyColours.h"
 #include "gui/lookandfeelv2/Colours.h"
@@ -22,7 +23,7 @@ namespace particules
           traversalRotaryMenu{uic.apvts, params::traversalMode::id, params::traversalFreq::id, params::traversalFreq_jitter::id},
           speedSlider{audioState, RotaryType::secondaryWithAux, uic.apvts, params::speed::name, params::speed::id},
           panSlider{audioState, RotaryType::secondaryWithAux, uic.apvts, params::pan::name, params::pan::id}, outputSlider{},
-          isLinkingUpdate{false}
+          isLinkingUpdate{false}, faudio{uic.faudio}
 
     {
         // slider linking feature
@@ -163,12 +164,12 @@ namespace particules
     {
         if(audioState.getIsLinked())
         {
-            audioState.setLink(false);
+            faudio.setLink(false);
             linkBtn.setIcon(linkOffIcon.get());
         }
         else
         {
-            audioState.setLink(true);
+            faudio.setLink(true);
             linkBtn.setIcon(linkInIcon.get());
 
             double emissionVal = emissionSlider.getPrimaryValue();

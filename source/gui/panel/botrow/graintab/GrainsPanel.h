@@ -20,6 +20,7 @@ namespace particules
 {
     struct UIContext;
     class AudioState;
+    class FromAudio;
     class GrainsPanel : public juce::Component //, private ValueTreeState::Listener
     {
     public:
@@ -34,7 +35,8 @@ namespace particules
         void setLinkButtonImage();
         void onPlaybackButtonClicked();
 
-        AudioState& audioState;
+        const AudioState& audioState;
+        FromAudio& faudio;
         ValueTreeState& apvts;
 
         MainSliderWithAux emissionSlider;

@@ -13,7 +13,7 @@
 namespace particules
 {
 
-    MainSliderWithAux::MainSliderWithAux(AudioState& as, RotaryType type, ValueTreeState& apvts, const str& name, const str& id)
+    MainSliderWithAux::MainSliderWithAux(const AudioState& as, RotaryType type, ValueTreeState& apvts, const str& name, const str& id)
         : audioState{as}, parameterID{id}, apvts{apvts}
     {
         label.setText(name, juce::dontSendNotification);

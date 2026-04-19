@@ -17,7 +17,7 @@ namespace particules
     class StateSynchronizer : public juce::Timer
     {
     public:
-        StateSynchronizer(std::atomic<AudioPayload*>& payload, RingBuffer<AudioPayload>& gc, AudioState& as, UIState& us);
+        StateSynchronizer(std::atomic<AudioPayload*>& payload, RingBuffer<AudioPayload*>& gc, AudioState& as, UIState& us);
         ~StateSynchronizer() override;
 
         void start(int framerateHz = 30);
@@ -27,7 +27,7 @@ namespace particules
 
     private:
         std::atomic<AudioPayload*>& currentPayload;
-        RingBuffer<AudioPayload>& garbageCollector;
+        RingBuffer<AudioPayload*>& garbageCollector;
 
         AudioState& audioState;
         UIState& uiState;

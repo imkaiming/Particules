@@ -37,6 +37,7 @@ namespace particules
         void timerCallback() override;
 
         UIContext& uic;
+        /*const*/ UIState& uiState;
         ValueTreeState& apvts;
 
         ThumbnailComponent thumbnailComponent; // after the file is loaded draw the waveform

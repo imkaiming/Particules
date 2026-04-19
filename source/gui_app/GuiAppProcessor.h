@@ -5,6 +5,7 @@
 #include <juce_core/juce_core.h> // memory block and string
 
 #include "framework/bridge/FromUI.h"
+#include "framework/bridge/FromAudio.h"
 #include "framework/bridge/PingPongBuffer.h"
 #include "framework/core/PluginTypes.h"
 #include "framework/state/AudioState.h"
@@ -56,6 +57,7 @@ namespace particules
         ParameterState paramState;
         UIState uiState;
         FromUI fui;
+        FromAudio faudio;
         UIContext uic;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(GuiAppProcessor)
