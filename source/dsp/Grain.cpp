@@ -31,7 +31,6 @@ namespace particules
         elapsedSamples = 0;
 
         inputNumSamples = ps.inputNumSamples;
-        //inputNumChannels = es.inputNumChannels;
         durationSamples = ps.durationSamples;
 
         // position data
@@ -42,7 +41,7 @@ namespace particules
 
         speed = ps.speed;
         playback = ps.playback;
-        effectiveSpeed = speed * (float)playback;
+        effectiveSpeed = speed * playback;
 
         // envelope data
         //setEnvelopeData(static_cast<int>(ps.sustainRatio));

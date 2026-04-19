@@ -150,14 +150,12 @@ namespace particules
 
         if(playback->load(std::memory_order_relaxed) > 0.5f)
         {
-            DBG("playback : true");
-            playbackBtn.setIcon(backwardIcon.get());
+            playbackBtn.setIcon(forwardIcon.get());
             apvts.getParameter(params::playback::id)->setValueNotifyingHost(0.f);
         }
         else
         {
-            DBG("playback : false");
-            playbackBtn.setIcon(forwardIcon.get());
+            playbackBtn.setIcon(backwardIcon.get());
             apvts.getParameter(params::playback::id)->setValueNotifyingHost(1.f);
         }
     }

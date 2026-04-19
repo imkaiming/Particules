@@ -42,11 +42,13 @@ namespace particules
         int fadeInSamples; // 0 to fadeIn
         int fadeOutSamples; // fadeOut to durationSamples
         int inputNumSamples;
+        float playback;
         //int inputNumChannels;
 
         float speed; // change the pitch and accelerate the lecture
         float readPosition;
         float invFadeInSamples;
+        float effectiveSpeed;
         //float linearGain;
 
         // lifecycle
