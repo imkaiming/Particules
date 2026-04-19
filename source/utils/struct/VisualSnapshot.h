@@ -7,7 +7,7 @@ namespace particules
 {
     struct VisualSnapshot
     {
-        static constexpr int SIZE = params::maxGrains;
+        static constexpr int SIZE = params::maxActiveGrains;
 
         std::array<GrainVisual, SIZE> grainVisuals{};
         int count = 0;

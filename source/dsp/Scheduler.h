@@ -2,9 +2,8 @@
 
 #include <juce_core/juce_core.h>
 
-#include "framework/core/PluginParams.h"
 #include "framework/core/Core.h"
-
+#include "framework/core/PluginParams.h"
 
 // Scheduler is responsible of computing the events
 // Maintains state necessary for activating grains according to Grain onset timesand durations
@@ -23,15 +22,11 @@ namespace particules
         void init(double) noexcept;
         void setEmission(float) noexcept;
         void tick(std::function<void(const ParameterSnapshot&)>, const ParameterSnapshot&);
-        //void tick(int, std::function<void(int, const ParameterSnapshot&)>, const ParameterSnapshot&);
+
+        void reset();
 
     private:
         static constexpr int SIZE = params::maxSpawnsPerBlock;
-
-        void reset();
-        //const double getInterOnSet(float, double) const noexcept;
-        //double getNextOnSet() const noexcept { return nextOnSet; }
-        //void setNextOnSet(double n) noexcept { nextOnSet = n; }
 
         double nextOnSet; // Tells us when the next grain should play
         double interOnSet; // time period between every spawn
@@ -40,8 +35,6 @@ namespace particules
         double sampleRate;
         float emission;
 
-        juce::Random random; // parameters to set the interOnset
-
-        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Scheduler)
+        //juce::Random random; // parameters to set the interOnset
     };
 }

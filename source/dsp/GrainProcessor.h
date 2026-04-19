@@ -29,7 +29,7 @@ namespace particules
     private:
         void removeVoice(const int index);
 
-        static constexpr int SIZE = params::maxGrains;
+        static constexpr int SIZE = params::maxActiveGrains;
 
         GrainEnvelope& envLut;
         PositionModulator& posMod;

@@ -5,11 +5,10 @@
 #include "framework/core/PluginParams.h"
 #include "utils/struct/GrainHandle.h"
 
-
 namespace particulesTest
 {
     using namespace particules;
-    static constexpr int MAX_GRAINS = params::maxGrains;
+    static constexpr int MAX_GRAINS = params::maxActiveGrains;
 
     struct GrainPoolFixture
     {
@@ -86,7 +85,7 @@ namespace particulesTest
             GrainHandle h2 = pool.acquire();
 
             pool.release(h2);
-            auto h3 = pool.acquire();
+            GrainHandle h3 = pool.acquire();
 
             REQUIRE(h3.index == h2.index);
             REQUIRE(h3.gen != h2.gen);

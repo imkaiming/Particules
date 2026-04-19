@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../enum/EnvelopeMode.h"
-#include "../enum/TraversalMode.h"
+#include "utils/enum/EnvelopeMode.h"
+#include "utils/enum/TraversalMode.h"
 
 namespace particules
 {

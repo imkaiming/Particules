@@ -1,145 +1,220 @@
-//#include "../source/dsp/Scheduler.h"
-//#include "../source/utils/ParameterSnapshot.h"
-//#include "../source/utils/TraversalMode.h"
-//#include <catch2/catch_test_macros.hpp>
-//
-//namespace audio_plugin_test
-//{
-//    struct SchedulerFixture
-//    {
-//        ParameterSnapshot snapshot;
-//        int numSamples;
-//        int numChannels;
-//        double sampleRate;
-//
-//        SchedulerFixture()
-//        {
-//            snapshot.durationSamples = 48000;
-//            snapshot.emission = 1.f;
-//            snapshot.linearGain = 1.0f;
-//            snapshot.speed = 1.0f;
-//            snapshot.mix = 1.f;
-//            snapshot.envMode = static_cast<EnvelopeMode>(1);
-//            snapshot.traversalMode = TraversalMode::Sine;
-//            snapshot.traversalFreq = 1.f;
-//
-//            numSamples = 512;
-//            numChannels = 2;
-//            sampleRate = 48000.0;
-//        }
-//
-//        int spawnCallCount{0};
-//        std::vector<int> spawnPositions;
-//
-//        void resetCounters()
-//        {
-//            spawnCallCount = 0;
-//            spawnPositions.clear();
-//        }
-//
-//        void spawnCallback(int position, const ParameterSnapshot& p)
-//        {
-//            spawnCallCount++;
-//            spawnPositions.push_back(position);
-//        }
-//    };
-//
-//    TEST_CASE_METHOD(SchedulerFixture, "Scheduler emission spawn correct grain", "[scheduler]")
-//    {
-//        SECTION("1# emission = 1.f, sr = 512")
-//        {
-//            Scheduler scheduler;
-//
-//            snapshot.emission = 1.0f;
-//            numSamples = 512;
-//            sampleRate = 48000.0;
-//
-//            scheduler.process(
-//                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-//                snapshot);
-//
-//            REQUIRE(spawnCallCount == 1);
-//        }
-//
-//        SECTION("3# emission = 0.f, sr = 512")
-//        {
-//            Scheduler scheduler;
-//
-//            snapshot.emission = 0.0f;
-//            numSamples = 512;
-//            sampleRate = 48000.0;
-//
-//            scheduler.process(
-//                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-//                snapshot);
-//
-//            REQUIRE(spawnCallCount == 0);
-//        }
-//
-//        SECTION("4# emission = 500.f, sr = 64")
-//        {
-//            Scheduler scheduler;
-//            snapshot.emission = 500.0f;
-//            numSamples = 64;
-//            sampleRate = 48000.0;
-//
-//            // 500 / 48000.0 * 64 = 0.66666
-//            scheduler.process(
-//                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-//                snapshot);
-//
-//            REQUIRE(spawnCallCount == 1);
-//        }
-//
-//        SECTION("5# emission = 500.f, sr = 128")
-//        {
-//            Scheduler scheduler;
-//            snapshot.emission = 500.0f;
-//            numSamples = 128;
-//            sampleRate = 48000.0;
-//            // 500 / 48000.0 * 64 = 0.66666
-//            scheduler.process(
-//                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-//                snapshot);
-//
-//            REQUIRE(spawnCallCount == 2);
-//        }
-//
-//        SECTION("6# emission = 500.f, sr = 64, 3 iterations")
-//        {
-//            Scheduler scheduler;
-//            snapshot.emission = 500.0f;
-//            numSamples = 64;
-//            sampleRate = 48000.0;
-//            // 48000 / 500 = 96
-//            scheduler.process(
-//                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-//                snapshot);
-//
-//            REQUIRE(spawnCallCount == 1);
-//            REQUIRE(spawnPositions.at(0) == 0);
-//
-//            scheduler.process(
-//                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-//                snapshot);
-//
-//            REQUIRE(spawnCallCount == 2);
-//            REQUIRE(spawnPositions.at(1) == 32);
-//
-//            scheduler.process(
-//                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-//                snapshot);
-//
-//            REQUIRE(spawnCallCount == 2);
-//            REQUIRE(spawnPositions.size() == 2);
-//
-//            scheduler.process(
-//                numSamples, sampleRate, snapshot.emission, [&](int pos, const ParameterSnapshot& p) { spawnCallback(pos, p); },
-//                snapshot);
-//
-//            REQUIRE(spawnCallCount == 3);
-//            REQUIRE(spawnPositions.at(2) == 0);
-//            REQUIRE(spawnPositions.size() == 3);
-//        }
-//    }
-//}
+﻿#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_floating_point.hpp>
+
+#include "dsp/Scheduler.h"
+#include "utils/struct/ParameterSnapshot.h"
+
+using namespace particules;
+
+namespace audio_plugin_test
+{
+    struct SchedulerFixture
+    {
+        ParameterSnapshot snapshot;
+        double sampleRate = 48000.0;
+
+        SchedulerFixture()
+        {
+            snapshot.durationSamples = 48000;
+            snapshot.emission = 1.f;
+            // Ensure jitter is 0 by default for deterministic tests
+            //snapshot.emissionJitter = 0.0f;
+        }
+
+        int spawnCount = 0;
+
+        auto makeSpawnCallback()
+        {
+            return [this](const ParameterSnapshot&) { spawnCount++; };
+        }
+    };
+
+    // 1. BOUNDARY TESTS
+    TEST_CASE_METHOD(SchedulerFixture, "emission below minimum must clamps to params::emission::min", "[scheduler]")
+    {
+        Scheduler scheduler;
+        scheduler.init(sampleRate);
+        scheduler.setEmission(0.f); 
+
+        for(int i = 0; i < static_cast<int>(sampleRate); ++i)
+        {
+            scheduler.tick(makeSpawnCallback(), snapshot);
+        }
+
+        REQUIRE(spawnCount == 0);
+    }
+
+    TEST_CASE_METHOD(SchedulerFixture, "emission at maximum limits to params::emission::max", "[scheduler]")
+    {
+        Scheduler scheduler;
+        scheduler.setEmission(500.f);
+        scheduler.init(sampleRate);
+
+        for(int i = 0; i < static_cast<int>(sampleRate); ++i)
+        {
+            scheduler.tick(makeSpawnCallback(), snapshot);
+        }
+
+        REQUIRE(spawnCount == static_cast<int>(params::emission::max)); // 50
+    }
+
+    TEST_CASE_METHOD(SchedulerFixture, "emission above maximum must clamps to params::emission::max", "[scheduler]")
+    {
+        Scheduler scheduler;
+        scheduler.setEmission(1000.f);
+        scheduler.init(sampleRate);
+
+        for(int i = 0; i < static_cast<int>(sampleRate); ++i)
+        {
+            scheduler.tick(makeSpawnCallback(), snapshot);
+        }
+
+        REQUIRE(spawnCount == static_cast<int>(params::emission::max));
+    }
+
+    // 2. BASIC FREQUENCY TESTS
+    TEST_CASE_METHOD(SchedulerFixture, "emission = 1 grain per second", "[scheduler]")
+    {
+        Scheduler scheduler;
+        scheduler.setEmission(1.0f);
+        scheduler.init(sampleRate);
+
+        for(int i = 0; i < static_cast<int>(sampleRate); ++i)
+        {
+            scheduler.tick(makeSpawnCallback(), snapshot);
+        }
+
+        REQUIRE(spawnCount == 1);
+    }
+
+    TEST_CASE_METHOD(SchedulerFixture, "emission = 50 grains per second", "[scheduler]")
+    {
+        Scheduler scheduler;
+        scheduler.setEmission(50.0f);
+        scheduler.init(sampleRate);
+
+        for(int i = 0; i < static_cast<int>(sampleRate); ++i)
+        {
+            scheduler.tick(makeSpawnCallback(), snapshot);
+        }
+
+        REQUIRE(spawnCount == 50);
+    }
+
+    // 3. ACCURACY
+    TEST_CASE_METHOD(SchedulerFixture, "phase accumulation should stay exact even with irrational emission", "[scheduler]")
+    {
+        Scheduler scheduler;
+        // 7 Hz does not divide perfectly into 48000 
+        scheduler.setEmission(7.0f);
+        scheduler.init(sampleRate);
+
+
+        for(int i = 0; i < static_cast<int>(sampleRate) * 10; ++i)
+        {
+            scheduler.tick(makeSpawnCallback(), snapshot);
+        }
+
+        REQUIRE(spawnCount == 70);
+    }
+
+    TEST_CASE_METHOD(SchedulerFixture, "reset() clears phase accumulation", "[scheduler]")
+    {
+        Scheduler scheduler;
+        scheduler.init(sampleRate);
+        scheduler.setEmission(2.0f);
+
+        for(int i = 0; i < 12000; ++i)
+            scheduler.tick(makeSpawnCallback(), snapshot);
+
+        REQUIRE(spawnCount == 0);
+
+        scheduler.reset();
+
+        spawnCount = 0;
+        for(int i = 0; i < 23999; ++i)
+            scheduler.tick(makeSpawnCallback(), snapshot);
+
+        REQUIRE(spawnCount == 1);
+
+        scheduler.tick(makeSpawnCallback(), snapshot); 
+        REQUIRE(spawnCount == 1);
+    }
+
+    TEST_CASE_METHOD(SchedulerFixture, "no drift over long durations", "[scheduler]")
+    {
+        Scheduler scheduler;
+        scheduler.setEmission(10.0f);
+        scheduler.init(sampleRate);
+
+        // Run for 10 seconds
+        for(int i = 0; i < static_cast<int>(sampleRate) * 10; ++i)
+        {
+            scheduler.tick(makeSpawnCallback(), snapshot);
+        }
+
+        REQUIRE(spawnCount == 100);
+    }
+
+    // 4. CHANGING DYNAMICALLY THE PARAMETERS
+    TEST_CASE_METHOD(SchedulerFixture, "setEmission updates interval mid-stream", "[scheduler]")
+    {
+        Scheduler scheduler;
+        scheduler.setEmission(1.0f);
+        scheduler.init(sampleRate);
+
+        for(int i = 0; i < 24000; ++i)
+            scheduler.tick(makeSpawnCallback(), snapshot);
+
+        REQUIRE(spawnCount == 1);
+
+        scheduler.setEmission(2.0f); 
+        spawnCount = 0;
+
+        for(int i = 0; i < 24000; ++i)
+            scheduler.tick(makeSpawnCallback(), snapshot);
+
+        // Au bout de la seconde moitié, le 2ème grain est parti.
+        REQUIRE(spawnCount == 1);
+    }
+    
+    // 5. BAD STATE AND C++ SAFETY
+    TEST_CASE_METHOD(SchedulerFixture, "tick before init does not explode", "[scheduler]")
+    {
+        Scheduler scheduler;
+        // omission of scheduler.init(sampleRate);
+        // Internal sampleRate is 0.0
+
+        scheduler.setEmission(10.0f);
+
+        for(int i = 0; i < 100; ++i)
+        {
+            REQUIRE_NOTHROW(scheduler.tick(makeSpawnCallback(), snapshot));
+        }
+
+        // Safety check: it shouldn't randomly spawn a million grains either
+        REQUIRE(spawnCount == 0);
+    }
+
+    TEST_CASE_METHOD(SchedulerFixture, "callback receives correct snapshot reference", "[scheduler]")
+    {
+        Scheduler scheduler;
+        scheduler.setEmission(params::emission::max); 
+        scheduler.init(sampleRate);
+
+        ParameterSnapshot captured;
+        bool wasCalled = false;
+
+        auto capture = [&](const ParameterSnapshot& ps) {
+            captured = ps;
+            wasCalled = true;
+        };
+
+        scheduler.tick(capture, snapshot);
+
+        REQUIRE(wasCalled);
+        REQUIRE(captured.durationSamples == snapshot.durationSamples);
+        REQUIRE(captured.emission == snapshot.emission);
+        REQUIRE(captured.linearGain == snapshot.linearGain);
+    }
+}
