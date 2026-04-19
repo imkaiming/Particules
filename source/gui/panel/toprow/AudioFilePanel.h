@@ -44,8 +44,13 @@ namespace particules
         std::unique_ptr<SliderOnWaveform> sliderOnWaveform;
 
         juce::Label fileNameLabel;
+        juce::Label grainsLabel;
         juce::Label numGrainsLabel;
+
+        juce::Label posTitleLabel;
         juce::Label posLabel;
+
+        juce::Label spanTitleLabel;
         juce::Label spanLabel;
 
         std::atomic<float>* posParam;
@@ -53,7 +58,7 @@ namespace particules
 
         int numSamples, lastNumGrains;
         float lastSpan, lastPos;
-        //bool lastPlayState;        
+        //bool lastPlayState;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFilePanel)
     };
