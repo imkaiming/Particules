@@ -5,6 +5,7 @@
 #include "framework/core/PluginParams.h"
 #include "utils/struct/ParameterSnapshot.h"
 #include "utils/struct/VisualSnapshot.h"
+#include "utils/ParamHelpers.h"
 
 namespace particules
 {

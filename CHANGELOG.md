@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.2] - 2026-04-xx
+
+### Added
+- New pipeline that abstract plugin states and hide implementations 
+
+## Changed
+- Project architecture is refactored to bridge and states folders
+
 ## [0.3.1] - 2026-04-17
 
 ### Added

@@ -17,6 +17,9 @@ int main (int argc, char* argv[])
 }
 
 #include "PluginEditor.h"
+#include "PluginProcessor.h"
+#include "gui_app/GuiAppProcessor.h"
+#include "gui_app/GuiAppEditor.h"
 #include "catch2/benchmark/catch_benchmark_all.hpp"
 #include "catch2/catch_test_macros.hpp"
 

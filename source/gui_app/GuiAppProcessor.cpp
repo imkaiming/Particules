@@ -2,19 +2,19 @@
 #include "GuiAppEditor.h"
 
 #include "framework/core/PluginParams.h"
+#include "utils/ParamHelpers.h"
 
 namespace particules
 {
     GuiAppProcessor::GuiAppProcessor()
         : apvts(*this, nullptr, "Parameters", createParameterLayout()), paramState{audioState}, audioState{}, uiState{},
-          uic{apvts, paramState, audioState, uiState, fui} 
+          uic{apvts, paramState, audioState, uiState, fui}
     {
         uic.fui.onLoadFile = [this] { DBG("fui load file"); };
         uic.fui.onLoadFilePath = [this](const str& path) { DBG("fui load file path = " + path); };
-        uic.fui.onSetPlaying = [this](bool play) { DBG("on set playing " + play ? 1.0f > 0.0f); };
+        uic.fui.onSetPlaying = [this](bool play) { DBG("on set playing " + str(play ? "1.0f" : "0.0f")); };
         uic.fui.onIsPlaying = [this]() -> float { return paramState.getPlay() > 0.5f ? 1.0f : 0.f; };
     }
-
     void GuiAppProcessor::prepareToPlay(double sampleRate, int /* samplesPerBlock */)
     {
         //const int numChannels = getTotalNumOutputChannels();
