@@ -1,12 +1,11 @@
 #include "Grain.h"
-#include "../utils/struct/SmoothedParameters.h"
+#include "utils/struct/SmoothedParameters.h"
 
 namespace particules
 {
     Grain::Grain()
-        : durationSamples{0}, startPositionSamples{0}, speed{1.f}, sustainWidthSamples{0}, selectionWindow{0}, fadeInSamples{0},
-          fadeOutSamples{0}, elapsedSamples{0}, readPosition{0.f}, inputNumSamples{0}
-    //, linearGain{1.f} /* inputNumChannels{0},*/
+        : durationSamples{0}, startPositionSamples{0}, speed{1.f}, sustainWidthSamples{0}, span{0}, fadeInSamples{0},
+          fadeOutSamples{0}, elapsedSamples{0}, readPosition{0.f}, inputNumSamples{0}, effectiveSpeed{1.f}, playback{1}
     {
         reset();
     }
@@ -19,12 +18,12 @@ namespace particules
         elapsedSamples = 0;
         fadeInSamples = 0;
         fadeOutSamples = 0;
-        //delaySamples = 0;
         generation = 0;
         inputNumSamples = 0;
-        //linearGain = 1.f;
         speed = 1.f;
         readPosition = 0.f;
+        effectiveSpeed = 1.0f;
+        playback = 1;
     }
 
     void Grain::config(const ParameterSnapshot& ps, float normalizedPosMod)
@@ -36,13 +35,14 @@ namespace particules
         durationSamples = ps.durationSamples;
 
         // position data
-        const int positionModulationSamples = static_cast<int>(normalizedPosMod * ps.selectionSamples);
+        const int positionModulationSamples = static_cast<int>(normalizedPosMod * ps.spanSamples);
         startPositionSamples = (ps.startPositionSamples + positionModulationSamples) % inputNumSamples;
         readPosition = static_cast<float>(startPositionSamples);
-        selectionWindow = ps.selectionSamples;
+        span = ps.spanSamples;
 
         speed = ps.speed;
-        //delaySamples = delay;
+        playback = ps.playback;
+        effectiveSpeed = speed * (float)playback;
 
         // envelope data
         //setEnvelopeData(static_cast<int>(ps.sustainRatio));
@@ -67,13 +67,15 @@ namespace particules
 
     void Grain::nextReadPosition() noexcept
     {
-        //if(delaySamples-- > 0)
-        //    return;
-
         elapsedSamples++;
-        readPosition += speed;
+        readPosition += effectiveSpeed;
+
         while(readPosition >= static_cast<float>(inputNumSamples))
             readPosition -= static_cast<float>(inputNumSamples);
+
+        // effective speed can be negative
+        while(readPosition < 0.0f)
+            readPosition += static_cast<float>(inputNumSamples);
     }
 
     // EnvelopeLookUpTable

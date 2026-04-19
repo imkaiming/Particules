@@ -2,7 +2,7 @@
 //#include "../source/dsp/Grain.h"
 //#include "../source/dsp/GrainPool.h"
 //#include "../source/dsp/PositionModulator.h"
-//#include "../source/dsp/VoiceManager.h"
+//#include "../source/dsp/GrainProcessor.h"
 //#include "../source/framework/Core.h"
 //#include "../source/utils/GrainHandle.h"
 //#include "../source/utils/ParameterSnapshot.h"
@@ -17,7 +17,7 @@ namespace particulesTest
 {
     using namespace particules;
 
-    struct VoiceManagerFixture
+    struct GrainProcessorFixture
     {
         PingPongBuffer<VisualSnapshot> vb;
         GrainEnvelope lut;
@@ -25,19 +25,17 @@ namespace particulesTest
         Grain g;
         PositionModulator posMod{};
         GrainPool pool;
-        //VoiceManager vm;
         AudioBuffer inputBuffer{2, 48000};
         AudioBlock outputBlock{inputBuffer};
         ParameterSnapshot ps;
-        //EngineSnapshot es;
 
-        VoiceManagerFixture() //: vm{}
+        GrainProcessorFixture()
         {
             ps.durationSamples = 48000;
             ps.emission = 1;
             ps.linearGain = 0.707946f;
             ps.startPositionSamples = 24000;
-            ps.selectionSamples = 12000;
+            ps.spanSamples = 12000;
             ps.speed = 1.f;
             ps.sustainRatio = 0.5f;
             ps.envMode = static_cast<EnvelopeMode>(1);
@@ -46,5 +44,4 @@ namespace particulesTest
             posMod.setSampleRate(48000);
         };
     };
-    //TEST_CASE()
 }

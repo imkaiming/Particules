@@ -67,7 +67,7 @@ namespace particules
         // position data
         ps.inputNumSamples = es.inputNumSamples; // temporary
         ps.startPositionSamples = static_cast<int>(getNormalizedStartPosition() * es.inputNumSamples);
-        ps.selectionSamples = static_cast<int>(getNormalizedWindowSelection() * es.inputNumSamples);
+        ps.spanSamples = static_cast<int>(getNormalizedSpan() * es.inputNumSamples);
 
         // time data
         ps.durationSamples = static_cast<int>(getNormalizedDuration() * es.sampleRate);

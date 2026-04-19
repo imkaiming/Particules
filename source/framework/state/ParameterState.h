@@ -30,7 +30,7 @@ namespace particules
         float getSpeed() const noexcept { return speed ? speed->load(std::memory_order_relaxed) : 0.0f; }
         float getEmission() const noexcept { return emission ? emission->load(std::memory_order_relaxed) : 0.0f; }
         float getNormalizedDuration() const noexcept { return duration ? duration->load(std::memory_order_relaxed) : 0.0f; }
-        float getNormalizedWindowSelection() const noexcept { return span ? span->load(std::memory_order_relaxed) : 0.0f; }
+        float getNormalizedSpan() const noexcept { return span ? span->load(std::memory_order_relaxed) : 0.0f; }
         float getNormalizedStartPosition() const noexcept { return position ? position->load(std::memory_order_relaxed) : 0.0f; }
         float getNormalizedSustainRatio() const noexcept
         {

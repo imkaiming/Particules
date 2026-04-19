@@ -4,6 +4,7 @@
 
 ### Added
 - New pipeline that abstract plugin states and hide implementations 
+- unitary tests for the Scheduler and Grains 
 
 ## Changed
 - Project architecture is refactored to bridge and states folders

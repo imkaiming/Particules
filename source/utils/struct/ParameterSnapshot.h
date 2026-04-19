@@ -10,7 +10,7 @@ namespace particules
         bool play;
         int durationSamples;
         int startPositionSamples;
-        int selectionSamples;
+        int spanSamples;
         TraversalMode traversalMode;
         EnvelopeMode envMode;
         float emission;
