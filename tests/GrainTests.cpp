@@ -21,6 +21,7 @@ namespace audio_plugin_test
             snapshot.spanSamples = 0;
             snapshot.speed = 1.0f;
             snapshot.sustainRatio = 0.5f;
+            snapshot.playback = 1.f;
         }
     };
 
@@ -47,6 +48,7 @@ namespace audio_plugin_test
     // 2. WRAPPING
     TEST_CASE_METHOD(GrainFixture, "Grain advances read position based on speed", "[grain]")
     {
+        snapshot.playback = 1.f;
         snapshot.speed = 1.5f;
         grain.config(snapshot, 0.0f);
 
@@ -64,6 +66,7 @@ namespace audio_plugin_test
         snapshot.inputNumSamples = 100;
         snapshot.startPositionSamples = 98;
         snapshot.speed = 1.5f;
+        snapshot.playback = 1.f;
         grain.config(snapshot, 0.0f);
 
         REQUIRE(grain.getReadPosition() == 98.0f);
