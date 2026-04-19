@@ -12,6 +12,7 @@
 #include <atomic>
 #include <memory>
 #include <utility> // std::max
+#include <numbers> // std::numbers::pi
 #include <type_traits> // is_trivially_copyable
 
 

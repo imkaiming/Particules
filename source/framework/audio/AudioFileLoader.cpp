@@ -6,8 +6,7 @@
 
 namespace particules
 {
-    AudioFileLoader::AudioFileLoader(/*RingBuffer<AudioBuffer>& pq*/)
-        : sampleRate{0.0}, formatManager{}, targetChannels{0} /*, incomingBuffer{pq}*/
+    AudioFileLoader::AudioFileLoader() : sampleRate{0.0}, formatManager{}, targetChannels{0}
     {
         formatManager.registerBasicFormats();
     }

@@ -1,13 +1,17 @@
 # Changelog
 
-## [0.3.2] - 2026-04-xx
+## [0.3.2] - 2026-04-18
 
 ### Added
-- New pipeline that abstract plugin states and hide implementations 
-- unitary tests for the Scheduler and Grains 
+- implementation of the grains playback feature
+- unitary tests for the Scheduler and Grain class
+- `FromAudio` and `FromUI` links the state with the pluginn components for abstraction
+ 
+### Changed
+- Refactored `PluginProcessor` into a centralized `PluginCore` to separate DSP services from the JUCE wrapper
 
-## Changed
-- Project architecture is refactored to bridge and states folders
+### Fixed
+- Scheduler now reset the phase not the user parameters
 
 ## [0.3.1] - 2026-04-17
 

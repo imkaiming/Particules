@@ -16,12 +16,10 @@ namespace juce
 
 namespace particules
 {
-    //template <typename T>
-    //class LockFreePointerQueue;
     class AudioFileLoader
     {
     public:
-        AudioFileLoader(/*RingBuffer<AudioBuffer>&*/);
+        AudioFileLoader();
         ~AudioFileLoader() = default;
 
         void loadFile(AudioLoadedCallback, const juce::File&);
@@ -44,12 +42,9 @@ namespace particules
 
         int targetChannels;
         ChannelMixer channelMixer;
-        //RingBuffer<AudioBuffer>& incomingBuffer;
         std::unique_ptr<juce::FileChooser> chooser;
         juce::AudioFormatManager formatManager; // classe qui traite les formats de fichier tq wav, aiff, ogg, vorbis ou mp3
 
-        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFileLoader)
+        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFileLoader)
     };
 }
-//void setOnFileLoadedCallBack(std::function<void(bool)> foo);
-//std::function<void(bool)> onFileLoaded;
