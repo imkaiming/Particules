@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <vector>
 
 #include <juce_events/juce_events.h>
 
@@ -32,7 +33,9 @@ namespace particules
         AudioState& audioState;
         UIState& uiState;
 
-        AudioPayload* lastSeenPayload = nullptr;
+        AudioPayload* lastSeenPayload;
+
+        std::vector<AudioPayload*> zombies;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StateSynchronizer)
     };

@@ -10,7 +10,7 @@
 namespace particules
 {
     PluginCore::PluginCore(juce::AudioProcessor& p)
-        : proc{p}, apvts(p, nullptr, "Parameters", createParameterLayout()), paramState{audioState}, granularEngine{faudio},
+        : proc{p}, apvts(p, nullptr, "Parameters", createParameterLayout()), paramState{/*audioState*/}, granularEngine{faudio},
           audioState{}, uiState{}, uic{apvts, paramState, audioState, uiState, fui, faudio}, loader{}, debugPresetLoaded{false},
           incomingBuffer{}, garbageCollector{}, currentPayload{nullptr},
           synchronizer{currentPayload, garbageCollector, audioState, uiState}, faudio{audioState, visualBuffer}
@@ -71,36 +71,27 @@ namespace particules
         // security for pluginval
         outputBuffer.clear();
 
-        AudioPayload* active = currentPayload.load(std::memory_order_relaxed);
+        AudioPayload* payload = currentPayload.load(std::memory_order_relaxed);
         bool fileSwappedThisBlock = false;
 
         // 1. new payload verification
         while(AudioPayload* next = incomingBuffer.pop())
         {
-            if(active)
-                garbageCollector.push(active);
+            if(payload)
+                garbageCollector.push(payload);
 
-            active = next;
-            fileSwappedThisBlock = true;
+            payload = next;
         }
 
         // 2. set the new payload as the current
-        currentPayload.store(active, std::memory_order_release);
+        currentPayload.store(payload, std::memory_order_release);
 
-        // 3. security
-        if(!active)
+        if(payload == nullptr)
             return;
 
-        // 4. if new payload we need to clear the active grains
-        if(fileSwappedThisBlock)
-        {
-            granularEngine.clear();
-        }
+        ParameterSnapshot ps = paramState.getSnapshot(payload, audioState.getSampleRate());
 
-        AudioBuffer* inputBuffer = active->buffer.get();
-        ParameterSnapshot ps = paramState.getSnapshot();
-
-        if(!ps.isValid() || inputBuffer == nullptr)
+        if(!ps.isValid())
             return;
 
         const int inputuNumChannels = proc.getTotalNumInputChannels();
@@ -110,7 +101,7 @@ namespace particules
 
         if(ps.play)
         {
-            granularEngine.process(outputBuffer, *inputBuffer, bufferSize, outputPtrs, outputNumChannels, ps);
+            granularEngine.process(outputBuffer, payload, bufferSize, outputPtrs, outputNumChannels, ps);
         }
     }
 

@@ -8,6 +8,7 @@
 // a grain have a fade in then a sustain then a fade out
 namespace particules
 {
+    struct AudioPayload;
     class Grain
     {
     public:
@@ -16,7 +17,7 @@ namespace particules
 
         void reset();
         void config(const ParameterSnapshot&, float);
-        
+
         const float getReadPosition() const noexcept;
         void nextReadPosition() noexcept;
         void updateParams(const SmoothedParameters&) noexcept;
@@ -30,8 +31,9 @@ namespace particules
 
         const float getPhase() const noexcept;
 
-    private:
+        AudioPayload* payload;
 
+    private:
         // Time related parameters
         int elapsedSamples; // le compteur interne du grain
         int durationSamples; // définie la durée en nombre de sample
@@ -54,7 +56,5 @@ namespace particules
         // lifecycle
         uint16_t generation = 0;
         bool active = false;
-        //bool isInitialized = false;
-
     };
 }

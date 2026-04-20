@@ -65,7 +65,7 @@ namespace particules
         RingBuffer<AudioPayload*> incomingBuffer;
         RingBuffer<AudioPayload*> garbageCollector;
         PingPongBuffer<VisualSnapshot> visualBuffer;
-        std::atomic<AudioPayload*> currentPayload{nullptr};
+        std::atomic<AudioPayload*> currentPayload;
 
         // communications pipeline
         FromAudio faudio;

@@ -200,7 +200,7 @@ namespace particules
         //fui.stop();
         //juce::RangedAudioParameter* playParameter = apvts.getParameter(params::play::id);
         //playParameter->setValueNotifyingHost(0.f);
-        uic.fui.setPlaying(false);
+        //uic.fui.setPlaying(false);
 
         for(str file : files)
         {

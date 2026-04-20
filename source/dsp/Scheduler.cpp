@@ -1,5 +1,6 @@
 #include "Scheduler.h"
-#include "../utils/struct/ParameterSnapshot.h"
+#include "utils/struct/ParameterSnapshot.h"
+#include "utils/struct/AudioPayload.h"
 
 namespace particules
 {
@@ -39,7 +40,8 @@ namespace particules
             phase = interOnSet;
     }
 
-    void Scheduler::tick(std::function<void(const ParameterSnapshot&)> spawn, const ParameterSnapshot& ps)
+    void Scheduler::tick(
+        std::function<void(const ParameterSnapshot&, AudioPayload*)> spawn, const ParameterSnapshot& ps, AudioPayload* payload)
     {
         // doing nothing is scheduler hasnt been initialized
         if(interOnSet <= 0.0)
@@ -47,7 +49,7 @@ namespace particules
 
         if(phase >= interOnSet) // zero latency trigger
         {
-            spawn(ps);
+            spawn(ps, payload);
             phase -= interOnSet;
         }
 

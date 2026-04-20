@@ -21,6 +21,7 @@
 namespace particules
 {
     struct ParameterSnapshot;
+    struct AudioPayload;
     class FromAudio;
     class GranularEngine
     {
@@ -28,7 +29,7 @@ namespace particules
         GranularEngine(FromAudio& fa);
         ~GranularEngine() = default;
 
-        void process(AudioBuffer& outputBuffer, AudioBuffer& inputBuffer, int bufferSize, float* const* outputPtrs,
+        void process(AudioBuffer& outputBuffer, AudioPayload* payload, int bufferSize, float* const* outputPtrs,
             int outputNumChannels, const ParameterSnapshot& ps);
 
         void init(double, int, int);
@@ -46,7 +47,7 @@ namespace particules
         const float refreshRate;
         int sampleAccumulator;
         int threshold;
-        std::function<void(const ParameterSnapshot& ps)> spawnCallback;
+        std::function<void(const ParameterSnapshot& ps, AudioPayload* payload)> spawnCallback;
 
         // core components
         GrainEnvelope envLut;

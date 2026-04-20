@@ -8,7 +8,7 @@ namespace particules
 {
     StateSynchronizer::StateSynchronizer(
         std::atomic<AudioPayload*>& payload, RingBuffer<AudioPayload*>& gc, AudioState& as, UIState& us)
-        : currentPayload{payload}, garbageCollector{gc}, audioState{as}, uiState{us}
+        : currentPayload{payload}, garbageCollector{gc}, audioState{as}, uiState{us}, lastSeenPayload{nullptr}
     {
     }
 
@@ -20,16 +20,27 @@ namespace particules
 
     void StateSynchronizer::timerCallback()
     {
-        // 1. freeing ram in the ui thread
+        // 1. emptying the garabage collector
         while(AudioPayload* oldPayload = garbageCollector.pop())
-            delete oldPayload;
+            zombies.push_back(oldPayload);
+        //delete oldPayload;
 
-        // 2. state syncing
+        // 2. erasing only grains that are not active
+        zombies.erase(std::remove_if(zombies.begin(), zombies.end(),
+                          [](AudioPayload* p) {
+                              if(p->activeReaders.load(std::memory_order_acquire) == 0)
+                              {
+                                  delete p;
+                                  return true;
+                              }
+                              return false; // some grains are still actives. The deletion is delayed to the next tick.
+                          }),
+            zombies.end());
+
+        // 3. state syncing
         AudioPayload* playingNow = currentPayload.load(std::memory_order_acquire);
-
         if(playingNow != nullptr && playingNow != lastSeenPayload)
         {
-            //3.  new source of truth need to be updated to the states
             audioState.setNumSamples(playingNow->numSamples);
             audioState.setNumChannels(playingNow->numChannels);
             uiState.setSource(playingNow->file);

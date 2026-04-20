@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.3.3] - 2026-04-20
+
+### Added
+- zombie garbage collector for seamless audio file transitions
+- mono-to-stereo safety protection in the grain rendering loop
+
+### Changed
+- grains are now fully autonomous and read from their specifically assigned audio payload
+- parameter snapshot generation is now driven by the active DSP payload to prevent race conditions
+- lock-free `RingBuffer` now strictly transports memory pointers instead of values
+- reverted `PingPongBuffer` to pass `VisualSnapshot` by value to prevent memory violations
+
+### Fixed
+- out-of-bounds memory crash when swapping audio files due to UI synchronization delays
+- critical nullptr dereference crash when the plugin processes an empty state
+- failing unit tests caused by uninitialized playback variables in test fixtures
+
+
 ## [0.3.2] - 2026-04-18
 
 ### Added

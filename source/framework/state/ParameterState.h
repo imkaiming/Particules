@@ -1,10 +1,10 @@
 #pragma once
 
+#include "framework/core/Core.h"
+#include "framework/core/PluginTypes.h"
 #include "utils/enum/EnvelopeMode.h"
 #include "utils/enum/TraversalMode.h"
 #include "utils/struct/ParameterSnapshot.h"
-#include "framework/core/PluginTypes.h"
-#include "framework/core/Core.h"
 
 // APVTS wrapper that create snapshot for the DSP
 // own atomic ptr
@@ -12,15 +12,16 @@
 namespace particules
 {
     class AudioState;
+    struct AudioPayload;
     class ParameterState
     {
     public:
-        ParameterState(AudioState&); 
+        ParameterState(/*AudioState&*/) = default;
         ~ParameterState() = default;
 
         void init(ValueTreeState& apvts);
 
-        const ParameterSnapshot getSnapshot() const noexcept;
+        const ParameterSnapshot getSnapshot(AudioPayload* payload, double sampleRate) noexcept;
 
         float getPlay() const noexcept { return play ? play->load(std::memory_order_relaxed) : false; }
 
@@ -55,8 +56,6 @@ namespace particules
         std::atomic<float>* traversalFreq = nullptr;
         std::atomic<float>* traversalMode = nullptr;
         std::atomic<float>* envMode = nullptr;
-
-        AudioState& audioState;
 
     };
 }

@@ -5,7 +5,8 @@ namespace particules
 {
     Grain::Grain()
         : durationSamples{0}, startPositionSamples{0}, speed{1.f}, sustainWidthSamples{0}, span{0}, fadeInSamples{0},
-          fadeOutSamples{0}, elapsedSamples{0}, readPosition{0.f}, inputNumSamples{0}, effectiveSpeed{1.f}, playback{1}
+          fadeOutSamples{0}, elapsedSamples{0}, readPosition{0.f}, inputNumSamples{0}, effectiveSpeed{1.f}, playback{1},
+          payload{nullptr}
     {
         reset();
     }

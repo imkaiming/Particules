@@ -2,6 +2,7 @@
 #include "framework/state/AudioState.h"
 #include "framework/bridge/FromAudio.h"
 #include "utils/struct/ParameterSnapshot.h"
+#include "utils/struct/AudioPayload.h"
 
 namespace particules
 {
@@ -9,23 +10,27 @@ namespace particules
         : scheduler{}, grainProcessor{pool, posMod, envLut}, pool{}, posMod{}, refreshRate{gui::refreshRate},
           sampleAccumulator{0}, threshold{0}, smoothedParams{}, faudio{fa}
     {
-        spawnCallback = [this](const ParameterSnapshot& ps) {
-            grainProcessor.spawn(ps);
+        spawnCallback = [this](const ParameterSnapshot& ps, AudioPayload* payload) {
+            grainProcessor.spawn(ps, payload);
         }; // to avoid creating a new lambda every sampleBlock
     }
 
     // pour 1024 buffer size en 48kHz on a une fenetre de 21ms par appelle de compute.
     // si Emission = 500g/s (1g chaque 0.002s) alors on a interOnSet = 48000/500 = 96 sample.
     // 1024/96 = 10.66 grains par appel
-    void GranularEngine::process(AudioBuffer& outputBuffer, AudioBuffer& inputBuffer, int bufferSize, float* const* outputPtrs,
+    void GranularEngine::process(AudioBuffer& outputBuffer, AudioPayload* payload, int bufferSize, float* const* outputPtrs,
         int outputNumChannels, const ParameterSnapshot& ps)
     {
+        if(!payload)
+            return;
+        AudioBuffer* inputBuffer = payload->buffer.get();
+
         // parameters
         AudioBlock outputBlock(outputBuffer);
 
-        const float* const* inputPtrs = inputBuffer.getArrayOfReadPointers();
-        const int inputNumsChannels = inputBuffer.getNumChannels();
-        const int inputNumSamples = inputBuffer.getNumSamples();
+        //const float* const* inputPtrs = inputBuffer->getArrayOfReadPointers();
+        //const int inputNumSamples = inputBuffer->getNumSamples();
+        const int inputNumsChannels = inputBuffer->getNumChannels();
 
         // security
         jassert(inputNumsChannels == outputNumChannels);
@@ -38,8 +43,8 @@ namespace particules
         for(int currentSample = 0; currentSample < bufferSize; currentSample++)
         {
             updateSmoothedParameters();
-            scheduler.tick(spawnCallback, ps);
-            grainProcessor.render(currentSample, outputNumChannels, outputPtrs, inputPtrs, smoothedParams, inputNumSamples);
+            scheduler.tick(spawnCallback, ps, payload);
+            grainProcessor.render(currentSample, outputNumChannels, outputPtrs, /*inputPtrs,*/ smoothedParams/*, inputNumSamples*/);
 
             //const float env = adsr.getNextSample();
             //for(int ch = 0; ch < outputNumChannels; ++ch)

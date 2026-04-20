@@ -13,6 +13,7 @@
 namespace particules
 {
     struct ParameterSnapshot;
+    struct AudioPayload;
     class Scheduler
     {
     public:
@@ -21,12 +22,12 @@ namespace particules
 
         void init(double) noexcept;
         void setEmission(float) noexcept;
-        void tick(std::function<void(const ParameterSnapshot&)>, const ParameterSnapshot&);
+        void tick(std::function<void(const ParameterSnapshot&, AudioPayload*)>, const ParameterSnapshot&, AudioPayload*);
 
         void reset();
 
     private:
-        static constexpr int SIZE = params::maxSpawnsPerBlock;
+        //static constexpr int SIZE = params::maxSpawnsPerBlock;
 
         double nextOnSet; // Tells us when the next grain should play
         double interOnSet; // time period between every spawn

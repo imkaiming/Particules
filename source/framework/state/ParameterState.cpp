@@ -5,10 +5,11 @@
 
 #include "AudioState.h"
 #include "framework/core/PluginParams.h"
+#include "utils/struct/AudioPayload.h"
 
 namespace particules
 {
-    ParameterState::ParameterState(AudioState& as) : audioState{as} {}
+    //ParameterState::ParameterState(AudioState& as) : audioState{as} {}
 
     void ParameterState::init(ValueTreeState& apvts)
     {
@@ -54,10 +55,9 @@ namespace particules
         return static_cast<TraversalMode>(choice);
     }
 
-    const ParameterSnapshot ParameterState::getSnapshot() const noexcept
+    const ParameterSnapshot ParameterState::getSnapshot(AudioPayload* payload, double sampleRate) noexcept
     {
         ParameterSnapshot ps;
-        AudioStateSnapshot es = audioState.getSnapshot();
 
         // state params
         ps.play = getPlay() > 0.5f ? true : false;
@@ -65,12 +65,12 @@ namespace particules
         //// get Buffer data
 
         // position data
-        ps.inputNumSamples = es.inputNumSamples; // temporary
-        ps.startPositionSamples = static_cast<int>(getNormalizedStartPosition() * es.inputNumSamples);
-        ps.spanSamples = static_cast<int>(getNormalizedSpan() * es.inputNumSamples);
+        ps.inputNumSamples = payload->numSamples; // temporary
+        ps.startPositionSamples = static_cast<int>(getNormalizedStartPosition() * payload->numSamples);
+        ps.spanSamples = static_cast<int>(getNormalizedSpan() * payload->numSamples);
 
         // time data
-        ps.durationSamples = static_cast<int>(getNormalizedDuration() * es.sampleRate);
+        ps.durationSamples = static_cast<int>(getNormalizedDuration() * sampleRate);
 
         // grain data
         ps.speed = getSpeed();

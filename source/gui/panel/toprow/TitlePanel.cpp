@@ -94,7 +94,7 @@ namespace particules
     void TitlePanel::loadSampleButtonClicked()
     {
         //fui.stop();
-        fui.setPlaying(false);
+        //fui.setPlaying(false);
         //if(fui.onLoadFile)
         fui.loadFile();
     }

@@ -10,6 +10,7 @@ namespace particules
     class GrainPool;
     struct SmoothedParameters;
     struct ParameterSnapshot;
+    struct AudioPayload;
     class GrainEnvelope;
     class PositionModulator;
     struct VisualSnapshot;
@@ -20,10 +21,9 @@ namespace particules
         ~GrainProcessor() = default;
 
         void reset() noexcept;
-        void render(int currentSample, int outputNumChannels, float* const* outputPtrs, const float* const* inputPtrs,
-            const SmoothedParameters& params, int numSamples);
+        void render(int currentSample, int outputNumChannels, float* const* outputPtrs, const SmoothedParameters& params);
 
-        void spawn(const ParameterSnapshot&);
+        void spawn(const ParameterSnapshot&, AudioPayload*);
         void writeVisualSnapshot(VisualSnapshot& snap) noexcept;
 
     private:
