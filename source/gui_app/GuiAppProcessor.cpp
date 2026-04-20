@@ -7,8 +7,8 @@
 namespace particules
 {
     GuiAppProcessor::GuiAppProcessor()
-        : apvts(*this, nullptr, "Parameters", createParameterLayout()), paramState{audioState}, audioState{}, uiState{},
-          uic{apvts, paramState, audioState, uiState, fui, faudio}
+        : apvts{*this, nullptr, "Parameters", createParameterLayout()}, paramState{}, audioState{}, uiState{},
+          uic{apvts, paramState, audioState, uiState, fui, faudio}, faudio{audioState, vb}, fui{}, vb{}
     {
         uic.fui.onLoadFile = [this] { DBG("fui load file"); };
         uic.fui.onLoadFilePath = [this](const str& path) { DBG("fui load file path = " + path); };

@@ -7,7 +7,7 @@
 #include "framework/bridge/FromUI.h"
 #include "framework/bridge/FromAudio.h"
 #include "framework/bridge/PingPongBuffer.h"
-#include "framework/core/PluginTypes.h"
+#include "framework/core/GuiTypes.h"
 #include "framework/state/AudioState.h"
 #include "framework/state/ParameterState.h"
 #include "framework/state/UIState.h"
@@ -52,6 +52,7 @@ namespace particules
         UIContext& getUIContext() noexcept { return uic; };
 
     private:
+        PingPongBuffer<VisualSnapshot> vb;
         ValueTreeState apvts;
         AudioState audioState;
         ParameterState paramState;
