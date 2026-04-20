@@ -36,8 +36,8 @@ namespace particules
         void getStateInformation(juce::MemoryBlock& destData);
         void setStateInformation(const void* data, int sizeInBytes);
 
-        //ValueTreeState& getValueTreeState() noexcept { return apvts; };
         //ParameterState& getParametersView() noexcept { return paramsView; };
+        ValueTreeState& getAPVTS() noexcept { return apvts; };
         UIContext& getUIContext() noexcept { return uic; };
         ////const juce::File& getCurrentFile() const noexcept { return loader.getCurrentFile(); };
         //AudioFileLoader& getAudioFileLoader() noexcept { return loader; };

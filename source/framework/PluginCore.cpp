@@ -10,7 +10,7 @@
 namespace particules
 {
     PluginCore::PluginCore(juce::AudioProcessor& p)
-        : proc{p}, apvts(p, nullptr, "Parameters", createParameterLayout()), paramState{/*audioState*/}, granularEngine{faudio},
+        : proc{p}, apvts(p, nullptr, "Parameters", createParameterLayout()), paramState{}, granularEngine{faudio},
           audioState{}, uiState{}, uic{apvts, paramState, audioState, uiState, fui, faudio}, loader{}, debugPresetLoaded{false},
           incomingBuffer{}, garbageCollector{}, currentPayload{nullptr},
           synchronizer{currentPayload, garbageCollector, audioState, uiState}, faudio{audioState, visualBuffer}
