@@ -25,7 +25,6 @@ namespace particules
         mainSlider.setSliderStyle(juce::Slider::RotaryHorizontalVerticalDrag);
         mainSlider.setTextBoxStyle(juce::Slider::NoTextBox, false, 0, 0);
 
-        //setColour(juce::Slider::textBoxTextColourId, coloursv2::perleBlanc);
         if(type == RotaryType::primaryWithAux)
         {
             setColour(juce::Slider::rotarySliderFillColourId, coloursv2::cyan);
@@ -64,11 +63,6 @@ namespace particules
             addAndMakeVisible(&label);
     }
 
-    void MainSliderWithAux::lookAndFeelChanged()
-    {
-        //if(MainLNF* lnf = dynamic_cast<MainLNF*>(&getLookAndFeel()))
-            //label.setFont(juce::Font(lnf->getFunnelTypeface()).withHeight(14.0f).withExtraKerningFactor(0.2f));
-    }
 
     void MainSliderWithAux::setPrimaryValue(double value, juce::NotificationType notify)
     {

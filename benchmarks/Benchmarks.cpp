@@ -1,4 +1,5 @@
 #include <chrono>
+#include <iostream>
 #include <thread>
 
 #include "framework/core/PluginParams.h"
@@ -77,10 +78,17 @@ TEST_CASE("Boot performance")
         constexpr double sampleRate = 48000.0;
         constexpr int numChannels = 2;
 
-        BENCHMARK_ADVANCED("Process block (maximum emission and duration)")
+        const double budgetMs = (static_cast<double>(blockSize) / sampleRate) * 1000.0;
+
+        std::cout << "\n========================================================\n";
+        std::cout << "[DSP TARGET] Block Size: " << blockSize << " | Sample Rate: " << sampleRate << "Hz\n";
+        std::cout << "[DSP TARGET] TIME BUDGET (100% CPU) = " << budgetMs << " ms\n";
+        std::cout << "[DSP TARGET] 10% CPU Load = " << (budgetMs * 0.1) << " ms\n";
+        std::cout << "========================================================\n";
+
+        BENCHMARK_ADVANCED("Process block (Heavy Granular Load)")
         (Catch::Benchmark::Chronometer meter)
         {
-            // 1. Initialisation
             particules::ParticulesAudioProcessor processor;
             processor.setRateAndBufferSizeDetails(sampleRate, blockSize);
             processor.prepareToPlay(sampleRate, blockSize);
@@ -88,25 +96,22 @@ TEST_CASE("Boot performance")
             juce::MidiBuffer midi;
             juce::AudioBuffer<float> buffer(numChannels, blockSize);
 
-            // 2. asynchronous load
             processor.getPluginCore().loadDebugPreset();
 
-            // 3. parameters settings
-            juce::AudioProcessorValueTreeState& apvts = processor.getPluginCore().getAPVTS();
-            if(auto* playParam = apvts.getParameter(particules::params::play::id))
+            juce::AudioProcessorValueTreeState& params = processor.getPluginCore().getAPVTS();
+            if(auto* playParam = params.getParameter(particules::params::play::id))
                 playParam->setValueNotifyingHost(1.0f);
-            if(auto* emissionParam = apvts.getParameter(particules::params::emission::id))
+            if(auto* emissionParam = params.getParameter(particules::params::emission::id))
                 emissionParam->setValueNotifyingHost(1.0f);
-            if(auto* durationParam = apvts.getParameter(particules::params::duration::id))
+            if(auto* durationParam = params.getParameter(particules::params::duration::id))
                 durationParam->setValueNotifyingHost(1.0f);
 
-            // 4. Spin-Wait
+            // Spin-Wait to verify the audio file is loaded (asynchronous thread)
             bool isLoaded = false;
             for(int i = 0; i < 200; ++i)
             {
                 buffer.clear();
                 processor.processBlock(buffer, midi);
-
                 if(buffer.getMagnitude(0, blockSize) > 0.0001f)
                 {
                     isLoaded = true;
@@ -114,17 +119,9 @@ TEST_CASE("Boot performance")
                 }
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
-
             REQUIRE(isLoaded == true);
 
-            // 5. mesure the dsp
-            // during offline benchmarks processblock is computed the faster possible
-            // there is no strict sampleRate tempo to follow like in online rendering
-            // in real context 48000 sample rate is 2.083e-5 seconds = 0.0208 ms
-            // for a block size of 512 samples = 10.66 ms
-            // so if the mesure is 1.06 ms well its means it requires 10% of the CPU load.
-            // if its 5.33 ms it means its 50% which is way to much
-
+            // 2. MESURE CATCH2
             meter.measure([&] {
                 processor.processBlock(buffer, midi);
                 doNotOptimize(buffer.getSample(0, 0));

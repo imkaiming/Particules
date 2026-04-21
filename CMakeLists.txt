@@ -38,6 +38,7 @@ set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT Embedded CACHE STRING "" FORCE)
 
 project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
 
+
 ############## MACOS LINK-TIME OPTIMIZATION FIX ##############
 ##############################################################
 # Bypass the Xcode 15 ld-prime linker bug when using LTO with Static Libraries
@@ -71,6 +72,13 @@ add_subdirectory(modules/clap-juce-extensions EXCLUDE_FROM_ALL) # Add CLAP forma
 # juce_add_module(modules/my_module)
 
 add_subdirectory (modules/melatonin_inspector)
+
+# Define an option to turn profiling on/off
+option(PARTICULES_ENABLE_PROFILING "Enable Tracy Profiler" ON)
+
+if(PARTICULES_ENABLE_PROFILING)
+    add_subdirectory(modules/tracy)
+endif()
 
 ############# RESOURCES #############
 #####################################
@@ -207,6 +215,14 @@ target_link_libraries(Core PUBLIC
     juce::juce_audio_basics
     juce::juce_audio_processors) # pas de apvts dans dsp mais dans framework
 
+
+# injection of Tracy in the Core lib
+if(PARTICULES_ENABLE_PROFILING)
+    target_link_libraries(Core PUBLIC TracyClient)
+    target_compile_definitions(Core PUBLIC TRACY_ENABLE)
+    target_include_directories(Core PUBLIC "${CMAKE_SOURCE_DIR}/modules/tracy/public")
+endif()
+
 ########### GUI LIB ############
 ################################
 
@@ -287,7 +303,8 @@ target_sources(SharedCode INTERFACE
     "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginEditor.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginEditor.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginProcessor.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginProcessor.h")
+    "${CMAKE_CURRENT_SOURCE_DIR}/source/PluginProcessor.h"
+)
 
 ########## PLUGIN SOURCES ##########
 ####################################
@@ -297,6 +314,7 @@ target_sources(SharedCode INTERFACE
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
+    JUCE_ASIO=1
     BUILDING_PLUGIN_APP=1
     BUILDING_GUI_APP=0
     PROJECT_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
@@ -364,7 +382,7 @@ if(BUILD_TOOLS)
         COMMENT "Generating SVG envelopes in resources...")
     set_target_properties(drawEnvelopeSVG PROPERTIES
         VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/resources/envelopes"
-    )
+    ) 
 endif()
 
 ############# PCH ##############

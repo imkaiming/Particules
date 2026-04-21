@@ -25,6 +25,12 @@ This allow creation of:
 
 Keep in mind that the result is highly dependent on the input signal.
 
+## Visualization
+The visualizer provides real-time feedback on the grain cloud using the following logic:
+
+X-axis: Represents the grain's position in time within the audio buffer.
+Y-axis: Stochastic vertical offset randomized at spawn to visualize density and prevent overlap.
+Opacity: Reflects the grain's current envelope amplitude (fade-in and fade-out).  
 
 ---
 

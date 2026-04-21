@@ -80,3 +80,6 @@ DerivedData/
 .DS_Store
 *.bak
 *.old
+
+
+bin/

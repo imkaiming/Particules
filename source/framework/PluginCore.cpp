@@ -1,17 +1,18 @@
 #include "PluginCore.h"
 
 #include <juce_audio_processors_headless/juce_audio_processors_headless.h> // audio parameter float
+#include <tracy/Tracy.hpp>
 
 #include "framework/core/PluginParams.h"
+#include "utils/ParamHelpers.h"
 #include "utils/struct/ParameterSnapshot.h"
 #include "utils/struct/VisualSnapshot.h"
-#include "utils/ParamHelpers.h"
 
 namespace particules
 {
     PluginCore::PluginCore(juce::AudioProcessor& p)
-        : proc{p}, apvts(p, nullptr, "Parameters", createParameterLayout()), paramState{}, granularEngine{faudio},
-          audioState{}, uiState{}, uic{apvts, paramState, audioState, uiState, fui, faudio}, loader{}, debugPresetLoaded{false},
+        : proc{p}, apvts(p, nullptr, "Parameters", createParameterLayout()), paramState{}, granularEngine{faudio}, audioState{},
+          uiState{}, uic{apvts, paramState, audioState, uiState, fui, faudio}, loader{}, debugPresetLoaded{false},
           incomingBuffer{}, garbageCollector{}, currentPayload{nullptr},
           synchronizer{currentPayload, garbageCollector, audioState, uiState}, faudio{audioState, visualBuffer}
     {
@@ -68,6 +69,8 @@ namespace particules
 
     void PluginCore::processBlock(AudioBuffer& outputBuffer, juce::MidiBuffer& midiMessages)
     {
+        ZoneScoped; // tracy submodules
+
         // security for pluginval
         outputBuffer.clear();
 
