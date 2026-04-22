@@ -14,6 +14,10 @@ namespace audio_plugin_test
         ParameterSnapshot snapshot;
         AudioPayload payload;
         double sampleRate = 48000.0;
+        int index = -1;
+        float pitch = 1.0f;
+        float gain = 1.0f;
+
 
         SchedulerFixture()
         {
@@ -27,7 +31,7 @@ namespace audio_plugin_test
 
         auto makeSpawnCallback()
         {
-            return [this](const ParameterSnapshot&, AudioPayload*) { spawnCount++; };
+            return [this](const ParameterSnapshot&, AudioPayload*, int, float, float) { spawnCount++; };
         }
     };
 
@@ -35,12 +39,12 @@ namespace audio_plugin_test
     TEST_CASE_METHOD(SchedulerFixture, "emission below minimum must clamps to params::emission::min", "[scheduler]")
     {
         Scheduler scheduler;
-        scheduler.init(sampleRate);
+        scheduler.setSampleRate(sampleRate);
         scheduler.setEmission(0.f); 
 
         for(int i = 0; i < static_cast<int>(sampleRate); ++i)
         {
-            scheduler.tick(makeSpawnCallback(), snapshot, &payload);
+            scheduler.tick(makeSpawnCallback(), snapshot, &payload, index, pitch, gain);
         }
 
         REQUIRE(spawnCount == 0);
@@ -50,11 +54,11 @@ namespace audio_plugin_test
     {
         Scheduler scheduler;
         scheduler.setEmission(500.f);
-        scheduler.init(sampleRate);
+        scheduler.setSampleRate(sampleRate);
 
         for(int i = 0; i < static_cast<int>(sampleRate); ++i)
         {
-            scheduler.tick(makeSpawnCallback(), snapshot, &payload);
+            scheduler.tick(makeSpawnCallback(), snapshot, &payload, index, pitch, gain);
         }
 
         REQUIRE(spawnCount == static_cast<int>(params::emission::max)); // 50
@@ -64,11 +68,11 @@ namespace audio_plugin_test
     {
         Scheduler scheduler;
         scheduler.setEmission(1000.f);
-        scheduler.init(sampleRate);
+        scheduler.setSampleRate(sampleRate);
 
         for(int i = 0; i < static_cast<int>(sampleRate); ++i)
         {
-            scheduler.tick(makeSpawnCallback(), snapshot, &payload);
+            scheduler.tick(makeSpawnCallback(), snapshot, &payload, index, pitch, gain);
         }
 
         REQUIRE(spawnCount == static_cast<int>(params::emission::max));
@@ -79,11 +83,11 @@ namespace audio_plugin_test
     {
         Scheduler scheduler;
         scheduler.setEmission(1.0f);
-        scheduler.init(sampleRate);
+        scheduler.setSampleRate(sampleRate);
 
         for(int i = 0; i < static_cast<int>(sampleRate); ++i)
         {
-            scheduler.tick(makeSpawnCallback(), snapshot, &payload);
+            scheduler.tick(makeSpawnCallback(), snapshot, &payload, index, pitch, gain);
         }
 
         REQUIRE(spawnCount == 1);
@@ -93,11 +97,11 @@ namespace audio_plugin_test
     {
         Scheduler scheduler;
         scheduler.setEmission(50.0f);
-        scheduler.init(sampleRate);
+        scheduler.setSampleRate(sampleRate);
 
         for(int i = 0; i < static_cast<int>(sampleRate); ++i)
         {
-            scheduler.tick(makeSpawnCallback(), snapshot, &payload);
+            scheduler.tick(makeSpawnCallback(), snapshot, &payload, index, pitch, gain);
         }
 
         REQUIRE(spawnCount == 50);
@@ -107,14 +111,13 @@ namespace audio_plugin_test
     TEST_CASE_METHOD(SchedulerFixture, "phase accumulation should stay exact even with irrational emission", "[scheduler]")
     {
         Scheduler scheduler;
-        // 7 Hz does not divide perfectly into 48000 
+        // 7 Hz does not divide perfectly into 48000
         scheduler.setEmission(7.0f);
-        scheduler.init(sampleRate);
-
+        scheduler.setSampleRate(sampleRate);
 
         for(int i = 0; i < static_cast<int>(sampleRate) * 10; ++i)
         {
-            scheduler.tick(makeSpawnCallback(), snapshot, &payload);
+            scheduler.tick(makeSpawnCallback(), snapshot, &payload, index, pitch, gain);
         }
 
         REQUIRE(spawnCount == 70);
@@ -123,11 +126,11 @@ namespace audio_plugin_test
     TEST_CASE_METHOD(SchedulerFixture, "reset() clears phase accumulation", "[scheduler]")
     {
         Scheduler scheduler;
-        scheduler.init(sampleRate);
+        scheduler.setSampleRate(sampleRate);
         scheduler.setEmission(2.0f);
 
         for(int i = 0; i < 12000; ++i)
-            scheduler.tick(makeSpawnCallback(), snapshot, &payload);
+            scheduler.tick(makeSpawnCallback(), snapshot, &payload, index, pitch, gain);
 
         REQUIRE(spawnCount == 0);
 
@@ -135,11 +138,11 @@ namespace audio_plugin_test
 
         spawnCount = 0;
         for(int i = 0; i < 23999; ++i)
-            scheduler.tick(makeSpawnCallback(), snapshot, &payload);
+            scheduler.tick(makeSpawnCallback(), snapshot, &payload, index, pitch, gain);
 
         REQUIRE(spawnCount == 1);
 
-        scheduler.tick(makeSpawnCallback(), snapshot, &payload); 
+        scheduler.tick(makeSpawnCallback(), snapshot, &payload, index, pitch, gain);
         REQUIRE(spawnCount == 1);
     }
 
@@ -147,12 +150,12 @@ namespace audio_plugin_test
     {
         Scheduler scheduler;
         scheduler.setEmission(10.0f);
-        scheduler.init(sampleRate);
+        scheduler.setSampleRate(sampleRate);
 
         // Run for 10 seconds
         for(int i = 0; i < static_cast<int>(sampleRate) * 10; ++i)
         {
-            scheduler.tick(makeSpawnCallback(), snapshot, &payload);
+            scheduler.tick(makeSpawnCallback(), snapshot, &payload, index, pitch, gain);
         }
 
         REQUIRE(spawnCount == 100);
@@ -163,35 +166,35 @@ namespace audio_plugin_test
     {
         Scheduler scheduler;
         scheduler.setEmission(1.0f);
-        scheduler.init(sampleRate);
+        scheduler.setSampleRate(sampleRate);
 
         for(int i = 0; i < 24000; ++i)
-            scheduler.tick(makeSpawnCallback(), snapshot, &payload);
+            scheduler.tick(makeSpawnCallback(), snapshot, &payload, index, pitch, gain);
 
         REQUIRE(spawnCount == 1);
 
-        scheduler.setEmission(2.0f); 
+        scheduler.setEmission(2.0f);
         spawnCount = 0;
 
         for(int i = 0; i < 24000; ++i)
-            scheduler.tick(makeSpawnCallback(), snapshot, &payload);
+            scheduler.tick(makeSpawnCallback(), snapshot, &payload, index, pitch, gain);
 
         // Au bout de la seconde moitié, le 2ème grain est parti.
         REQUIRE(spawnCount == 1);
     }
     
     // 5. BAD STATE AND C++ SAFETY
-    TEST_CASE_METHOD(SchedulerFixture, "tick before init does not explode", "[scheduler]")
+    TEST_CASE_METHOD(SchedulerFixture, "tick before setSampleRate does not explode", "[scheduler]")
     {
         Scheduler scheduler;
-        // omission of scheduler.init(sampleRate);
+        // omission of scheduler.setSampleRate(sampleRate);
         // Internal sampleRate is 0.0
 
         scheduler.setEmission(10.0f);
 
         for(int i = 0; i < 100; ++i)
         {
-            REQUIRE_NOTHROW(scheduler.tick(makeSpawnCallback(), snapshot, &payload));
+            REQUIRE_NOTHROW(scheduler.tick(makeSpawnCallback(), snapshot, &payload, index, pitch, gain));
         }
 
         // Safety check: it shouldn't randomly spawn a million grains either
@@ -202,17 +205,17 @@ namespace audio_plugin_test
     {
         Scheduler scheduler;
         scheduler.setEmission(params::emission::max); 
-        scheduler.init(sampleRate);
+        scheduler.setSampleRate(sampleRate);
 
         ParameterSnapshot captured;
         bool wasCalled = false;
 
-        auto capture = [&](const ParameterSnapshot& ps, AudioPayload* payload) {
+        auto capture = [&](const ParameterSnapshot& ps, AudioPayload* payload, int index, float pitch, float gain) {
             captured = ps;
             wasCalled = true;
         };
 
-        scheduler.tick(capture, snapshot, &payload);
+        scheduler.tick(capture, snapshot, &payload, index, pitch, gain);
 
         REQUIRE(wasCalled);
         REQUIRE(captured.durationSamples == snapshot.durationSamples);

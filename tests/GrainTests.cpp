@@ -12,6 +12,9 @@ namespace audio_plugin_test
     {
         Grain grain;
         ParameterSnapshot snapshot;
+        int index = -1;
+        float pitch = 1.0f;
+        float gain = 1.0f;
 
         GrainFixture()
         {
@@ -19,9 +22,9 @@ namespace audio_plugin_test
             snapshot.durationSamples = 100;
             snapshot.startPositionSamples = 0;
             snapshot.spanSamples = 0;
-            snapshot.speed = 1.0f;
             snapshot.sustainRatio = 0.5f;
             snapshot.playback = 1.f;
+            snapshot.speed = 1.f;
         }
     };
 
@@ -34,23 +37,24 @@ namespace audio_plugin_test
 
         SECTION("No modulation")
         {
-            grain.config(snapshot, 0.0f);
+            grain.config(snapshot, 0.0f, index, pitch, gain);
             REQUIRE(grain.getReadPosition() == 80.0f);
         }
 
         SECTION("Max modulation with wrapping")
         {
-            grain.config(snapshot, 1.0f);
+            grain.config(snapshot, 1.0f, index, pitch, gain);
             REQUIRE(grain.getReadPosition() == 30.0f);
         }
     }
 
-    // 2. WRAPPING
-    TEST_CASE_METHOD(GrainFixture, "Grain advances read position based on speed", "[grain]")
+    // 2. ADVANCING AND WRAPPING
+    TEST_CASE_METHOD(GrainFixture, "Grain advances read position based on pitch ratio", "[grain]")
     {
         snapshot.playback = 1.f;
-        snapshot.speed = 1.5f;
-        grain.config(snapshot, 0.0f);
+        pitch = 1.5f;
+
+        grain.config(snapshot, 0.0f, index, pitch, gain);
 
         REQUIRE(grain.getReadPosition() == 0.0f);
 
@@ -65,9 +69,10 @@ namespace audio_plugin_test
     {
         snapshot.inputNumSamples = 100;
         snapshot.startPositionSamples = 98;
-        snapshot.speed = 1.5f;
         snapshot.playback = 1.f;
-        grain.config(snapshot, 0.0f);
+        pitch = 1.5f;
+
+        grain.config(snapshot, 0.0f, index, pitch, gain);
 
         REQUIRE(grain.getReadPosition() == 98.0f);
 
@@ -84,7 +89,7 @@ namespace audio_plugin_test
     TEST_CASE_METHOD(GrainFixture, "Grain correctly reports exhaustion", "[grain]")
     {
         snapshot.durationSamples = 10;
-        grain.config(snapshot, 0.0f);
+        grain.config(snapshot, 0.0f, index, pitch, gain);
 
         REQUIRE_FALSE(grain.isExhausted());
 
@@ -102,7 +107,7 @@ namespace audio_plugin_test
     {
         snapshot.durationSamples = 100;
         snapshot.sustainRatio = 0.5f;
-        grain.config(snapshot, 0.0f);
+        grain.config(snapshot, 0.0f, index, pitch, gain);
 
         SECTION("Start of grain is 0.0") { REQUIRE(grain.getPhase() == 0.0f); }
 
@@ -146,7 +151,7 @@ namespace audio_plugin_test
     {
         snapshot.durationSamples = 100;
         snapshot.sustainRatio = 0.0f;
-        grain.config(snapshot, 0.0f);
+        grain.config(snapshot, 0.0f, index, pitch, gain);
 
         for(int i = 0; i < 50; ++i)
             grain.nextReadPosition();
