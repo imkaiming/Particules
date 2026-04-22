@@ -96,11 +96,15 @@ TEST_CASE("Boot performance")
             juce::MidiBuffer midi;
             juce::AudioBuffer<float> buffer(numChannels, blockSize);
 
+            for(int voice = 0; voice < particules::params::maxMidiVoice; voice++)
+            {
+                midi.addEvent(juce::MidiMessage::noteOn(1, 60 + voice, 1.0f), 0);
+            }
+
             processor.getPluginCore().loadDebugPreset();
 
             juce::AudioProcessorValueTreeState& params = processor.getPluginCore().getAPVTS();
-            if(auto* playParam = params.getParameter(particules::params::play::id))
-                playParam->setValueNotifyingHost(1.0f);
+
             if(auto* emissionParam = params.getParameter(particules::params::emission::id))
                 emissionParam->setValueNotifyingHost(1.0f);
             if(auto* durationParam = params.getParameter(particules::params::duration::id))
@@ -126,6 +130,9 @@ TEST_CASE("Boot performance")
                 processor.processBlock(buffer, midi);
                 doNotOptimize(buffer.getSample(0, 0));
             });
+        
         };
+
+        std::cout << "end audio processing benchmarks \n";
     }
 }
