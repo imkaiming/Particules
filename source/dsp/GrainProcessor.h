@@ -23,7 +23,7 @@ namespace particules
         void reset() noexcept;
         void render(int currentSample, int outputNumChannels, float* const* outputPtrs, const SmoothedParameters& params);
 
-        void spawn(const ParameterSnapshot&, AudioPayload*);
+        void spawn(const ParameterSnapshot&, AudioPayload*, int, float, float);
         void writeVisualSnapshot(VisualSnapshot& snap) noexcept;
 
     private:

@@ -1,7 +1,10 @@
 #include "PluginCore.h"
 
 #include <juce_audio_processors_headless/juce_audio_processors_headless.h> // audio parameter float
+
+#ifdef TRACY_ENABLE
 #include <tracy/Tracy.hpp>
+#endif
 
 #include "framework/core/PluginParams.h"
 #include "utils/ParamHelpers.h"
@@ -13,7 +16,7 @@ namespace particules
     PluginCore::PluginCore(juce::AudioProcessor& p)
         : proc{p}, apvts(p, nullptr, "Parameters", createParameterLayout()), paramState{}, granularEngine{faudio}, audioState{},
           uiState{}, uic{apvts, paramState, audioState, uiState, fui, faudio}, loader{}, debugPresetLoaded{false},
-          incomingBuffer{}, garbageCollector{}, currentPayload{nullptr},
+          incomingBuffer{}, garbageCollector{}, currentPayload{nullptr}, wasAuditioning{false},
           synchronizer{currentPayload, garbageCollector, audioState, uiState}, faudio{audioState, visualBuffer}
     {
         onAudioLoadedCallback = [this](std::unique_ptr<AudioBuffer> buffer, const juce::File& loadedFile) {
@@ -67,9 +70,11 @@ namespace particules
         loader.init(sampleRate, numChannels);
     }
 
-    void PluginCore::processBlock(AudioBuffer& outputBuffer, juce::MidiBuffer& midiMessages)
+    void PluginCore::processBlock(AudioBuffer& outputBuffer, juce::MidiBuffer& midiBuffer)
     {
+#ifdef TRACY_ENABLE 
         ZoneScoped; // tracy submodules
+#endif
 
         // security for pluginval
         outputBuffer.clear();
@@ -102,10 +107,11 @@ namespace particules
         const int bufferSize = outputBuffer.getNumSamples();
         float* const* outputPtrs = outputBuffer.getArrayOfWritePointers();
 
-        if(ps.play)
-        {
-            granularEngine.process(outputBuffer, payload, bufferSize, outputPtrs, outputNumChannels, ps);
-        }
+        //bool currentlyAuditioning = audioState.getIsAuditioning();
+
+        keyboardState.processNextMidiBuffer(midiBuffer, 0, bufferSize, true);
+
+        granularEngine.process(outputBuffer, midiBuffer, payload, bufferSize, outputPtrs, outputNumChannels, ps);
     }
 
     void PluginCore::getStateInformation(juce::MemoryBlock& destData)

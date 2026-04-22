@@ -4,6 +4,7 @@
 
 #include "framework/core/Core.h"
 #include "framework/core/PluginParams.h"
+#include "framework/core/PluginTypes.h"
 
 // Scheduler is responsible of computing the events
 // Maintains state necessary for activating grains according to Grain onset timesand durations
@@ -20,9 +21,9 @@ namespace particules
         Scheduler();
         ~Scheduler() = default;
 
-        void init(double) noexcept;
+        void setSampleRate(double) noexcept;
         void setEmission(float) noexcept;
-        void tick(std::function<void(const ParameterSnapshot&, AudioPayload*)>, const ParameterSnapshot&, AudioPayload*);
+        void tick(SpawnGrainCallback, const ParameterSnapshot&, AudioPayload*, int indexVoice, float pitchRatio, float gain);
 
         void reset();
 

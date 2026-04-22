@@ -44,7 +44,7 @@ namespace particules
             const float* const* inputPtrs = buffer->getArrayOfReadPointers();
             const int inputNumSamples = buffer->getNumSamples();
             const float phase = g->getPhase();
-            const float envelopeValue = envLut.getEnvelopeValue(phase);
+            const float envelopeValue = envLut.getEnvelopeValue(phase) * g->getGain();
             const float readPos = g->getReadPosition();
 
             // linear interpolation
@@ -56,7 +56,7 @@ namespace particules
                 // interpolating read position
                 const float* sample = inputPtrs[channel];
                 const float s0 = sample[index] * envelopeValue;
-                
+
                 // buffer is safe because we added one value before setting the input
                 const float s1 = sample[index + 1] * envelopeValue;
 
@@ -79,7 +79,7 @@ namespace particules
         }
     }
 
-    void GrainProcessor::spawn(const ParameterSnapshot& ps, AudioPayload* payload)
+    void GrainProcessor::spawn(const ParameterSnapshot& ps, AudioPayload* payload, int indexVoice, float pitchRatio, float gain)
     {
         if(activeCount >= SIZE)
             return; // cannot spawn any more grains
@@ -98,7 +98,8 @@ namespace particules
         visualY[handle.index] = juce::Random::getSystemRandom().nextFloat();
 
         envLut.setEnvelopeMode(ps.envMode);
-        grain->config(ps, posMod.getPhase()); // init the grain here before process with the snapshot
+        // init the grain here before process with the snapshot
+        grain->config(ps, posMod.getPhase(), indexVoice, pitchRatio, gain);
 
         activeHandles[activeCount++] = handle;
     }

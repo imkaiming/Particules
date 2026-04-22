@@ -1,6 +1,8 @@
 #include "StateSynchronizer.h"
 
+#ifdef TRACY_ENABLE
 #include <tracy/Tracy.hpp>
+#endif
 
 #include "framework/state/AudioState.h"
 #include "framework/state/UIState.h"
@@ -22,7 +24,9 @@ namespace particules
 
     void StateSynchronizer::timerCallback()
     {
+#ifdef TRACY_ENABLE 
         ZoneScopedN("Zombie Garbage Collection");
+#endif
 
         // 1. emptying the garabage collector
         while(AudioPayload* oldPayload = garbageCollector.pop())

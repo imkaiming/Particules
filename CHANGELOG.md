@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.4.0] - 2026-04-21
+
+### Added
+- polyphonic architecture with 8 independent voices
+- each voice have it own dedicated `Scheduler` and `juce::ADSR`
+- `VoiceManager` is the midi dispatch with a simple voice stealing algorithm
+- pre-calculated pitch ratio Look-Up Table
+- standalone virtual keyboard integration via `juce::MidiKeyboardState` for computer keyboard input
+
+### Changed
+- ADSR now dictates the instantaneous base gain of grains at spawn time instead of modulating a global VCA buffer
+- decoupled MIDI transposition `pitchRatio` from the global engine `speed` parameter
+
+
 ## [0.3.3] - 2026-04-20
 
 ### Added

@@ -39,6 +39,7 @@ namespace particules
         //ParameterState& getParametersView() noexcept { return paramsView; };
         ValueTreeState& getAPVTS() noexcept { return apvts; };
         UIContext& getUIContext() noexcept { return uic; };
+        juce::MidiKeyboardState& getKeyboardState() noexcept { return keyboardState; }
         ////const juce::File& getCurrentFile() const noexcept { return loader.getCurrentFile(); };
         //AudioFileLoader& getAudioFileLoader() noexcept { return loader; };
         //const int getNumActiveGrains() const noexcept { return granularEngine.getNumActiveGrains(); };
@@ -85,5 +86,9 @@ namespace particules
 
         // timer for thread communication
         StateSynchronizer synchronizer;
+
+        bool wasAuditioning;
+
+        juce::MidiKeyboardState keyboardState;
     };
 }

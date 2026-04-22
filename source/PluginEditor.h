@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <juce_audio_utils/juce_audio_utils.h>
+
 #include "melatonin_inspector/melatonin_inspector.h"
 
 #include "gui/lookandfeel/GlobalLookAndFeel.h"
@@ -23,13 +25,13 @@ namespace particules
         //void paint(juce::Graphics&) override;
         void resized() override;
 
-        GlobalLookAndFeel& getCustomLook() { return globalLookAndFeel; };
+        //GlobalLookAndFeel& getCustomLook() { return globalLookAndFeel; };
 
     private:
         ParticulesAudioProcessor& pluginProcessor;
         MainLNF lnf;
         MainPanel mainPanel;
-        GlobalLookAndFeel globalLookAndFeel;
+        juce::MidiKeyboardComponent keyboardComponent;
 
 #if ENABLE_MELATONINE_INSPECTOR
         melatonin::Inspector inspector{*this};

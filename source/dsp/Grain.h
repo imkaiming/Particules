@@ -16,7 +16,7 @@ namespace particules
         ~Grain() = default;
 
         void reset();
-        void config(const ParameterSnapshot&, float);
+        void config(const ParameterSnapshot&, float, int, float, float);
 
         const float getReadPosition() const noexcept;
         void nextReadPosition() noexcept;
@@ -30,6 +30,7 @@ namespace particules
         void incrementGen() noexcept { generation++; }
 
         const float getPhase() const noexcept;
+        const float getGain() const noexcept { return gain; };
 
         AudioPayload* payload;
 
@@ -52,6 +53,10 @@ namespace particules
         float invFadeInSamples;
         float effectiveSpeed;
         //float linearGain;
+
+        int indexVoice;
+        float pitchRatio;
+        float gain;
 
         // lifecycle
         uint16_t generation = 0;

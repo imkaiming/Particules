@@ -28,7 +28,7 @@ namespace particules
         fb.flexDirection = juce::FlexBox::Direction::column;
         fb.alignItems = juce::FlexBox::AlignItems::stretch;
 
-        fb.items.add(juce::FlexItem(titlePanel).withFlex(0.0f).withMinHeight(50));
+        fb.items.add(juce::FlexItem(titlePanel).withFlex(0.0f).withMinHeight(45));
         fb.items.add(juce::FlexItem(audioFilePanel).withFlex(0.45f));
         fb.items.add(juce::FlexItem(tabPanel).withFlex(0.55f));
 

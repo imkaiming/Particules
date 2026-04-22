@@ -1,6 +1,6 @@
 #include "Scheduler.h"
-#include "utils/struct/ParameterSnapshot.h"
 #include "utils/struct/AudioPayload.h"
+#include "utils/struct/ParameterSnapshot.h"
 
 namespace particules
 {
@@ -9,19 +9,16 @@ namespace particules
     // reset should never flush users settings
     void Scheduler::reset()
     {
-        //emission = 0.f;
-        //interOnSet = 0.0;
-        phase = phase = interOnSet;
+        phase = interOnSet;
         nextOnSet = 0.0;
     }
 
     // prepare to play
-    void Scheduler::init(double sr) noexcept
+    void Scheduler::setSampleRate(double sr) noexcept
     {
         sampleRate = sr;
         if(emission > 0.f)
             setEmission(emission); // in case emission has been setted befor the sample rate
-
         reset();
     }
 
@@ -40,8 +37,7 @@ namespace particules
             phase = interOnSet;
     }
 
-    void Scheduler::tick(
-        std::function<void(const ParameterSnapshot&, AudioPayload*)> spawn, const ParameterSnapshot& ps, AudioPayload* payload)
+    void Scheduler::tick(SpawnGrainCallback spawn, const ParameterSnapshot& ps, AudioPayload* payload, int indexVoice, float pitchRatio, float gain)
     {
         // doing nothing is scheduler hasnt been initialized
         if(interOnSet <= 0.0)
@@ -49,7 +45,7 @@ namespace particules
 
         if(phase >= interOnSet) // zero latency trigger
         {
-            spawn(ps, payload);
+            spawn(ps, payload, indexVoice, pitchRatio, gain);
             phase -= interOnSet;
         }
 

@@ -74,7 +74,7 @@ add_subdirectory(modules/clap-juce-extensions EXCLUDE_FROM_ALL) # Add CLAP forma
 add_subdirectory (modules/melatonin_inspector)
 
 # Define an option to turn profiling on/off
-option(PARTICULES_ENABLE_PROFILING "Enable Tracy Profiler" ON)
+option(PARTICULES_ENABLE_PROFILING "Enable Tracy Profiler" OFF)
 
 if(PARTICULES_ENABLE_PROFILING)
     add_subdirectory(modules/tracy)
@@ -227,7 +227,7 @@ endif()
 ################################
 
 add_library(Gui STATIC)
-
+ 
 set_target_properties(Gui PROPERTIES POSITION_INDEPENDENT_CODE TRUE)
 
 target_compile_features(Gui PUBLIC cxx_std_20)

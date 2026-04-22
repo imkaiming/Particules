@@ -104,10 +104,10 @@ namespace particules
     void TitlePanel::resized()
     {
         juce::Rectangle<int> area = getLocalBounds();
-        int margin = 15;
+        int margin = 5;
         area.reduce(margin, 0);
 
-        int btnSize = juce::jmin(getHeight() - 16, 32);
+        int btnSize = juce::jmin(getHeight() - margin, 35);
         int titleWidth = 150;
 
         juce::Rectangle<int> titleArea = area.removeFromLeft(titleWidth);

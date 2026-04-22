@@ -20,6 +20,10 @@ namespace particules
         float traversalFreq;
         int inputNumSamples;
         float playback;
+        float attack;
+        float decay;
+        float sustain;
+        float release;
         bool isValid() const { return durationSamples > 0 && speed > 0 && emission >= 0; }
     };
 }

@@ -6,7 +6,7 @@ namespace particules
     Grain::Grain()
         : durationSamples{0}, startPositionSamples{0}, speed{1.f}, sustainWidthSamples{0}, span{0}, fadeInSamples{0},
           fadeOutSamples{0}, elapsedSamples{0}, readPosition{0.f}, inputNumSamples{0}, effectiveSpeed{1.f}, playback{1},
-          payload{nullptr}
+          payload{nullptr}, indexVoice{-1}, pitchRatio{1.0f}, gain{1.0f}
     {
         reset();
     }
@@ -25,35 +25,40 @@ namespace particules
         readPosition = 0.f;
         effectiveSpeed = 1.0f;
         playback = 1;
+        gain = 1.0f;
     }
 
-    void Grain::config(const ParameterSnapshot& ps, float normalizedPosMod)
+    void Grain::config(const ParameterSnapshot& ps, float normalizedPosMod, int indexVoice, float pitchRatio, float gain)
     {
-        elapsedSamples = 0;
+        this->elapsedSamples = 0;
 
-        inputNumSamples = ps.inputNumSamples;
-        durationSamples = ps.durationSamples;
+        this->inputNumSamples = ps.inputNumSamples;
+        this->durationSamples = ps.durationSamples;
+
+        this->indexVoice = indexVoice;
+        this->pitchRatio = pitchRatio;
+        this->gain = gain;
 
         // position data
         const int positionModulationSamples = static_cast<int>(normalizedPosMod * ps.spanSamples);
-        startPositionSamples = (ps.startPositionSamples + positionModulationSamples) % inputNumSamples;
-        readPosition = static_cast<float>(startPositionSamples);
-        span = ps.spanSamples;
+        this->startPositionSamples = (ps.startPositionSamples + positionModulationSamples) % inputNumSamples;
+        this->readPosition = static_cast<float>(startPositionSamples);
+        this->span = ps.spanSamples;
 
-        speed = ps.speed;
-        playback = ps.playback;
-        effectiveSpeed = speed * playback;
+        this->speed = ps.speed;
+        this->playback = ps.playback;
+        this->effectiveSpeed = pitchRatio * playback;
 
         // envelope data
         //setEnvelopeData(static_cast<int>(ps.sustainRatio));
 
         //linearGain = ps.linearGain;
-        sustainWidthSamples = static_cast<int>(ps.sustainRatio * durationSamples);
-        fadeInSamples = static_cast<int>(0.5f * (durationSamples - sustainWidthSamples));
-        fadeOutSamples = fadeInSamples + sustainWidthSamples;
-        fadeInSamples = std::max<int>(fadeInSamples, 1);
-        fadeOutSamples = std::max<int>(fadeOutSamples, 1);
-        invFadeInSamples = 1.f / static_cast<float>(fadeInSamples);
+        this->sustainWidthSamples = static_cast<int>(ps.sustainRatio * durationSamples);
+        this->fadeInSamples = static_cast<int>(0.5f * (durationSamples - sustainWidthSamples));
+        this->fadeOutSamples = fadeInSamples + sustainWidthSamples;
+        this->fadeInSamples = std::max<int>(fadeInSamples, 1);
+        this->fadeOutSamples = std::max<int>(fadeOutSamples, 1);
+        this->invFadeInSamples = 1.f / static_cast<float>(fadeInSamples);
     }
 
     //void Grain::setEnvelopeData(const float sustainRatio) noexcept {}

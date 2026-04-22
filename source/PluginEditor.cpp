@@ -1,11 +1,11 @@
 #include "PluginEditor.h"
 #include "PluginProcessor.h"
 
-
 namespace particules
 {
     ParticulesAudioProcessorEditor::ParticulesAudioProcessorEditor(ParticulesAudioProcessor& p)
-        : AudioProcessorEditor(&p), pluginProcessor(p), mainPanel(p.getUIContext()), globalLookAndFeel()
+        : AudioProcessorEditor(&p), pluginProcessor(p), mainPanel(p.getUIContext()),
+          keyboardComponent{p.getPluginCore().getKeyboardState(), juce::MidiKeyboardComponent::horizontalKeyboard}
     {
         setLookAndFeel(&lnf);
 
@@ -18,6 +18,9 @@ namespace particules
         setSize(gui::windowWidthInit, gui::windowHeightInit);
 
         addAndMakeVisible(&mainPanel);
+        addAndMakeVisible(&keyboardComponent);
+        setWantsKeyboardFocus(true);
+        keyboardComponent.setWantsKeyboardFocus(true);
 
 #if ENABLE_DEBUG_PRESET
         pluginProcessor.loadDebugPreset();
@@ -31,5 +34,14 @@ namespace particules
 
     ParticulesAudioProcessorEditor::~ParticulesAudioProcessorEditor() { setLookAndFeel(nullptr); }
 
-    void ParticulesAudioProcessorEditor::resized() { mainPanel.setBounds(getLocalBounds()); }
+    void ParticulesAudioProcessorEditor::resized()
+    {
+        //mainPanel.setBounds(getLocalBounds());
+
+        // temp
+        juce::Rectangle<int> bounds = getLocalBounds();
+        const int pianoHeight = 60;
+        keyboardComponent.setBounds(bounds.removeFromBottom(pianoHeight));
+        mainPanel.setBounds(bounds);
+    }
 }

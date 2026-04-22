@@ -26,6 +26,10 @@ namespace particules
         traversalFreq = apvts.getRawParameterValue(params::traversalFreq::id);
         play = apvts.getRawParameterValue(params::play::id);
         playback = apvts.getRawParameterValue(params::playback::id);
+        attack = apvts.getRawParameterValue(params::attack::id);
+        decay = apvts.getRawParameterValue(params::decay::id);
+        sustain = apvts.getRawParameterValue(params::sustain::id);
+        release = apvts.getRawParameterValue(params::release::id);
     }
 
     EnvelopeMode ParameterState::getEnvelopeMode() const noexcept
@@ -80,6 +84,10 @@ namespace particules
         ps.linearGain = getLinearGain();
         ps.traversalMode = getTraversalMode();
         ps.traversalFreq = getTraversalFreq();
+        ps.attack = getAttack();
+        ps.decay = getDecay();
+        ps.sustain = getSustain();
+        ps.release = getRelease();
 
         return ps;
     };

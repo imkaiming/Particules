@@ -39,6 +39,11 @@ namespace particules
         }
         float getTraversalFreq() const noexcept { return traversalFreq ? traversalFreq->load(std::memory_order_relaxed) : 0.0f; }
         float getPlayback() const noexcept { return playback ? playback->load(std::memory_order_relaxed) : 0.0f; }
+        float getAttack() const noexcept { return attack ? attack->load(std::memory_order_relaxed) : 0.0f; }
+        float getDecay() const noexcept { return decay ? decay->load(std::memory_order_relaxed) : 0.0f; }
+        float getSustain() const noexcept { return sustain ? sustain->load(std::memory_order_relaxed) : 0.0f; }
+        float getRelease() const noexcept { return release ? release->load(std::memory_order_relaxed) : 0.0f; }
+
 
         EnvelopeMode getEnvelopeMode() const noexcept;
         TraversalMode getTraversalMode() const noexcept;
@@ -56,6 +61,10 @@ namespace particules
         std::atomic<float>* traversalFreq = nullptr;
         std::atomic<float>* traversalMode = nullptr;
         std::atomic<float>* envMode = nullptr;
+        std::atomic<float>* attack = nullptr;
+        std::atomic<float>* decay = nullptr;
+        std::atomic<float>* sustain = nullptr;
+        std::atomic<float>* release = nullptr;
 
     };
 }
