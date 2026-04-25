@@ -35,7 +35,7 @@ namespace particulesTest
             ps.emission = 100.0f;
 
             vm.setSampleRate(sampleRate);
-            vm.setParameters(ps.attack, ps.decay, ps.sustain, ps.release);
+            vm.setParameters(ps.attack, ps.decay, ps.sustain, ps.release, ps.emission);
         }
     };
 

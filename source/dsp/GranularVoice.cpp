@@ -33,7 +33,6 @@ namespace particules
         if(!isBusy())
             return;
 
-        scheduler.setEmission(ps.emission);
         float currentAdsrLevel = adsr.getNextSample();
         float gain = currentAdsrLevel * velocity;
         scheduler.tick(spawnGrainCallback, ps, payload, voiceID, pitch, gain);

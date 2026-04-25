@@ -21,10 +21,13 @@ namespace particules
         }
     }
 
-    void VoiceManager::setParameters(float a, float d, float s, float r) noexcept
+    void VoiceManager::setParameters(float a, float d, float s, float r, float e) noexcept
     {
         for(GranularVoice& voice : voices)
+        {
             voice.setADSR(a, d, s, r);
+            voice.setEmission(e);
+        }
     }
 
     void VoiceManager::process(

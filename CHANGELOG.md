@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.4.2] - 2026-xx-xx
+
+### Added 
+
+
+### Changed
+- ADSR and emission parameters are moving from sample-based to block-based accuracy
+
+## [0.4.1] - 2026-04-25
+
+### Added
+- early grain termination (kill switch) in the `GrainProcessor` that forcefully exhausts grains if their parent voice dies
+- grains now store an independent `envID` and `voiceID` to strictly track ownership and windowing shapes
+
+### Changed
+- all parameters are now set once at grain spawning time, not updated anymore during lifecycle
+- envelope mode is no longer a global state; `GrainEnvelope` now serves stateless lookups via `getEnvelopeModeValue`
+- ADSR parameters are now dispatched directly to the `VoiceManager` at the block start to update all voices simultaneously
+
+### Fixed
+- voice stealing logic in `findOldestVoice` that incorrectly targeted free voices instead of busy ones
+
 ## [0.4.0] - 2026-04-21
 
 ### Added

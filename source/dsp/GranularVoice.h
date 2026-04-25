@@ -7,7 +7,7 @@
 
 namespace particules
 {
-        struct ParameterSnapshot;
+    struct ParameterSnapshot;
     struct AudioPayload;
     class GranularVoice
     {
@@ -30,11 +30,11 @@ namespace particules
         float getVelocity() const noexcept { return velocity; }
         float getGain() noexcept { return adsr.getNextSample() * velocity; } // ADSR * Velocity
 
-        void setSampleRate(double sampleRate) noexcept;
         void setADSR(float attack, float decay, float sustain, float release) noexcept;
+        void setEmission(float e) noexcept { scheduler.setEmission(e); }
+        void setSampleRate(double sampleRate) noexcept;
 
     private:
-
         juce::ADSR adsr;
         Scheduler scheduler;
         SpawnGrainCallback spawnGrainCallback;

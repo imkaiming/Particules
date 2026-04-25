@@ -29,7 +29,7 @@ namespace particules
         int getNumActiveNotes() const noexcept;
         bool isVoiceDead(int index) const noexcept;
         float getVoiceGain(int index) const noexcept;
-        void setParameters(float a, float d, float s, float r) noexcept;
+        void setParameters(float a, float d, float s, float r, float e) noexcept;
 
     private:
         static constexpr int numPitchRatio = 128;
