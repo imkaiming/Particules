@@ -34,6 +34,7 @@ namespace particules
         void setADSR(float attack, float decay, float sustain, float release) noexcept;
 
     private:
+
         juce::ADSR adsr;
         Scheduler scheduler;
         SpawnGrainCallback spawnGrainCallback;

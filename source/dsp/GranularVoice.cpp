@@ -28,15 +28,15 @@ namespace particules
 
     void GranularVoice::noteOff() { adsr.noteOff(); }
 
-    void GranularVoice::tick(const ParameterSnapshot& ps, AudioPayload* payload, int indexVoice)
+    void GranularVoice::tick(const ParameterSnapshot& ps, AudioPayload* payload, int voiceID)
     {
-        if(!adsr.isActive())
+        if(!isBusy())
             return;
 
         scheduler.setEmission(ps.emission);
         float currentAdsrLevel = adsr.getNextSample();
         float gain = currentAdsrLevel * velocity;
-        scheduler.tick(spawnGrainCallback, ps, payload, indexVoice, pitch, gain);
+        scheduler.tick(spawnGrainCallback, ps, payload, voiceID, pitch, gain);
     }
 
     void GranularVoice::setADSR(float attack, float decay, float sustain, float release) noexcept

@@ -7,7 +7,7 @@
 namespace particules
 {
     GranularEngine::GranularEngine(FromAudio& fa)
-        : grainProcessor{pool, posMod, envLut},
+        : grainProcessor{pool, posMod, envLut, voiceManager},
           voiceManager{[this](const ParameterSnapshot& ps, AudioPayload* payload, int indexVoice, float pitchRatio,
                            float velocity) -> void { grainProcessor.spawn(ps, payload, indexVoice, pitchRatio, velocity); }},
           pool{}, posMod{}, refreshRate{gui::refreshRate}, sampleAccumulator{0}, threshold{0}, smoothedParams{}, faudio{fa}
@@ -43,15 +43,14 @@ namespace particules
         // security
         jassert(inputNumsChannels == outputNumChannels);
 
-        setTargetSmoothedValue(ps);
+        //setTargetSmoothedValue(ps);
         posMod.setParameters(ps.traversalMode, ps.traversalFreq);
-        //scheduler.setEmission(ps.emission);
+        voiceManager.setParameters(ps.attack, ps.decay, ps.sustain, ps.release);
 
         // main loop
         for(int currentSample = 0; currentSample < bufferSize; currentSample++)
         {
-            updateSmoothedParameters();
-            //scheduler.tick(spawnCallback, ps, payload);
+            //updateSmoothedParameters();
             while(midiSamplePosition == currentSample && hasMidiEvent)
             {
                 if(midiMsg.isNoteOn() && midiMsg.getVelocity() > 0)
@@ -70,8 +69,8 @@ namespace particules
                 hasMidiEvent = midiIterator.getNextEvent(midiMsg, midiSamplePosition);
             }
 
-            voiceManager.process(currentSample, ps, smoothedParams, payload);
-            grainProcessor.render(currentSample, outputNumChannels, outputPtrs, smoothedParams);
+            voiceManager.process(currentSample, ps, payload /*, smoothedParams*/);
+            grainProcessor.process(currentSample, outputNumChannels, outputPtrs /*, smoothedParams*/);
         }
 
         posMod.advanceBlock(bufferSize);
@@ -94,7 +93,7 @@ namespace particules
     {
         threshold = static_cast<int>(sampleRate / refreshRate);
         posMod.setSampleRate(sampleRate);
-        voiceManager.prepare(sampleRate);
+        voiceManager.setSampleRate(sampleRate);
 
         juce::dsp::ProcessSpec spec;
 
@@ -115,11 +114,13 @@ namespace particules
         //adsr.setParameters(adsrParams);
 
         // init smooth parameters
+        /*
         speedSmooth.reset(sampleRate, 0.02);
         attackSmooth.reset(sampleRate, 0.02);
         decaySmooth.reset(sampleRate, 0.02);
         sustainSmooth.reset(sampleRate, 0.02);
         releaseSmooth.reset(sampleRate, 0.02);
+        */
         //sustainRatioSmooth.reset(sampleRate, 0.01);
 
         //scheduler.init(sampleRate);
@@ -135,16 +136,19 @@ namespace particules
 
     void GranularEngine::updateSmoothedParameters() noexcept
     {
+        /*
         smoothedParams.speed = speedSmooth.getNextValue();
         smoothedParams.attack = attackSmooth.getNextValue();
         smoothedParams.decay = decaySmooth.getNextValue();
         smoothedParams.sustain = sustainSmooth.getNextValue();
         smoothedParams.release = releaseSmooth.getNextValue();
+        */
         //smoothedParams.sustainRatio = sustainRatioSmooth.getNextValue();
     }
 
     void GranularEngine::setTargetSmoothedValue(const ParameterSnapshot& ps) noexcept
     {
+        /*
         if(speedSmooth.getTargetValue() != ps.speed)
             speedSmooth.setTargetValue(ps.speed);
         if(attackSmooth.getTargetValue() != ps.attack)
@@ -155,6 +159,7 @@ namespace particules
             sustainSmooth.setTargetValue(ps.sustain);
         if(releaseSmooth.getTargetValue() != ps.release)
             releaseSmooth.setTargetValue(ps.release);
+        */
 
         //if(sustainRatioSmooth.getTargetValue() != ps.sustainRatio)
         //    sustainRatioSmooth.setTargetValue(ps.sustainRatio);

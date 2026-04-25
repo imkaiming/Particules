@@ -14,7 +14,7 @@ namespace particules
         }
     }
 
-    void VoiceManager::prepare(double sampleRate)
+    void VoiceManager::setSampleRate(double sampleRate)
     {
         for(GranularVoice& voice : voices)
         {
@@ -23,19 +23,23 @@ namespace particules
         }
     }
 
+    void VoiceManager::setParameters(float a, float d, float s, float r) noexcept
+    {
+        for(GranularVoice& voice : voices)
+            voice.setADSR(a, d, s, r);
+    }
+
     void VoiceManager::process(
-        int currentSample, const ParameterSnapshot& ps, const SmoothedParameters& sp, AudioPayload* payload)
+        int currentSample, const ParameterSnapshot& ps, AudioPayload* payload /*, const SmoothedParameters& sp*/)
     {
         globalSampleCounter++;
-        for(int indexVoice = 0; indexVoice < params::maxMidiVoice; ++indexVoice)
+        for(int i = 0; i < params::maxMidiVoice; ++i)
         {
-            GranularVoice& voice = voices[indexVoice];
+            GranularVoice& voice = voices[i];
             if(!voice.isBusy())
                 continue;
-            
-            voice.setADSR(sp.attack, sp.decay, sp.sustain, sp.release);
-            voice.tick(ps, payload, indexVoice);
-            //spawnCallback(ps, payload, indexVoice, voice.getPitchRatio(), voice.getVelocity());
+
+            voice.tick(ps, payload, i);
         }
     }
 
@@ -99,6 +103,8 @@ namespace particules
         return count;
     }
 
+    bool VoiceManager::isVoiceDead(int index) const noexcept { return !voices[index].isBusy(); }
+
     float VoiceManager::getVoiceGain(int index) const noexcept { return 0.0f; }
 
     GranularVoice* VoiceManager::findOldestVoice()
@@ -108,7 +114,7 @@ namespace particules
 
         for(GranularVoice& voice : voices)
         {
-            if(!voice.isBusy() && voice.getNoteOnTime() < time)
+            if(voice.isBusy() && voice.getNoteOnTime() < time)
             {
                 oldestVoice = &voice;
                 time = voice.getNoteOnTime();

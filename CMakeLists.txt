@@ -35,6 +35,7 @@ set(FORMATS Standalone AU VST3 AUv3) # Valid choices: AAX Unity VST VST3 AU AUv3
 # instruct MSVC to embed debug info (/Z7) instead of emitting a .pdb
 set(CMAKE_POLICY_DEFAULT_CMP0141        NEW      CACHE STRING "" FORCE)
 set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT Embedded CACHE STRING "" FORCE)
+#set(CMAKE_BUILD_TYPE RelWithDebInfo) # doesnt work on visual studio 
 
 project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
 

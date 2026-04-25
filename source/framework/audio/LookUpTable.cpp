@@ -1,6 +1,6 @@
 #include "LookUpTable.h"
 
-#include "../../utils/math/Lerp.h"
+#include "utils/math/Lerp.h"
 
 namespace particules
 {

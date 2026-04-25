@@ -4,7 +4,7 @@
 
 #include "framework/core/PluginParams.h"
 
-// act like a midi dispatch. 
+// act like a midi dispatch.
 // assign a midi note to a granular voice
 
 namespace particules
@@ -18,8 +18,8 @@ namespace particules
         explicit VoiceManager(SpawnGrainCallback);
         ~VoiceManager() = default;
 
-        void prepare(double sampleRate);
-        void process(int currentSample, const ParameterSnapshot& ps, const SmoothedParameters& sp, AudioPayload* payload);
+        void setSampleRate(double sampleRate);
+        void process(int currentSample, const ParameterSnapshot& ps, AudioPayload* payload /*, const SmoothedParameters& sp*/);
 
         void noteOn(int midiNoteNumber, float velocity);
         void noteOff(int midiNoteNumber);
@@ -27,7 +27,10 @@ namespace particules
 
         bool isAnyVoicesActive() const noexcept;
         int getNumActiveNotes() const noexcept;
+        bool isVoiceDead(int index) const noexcept;
         float getVoiceGain(int index) const noexcept;
+        void setParameters(float a, float d, float s, float r) noexcept;
+
     private:
         GranularVoice* findOldestVoice();
         GranularVoice* findFreeVoice();

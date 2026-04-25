@@ -1,8 +1,8 @@
 #pragma once
 
-#include "framework/core/PluginParams.h"
-#include "framework/core/Core.h"
 #include "framework/audio/LookUpTable.h"
+#include "framework/core/Core.h"
+#include "framework/core/PluginParams.h"
 #include "utils/enum/EnvelopeMode.h"
 
 // LUT TABLE
@@ -22,6 +22,7 @@ namespace particules
 
         const float getEnvelopeValue(float phase) const noexcept;
         void setEnvelopeMode(EnvelopeMode m) noexcept { envMode = m; }
+        const float getEnvelopeModeValue(int mode, float phase) noexcept;
 
     private:
         static constexpr int SIZE = params::maxLutSize;
@@ -36,7 +37,6 @@ namespace particules
         static void initExp(std::span<float>) noexcept;
         static void initSqrt(std::span<float>) noexcept;
         */
-
 
         //static void initSmoothed(std::span<float>) noexcept;
         //static const float smoothedStep(float x) noexcept { return x * x * (3.f - 2.f * x); }

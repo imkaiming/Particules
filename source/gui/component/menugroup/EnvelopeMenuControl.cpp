@@ -1,5 +1,5 @@
 #include "EnvelopeMenuControl.h"
-#include "../../../utils/math/EnvelopeMath.h"
+#include "utils/math/EnvelopeMath.h"
 
 namespace particules
 {

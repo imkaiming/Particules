@@ -8,6 +8,7 @@
 namespace particules
 {
     class GrainPool;
+    class VoiceManager;
     struct SmoothedParameters;
     struct ParameterSnapshot;
     struct AudioPayload;
@@ -17,11 +18,11 @@ namespace particules
     class GrainProcessor
     {
     public:
-        GrainProcessor(GrainPool& pool, PositionModulator& pm, GrainEnvelope& lut);
+        GrainProcessor(GrainPool& pool, PositionModulator& pm, GrainEnvelope& lut, VoiceManager& vm);
         ~GrainProcessor() = default;
 
         void reset() noexcept;
-        void render(int currentSample, int outputNumChannels, float* const* outputPtrs, const SmoothedParameters& params);
+        void process(int currentSample, int outputNumChannels, float* const* outputPtrs /*,const SmoothedParameters& params*/);
 
         void spawn(const ParameterSnapshot&, AudioPayload*, int, float, float);
         void writeVisualSnapshot(VisualSnapshot& snap) noexcept;
@@ -34,6 +35,7 @@ namespace particules
         GrainEnvelope& envLut;
         PositionModulator& posMod;
         GrainPool& pool;
+        VoiceManager& voiceManager;
 
         std::array<GrainHandle, SIZE> activeHandles;
         int activeCount;

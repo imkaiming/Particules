@@ -16,21 +16,21 @@ namespace particules
         ~Grain() = default;
 
         void reset();
-        void config(const ParameterSnapshot&, float, int, float, float);
+        void config(const ParameterSnapshot&, float, int, int, float, float);
 
         const float getReadPosition() const noexcept;
         void nextReadPosition() noexcept;
-        void updateParams(const SmoothedParameters&) noexcept;
-
-        bool getActive() const noexcept { return active; }
+        //void updateParams(const SmoothedParameters&) noexcept;
         void setActive(bool b) noexcept { active = b; }
-        bool isExhausted() const noexcept { return elapsedSamples >= durationSamples; }
-
-        uint16_t getGeneration() const noexcept { return generation; }
         void incrementGen() noexcept { generation++; }
 
+        uint16_t getGeneration() const noexcept { return generation; }
+        bool isExhausted() const noexcept { return elapsedSamples >= durationSamples; }
         const float getPhase() const noexcept;
+        bool getActive() const noexcept { return active; }
+        int getVoiceID() const noexcept { return voiceID; }
         const float getGain() const noexcept { return gain; };
+        const int getEnvID() const noexcept { return envID; };
 
         AudioPayload* payload;
 
@@ -54,7 +54,8 @@ namespace particules
         float effectiveSpeed;
         //float linearGain;
 
-        int indexVoice;
+        int voiceID; // index 
+        int envID; 
         float pitchRatio;
         float gain;
 

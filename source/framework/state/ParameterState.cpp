@@ -67,7 +67,6 @@ namespace particules
         ps.play = getPlay() > 0.5f ? true : false;
         ps.playback = getPlayback() > 0.5f ? 1.f : -1.f;
         //// get Buffer data
-
         // position data
         ps.inputNumSamples = payload->numSamples; // temporary
         ps.startPositionSamples = static_cast<int>(getNormalizedStartPosition() * payload->numSamples);
@@ -89,6 +88,10 @@ namespace particules
         ps.sustain = getSustain();
         ps.release = getRelease();
 
+        //DBG("attack = " + str(ps.attack));
+        //DBG("decay = " + str(ps.decay));
+        //DBG("sustain = " + str(ps.sustain));
+        //DBG("release = " + str(ps.release));
         return ps;
     };
 

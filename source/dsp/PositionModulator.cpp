@@ -1,21 +1,12 @@
-/*
-  ==============================================================================
+#include "PositionModulator.h"
 
-	PositionModulator.cpp
-	Created: 3 Apr 2023 12:02:48am
-	Author:  user
+#include <juce_core/juce_core.h>
 
-  ==============================================================================
-*/
+#include "utils/math/MathConstants.h"
 
 // quand on change le mod on reset la position de la phase.
 // quand on met pause on reset egalement le modulator
 // on calcule chaque avancer en fonction du bufferSize
-#include "PositionModulator.h"
-#include "../utils/math/MathConstants.h"
-
-#include <juce_core/juce_core.h>
-
 namespace particules
 {
     PositionModulator::PositionModulator()

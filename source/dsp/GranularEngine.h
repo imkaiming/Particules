@@ -64,15 +64,15 @@ namespace particules
         //juce::ADSR::Parameters adsrParams;
 
         // smoothed value : we only smooth parameters that change the life cycle of the grains.
-        juce::SmoothedValue<float> speedSmooth;
-        juce::SmoothedValue<float> attackSmooth;
-        juce::SmoothedValue<float> decaySmooth;
-        juce::SmoothedValue<float> sustainSmooth;
-        juce::SmoothedValue<float> releaseSmooth;
-        juce::dsp::Gain<float> gainProcessor;
+        //juce::SmoothedValue<float> speedSmooth;
+        //juce::SmoothedValue<float> attackSmooth;
+        //juce::SmoothedValue<float> decaySmooth;
+        //juce::SmoothedValue<float> sustainSmooth;
+        //juce::SmoothedValue<float> releaseSmooth;
         //juce::SmoothedValue<float> sustainRatioSmooth;
 
         SmoothedParameters smoothedParams;
+        juce::dsp::Gain<float> gainProcessor;
 
         FromAudio& faudio;
     };

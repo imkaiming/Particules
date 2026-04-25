@@ -2,9 +2,10 @@
 
 #include <juce_core/juce_core.h>
 
-#include "GrainEnvelope.h"
-#include "GrainPool.h"
-#include "PositionModulator.h"
+#include "dsp/GrainEnvelope.h"
+#include "dsp/GrainPool.h"
+#include "dsp/PositionModulator.h"
+#include "dsp/VoiceManager.h"
 #include "utils/math/Lerp.h"
 #include "utils/struct/AudioPayload.h"
 #include "utils/struct/ParameterSnapshot.h"
@@ -13,8 +14,8 @@
 
 namespace particules
 {
-    GrainProcessor::GrainProcessor(GrainPool& p, PositionModulator& pm, GrainEnvelope& lut)
-        : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}
+    GrainProcessor::GrainProcessor(GrainPool& p, PositionModulator& pm, GrainEnvelope& lut, VoiceManager& vm)
+        : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}, voiceManager{vm}
     {
         reset();
     }
@@ -27,8 +28,8 @@ namespace particules
         pool.reset();
     }
 
-    void GrainProcessor::render(
-        int currentSample, int outputNumChannels, float* const* outputPtrs, const SmoothedParameters& params)
+    void GrainProcessor::process(
+        int currentSample, int outputNumChannels, float* const* outputPtrs/*, const SmoothedParameters& params*/)
     {
         for(int i = activeCount - 1; i >= 0; --i) // backward iteration
         {
@@ -43,8 +44,7 @@ namespace particules
 
             const float* const* inputPtrs = buffer->getArrayOfReadPointers();
             const int inputNumSamples = buffer->getNumSamples();
-            const float phase = g->getPhase();
-            const float envelopeValue = envLut.getEnvelopeValue(phase) * g->getGain();
+            const float envelopeValue = envLut.getEnvelopeModeValue(g->getEnvID(), g->getPhase()) * g->getGain();
             const float readPos = g->getReadPosition();
 
             // linear interpolation
@@ -65,10 +65,10 @@ namespace particules
             }
 
             g->nextReadPosition();
-            g->updateParams(params);
-            if(g->isExhausted())
+            //g->updateParams(params);
+            if(g->isExhausted() || voiceManager.isVoiceDead(g->getVoiceID()))
             {
-                if(g->payload != nullptr)
+                if(p != nullptr)
                 {
                     g->payload->activeReaders.fetch_sub(1, std::memory_order_acq_rel);
                     g->payload = nullptr;
@@ -97,9 +97,8 @@ namespace particules
 
         visualY[handle.index] = juce::Random::getSystemRandom().nextFloat();
 
-        envLut.setEnvelopeMode(ps.envMode);
         // init the grain here before process with the snapshot
-        grain->config(ps, posMod.getPhase(), indexVoice, pitchRatio, gain);
+        grain->config(ps, posMod.getPhase(), indexVoice, static_cast<int>(ps.envMode), pitchRatio, gain);
 
         activeHandles[activeCount++] = handle;
     }

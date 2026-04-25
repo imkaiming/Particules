@@ -32,7 +32,6 @@ namespace particules
         void initTableData();
         void initTablePtr();
 
-
         std::array<LookUpTable*, MODCOUNT> positionTables;
         LookUpTable sineLUT;
         LookUpTable squareLUT;
@@ -52,6 +51,5 @@ namespace particules
         float mPhaseIncrement; // time step per samples
         float mPhaseAccumulator; // position of a bufferSize block samples
 
-        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PositionModulator)
     };
 }

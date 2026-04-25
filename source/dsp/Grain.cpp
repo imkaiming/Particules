@@ -6,7 +6,7 @@ namespace particules
     Grain::Grain()
         : durationSamples{0}, startPositionSamples{0}, speed{1.f}, sustainWidthSamples{0}, span{0}, fadeInSamples{0},
           fadeOutSamples{0}, elapsedSamples{0}, readPosition{0.f}, inputNumSamples{0}, effectiveSpeed{1.f}, playback{1},
-          payload{nullptr}, indexVoice{-1}, pitchRatio{1.0f}, gain{1.0f}
+          payload{nullptr}, voiceID{-1}, envID{-1}, pitchRatio{1.0f}, gain{1.0f}
     {
         reset();
     }
@@ -26,16 +26,19 @@ namespace particules
         effectiveSpeed = 1.0f;
         playback = 1;
         gain = 1.0f;
+        envID = -1;
+        voiceID = -1;
     }
 
-    void Grain::config(const ParameterSnapshot& ps, float normalizedPosMod, int indexVoice, float pitchRatio, float gain)
+    void Grain::config(const ParameterSnapshot& ps, float normalizedPosMod, int voiceID, int envID, float pitchRatio, float gain)
     {
         this->elapsedSamples = 0;
 
         this->inputNumSamples = ps.inputNumSamples;
         this->durationSamples = ps.durationSamples;
 
-        this->indexVoice = indexVoice;
+        this->voiceID = voiceID;
+        this->envID = envID;
         this->pitchRatio = pitchRatio;
         this->gain = gain;
 
@@ -49,25 +52,27 @@ namespace particules
         this->playback = ps.playback;
         this->effectiveSpeed = pitchRatio * playback;
 
-        // envelope data
-        //setEnvelopeData(static_cast<int>(ps.sustainRatio));
-
-        //linearGain = ps.linearGain;
         this->sustainWidthSamples = static_cast<int>(ps.sustainRatio * durationSamples);
         this->fadeInSamples = static_cast<int>(0.5f * (durationSamples - sustainWidthSamples));
         this->fadeOutSamples = fadeInSamples + sustainWidthSamples;
         this->fadeInSamples = std::max<int>(fadeInSamples, 1);
         this->fadeOutSamples = std::max<int>(fadeOutSamples, 1);
         this->invFadeInSamples = 1.f / static_cast<float>(fadeInSamples);
+
+        // for smoothing value that updates during the lifecycle
+        // envelope data
+        //setEnvelopeData(static_cast<int>(ps.sustainRatio));
     }
 
     //void Grain::setEnvelopeData(const float sustainRatio) noexcept {}
 
+    /*
     void Grain::updateParams(const SmoothedParameters& params) noexcept
     {
         speed = params.speed;
         //setEnvelopeData(params.sustainRatio);
     }
+    */
     const float Grain::getReadPosition() const noexcept { return readPosition; }
 
     void Grain::nextReadPosition() noexcept
