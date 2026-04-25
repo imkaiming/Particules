@@ -6,12 +6,10 @@
 
 namespace particules
 {
-    VoiceManager::VoiceManager(SpawnGrainCallback c) : spawnCallback{c}
+    VoiceManager::VoiceManager(SpawnGrainCallback c) : spawnCallback{c}, baseNote{60.f}, globalSampleCounter{0}
     {
         for(int i = 0; i < numPitchRatio; ++i)
-        {
             pitchRatioLUT[i] = std::pow(2.0f, (i - 60) / 12.0f);
-        }
     }
 
     void VoiceManager::setSampleRate(double sampleRate)
@@ -71,12 +69,8 @@ namespace particules
         // same note could exist on multiple voices
         // sustain pedal, stuck notes...
         for(GranularVoice& voice : voices)
-        {
             if(voice.isBusy() && voice.getCurrentNote() == midiNoteNumber)
-            {
                 voice.noteOff();
-            }
-        }
     }
 
     void VoiceManager::allNotesOff()
@@ -134,7 +128,7 @@ namespace particules
     GranularVoice* VoiceManager::findVoiceByNote(int noteNumber)
     {
         for(GranularVoice& voice : voices)
-            if(!voice.isBusy() && voice.getCurrentNote() == noteNumber)
+            if(voice.isBusy() && voice.getCurrentNote() == noteNumber)
                 return &voice;
         return nullptr;
     }
