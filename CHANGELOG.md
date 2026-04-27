@@ -2,7 +2,7 @@
 
 ---
 
-## [0.4.2] - 2026-xx-xx
+## [0.4.2] - 2026-04-27
 
 ### Added 
 - `std::tread` to load `processingLoadedFile()` so the GUI won't freeze during the process
@@ -10,10 +10,11 @@
 ### Changed
 - ADSR and emission parameters are moving from sample-based to block-based accuracy
 - `juce::Random` is used once, not need to be cached in the `GrainProcessor` as member variable
+- terms like `garbageCollector` and `zombie` respectively becomes `releaseQueue` and `pendingDeletions`for cleaner semantic
+
 
 ### Fixed
 - Removed the `juce::Random::GetSystemRandom().nextFloat()` to compute the Y axis of the visual grain (hidden spin lock in it)
-
 
 ---
 
