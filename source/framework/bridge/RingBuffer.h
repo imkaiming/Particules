@@ -12,8 +12,8 @@ namespace particules
     template <typename T, size_t Size = 16>
     class RingBuffer
     {
-        static_assert(
-            std::is_trivially_copyable<T>(), "RingBuffer<T> : T must be trivially copyable. No vector or array");
+        static_assert(std::is_pointer_v<T>, "T must be a pointer");
+
     public:
         RingBuffer() = default;
 
