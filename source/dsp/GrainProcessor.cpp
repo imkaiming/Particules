@@ -18,6 +18,9 @@ namespace particules
         : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}, voiceManager{vm}, verticalAxisIndex{0}
     {
         reset();
+        
+        juce::Random rng;
+
         for(int i = 0; i < RANDOM_LUT_SIZE; ++i)
             randomVerticalAxis[i] = rng.nextFloat();
     }
