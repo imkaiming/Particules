@@ -4,9 +4,11 @@
 
 ### Added 
 
-
 ### Changed
 - ADSR and emission parameters are moving from sample-based to block-based accuracy
+
+### Fixed
+- Removed the `juce::Random::GetSystemRandom().nextFloat()` to compute the Y axis of the visual grain (hidden spin lock in it)
 
 ## [0.4.1] - 2026-04-25
 

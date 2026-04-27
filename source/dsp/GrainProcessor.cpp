@@ -15,9 +15,11 @@
 namespace particules
 {
     GrainProcessor::GrainProcessor(GrainPool& p, PositionModulator& pm, GrainEnvelope& lut, VoiceManager& vm)
-        : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}, voiceManager{vm}
+        : pool{p}, activeCount{0}, posMod{pm}, envLut{lut}, voiceManager{vm}, verticalAxisIndex{0}
     {
         reset();
+        for(int i = 0; i < RANDOM_LUT_SIZE; ++i)
+            randomVerticalAxis[i] = rng.nextFloat();
     }
 
     void GrainProcessor::reset() noexcept
@@ -29,7 +31,7 @@ namespace particules
     }
 
     void GrainProcessor::process(
-        int currentSample, int outputNumChannels, float* const* outputPtrs/*, const SmoothedParameters& params*/)
+        int currentSample, int outputNumChannels, float* const* outputPtrs /*, const SmoothedParameters& params*/)
     {
         for(int i = activeCount - 1; i >= 0; --i) // backward iteration
         {
@@ -95,7 +97,8 @@ namespace particules
         grain->payload = payload;
         grain->payload->activeReaders.fetch_add(1, std::memory_order_relaxed);
 
-        visualY[handle.index] = juce::Random::getSystemRandom().nextFloat();
+        visualY[handle.index] = randomVerticalAxis[verticalAxisIndex++];
+        verticalAxisIndex = (verticalAxisIndex + 1) & (RANDOM_LUT_SIZE - 1); // act as modulo opoerator but bitwise
 
         // init the grain here before process with the snapshot
         grain->config(ps, posMod.getPhase(), indexVoice, static_cast<int>(ps.envMode), pitchRatio, gain);

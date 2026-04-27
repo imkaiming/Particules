@@ -31,6 +31,7 @@ namespace particules
         void removeVoice(const int index);
 
         static constexpr int SIZE = params::maxActiveGrains;
+        static constexpr int RANDOM_LUT_SIZE = 256;
 
         GrainEnvelope& envLut;
         PositionModulator& posMod;
@@ -41,5 +42,8 @@ namespace particules
         int activeCount;
 
         std::array<float, SIZE> visualY;
+
+        std::array<float, RANDOM_LUT_SIZE> randomVerticalAxis;
+        int verticalAxisIndex;
     };
 }

@@ -1,4 +1,4 @@
-#pragma once
+    #pragma once
 
 #include "framework/core/Core.h"
 #include "framework/core/PluginTypes.h"

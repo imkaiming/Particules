@@ -12,7 +12,7 @@ namespace particules
 {
     AudioFilePanel::AudioFilePanel(UIContext& uic)
         : uic{uic}, apvts{uic.apvts}, thumbnailComponent{uic}, grainVisualComponent{uic}, posParam{nullptr}, spanParam{nullptr},
-          lastNumGrains{-1}, lastPos{-1.0f}, lastSpan{-1.0f}, numSamples{0}, uiState{uic.uiState}
+          lastNumGrains{-1}, lastPos{-1.0f}, lastSpan{-1.0f}, numSamples{0}, uiState{uic.uiState}, audioState{uic.audioState}, fui{uic.fui}
     {
         uiState.addChangeListener(this); // uistate send a message at setSource(file), audio file panel is listening
 
@@ -102,12 +102,12 @@ namespace particules
 
     void AudioFilePanel::changeListenerCallback(juce::ChangeBroadcaster* source)
     {
-        if(source == &uic.uiState)
+        if(source == &uiState)
         {
             if(uiState.isFileLoaded())
             {
                 numSamples = uic.audioState.getNumSamples();
-                const juce::File& currentFile = uic.uiState.getCurrentFile();
+                const juce::File& currentFile = uiState.getCurrentFile();
 
                 sliderOnWaveform->setAudioLoaded(true);
                 sliderOnWaveform->setEnabled(true);
@@ -146,15 +146,15 @@ namespace particules
     // or to avoid to trigger onValueChange 3000time with automations.
     void AudioFilePanel::timerCallback()
     {
-        const int numGrains = uic.audioState.getNumActiveGrains();
+        const int numGrains = audioState.getNumActiveGrains();
         if(numGrains != lastNumGrains)
         {
             numGrainsLabel.setText(str::formatted("%d", numGrains), juce::dontSendNotification);
             lastNumGrains = numGrains;
         }
 
-        const double totalSamples = static_cast<double>(uic.audioState.getNumSamples());
-        const double sampleRate = uic.audioState.getSampleRate();
+        const double totalSamples = static_cast<double>(audioState.getNumSamples());
+        const double sampleRate = audioState.getSampleRate();
 
         if(posParam != nullptr)
         {
@@ -200,13 +200,13 @@ namespace particules
         //fui.stop();
         //juce::RangedAudioParameter* playParameter = apvts.getParameter(params::play::id);
         //playParameter->setValueNotifyingHost(0.f);
-        //uic.fui.setPlaying(false);
+        //fui.setPlaying(false);
 
         for(str file : files)
         {
             if(isInterestedInFileDrag(file))
             {
-                uic.fui.loadFilePath(file);
+                fui.loadFilePath(file);
             }
         }
     }

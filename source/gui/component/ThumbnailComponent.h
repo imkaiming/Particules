@@ -40,7 +40,6 @@ namespace particules
 
         void changeListenerCallback(juce::ChangeBroadcaster*) override; // to change the waveform when changing the audio
 
-        //UIState& uiState;
         juce::AudioThumbnail& audioThumbnail;
         std::function<void()> onThumbnailReady;
         // Callback from the AudioFilePanel to activate function after the thumbnail has fully loaded

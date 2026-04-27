@@ -15,6 +15,8 @@
 namespace particules
 {
     class UIState;
+    class AudioState;
+    class FromUI;
     struct UIContext;
     class AudioFilePanel : public juce::Component,
                            public juce::FileDragAndDropTarget,
@@ -38,6 +40,10 @@ namespace particules
 
         UIContext& uic;
         /*const*/ UIState& uiState;
+        const AudioState& audioState;
+        FromUI& fui;
+
+
         ValueTreeState& apvts;
 
         ThumbnailComponent thumbnailComponent; // after the file is loaded draw the waveform

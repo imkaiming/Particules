@@ -48,20 +48,19 @@ namespace particules
     {
         GranularVoice* voice = findVoiceByNote(midiNoteNumber);
 
-        // 1 find next available voice
+        // find next available voice
         if(voice == nullptr)
             voice = findFreeVoice();
 
-        // 2. voice stealing
+        // voice stealing
         if(voice == nullptr)
             voice = findOldestVoice();
 
-        // 3. trigger the midi note
+        // trigger the midi note
         if(voice != nullptr)
         {
             int safeNote = std::clamp(midiNoteNumber, 0, 127);
             float pitch = pitchRatioLUT[safeNote];
-            //DBG("pitch ratio = " + (str)pitch);
             voice->noteOn(midiNoteNumber, velocity, pitch, globalSampleCounter);
         }
     }
