@@ -26,9 +26,9 @@ namespace particules
 
         void loadFile(const str&, AudioLoadedCallback, const juce::File&);
 
-        void processLoadingFile(juce::File&, AudioLoadedCallback);
+        void processLoadingFile(const juce::File&, AudioLoadedCallback);
 
-        std::unique_ptr<AudioBuffer> loadAudioFromFile(juce::File&);
+        std::unique_ptr<AudioBuffer> loadAudioFromFile(const juce::File&);
 
         void init(double, int) noexcept;
         void setSampleRate(double) noexcept;
@@ -44,7 +44,6 @@ namespace particules
         ChannelMixer channelMixer;
         std::unique_ptr<juce::FileChooser> chooser;
         juce::AudioFormatManager formatManager; // classe qui traite les formats de fichier tq wav, aiff, ogg, vorbis ou mp3
-
-        //JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioFileLoader)
+        //juce::ThreadPool threadPool{1};
     };
 }

@@ -23,7 +23,8 @@ namespace particules
             if(currentFile == file)
                 return;
 
-            processLoadingFile(file, onAudioLoaded);
+            std::thread([this, file, onAudioLoaded]() { processLoadingFile(file, onAudioLoaded); }).detach();
+            //threadPool.addJob([this, file, onAudioLoaded]() { processLoadingFile(file, onAudioLoaded); });
         });
     }
 
@@ -33,11 +34,13 @@ namespace particules
         if(currentFile == file)
             return;
 
-        processLoadingFile(file, onAudioLoaded);
+        std::thread([this, file, onAudioLoaded]() { processLoadingFile(file, onAudioLoaded); }).detach();
+        //threadPool.addJob([this, file, onAudioLoaded]() { processLoadingFile(file, onAudioLoaded); }); // very weird Heisenbug ????
     }
 
-    void AudioFileLoader::processLoadingFile(juce::File& file, AudioLoadedCallback onAudioLoaded)
+    void AudioFileLoader::processLoadingFile(const juce::File& file, AudioLoadedCallback onAudioLoaded)
     {
+        //DBG("THREAD POOL");
         if(file.existsAsFile())
         {
             std::unique_ptr<AudioBuffer> finalBufferPtr = loadAudioFromFile(file);
@@ -46,7 +49,7 @@ namespace particules
         }
     }
 
-    std::unique_ptr<AudioBuffer> AudioFileLoader::loadAudioFromFile(juce::File& file)
+    std::unique_ptr<AudioBuffer> AudioFileLoader::loadAudioFromFile(const juce::File& file)
     {
         std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(file));
 
@@ -57,8 +60,8 @@ namespace particules
         const double fileDuration = static_cast<double>(reader->lengthInSamples) / reader->sampleRate;
         if(fileDuration >= params::maxFileDuration)
         {
-            showErrorWindow("The file duration must not exceed " + str(params::maxFileDuration) + " seconds.\nYour file is currently "
-                            + str(fileDuration, 2) + " seconds.");
+            showErrorWindow("The file duration must not exceed " + str(params::maxFileDuration)
+                            + " seconds.\nYour file is currently " + str(fileDuration, 2) + " seconds.");
             return nullptr;
         }
 
@@ -104,7 +107,7 @@ namespace particules
         std::unique_ptr<juce::AudioBuffer<float>> finalBuffer =
             std::make_unique<juce::AudioBuffer<float>>(mixedChannels, resampledSamples + 1);
 
-        // 6. resampling is bypassed if sample rate is identical 
+        // 6. resampling is bypassed if sample rate is identical
         if(std::abs(ratio - 1.0) < 0.00001)
         {
             for(int ch = 0; ch < mixedChannels; ++ch)
