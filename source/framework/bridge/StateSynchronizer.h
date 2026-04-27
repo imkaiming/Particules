@@ -35,7 +35,7 @@ namespace particules
 
         AudioPayload* lastSeenPayload;
 
-        std::vector<AudioPayload*> zombies;
+        std::vector<AudioPayload*> pendingDeletions;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StateSynchronizer)
     };

@@ -42,7 +42,7 @@ namespace particules
         };
         fui.onIsPlaying = [this]() -> float { return paramState.getPlay() > 0.5f ? 1.0f : 0.f; };
 
-        synchronizer.start(10);
+        synchronizer.start(4); // 4hz = 250ms
     }
 
     PluginCore::~PluginCore()

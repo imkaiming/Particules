@@ -24,26 +24,26 @@ namespace particules
 
     void StateSynchronizer::timerCallback()
     {
-#ifdef TRACY_ENABLE 
-        ZoneScopedN("Zombie Garbage Collection");
+#ifdef TRACY_ENABLE
+        ZoneScopedN("Garbage Queue");
 #endif
 
         // 1. emptying the garabage collector
         while(AudioPayload* oldPayload = garbageCollector.pop())
-            zombies.push_back(oldPayload);
+            pendingDeletions.push_back(oldPayload);
         //delete oldPayload;
 
-        // 2. erasing only grains that are not active
-        zombies.erase(std::remove_if(zombies.begin(), zombies.end(),
-                          [](AudioPayload* p) {
-                              if(p->activeReaders.load(std::memory_order_acquire) == 0)
-                              {
-                                  delete p;
-                                  return true;
-                              }
-                              return false; // some grains are still actives. The deletion is delayed to the next tick.
-                          }),
-            zombies.end());
+        // 2. verifying no grains are currently reading the payload before deleting it
+        pendingDeletions.erase(std::remove_if(pendingDeletions.begin(), pendingDeletions.end(),
+                                   [](AudioPayload* p) {
+                                       if(p->activeReaders.load(std::memory_order_acquire) == 0)
+                                       {
+                                           delete p;
+                                           return true;
+                                       }
+                                       return false; // some grains are still actives. The deletion is delayed to the next tick.
+                                   }),
+            pendingDeletions.end());
 
         // 3. state syncing
         AudioPayload* playingNow = currentPayload.load(std::memory_order_acquire);
