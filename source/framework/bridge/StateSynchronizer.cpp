@@ -12,7 +12,7 @@ namespace particules
 {
     StateSynchronizer::StateSynchronizer(
         std::atomic<AudioPayload*>& payload, RingBuffer<AudioPayload*>& gc, AudioState& as, UIState& us)
-        : currentPayload{payload}, garbageCollector{gc}, audioState{as}, uiState{us}, lastSeenPayload{nullptr}
+        : currentPayload{payload}, releaseQueue{gc}, audioState{as}, uiState{us}, lastSeenPayload{nullptr}
     {
     }
 
@@ -29,7 +29,7 @@ namespace particules
 #endif
 
         // 1. emptying the garabage collector
-        while(AudioPayload* oldPayload = garbageCollector.pop())
+        while(AudioPayload* oldPayload = releaseQueue.pop())
             pendingDeletions.push_back(oldPayload);
         //delete oldPayload;
 
@@ -51,7 +51,7 @@ namespace particules
         {
             audioState.setNumSamples(playingNow->numSamples);
             audioState.setNumChannels(playingNow->numChannels);
-            uiState.setSource(playingNow->file);
+            uiState.setSource(playingNow->file); // retrigger the new audio thumbnail repaint
             lastSeenPayload = playingNow;
         }
     }

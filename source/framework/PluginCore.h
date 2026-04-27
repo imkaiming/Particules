@@ -64,7 +64,7 @@ namespace particules
 
         // lock free queues
         RingBuffer<AudioPayload*> incomingBuffer;
-        RingBuffer<AudioPayload*> garbageCollector;
+        RingBuffer<AudioPayload*> releaseQueue;
         PingPongBuffer<VisualSnapshot> visualBuffer;
         std::atomic<AudioPayload*> currentPayload;
 

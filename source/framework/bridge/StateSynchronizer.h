@@ -28,7 +28,7 @@ namespace particules
 
     private:
         std::atomic<AudioPayload*>& currentPayload;
-        RingBuffer<AudioPayload*>& garbageCollector;
+        RingBuffer<AudioPayload*>& releaseQueue;
 
         AudioState& audioState;
         UIState& uiState;
