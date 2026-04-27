@@ -64,7 +64,7 @@ namespace particules
         ParameterSnapshot ps;
 
         // state params
-        ps.play = getPlay() > 0.5f ? true : false;
+        //ps.isAuditionning = getAuditionning() > 0.5f ? true : false;
         ps.playback = getPlayback() > 0.5f ? 1.f : -1.f;
         //// get Buffer data
         // position data

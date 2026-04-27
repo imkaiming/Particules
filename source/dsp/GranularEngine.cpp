@@ -45,7 +45,7 @@ namespace particules
 
         //setTargetSmoothedValue(ps);
         posMod.setParameters(ps.traversalMode, ps.traversalFreq);
-        voiceManager.setParameters(ps.attack, ps.decay, ps.sustain, ps.release);
+        voiceManager.setParameters(ps.attack, ps.decay, ps.sustain, ps.release, ps.emission);
 
         // main loop
         for(int currentSample = 0; currentSample < bufferSize; currentSample++)

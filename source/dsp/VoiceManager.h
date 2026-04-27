@@ -10,7 +10,7 @@
 namespace particules
 {
     struct ParameterSnapshot;
-    struct SmoothedParameters;
+    //struct SmoothedParameters;
     struct AudioPayload;
     class VoiceManager
     {
@@ -29,20 +29,21 @@ namespace particules
         int getNumActiveNotes() const noexcept;
         bool isVoiceDead(int index) const noexcept;
         float getVoiceGain(int index) const noexcept;
-        void setParameters(float a, float d, float s, float r) noexcept;
+        void setParameters(float a, float d, float s, float r, float e) noexcept;
 
     private:
+        static constexpr int numPitchRatio = 128;
+
         GranularVoice* findOldestVoice();
         GranularVoice* findFreeVoice();
         GranularVoice* findVoiceByNote(int noteNumber);
 
         SpawnGrainCallback spawnCallback;
+        
         std::array<GranularVoice, params::maxMidiVoice> voices;
 
-        uint32_t globalSampleCounter = 0;
-
-        static constexpr int numPitchRatio = 128;
+        uint32_t globalSampleCounter;
         std::array<float, numPitchRatio> pitchRatioLUT;
-        float baseNote = 60.f; // C3
+        float baseNote; // C3
     };
 }

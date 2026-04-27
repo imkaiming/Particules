@@ -4,10 +4,10 @@
 #include "dsp/Grain.h"
 #include "utils/struct/ParameterSnapshot.h"
 
-using namespace particules;
-
-namespace audio_plugin_test
+namespace particulesTest
 {
+    using namespace particules;
+
     struct GrainFixture
     {
         Grain grain;

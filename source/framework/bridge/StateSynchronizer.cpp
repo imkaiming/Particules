@@ -12,7 +12,7 @@ namespace particules
 {
     StateSynchronizer::StateSynchronizer(
         std::atomic<AudioPayload*>& payload, RingBuffer<AudioPayload*>& gc, AudioState& as, UIState& us)
-        : currentPayload{payload}, garbageCollector{gc}, audioState{as}, uiState{us}, lastSeenPayload{nullptr}
+        : currentPayload{payload}, releaseQueue{gc}, audioState{as}, uiState{us}, lastSeenPayload{nullptr}
     {
     }
 
@@ -24,26 +24,26 @@ namespace particules
 
     void StateSynchronizer::timerCallback()
     {
-#ifdef TRACY_ENABLE 
-        ZoneScopedN("Zombie Garbage Collection");
+#ifdef TRACY_ENABLE
+        ZoneScopedN("Garbage Queue");
 #endif
 
         // 1. emptying the garabage collector
-        while(AudioPayload* oldPayload = garbageCollector.pop())
-            zombies.push_back(oldPayload);
+        while(AudioPayload* oldPayload = releaseQueue.pop())
+            pendingDeletions.push_back(oldPayload);
         //delete oldPayload;
 
-        // 2. erasing only grains that are not active
-        zombies.erase(std::remove_if(zombies.begin(), zombies.end(),
-                          [](AudioPayload* p) {
-                              if(p->activeReaders.load(std::memory_order_acquire) == 0)
-                              {
-                                  delete p;
-                                  return true;
-                              }
-                              return false; // some grains are still actives. The deletion is delayed to the next tick.
-                          }),
-            zombies.end());
+        // 2. verifying no grains are currently reading the payload before deleting it
+        pendingDeletions.erase(std::remove_if(pendingDeletions.begin(), pendingDeletions.end(),
+                                   [](AudioPayload* p) {
+                                       if(p->activeReaders.load(std::memory_order_acquire) == 0)
+                                       {
+                                           delete p;
+                                           return true;
+                                       }
+                                       return false; // some grains are still actives. The deletion is delayed to the next tick.
+                                   }),
+            pendingDeletions.end());
 
         // 3. state syncing
         AudioPayload* playingNow = currentPayload.load(std::memory_order_acquire);
@@ -51,7 +51,7 @@ namespace particules
         {
             audioState.setNumSamples(playingNow->numSamples);
             audioState.setNumChannels(playingNow->numChannels);
-            uiState.setSource(playingNow->file);
+            uiState.setSource(playingNow->file); // retrigger the new audio thumbnail repaint
             lastSeenPayload = playingNow;
         }
     }

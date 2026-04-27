@@ -45,7 +45,6 @@ namespace particules
         FromUI(FromUI&&) = delete;
         FromUI& operator=(FromUI&&) = delete;
 
-        //private:
         std::function<void()> onLoadFile;
         std::function<void(const juce::String& path)> onLoadFilePath;
         std::function<float()> onIsPlaying;

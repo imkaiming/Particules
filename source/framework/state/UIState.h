@@ -29,7 +29,6 @@ namespace particules
 
         juce::AudioThumbnail& getAudioThumbnail() noexcept { return audioThumbnail; }
         const juce::File& getCurrentFile() const noexcept { return currentFile; }
-        void setPayload(AudioPayload*);
 
     private:
         void setFileLoaded(bool b);
@@ -40,7 +39,6 @@ namespace particules
         juce::AudioThumbnail audioThumbnail;
 
         const PingPongBuffer<VisualSnapshot>* visualBuffer;
-        std::atomic<AudioPayload*> currentPayload;
         std::atomic<bool> fileLoaded;
         juce::File currentFile;
 

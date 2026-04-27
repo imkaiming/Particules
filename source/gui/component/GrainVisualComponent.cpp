@@ -13,10 +13,7 @@ namespace particules
         : uiState{uic.uiState}, numSamples{uic.audioState.getNumSamples()}, invWidthSamples{0.f}, colour{colours::lavender}
     {
         setOpaque(false);
-        //startTimerHz(static_cast<int>(gui::refreshRate));
     }
-
-    //GrainVisualComponent::~GrainVisualComponent() { stopTimer(); }
 
     void GrainVisualComponent::paint(juce::Graphics& g)
     {
@@ -46,13 +43,9 @@ namespace particules
             invWidthSamples = 0.f;
     }
 
-    //void GrainVisualComponent::timerCallback() { repaint(); }
-
     void GrainVisualComponent::resized()
     {
         if(numSamples > 0)
             invWidthSamples = static_cast<float>(getWidth()) / static_cast<float>(numSamples);
     }
 }
-
-//void GrainVisualComponent::setGrains(juce::Array<Grain*>* grains) { this->grains = grains; }

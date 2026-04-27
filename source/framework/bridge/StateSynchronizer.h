@@ -28,14 +28,14 @@ namespace particules
 
     private:
         std::atomic<AudioPayload*>& currentPayload;
-        RingBuffer<AudioPayload*>& garbageCollector;
+        RingBuffer<AudioPayload*>& releaseQueue;
 
         AudioState& audioState;
         UIState& uiState;
 
         AudioPayload* lastSeenPayload;
 
-        std::vector<AudioPayload*> zombies;
+        std::vector<AudioPayload*> pendingDeletions;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(StateSynchronizer)
     };

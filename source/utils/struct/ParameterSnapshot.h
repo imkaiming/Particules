@@ -7,7 +7,7 @@ namespace particules
 {
     struct ParameterSnapshot
     {
-        bool play;
+        bool isAuditionning;
         int durationSamples;
         int startPositionSamples;
         int spanSamples;

@@ -16,8 +16,8 @@ namespace particules
     PluginCore::PluginCore(juce::AudioProcessor& p)
         : proc{p}, apvts(p, nullptr, "Parameters", createParameterLayout()), paramState{}, granularEngine{faudio}, audioState{},
           uiState{}, uic{apvts, paramState, audioState, uiState, fui, faudio}, loader{}, debugPresetLoaded{false},
-          incomingBuffer{}, garbageCollector{}, currentPayload{nullptr}, wasAuditioning{false},
-          synchronizer{currentPayload, garbageCollector, audioState, uiState}, faudio{audioState, visualBuffer}
+          incomingBuffer{}, releaseQueue{}, currentPayload{nullptr}, wasAuditioning{false},
+          synchronizer{currentPayload, releaseQueue, audioState, uiState}, faudio{audioState, visualBuffer}
     {
         onAudioLoadedCallback = [this](std::unique_ptr<AudioBuffer> buffer, const juce::File& loadedFile) {
             AudioPayload* newPayload = new AudioPayload();
@@ -42,7 +42,7 @@ namespace particules
         };
         fui.onIsPlaying = [this]() -> float { return paramState.getPlay() > 0.5f ? 1.0f : 0.f; };
 
-        synchronizer.start(10);
+        synchronizer.start(4); // 4hz = 250ms
     }
 
     PluginCore::~PluginCore()
@@ -52,7 +52,7 @@ namespace particules
         while(AudioPayload* payload = incomingBuffer.pop())
             delete payload;
 
-        while(AudioPayload* payload = garbageCollector.pop())
+        while(AudioPayload* payload = releaseQueue.pop())
             delete payload;
 
         AudioPayload* active = currentPayload.exchange(nullptr);
@@ -72,7 +72,7 @@ namespace particules
 
     void PluginCore::processBlock(AudioBuffer& outputBuffer, juce::MidiBuffer& midiBuffer)
     {
-#ifdef TRACY_ENABLE 
+#ifdef TRACY_ENABLE
         ZoneScoped; // tracy submodules
 #endif
 
@@ -86,7 +86,7 @@ namespace particules
         while(AudioPayload* next = incomingBuffer.pop())
         {
             if(payload)
-                garbageCollector.push(payload);
+                releaseQueue.push(payload);
 
             payload = next;
         }

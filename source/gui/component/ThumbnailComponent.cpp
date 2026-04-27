@@ -12,17 +12,14 @@
 namespace particules
 {
     ThumbnailComponent::ThumbnailComponent(UIContext& uic)
-        : audioThumbnail{uic.uiState.getAudioThumbnail()}/*, uiState{uic.uiState}*/
+        : audioThumbnail{uic.uiState.getAudioThumbnail()}
     {
         audioThumbnail.addChangeListener(this);
 
         setOpaque(true);
-        //addAndMakeVisible(&grainVisualComponent);
-        //grainVisualComponent.toBack();
 
         if(audioThumbnail.isFullyLoaded())
             repaint();
-
 
         noFileLabel.setText("No File Loaded", juce::dontSendNotification);
         noFileLabel.setJustificationType(juce::Justification::centred);

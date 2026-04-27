@@ -6,12 +6,10 @@
 
 namespace particules
 {
-    VoiceManager::VoiceManager(SpawnGrainCallback c) : spawnCallback{c}
+    VoiceManager::VoiceManager(SpawnGrainCallback c) : spawnCallback{c}, baseNote{60.f}, globalSampleCounter{0}
     {
         for(int i = 0; i < numPitchRatio; ++i)
-        {
             pitchRatioLUT[i] = std::pow(2.0f, (i - 60) / 12.0f);
-        }
     }
 
     void VoiceManager::setSampleRate(double sampleRate)
@@ -23,10 +21,13 @@ namespace particules
         }
     }
 
-    void VoiceManager::setParameters(float a, float d, float s, float r) noexcept
+    void VoiceManager::setParameters(float a, float d, float s, float r, float e) noexcept
     {
         for(GranularVoice& voice : voices)
+        {
             voice.setADSR(a, d, s, r);
+            voice.setEmission(e);
+        }
     }
 
     void VoiceManager::process(
@@ -47,20 +48,19 @@ namespace particules
     {
         GranularVoice* voice = findVoiceByNote(midiNoteNumber);
 
-        // 1 find next available voice
+        // find next available voice
         if(voice == nullptr)
             voice = findFreeVoice();
 
-        // 2. voice stealing
+        // voice stealing
         if(voice == nullptr)
             voice = findOldestVoice();
 
-        // 3. trigger the midi note
+        // trigger the midi note
         if(voice != nullptr)
         {
             int safeNote = std::clamp(midiNoteNumber, 0, 127);
             float pitch = pitchRatioLUT[safeNote];
-            //DBG("pitch ratio = " + (str)pitch);
             voice->noteOn(midiNoteNumber, velocity, pitch, globalSampleCounter);
         }
     }
@@ -71,12 +71,8 @@ namespace particules
         // same note could exist on multiple voices
         // sustain pedal, stuck notes...
         for(GranularVoice& voice : voices)
-        {
             if(voice.isBusy() && voice.getCurrentNote() == midiNoteNumber)
-            {
                 voice.noteOff();
-            }
-        }
     }
 
     void VoiceManager::allNotesOff()
@@ -134,7 +130,7 @@ namespace particules
     GranularVoice* VoiceManager::findVoiceByNote(int noteNumber)
     {
         for(GranularVoice& voice : voices)
-            if(!voice.isBusy() && voice.getCurrentNote() == noteNumber)
+            if(voice.isBusy() && voice.getCurrentNote() == noteNumber)
                 return &voice;
         return nullptr;
     }

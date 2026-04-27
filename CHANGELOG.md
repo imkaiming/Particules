@@ -1,5 +1,23 @@
 # Changelog
 
+---
+
+## [0.4.2] - 2026-04-27
+
+### Added 
+- `std::tread` to load `processingLoadedFile()` so the GUI won't freeze during the process
+
+### Changed
+- ADSR and emission parameters are moving from sample-based to block-based accuracy
+- `juce::Random` is used once, not need to be cached in the `GrainProcessor` as member variable
+- terms like `garbageCollector` and `zombie` respectively becomes `releaseQueue` and `pendingDeletions`for cleaner semantic
+
+
+### Fixed
+- Removed the `juce::Random::GetSystemRandom().nextFloat()` to compute the Y axis of the visual grain (hidden spin lock in it)
+
+---
+
 ## [0.4.1] - 2026-04-25
 
 ### Added
@@ -12,7 +30,9 @@
 - ADSR parameters are now dispatched directly to the `VoiceManager` at the block start to update all voices simultaneously
 
 ### Fixed
-- voice stealing logic in `findOldestVoice()` that incorrectly targeted free voices instead of busy ones
+- voice stealing logic in `findOldestVoice` that incorrectly targeted free voices instead of busy ones
+
+---
 
 ## [0.4.0] - 2026-04-21
 
@@ -45,6 +65,7 @@
 - critical nullptr dereference crash when the plugin processes an empty state
 - failing unit tests caused by uninitialized playback variables in test fixtures
 
+---
 
 ## [0.3.2] - 2026-04-18
 
@@ -58,6 +79,8 @@
 
 ### Fixed
 - Scheduler now reset the phase not the user parameters
+
+---
 
 ## [0.3.1] - 2026-04-17
 
@@ -73,6 +96,7 @@
 - Crash when swapping to a shorter audio file 
 - Instant loading bypass when the source file matches the DAW's sample rate
 
+---
 
 ## [0.3.0] - 2026-04-15
 

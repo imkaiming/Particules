@@ -1,20 +1,19 @@
 #include "UIState.h"
 
+#include "framework/bridge/PingPongBuffer.h"
 #include "utils/struct/AudioPayload.h"
 #include "utils/struct/VisualSnapshot.h"
-#include "framework/bridge/PingPongBuffer.h"
 
 namespace particules
 {
     UIState::UIState()
         : formatManager{}, fileLoaded{false}, cache{10}, visualBuffer{nullptr},
-          audioThumbnail{samplesPerThumbnail, formatManager, cache}, currentPayload{nullptr} /*, visualBuffer{vb}*/
+          audioThumbnail{samplesPerThumbnail, formatManager, cache}
     {
         formatManager.registerBasicFormats();
     }
     void UIState::setSource(const juce::File& f) noexcept
     {
-        //audioThumbnail.setSource(std::make_unique<juce::FileInputSource>(f));
         audioThumbnail.setSource(new juce::FileInputSource(f));
         currentFile = f;
         setFileLoaded(true);
@@ -30,5 +29,4 @@ namespace particules
 
     void UIState::init(const PingPongBuffer<VisualSnapshot>* vb) noexcept { visualBuffer = vb; }
 
-    void UIState::setPayload(AudioPayload* payload) { currentPayload.store(payload, std::memory_order_relaxed); }
 }

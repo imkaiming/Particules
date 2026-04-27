@@ -2,13 +2,13 @@
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
 #include "dsp/Scheduler.h"
-#include "utils/struct/ParameterSnapshot.h"
 #include "utils/struct/AudioPayload.h"
+#include "utils/struct/ParameterSnapshot.h"
 
-using namespace particules;
-
-namespace audio_plugin_test
+namespace particulesTest
 {
+    using namespace particules;
+
     struct SchedulerFixture
     {
         ParameterSnapshot snapshot;
@@ -17,7 +17,6 @@ namespace audio_plugin_test
         int index = -1;
         float pitch = 1.0f;
         float gain = 1.0f;
-
 
         SchedulerFixture()
         {
@@ -40,7 +39,7 @@ namespace audio_plugin_test
     {
         Scheduler scheduler;
         scheduler.setSampleRate(sampleRate);
-        scheduler.setEmission(0.f); 
+        scheduler.setEmission(0.f);
 
         for(int i = 0; i < static_cast<int>(sampleRate); ++i)
         {
@@ -182,7 +181,7 @@ namespace audio_plugin_test
         // Au bout de la seconde moitié, le 2ème grain est parti.
         REQUIRE(spawnCount == 1);
     }
-    
+
     // 5. BAD STATE AND C++ SAFETY
     TEST_CASE_METHOD(SchedulerFixture, "tick before setSampleRate does not explode", "[scheduler]")
     {
@@ -204,7 +203,7 @@ namespace audio_plugin_test
     TEST_CASE_METHOD(SchedulerFixture, "callback receives correct snapshot reference", "[scheduler]")
     {
         Scheduler scheduler;
-        scheduler.setEmission(params::emission::max); 
+        scheduler.setEmission(params::emission::max);
         scheduler.setSampleRate(sampleRate);
 
         ParameterSnapshot captured;
