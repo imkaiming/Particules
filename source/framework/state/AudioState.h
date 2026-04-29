@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "utils/struct/AudioStateSnapshot.h"
+//#include "utils/struct/AudioStateSnapshot.h"
 #include "framework/core/Core.h"
 
 // own audio runtime flags
@@ -18,7 +18,7 @@ namespace particules
         AudioState();
         ~AudioState() = default;
 
-        AudioStateSnapshot getSnapshot() const noexcept;
+        //AudioStateSnapshot getSnapshot() const noexcept;
 
         //void setIsPlaying(bool b) noexcept { isPlaying.store(b, std::memory_order_relaxed); }
         void setIsGrainsEmpty(bool b) noexcept { isGrainsEmpty.store(b, std::memory_order_relaxed); }

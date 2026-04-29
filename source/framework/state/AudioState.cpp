@@ -7,14 +7,14 @@ namespace particules
     {
     }
 
-    AudioStateSnapshot AudioState::getSnapshot() const noexcept
-    {
-        AudioStateSnapshot snapshot;
+    //AudioStateSnapshot AudioState::getSnapshot() const noexcept
+    //{
+    //    AudioStateSnapshot snapshot;
 
-        snapshot.sampleRate = getSampleRate();
-        snapshot.inputNumSamples = getNumSamples();
-        snapshot.inputNumChannels = getNumChannels();
+    //    snapshot.sampleRate = getSampleRate();
+    //    snapshot.inputNumSamples = getNumSamples();
+    //    snapshot.inputNumChannels = getNumChannels();
 
-        return snapshot;
-    }
+    //    return snapshot;
+    //}
 }

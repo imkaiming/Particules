@@ -36,7 +36,9 @@ namespace particules
         // 2. verifying no grains are currently reading the payload before deleting it
         pendingDeletions.erase(std::remove_if(pendingDeletions.begin(), pendingDeletions.end(),
                                    [](AudioPayload* p) {
-                                       if(p->activeReaders.load(std::memory_order_acquire) == 0)
+                                       const int readers = p->activeReaders.load(std::memory_order_acquire);
+                                       jassert(readers >= 0); // should never be negative
+                                       if(readers == 0) // defensive guards
                                        {
                                            delete p;
                                            return true;

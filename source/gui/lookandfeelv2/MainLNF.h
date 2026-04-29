@@ -78,8 +78,8 @@ namespace particules
         void drawJitterArc(juce::Graphics& g, float cx, float cy, float baseArcRadius, float startAngle, float endAngle,
             float primaryAngle, float jitterAmount, float baseLineWidth = 2.f) const;
 
-        void drawArcGlow(juce::Graphics& g, const juce::Path& path, color c, float width, int steps = 8,
-            float spreadMultiplier = 12.0f, float alphaBase = 0.1f) const;
+        //void drawArcGlow(juce::Graphics& g, const juce::Path& path, color c, float width, int steps = 8,
+        //    float spreadMultiplier = 12.0f, float alphaBase = 0.1f) const;
 
         void drawColoredArc(juce::Graphics& g, float cx, float cy, float radius, float startAngle, float endAngle, color c,
             float thickness = 2.f) const;

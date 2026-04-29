@@ -33,6 +33,7 @@ namespace particules
         else
             interOnSet = 0.0;
 
+        // clamp the phase to interOnSet  
         if(phase > interOnSet)
             phase = interOnSet;
     }

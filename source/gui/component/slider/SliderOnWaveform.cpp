@@ -1,6 +1,8 @@
 #include "SliderOnWaveform.h"
-#include "../../lookandfeelv2/Colours.h"
+
 #include <juce_core/juce_core.h>
+
+#include "gui/lookandfeelv2/Colours.h"
 
 namespace particules
 {
