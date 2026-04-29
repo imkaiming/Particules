@@ -68,7 +68,7 @@ namespace particules
         ps.playback = getPlayback() > 0.5f ? 1.f : -1.f;
         //// get Buffer data
         // position data
-        ps.inputNumSamples = payload->numSamples; // temporary
+        ps.bufferNumSamples = payload->numSamples; // temporary
         ps.startPositionSamples = static_cast<int>(getNormalizedStartPosition() * payload->numSamples);
         ps.spanSamples = static_cast<int>(getNormalizedSpan() * payload->numSamples);
 

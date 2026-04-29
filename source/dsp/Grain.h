@@ -44,7 +44,7 @@ namespace particules
         int sustainWidthSamples; // définie la taille des rampes d'amplitude en entré et en sortie du grain
         int fadeInSamples; // 0 to fadeIn
         int fadeOutSamples; // fadeOut to durationSamples
-        int inputNumSamples;
+        int bufferNumSamples; // total lenght of the input buffer 
         float playback;
         //int inputNumChannels;
 

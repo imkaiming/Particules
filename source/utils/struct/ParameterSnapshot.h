@@ -18,7 +18,7 @@ namespace particules
         float speed;
         float sustainRatio;
         float traversalFreq;
-        int inputNumSamples;
+        int bufferNumSamples;
         float playback;
         float attack;
         float decay;

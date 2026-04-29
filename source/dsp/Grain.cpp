@@ -5,7 +5,7 @@ namespace particules
 {
     Grain::Grain()
         : durationSamples{0}, startPositionSamples{0}, speed{1.f}, sustainWidthSamples{0}, span{0}, fadeInSamples{0},
-          fadeOutSamples{0}, elapsedSamples{0}, readPosition{0.f}, inputNumSamples{0}, effectiveSpeed{1.f}, playback{1},
+          fadeOutSamples{0}, elapsedSamples{0}, readPosition{0.f}, bufferNumSamples{0}, effectiveSpeed{1.f}, playback{1},
           payload{nullptr}, voiceID{-1}, envID{-1}, pitchRatio{1.0f}, gain{1.0f}
     {
         reset();
@@ -20,7 +20,7 @@ namespace particules
         fadeInSamples = 0;
         fadeOutSamples = 0;
         generation = 0;
-        inputNumSamples = 0;
+        bufferNumSamples = 0;
         speed = 1.f;
         readPosition = 0.f;
         effectiveSpeed = 1.0f;
@@ -34,7 +34,7 @@ namespace particules
     {
         this->elapsedSamples = 0;
 
-        this->inputNumSamples = ps.inputNumSamples;
+        this->bufferNumSamples = ps.bufferNumSamples;
         this->durationSamples = ps.durationSamples;
 
         this->voiceID = voiceID;
@@ -44,7 +44,7 @@ namespace particules
 
         // position data
         const int positionModulationSamples = static_cast<int>(normalizedPosMod * ps.spanSamples);
-        this->startPositionSamples = (ps.startPositionSamples + positionModulationSamples) % inputNumSamples;
+        this->startPositionSamples = (ps.startPositionSamples + positionModulationSamples) % bufferNumSamples;
         this->readPosition = static_cast<float>(startPositionSamples);
         this->span = ps.spanSamples;
 
@@ -80,12 +80,12 @@ namespace particules
         elapsedSamples++;
         readPosition += effectiveSpeed;
 
-        while(readPosition >= static_cast<float>(inputNumSamples))
-            readPosition -= static_cast<float>(inputNumSamples);
+        while(readPosition >= static_cast<float>(bufferNumSamples))
+            readPosition -= static_cast<float>(bufferNumSamples);
 
         // effective speed can be negative
         while(readPosition < 0.0f)
-            readPosition += static_cast<float>(inputNumSamples);
+            readPosition += static_cast<float>(bufferNumSamples);
     }
 
     // EnvelopeLookUpTable

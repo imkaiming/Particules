@@ -22,7 +22,7 @@ namespace particules
     void UIState::setFileLoaded(bool b)
     {
         fileLoaded.store(b, std::memory_order_relaxed);
-        sendChangeMessage(); // "a file is loaded you can now enable new logic"
+        sendChangeMessage(); // "an audio file has been successfully loaded"
     }
 
     const VisualSnapshot& UIState::getSnapshot() const noexcept { return visualBuffer->getReadBuffer(); }
