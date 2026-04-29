@@ -19,20 +19,20 @@ namespace particulesTest
 
         GrainFixture()
         {
-            snapshot.inputNumSamples = 1000;
+            snapshot.bufferNumSamples = 1000;
             snapshot.durationSamples = 100;
             snapshot.startPositionSamples = 0;
             snapshot.spanSamples = 0;
             snapshot.sustainRatio = 0.5f;
             snapshot.playback = 1.f;
-            snapshot.speed = 1.f;
+            //snapshot.speed = 1.f;
         }
     };
 
     // 1. MODULATION POSITION
     TEST_CASE_METHOD(GrainFixture, "Grain config applies position modulation and wrapping", "[grain]")
     {
-        snapshot.inputNumSamples = 100;
+        snapshot.bufferNumSamples = 100;
         snapshot.startPositionSamples = 80;
         snapshot.spanSamples = 50;
 
@@ -68,7 +68,7 @@ namespace particulesTest
 
     TEST_CASE_METHOD(GrainFixture, "Grain wraps read position when reaching buffer end", "[grain]")
     {
-        snapshot.inputNumSamples = 100;
+        snapshot.bufferNumSamples = 100;
         snapshot.startPositionSamples = 98;
         snapshot.playback = 1.f;
         pitch = 1.5f;
@@ -146,6 +146,47 @@ namespace particulesTest
                 grain.nextReadPosition();
             REQUIRE(grain.getPhase() == 1.0f);
         }
+    }
+
+    TEST_CASE_METHOD(GrainFixture, "Grain duration is strictly independent of pitch ratio", "[grain]")
+    {
+        Grain grainNormal;
+        Grain grainOctaveUp;
+        Grain grainOctaveDown;
+
+        // set up
+        grainNormal.config(snapshot, 0.0f, 0, 0, 1.0f, 1.0f); // normal
+        grainOctaveUp.config(snapshot, 0.0f, 0, 0, 2.0f, 1.0f); // +1 Octave (read 2x faster)
+        grainOctaveDown.config(snapshot, 0.0f, 0, 0, 0.5f, 1.0f); // -1 Octave (read 2x slower)
+
+        // 3. Mesure de la durée de vie (en nombre de samples)
+        int samplesNormal = 0;
+        while(!grainNormal.isExhausted() && samplesNormal < 96000)
+        {
+            grainNormal.nextReadPosition(); // Avance la phase et le pointeur de lecture
+            samplesNormal++;
+        }
+
+        int samplesOctaveUp = 0;
+        while(!grainOctaveUp.isExhausted() && samplesOctaveUp < 96000)
+        {
+            grainOctaveUp.nextReadPosition();
+            samplesOctaveUp++;
+        }
+
+        int samplesOctaveDown = 0;
+        while(!grainOctaveDown.isExhausted() && samplesOctaveDown < 96000)
+        {
+            grainOctaveDown.nextReadPosition();
+            samplesOctaveDown++;
+        }
+
+        // 4. Assertions strictes
+        // grains must traveled froward
+        REQUIRE(samplesNormal > 0);
+
+        REQUIRE(samplesNormal == samplesOctaveUp);
+        REQUIRE(samplesNormal == samplesOctaveDown);
     }
 
     TEST_CASE_METHOD(GrainFixture, "Grain envelope phase calculation : no sustain", "[grain]")
