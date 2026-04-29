@@ -18,12 +18,12 @@ namespace juce
 namespace particules
 {
     class UIState;
-    struct UIContext;
+    //struct UIContext;
     class ThumbnailComponent : public juce::Component,
                                private juce::ChangeListener //, public juce::AudioProcessorValueTreeState::Listener
     {
     public:
-        ThumbnailComponent(UIContext&);
+        ThumbnailComponent(juce::AudioThumbnail&);
         ~ThumbnailComponent() override;
 
         void setCallbackOnThumbnailReady(std::function<void()>);

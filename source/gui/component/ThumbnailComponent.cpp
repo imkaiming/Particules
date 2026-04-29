@@ -4,15 +4,14 @@
 #include <juce_graphics/juce_graphics.h> // graphics
 
 #include "framework/state/UIState.h"
-#include "utils/struct/UIContext.h"
+//#include "utils/struct/UIContext.h"
 #include "gui/lookandfeel/MyColours.h"
 #include "gui/lookandfeelv2/Colours.h"
 #include "gui/lookandfeelv2/MainLNF.h"
 
 namespace particules
 {
-    ThumbnailComponent::ThumbnailComponent(UIContext& uic)
-        : audioThumbnail{uic.uiState.getAudioThumbnail()}
+    ThumbnailComponent::ThumbnailComponent(juce::AudioThumbnail& thumbnail) : audioThumbnail{thumbnail}
     {
         audioThumbnail.addChangeListener(this);
 

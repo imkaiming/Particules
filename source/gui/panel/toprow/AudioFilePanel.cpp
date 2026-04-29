@@ -11,7 +11,8 @@
 namespace particules
 {
     AudioFilePanel::AudioFilePanel(UIContext& uic)
-        : uic{uic}, apvts{uic.apvts}, thumbnailComponent{uic}, grainVisualComponent{uic}, posParam{nullptr}, spanParam{nullptr},
+        : uic{uic}, apvts{uic.apvts}, thumbnailComponent{uic.uiState.getAudioThumbnail()}, grainVisualComponent{uic},
+          posParam{nullptr}, spanParam{nullptr},
           lastNumGrains{-1}, lastPos{-1.0f}, lastSpan{-1.0f}, numSamples{0}, uiState{uic.uiState}, audioState{uic.audioState}, fui{uic.fui}
     {
         uiState.addChangeListener(this); // uistate send a message at setSource(file), audio file panel is listening
@@ -106,7 +107,7 @@ namespace particules
         {
             if(uiState.isFileLoaded())
             {
-                numSamples = uic.audioState.getNumSamples();
+                numSamples = audioState.getNumSamples();
                 const juce::File& currentFile = uiState.getCurrentFile();
 
                 sliderOnWaveform->setAudioLoaded(true);
@@ -114,6 +115,7 @@ namespace particules
                 sliderOnWaveform->setAlpha(1.0f);
 
                 grainVisualComponent.setNumSamples(numSamples);
+                //thumbnailComponent.paint();
 
                 fileNameLabel.setText(currentFile.getFileName(), juce::dontSendNotification);
                 fileNameLabel.setVisible(true);
