@@ -22,8 +22,10 @@ namespace particules
         void paint(juce::Graphics& g) override;
 
     private:
+
         enum class HoverState { None, Position, Body, Edge };
         enum class DragMode { None, Position, SpanBody, SpanEdge };
+
         HoverState currentHover;
         DragMode dragMode;
 
@@ -39,8 +41,8 @@ namespace particules
         float dragStartPos;
         float dragStartSpan;
 
-        std::atomic<float>* rawPosValue = nullptr;
-        std::atomic<float>* rawSpanValue = nullptr;
+        std::atomic<float>* rawPosValue;
+        std::atomic<float>* rawSpanValue;
 
         std::unique_ptr<juce::ParameterAttachment> positionAttachment;
         std::unique_ptr<juce::ParameterAttachment> spanAttachment;

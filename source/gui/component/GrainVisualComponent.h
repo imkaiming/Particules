@@ -27,7 +27,7 @@ namespace particules
 
     struct UIContext;
     class UIState;
-    class GrainVisualComponent : public juce::Component //, private juce::Timer
+    class GrainVisualComponent : public juce::Component 
     {
     public:
         GrainVisualComponent(UIContext&);
@@ -39,10 +39,10 @@ namespace particules
         void setNumSamples(int);
 
     private:
-        static constexpr int MAXGRAINS = static_cast<int>(params::maxActiveGrains);
+        //static constexpr int MAXGRAINS = static_cast<int>(params::maxActiveGrains);
+
         static constexpr float GSIZE = gui::grainVisualSize;
         static constexpr float GCENTER = GSIZE / 2.f;
-        //void timerCallback() override;
 
         color colour;
         const UIState& uiState;

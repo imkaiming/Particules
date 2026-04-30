@@ -1,5 +1,5 @@
 #include "RotaryMenuBase.h"
-#include "../../../utils/math/MathConstants.h"
+#include "utils/math/MathConstants.h"
 
 namespace particules
 {
@@ -38,7 +38,7 @@ namespace particules
 
         mainSlider.onValueChange = [this]() {
             updatePrimaryAngle();
-            mainSlider.repaint();
+            //mainSlider.repaint();
         };
 
         auxSlider.onValueChange = [this]() {

@@ -26,18 +26,13 @@ namespace particules
         void updatePrimaryAngle();
 
         void setOnPrimaryValueChanged(ValueCallback callback) { onValueChanged = std::move(callback); }
-        void setPrimaryValue(double value, juce::NotificationType notify = juce::dontSendNotification);
-
         double getPrimaryValue() const noexcept { return mainSlider.getValue(); }
-        double getPrimaryMinimum() const noexcept { return mainSlider.getMinimum(); }
-        double getPrimaryMaximum() const noexcept { return mainSlider.getMaximum(); }
 
         std::unique_ptr<ValueTreeState::SliderAttachment> attachPrimaryToAPVTS(ValueTreeState&, const str&) noexcept;
         std::unique_ptr<ValueTreeState::SliderAttachment> attachAuxToAPVTS(ValueTreeState&, const str&) noexcept;
 
         void resized() override;
         void paint(juce::Graphics& g) override;
-        //void lookAndFeelChanged() override;
 
     private:
         void syncAuxDataToPrimary();

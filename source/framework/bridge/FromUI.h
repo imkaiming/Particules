@@ -1,11 +1,20 @@
 #pragma once
 
 #include <juce_core/juce_core.h>
-// expose some audio processor functions witouth coupling
-// the audio processor directly with the GUI
-// Populated by the plugin processor
-// consumed by the gui components
-// UI to DSP bus
+
+/**
+ * @class FromUI
+ * @brief Unidirectional communication bridge (Message Thread -> Audio Engine).
+ *
+ * This class is exclusively responsible for routing commands and events triggered 
+ * by the User Interface to the audio engine or the application state. It serves 
+ * as the primary entry point for control instructions (e.g., loading audio files, 
+ * transport commands).
+ * 
+ * By design, it must not expose any methods for reading the audio state, ensuring 
+ * a strict separation of concerns where the UI acts as the commander and the 
+ * engine acts as the executor.
+ */
 namespace particules
 {
     class FromUI

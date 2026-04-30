@@ -9,7 +9,6 @@
 
 #include "melatonin_inspector/melatonin_inspector.h"
 
-#include "gui/lookandfeel/GlobalLookAndFeel.h"
 #include "gui/lookandfeelv2/MainLNF.h"
 #include "gui/panel/MainPanel.h"
 

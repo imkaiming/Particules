@@ -7,6 +7,21 @@
 #include "framework/core/Core.h"
 #include "utils/struct/VisualSnapshot.h"
 
+/**
+ * @class FromAudio
+ * @brief Unidirectional telemetry bridge (Audio Thread -> UI / State).
+ *
+ * This class allows the real-time audio thread to export telemetry data and 
+ * rendering snapshots (e.g., grain visuals) to the graphical interface. It 
+ * operates strictly in a Producer role, writing data into concurrent, 
+ * thread-safe structures like the PingPongBuffer.
+ * 
+ * [CRITICAL]: All methods within this class are executed on the high-priority 
+ * 
+ * Audio Thread. Consequently, every implementation must be strictly lock-free, 
+ * wait-free, and must not perform any memory allocations or system calls to 
+ * prevent audio dropouts.
+ */
 namespace particules
 {
     class FromAudio

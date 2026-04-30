@@ -42,8 +42,8 @@ namespace particules
 
         mainSlider.onValueChange = [this]() {
             updatePrimaryAngle();
-            //DBG(" SLIDER = " + (str)mainSlider.getValue());
-            mainSlider.repaint();
+
+            //mainSlider.repaint();
 
             if(audioState.getIsLinked() && onValueChanged)
             {
@@ -64,15 +64,15 @@ namespace particules
     }
 
 
-    void MainSliderWithAux::setPrimaryValue(double value, juce::NotificationType notify)
-    {
-        mainSlider.setValue(value, notify);
-        if(notify == juce::dontSendNotification)
-        {
-            updatePrimaryAngle();
-            mainSlider.repaint();
-        }
-    }
+    //void MainSliderWithAux::setPrimaryValue(double value, juce::NotificationType notify)
+    //{
+    //    mainSlider.setValue(value, notify);
+    //    if(notify == juce::dontSendNotification)
+    //    {
+    //        updatePrimaryAngle();
+    //        mainSlider.repaint();
+    //    }
+    //}
 
     void MainSliderWithAux::updatePrimaryAngle()
     {

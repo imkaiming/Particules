@@ -17,15 +17,18 @@ namespace particules
 
         setOpaque(true);
 
-        if(audioThumbnail.isFullyLoaded())
-            repaint();
-
         noFileLabel.setText("No File Loaded", juce::dontSendNotification);
         noFileLabel.setJustificationType(juce::Justification::centred);
         noFileLabel.setColour(juce::Label::textColourId, coloursv2::perleBlanc);
         noFileLabel.getProperties().set("isValue", true);
-        addAndMakeVisible(noFileLabel);
 
+        addAndMakeVisible(&noFileLabel);
+
+        noFileLabel.setVisible(true);
+
+        if(audioThumbnail.isFullyLoaded())
+            audioThumbnail.sendChangeMessage();
+        
         // apvts listener to update the UI
         //apvts.addParameterListener(Param::Position::id, this);
         //apvts.addParameterListener(Param::Selection::id, this);
@@ -40,22 +43,20 @@ namespace particules
 
     void ThumbnailComponent::paint(juce::Graphics& g)
     {
-        if(audioThumbnail.getNumChannels() == 0)
-            paintIfNoFileLoaded(g);
-        else
+        if(audioThumbnail.getTotalLength() > 0)
             paintIfFileLoaded(g);
+        else
+            paintIfNoFileLoaded(g);
     }
 
     void ThumbnailComponent::paintIfNoFileLoaded(juce::Graphics& g)
     {
         g.fillAll(colours::black);
         paintGrid(g);
-        noFileLabel.setVisible(true);
     }
 
     void ThumbnailComponent::paintIfFileLoaded(juce::Graphics& g)
     {
-        noFileLabel.setVisible(false);
         g.fillAll(colours::smokyBlack);
         paintGrid(g);
         g.setColour(colours::brightBlue);
@@ -88,12 +89,9 @@ namespace particules
         }
     }
 
-
-
     void ThumbnailComponent::resized()
     {
         juce::Rectangle<int> area = getLocalBounds();
-        //grainVisualComponent.setBounds(area);
         noFileLabel.setBounds(area);
     }
 
@@ -101,7 +99,7 @@ namespace particules
     {
         if(source == &audioThumbnail)
         {
-            //grainVisualComponent.setNumSamples(engineState.getNumSamples());
+            noFileLabel.setVisible(false);
             repaint();
             if(audioThumbnail.isFullyLoaded())
             {

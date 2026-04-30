@@ -1,5 +1,6 @@
 #include "TraversalRotaryMenu.h"
-#include "../../../utils/math/TraversalMath.h"
+
+#include "utils/math/TraversalMath.h"
 
 namespace particules
 {

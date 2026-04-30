@@ -1,5 +1,6 @@
-#include "../../../utils/math/EnvelopeMath.h"
 #include "EnvelopeRotaryMenu.h"
+
+#include "utils/math/EnvelopeMath.h"
 
 namespace particules
 {
