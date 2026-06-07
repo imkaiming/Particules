@@ -86,3 +86,7 @@ bin/
 
 # AI workspace state
 .opencode/
+.codegraph/
+.mcp.json
+opencode.jsonc
+
