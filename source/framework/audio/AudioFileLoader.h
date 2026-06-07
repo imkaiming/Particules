@@ -20,7 +20,7 @@ namespace particules
     {
     public:
         AudioFileLoader();
-        ~AudioFileLoader() = default;
+        ~AudioFileLoader();
 
         void loadFile(AudioLoadedCallback, const juce::File&);
 
@@ -38,12 +38,15 @@ namespace particules
     private:
         void showErrorWindow(const str&);
 
+        void launchLoadingJob(const juce::File&, AudioLoadedCallback);
+
         double sampleRate;
 
         int targetChannels;
         ChannelMixer channelMixer;
         std::unique_ptr<juce::FileChooser> chooser;
         juce::AudioFormatManager formatManager; // classe qui traite les formats de fichier tq wav, aiff, ogg, vorbis ou mp3
-        //juce::ThreadPool threadPool{1};
+        juce::ThreadPool threadPool{1};
+        std::atomic<bool> loading;
     };
 }

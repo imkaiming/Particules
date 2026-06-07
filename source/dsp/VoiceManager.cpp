@@ -1,5 +1,9 @@
 #include "VoiceManager.h"
 
+#ifdef TRACY_ENABLE
+#include <tracy/Tracy.hpp>
+#endif
+
 #include "utils/struct/AudioPayload.h"
 #include "utils/struct/ParameterSnapshot.h"
 #include "utils/struct/SmoothedParameters.h"
@@ -33,6 +37,9 @@ namespace particules
     void VoiceManager::process(
         int currentSample, const ParameterSnapshot& ps, AudioPayload* payload /*, const SmoothedParameters& sp*/)
     {
+#ifdef TRACY_ENABLE
+        ZoneScopedN("VoiceManager::Process");
+#endif
         globalSampleCounter++;
         for(int i = 0; i < params::maxMidiVoice; ++i)
         {

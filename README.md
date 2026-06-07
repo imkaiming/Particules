@@ -1,3 +1,11 @@
+[![Version](https://img.shields.io/badge/version-0.4.2-blue.svg)](https://github.com/imkaiming/Particules/blob/main/VERSION)
+[![CI](https://github.com/imkaiming/Particules/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/imkaiming/Particules/actions/workflows/build_and_test.yml)
+[![Tests](https://img.shields.io/badge/tests-Catch2-brightgreen.svg)](https://github.com/imkaiming/Particules/tree/main/tests)
+[![JUCE](https://img.shields.io/badge/JUCE-8.0.12+-8A2BE2)](https://github.com/juce-framework/JUCE/tree/501c07674e1ad693085a7e7c398f205c2677f5da)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![C++20](https://img.shields.io/badge/C++-20-00599C?logo=c%2B%2B)](https://en.cppreference.com/w/cpp/20)
+[![CMake](https://img.shields.io/badge/CMake-3.25+-064F8C?logo=cmake)](https://cmake.org/)
+
 # Particules - Granular Synthesizer
 
 Particules is a real-time granular synthesizer built with JUCE.

@@ -73,7 +73,7 @@ namespace particules
     void PluginCore::processBlock(AudioBuffer& outputBuffer, juce::MidiBuffer& midiBuffer)
     {
 #ifdef TRACY_ENABLE
-        ZoneScoped; // tracy submodules
+        ZoneScopedN("PluginCore::processBlock"); // tracy submodules
 #endif
 
         // security for pluginval
@@ -112,6 +112,10 @@ namespace particules
         keyboardState.processNextMidiBuffer(midiBuffer, 0, bufferSize, true);
 
         granularEngine.process(outputBuffer, midiBuffer, payload, bufferSize, outputPtrs, outputNumChannels, ps);
+
+#ifdef TRACY_ENABLE
+        TracyPlot("ActiveGrains", (int64_t)granularEngine.getNumActiveGrains());
+#endif
     }
 
     void PluginCore::getStateInformation(juce::MemoryBlock& destData)

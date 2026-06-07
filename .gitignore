@@ -83,3 +83,6 @@ DerivedData/
 
 
 bin/
+
+# AI workspace state
+.opencode/

@@ -1,6 +1,9 @@
 #include "GrainProcessor.h"
 
 #include <juce_core/juce_core.h>
+#ifdef TRACY_ENABLE
+#include <tracy/Tracy.hpp>
+#endif
 
 #include "dsp/GrainEnvelope.h"
 #include "dsp/GrainPool.h"
@@ -36,6 +39,10 @@ namespace particules
     void GrainProcessor::process(
         int currentSample, int outputNumChannels, float* const* outputPtrs /*, const SmoothedParameters& params*/)
     {
+#ifdef TRACY_ENABLE
+        ZoneScopedN("GrainProcessor::Process");
+#endif
+
         for(int i = activeCount - 1; i >= 0; --i) // backward iteration
         {
             GrainHandle h = activeHandles[i];
@@ -86,6 +93,9 @@ namespace particules
 
     void GrainProcessor::spawn(const ParameterSnapshot& ps, AudioPayload* payload, int indexVoice, float pitchRatio, float gain)
     {
+#ifdef TRACY_ENABLE
+        ZoneScopedN("GrainProcessor::Spawn");
+#endif
         if(activeCount >= SIZE)
             return; // cannot spawn any more grains
 
@@ -116,6 +126,9 @@ namespace particules
 
     void GrainProcessor::writeVisualSnapshot(VisualSnapshot& snap) noexcept
     {
+#ifdef TRACY_ENABLE
+        ZoneScopedN("GrainProcessor::writeVisualSnapshot");
+#endif
         snap.count = 0;
         for(int i = 0; i < activeCount; ++i)
         {
