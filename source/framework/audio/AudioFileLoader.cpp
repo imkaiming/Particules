@@ -95,13 +95,9 @@ namespace particules
         }
     }
 
-    //==================================================================
-
     AudioFileLoader::AudioFileLoader() : sampleRate(0.0), targetChannels(0) { formatManager.registerBasicFormats(); }
 
     AudioFileLoader::~AudioFileLoader() { threadPool.removeAllJobs(true, 1000); }
-
-    //==================================================================
 
     void AudioFileLoader::loadFile(AudioLoadedCallback onAudioLoaded, const juce::File& currentFile)
     {
@@ -138,7 +134,6 @@ namespace particules
 
         launchLoadingJob(file, onAudioLoaded);
     }
-
 
     void AudioFileLoader::launchLoadingJob(const juce::File& file, AudioLoadedCallback onAudioLoaded)
     {
@@ -197,6 +192,5 @@ namespace particules
         juce::MessageManager::callAsync(
             [message]() { juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::WarningIcon, "Error", message, "OK"); });
     }
-
 
 } 
