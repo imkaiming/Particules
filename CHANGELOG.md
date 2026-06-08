@@ -2,6 +2,14 @@
 
 ---
 
+## [0.4.3] - 2026-06-07
+
+### Changed
+- Enhanced mouse interaction and hover feedback for the waveform slider
+- Refined audio file loading status messages
+
+---
+
 ## [0.4.2] - 2026-04-27
 
 ### Added 
