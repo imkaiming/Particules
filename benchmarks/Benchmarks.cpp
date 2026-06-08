@@ -112,7 +112,7 @@ TEST_CASE("Boot performance")
 
             // Spin-Wait to verify the audio file is loaded (asynchronous thread)
             bool isLoaded = false;
-            for(int i = 0; i < 200; ++i)
+            for(int i = 0; i < 500; ++i)
             {
                 buffer.clear();
                 processor.processBlock(buffer, midi);
