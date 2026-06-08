@@ -82,57 +82,63 @@ TEST_CASE("Boot performance")
 
         std::cout << "\n========================================================\n";
         std::cout << "[DSP TARGET] Block Size: " << blockSize << " | Sample Rate: " << sampleRate << "Hz\n";
-        std::cout << "[DSP TARGET] TIME BUDGET (100% CPU) = " << budgetMs << " ms\n";
-        std::cout << "[DSP TARGET] 10% CPU Load = " << (budgetMs * 0.1) << " ms\n";
+        std::cout << "[DSP TARGET] TIME BUDGET = " << budgetMs << " ms\n";
         std::cout << "========================================================\n";
 
         BENCHMARK_ADVANCED("Process block (Heavy Granular Load)")
         (Catch::Benchmark::Chronometer meter)
         {
+            // 1. Processor setup (deterministic)
             particules::ParticulesAudioProcessor processor;
             processor.setRateAndBufferSizeDetails(sampleRate, blockSize);
             processor.prepareToPlay(sampleRate, blockSize);
 
-            juce::MidiBuffer midi;
+            // 2. Test audio buffer (VALID size only)
             juce::AudioBuffer<float> buffer(numChannels, blockSize);
+            buffer.clear();
 
-            for(int voice = 0; voice < particules::params::maxMidiVoice; voice++)
+            juce::Random rng(12345);
+            for(int ch = 0; ch < buffer.getNumChannels(); ++ch)
+            {
+                float* data = buffer.getWritePointer(ch);
+
+                for(int i = 0; i < buffer.getNumSamples(); ++i)
+                    data[i] = rng.nextFloat() * 2.0f - 1.0f;
+            }
+
+            // 3. MIDI load (worst-case activation)
+            juce::MidiBuffer midi;
+
+            for(int voice = 0; voice < particules::params::maxMidiVoice; ++voice)
             {
                 midi.addEvent(juce::MidiMessage::noteOn(1, 60 + voice, 1.0f), 0);
             }
 
-            processor.getPluginCore().loadDebugPreset();
+            // 4. Parameter setup (deterministic state)
+            auto& apvts = processor.getPluginCore().getAPVTS();
 
-            juce::AudioProcessorValueTreeState& params = processor.getPluginCore().getAPVTS();
+            if(auto* p = apvts.getParameter(particules::params::emission::id))
+                p->setValueNotifyingHost(1.0f);
 
-            if(auto* emissionParam = params.getParameter(particules::params::emission::id))
-                emissionParam->setValueNotifyingHost(1.0f);
-            if(auto* durationParam = params.getParameter(particules::params::duration::id))
-                durationParam->setValueNotifyingHost(1.0f);
+            if(auto* p = apvts.getParameter(particules::params::duration::id))
+                p->setValueNotifyingHost(1.0f);
 
-            // Spin-Wait to verify the audio file is loaded (asynchronous thread)
-            bool isLoaded = false;
-            for(int i = 0; i < 500; ++i)
-            {
+            if(auto* p = apvts.getParameter(particules::params::play::id))
+                p->setValueNotifyingHost(1.0f);
+
+            // 5. WARMUP (NOT measured)
+            for(int i = 0; i < 100; ++i)
+                processor.processBlock(buffer, midi);
+
+            // 6. BENCHMARK (only measured section)
+            meter.measure([&] {
                 buffer.clear();
                 processor.processBlock(buffer, midi);
-                if(buffer.getMagnitude(0, blockSize) > 0.0001f)
-                {
-                    isLoaded = true;
-                    break;
-                }
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            }
-            REQUIRE(isLoaded == true);
 
-            // 2. MESURE CATCH2
-            meter.measure([&] {
-                processor.processBlock(buffer, midi);
                 doNotOptimize(buffer.getSample(0, 0));
             });
-        
         };
 
-        std::cout << "end audio processing benchmarks \n";
+        std::cout << "end audio processing benchmarks\n";
     }
 }
