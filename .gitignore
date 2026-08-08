@@ -4,6 +4,7 @@ JuceLibraryCode/
 
 # IDE / build output
 .vs/
+/.vs
 Builds/
 build/
 out/
